@@ -1,13 +1,14 @@
 import 'react-native-gesture-handler';
 import React, { useEffect, useRef, useState } from 'react';
 import NaverMapView, { Align, Circle, Marker, Path, Polygon, Polyline } from "./map";
-import { Image, ImageBackground, PermissionsAndroid, Platform, ScrollView, Text, TouchableOpacity, View } from "react-native";
+import { Image, ImageBackground, PermissionsAndroid, Platform, ScrollView, Text, TouchableOpacity, View, TextInput, StyleSheet, Button } from "react-native";
 import { NavigationContainer } from '@react-navigation/native';
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { LayerGroup } from './map/index';
 
 import VectorImage from 'react-native-vector-image';
+import * as Keychain from 'react-native-keychain';
 
 
 const P0 = { latitude: 37.564362, longitude: 126.977011 };
@@ -19,25 +20,39 @@ const P5 = { latitude: 37.562834, longitude: 126.976218 };
 const Tab = createBottomTabNavigator();
 const Stack = createNativeStackNavigator();
 
+const setSecureValue = (key, value) =>
+    Keychain.setInternetCredentials(key, key /* <- can be a random string */, value)
+
+const getSecureValue = async (key) => {
+    const result = await Keychain.getInternetCredentials(key)
+    if (result) {
+        return result.password
+    }
+    return false
+}
+
+const removeSecureValue = (key) =>
+    Keychain.resetInternetCredentials(key)
+
 const App = () => {
     return <NavigationContainer>
         <Stack.Navigator
-            screenOptions={{
+            screenOptions={({ navigation, route }) => ({
                 headerTitle: 'SASM',
                 headerTitleAlign: 'center',
                 headerTintColor: '#000000',
                 headerStyle: { backgroundColor: '#FFFFFF' },
                 headerRight: () => (
-                    <TouchableOpacity onPress={() => navigation.navigate('stack')}>
+                    <TouchableOpacity onPress={() => navigation.navigate('login')}>
                         <View style={{}}>
                             <Text style={{ color: '#000000' }}>로그인</Text>
                         </View>
                     </TouchableOpacity>
                 ),
-            }}
+            })}
         >
             <Stack.Screen name="home" component={HomeScreen} />
-            <Stack.Screen name="stack" component={MapViewScreen2} />
+            <Stack.Screen name="login" component={LoginScreen} />
         </Stack.Navigator>
     </NavigationContainer >
 }
@@ -59,7 +74,7 @@ const HomeScreen = () =>
         })}
     >
         <Tab.Screen
-            name={"Map"}
+            name={"map"}
             component={MapViewScreen}
             options={{
                 tabBarLabel: '맵',
@@ -76,7 +91,7 @@ const HomeScreen = () =>
                 )
             }}
         />
-        <Tab.Screen name={"text"} component={TextScreen} />
+        <Tab.Screen name={"마이페이지"} component={MyPageScreen} />
     </Tab.Navigator>
 
 const TextScreen = () => {
@@ -188,6 +203,205 @@ const MapViewScreen2 = ({ navigation }) => {
         </ScrollView>
     </View>
 }
+
+const MyPageScreen = ({ navigation }) => {
+    const [accessToken, setAccessToken] = useState('')
+    const [refreshToken, setRefreshToken] = useState('')
+
+    useEffect(() => {
+        // const  = await fetchUser(userId);
+        // // getSecureValue('accessToken')
+        async function getTokens() {
+            setAccessToken(await getSecureValue('accessToken'));
+            setRefreshToken(await getSecureValue('refreshToken'));
+        }
+        getTokens();
+    }, []);
+
+
+    return (
+        <View>
+            <Text>{accessToken}</Text>
+            <Text>{refreshToken}</Text>
+        </View>
+    )
+}
+
+const LoginScreen = ({ navigation }) => {
+    const styles = StyleSheet.create({
+        input: {
+            width: 294,
+            height: 32,
+            margin: 12,
+            borderWidth: 1,
+            padding: 10,
+            backgroundColor: '#FFFFFF',
+            borderRadius: 3,
+            shadowOffset: {
+                width: 2,
+                height: 4,
+            },
+            shadowOpacity: 0.1,
+            //             box- shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
+        },
+        errorContainer: {
+            marginBottom: 10,
+            marginTop: 30,
+            padding: 20,
+            backgroundColor: '#ee3344',
+        },
+        errorLabel: {
+            color: '#fff',
+            fontSize: 15,
+            fontWeight: 'bold',
+            textAlignVertical: 'center',
+            textAlign: 'center',
+        },
+        loginButton: {
+            width: 150,
+            height: 40,
+            borderWidth: 2,
+            borderRadius: 10,
+            backgroundColor: '#FFFFFF',
+            fontSize: 12,
+            fontWeight: 500,
+            alignItems: 'center',
+            justifyContent: 'center',
+            borderColor: '#44ADF7',
+            ...Platform.select({
+                ios: {
+                    marginTop: 15,
+                },
+                android: {
+                    marginTop: 15,
+                    marginBottom: 10,
+                },
+            }),
+        },
+        signUpButton: {
+            width: 300,
+            height: 40,
+            borderRadius: 10,
+            backgroundColor: '#44ADF7',
+            fontSize: 16,
+            fontWeight: 600,
+            alignItems: 'center',
+            justifyContent: 'center',
+            borderColor: '#44ADF7',
+            ...Platform.select({
+                ios: {
+                    marginTop: 15,
+                },
+                android: {
+                    marginTop: 15,
+                    marginBottom: 10,
+                },
+            }),
+        }
+    });
+    const [form, setForm] = useState({
+        email: {
+            value: '',
+            type: 'textInput',
+            rules: {},
+            valid: false,
+        },
+        password: {
+            value: '',
+            type: 'textInput',
+            rules: {},
+            valid: false,
+        },
+    });
+
+    updateInput = (name, value) => {
+        let formCopy = form;
+        formCopy[name].value = value;
+        setForm(form => {
+            return { ...formCopy };
+        });
+    };
+
+    login = () => {
+        fetch('http://127.0.0.1:8000/users/login/', {
+            method: 'POST',
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                email: form['email'].value,
+                password: form['password'].value,
+            }),
+        }).then(async (response) => {
+            if (response.status == 200) {
+                const responseData = await response.json()
+                const accessToken = responseData.data.access
+                const refreshToken = responseData.data.access
+                setSecureValue('accessToken', accessToken)
+                setSecureValue('refreshToken', refreshToken)
+                navigation.navigate('home')
+            } else {
+                alert('아이디 또는 비밀번호가 일치하지 않습니다.');
+            }
+        });
+    }
+
+    return (
+        <View
+            style={
+                {
+                    backgroundColor: '#FFFFFF',
+                    width: '100%',
+                    height: '100%',
+                    alignItems: 'center'
+                }
+            }
+        >
+            <View style={{ marginTop: 100 }}>
+                <Text
+                    style={{
+                        fontSize: 24,
+                        fontWeight: 600,
+                    }}
+                >LOG IN</Text>
+            </View>
+            <View style={{ marginTop: 40 }}>
+                <TextInput
+                    style={styles.input}
+                    value={form.email.value}
+                    type={form.email.type}
+                    autoCapitalize={'none'}
+                    keyboardType={'email-address'}
+                    placeholder="E-mail"
+                    placeholderTextColor={'rgba(0, 0, 0, 0.5)'}
+                    onChangeText={value => updateInput('email', value)}
+                />
+                <TextInput
+                    style={styles.input}
+                    value={form.password.value}
+                    type={form.password.type}
+                    secureTextEntry={true}
+                    placeholder="Password"
+                    placeholderTextColor={'rgba(0, 0, 0, 0.5)'}
+                    onChangeText={value => updateInput('password', value)}
+                />
+            </View>
+            <View style={{ marginTop: 40 }}>
+                <TouchableOpacity onPress={() => login()}>
+                    <View style={styles.loginButton}>
+                        <Text>로그인하기</Text>
+                    </View>
+                </TouchableOpacity>
+            </View>
+            <View style={{ marginTop: 40 }}>
+                <View style={styles.signUpButton}>
+                    <Text style={{ color: '#FFFFFF' }}>회원가입하기</Text>
+                </View>
+            </View>
+        </View >)
+}
+
 
 async function requestLocationPermission() {
     if (Platform.OS !== 'android') return;
