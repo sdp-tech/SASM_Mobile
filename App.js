@@ -4,8 +4,11 @@ import NaverMapView, { Align, Circle, Marker, Path, Polygon, Polyline } from "./
 import { Image, ImageBackground, PermissionsAndroid, Platform, ScrollView, Text, TouchableOpacity, View } from "react-native";
 import { NavigationContainer } from '@react-navigation/native';
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
-import { createStackNavigator } from "@react-navigation/stack";
+import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { LayerGroup } from './map/index';
+
+import VectorImage from 'react-native-vector-image';
+
 
 const P0 = { latitude: 37.564362, longitude: 126.977011 };
 const P1 = { latitude: 37.565051, longitude: 126.978567 };
@@ -14,20 +17,65 @@ const P4 = { latitude: 37.564834, longitude: 126.977218 };
 const P5 = { latitude: 37.562834, longitude: 126.976218 };
 
 const Tab = createBottomTabNavigator();
-const Stack = createStackNavigator();
+const Stack = createNativeStackNavigator();
 
 const App = () => {
     return <NavigationContainer>
-        <Stack.Navigator>
+        <Stack.Navigator
+            screenOptions={{
+                headerTitle: 'SASM',
+                headerTitleAlign: 'center',
+                headerTintColor: '#000000',
+                headerStyle: { backgroundColor: '#FFFFFF' },
+                headerRight: () => (
+                    <TouchableOpacity onPress={() => navigation.navigate('stack')}>
+                        <View style={{}}>
+                            <Text style={{ color: '#000000' }}>로그인</Text>
+                        </View>
+                    </TouchableOpacity>
+                ),
+            }}
+        >
             <Stack.Screen name="home" component={HomeScreen} />
             <Stack.Screen name="stack" component={MapViewScreen2} />
         </Stack.Navigator>
-    </NavigationContainer>
+    </NavigationContainer >
 }
 
 const HomeScreen = () =>
-    <Tab.Navigator>
-        <Tab.Screen name={"map"} component={MapViewScreen} />
+    <Tab.Navigator
+        initialRouteName='Map'
+        screenOptions={({ route }) => ({
+            headerShown: false,
+            tabBarStyle: {
+                // height: 90,
+                // paddingHorizontal: 5,
+                // paddingTop: 5,
+                // paddingBottom: 30,
+                backgroundColor: '#000000',
+                // position: 'absolute',
+                // borderTopWidth: 0,
+            },
+        })}
+    >
+        <Tab.Screen
+            name={"Map"}
+            component={MapViewScreen}
+            options={{
+                tabBarLabel: '맵',
+                tabBarActiveTintColor: '#FFFFFF',
+                tabBarInactiveTintColor: '#808080',
+                tabBarIcon: ({ color, size }) => (
+                    <VectorImage
+                        source={require('./assets/navbar/map.svg')}
+                        style={{
+                            tintColor: color,
+                            resizeMode: 'center'
+                        }}
+                    />
+                )
+            }}
+        />
         <Tab.Screen name={"text"} component={TextScreen} />
     </Tab.Navigator>
 
