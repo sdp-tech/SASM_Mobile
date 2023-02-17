@@ -4,6 +4,7 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 
 import MyPageMainScreen from './Main'
 import LoginScreen from './Login';
+import JoinScreen from './Join';
 
 import { getAccessToken, getRefreshToken } from '../../common/storage';
 
@@ -18,6 +19,7 @@ const MyPageScreen = ({ navigation }) => {
         >
             <Stack.Screen name="mypage" component={MyPageMainScreen} />
             <Stack.Screen name="login" component={LoginScreen} />
+            <Stack.Screen name="join" component={JoinScreen} />
         </Stack.Navigator>
     )
 }
