@@ -1,81 +1,43 @@
 import React, { useState } from 'react';
 import { Platform, Text, TouchableOpacity, View, TextInput, StyleSheet, SafeAreaView } from "react-native";
+import styled, { css } from 'styled-components/native';
 
 import { setNickname, setAccessToken, setRefreshToken } from '../../common/storage';
+import { Request } from '../../common/requests'
 
+const SignUpButton = styled.View`
+    width: 300px;
+    height: 40px;
+    border-radius: 10px;
+    border-color: #44ADF7;
+    background: #44ADF7;
+    align-items: center;
+    justify-content: center;   
+`;
+
+const LoginButton = styled.View`
+    width: 150px;
+    height: 40px;
+    border-width: 2px;
+    border-radius: 10px;
+    backgroundColor: #FFFFFF;
+    align-items: center;
+    justify-content: center;
+    border-color: #44ADF7;
+`;
+
+const LoginInput = styled.TextInput`
+    width: 294px;
+    height: 32px;
+    margin: 12px;
+    padding: 5px;
+    borderWidth: 1px;
+    background: #FFFFFF;
+    border-radius: 3px;
+    box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
+`;
 
 const LoginScreen = ({ navigation }) => {
-    const styles = StyleSheet.create({
-        input: {
-            width: 294,
-            height: 32,
-            margin: 12,
-            borderWidth: 1,
-            padding: 10,
-            backgroundColor: '#FFFFFF',
-            borderRadius: 3,
-            shadowOffset: {
-                width: 2,
-                height: 4,
-            },
-            shadowOpacity: 0.1,
-            //             box- shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
-        },
-        errorContainer: {
-            marginBottom: 10,
-            marginTop: 30,
-            padding: 20,
-            backgroundColor: '#ee3344',
-        },
-        errorLabel: {
-            color: '#fff',
-            fontSize: 15,
-            fontWeight: 'bold',
-            textAlignVertical: 'center',
-            textAlign: 'center',
-        },
-        loginButton: {
-            width: 150,
-            height: 40,
-            borderWidth: 2,
-            borderRadius: 10,
-            backgroundColor: '#FFFFFF',
-            fontSize: 12,
-            fontWeight: 500,
-            alignItems: 'center',
-            justifyContent: 'center',
-            borderColor: '#44ADF7',
-            ...Platform.select({
-                ios: {
-                    marginTop: 15,
-                },
-                android: {
-                    marginTop: 15,
-                    marginBottom: 10,
-                },
-            }),
-        },
-        signUpButton: {
-            width: 300,
-            height: 40,
-            borderRadius: 10,
-            backgroundColor: '#44ADF7',
-            fontSize: 16,
-            fontWeight: 600,
-            alignItems: 'center',
-            justifyContent: 'center',
-            borderColor: '#44ADF7',
-            ...Platform.select({
-                ios: {
-                    marginTop: 15,
-                },
-                android: {
-                    marginTop: 15,
-                    marginBottom: 10,
-                },
-            }),
-        }
-    });
     const [form, setForm] = useState({
         email: {
             value: '',
@@ -90,6 +52,7 @@ const LoginScreen = ({ navigation }) => {
             valid: false,
         },
     });
+    const request = new Request();
 
     updateInput = (name, value) => {
         let formCopy = form;
@@ -99,31 +62,26 @@ const LoginScreen = ({ navigation }) => {
         });
     };
 
-    login = () => {
-        fetch('http://127.0.0.1:8000/users/login/', {
-            method: 'POST',
-            headers: {
-                'Accept': 'application/json',
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({
+    login = async () => {
+        let response = await request.post('/users/login/',
+            {
                 email: form['email'].value,
                 password: form['password'].value,
-            }),
-        }).then(async (response) => {
-            if (response.status == 200) {
-                const responseData = await response.json()
-                const nickname = responseData.data.nickname
-                const accessToken = responseData.data.access
-                const refreshToken = responseData.data.refresh
-                setNickname(nickname)
-                setAccessToken(accessToken)
-                setRefreshToken(refreshToken)
-                navigation.goBack()
-            } else {
-                alert('아이디 또는 비밀번호가 일치하지 않습니다.');
-            }
-        });
+            },
+            null);
+        if (response.status == 200) {
+            let responseData = await response.json()
+            const nickname = responseData.data.nickname
+            const accessToken = responseData.data.access
+            const refreshToken = responseData.data.refresh
+            setNickname(nickname)
+            setAccessToken(accessToken)
+            setRefreshToken(refreshToken)
+            navigation.goBack()
+        } else {
+            alert('아이디 또는 비밀번호가 일치하지 않습니다.');
+        }
+
     }
 
     return (
@@ -146,8 +104,7 @@ const LoginScreen = ({ navigation }) => {
                 >LOG IN</Text>
             </View>
             <View style={{ marginTop: 40 }}>
-                <TextInput
-                    style={styles.input}
+                <LoginInput
                     value={form.email.value}
                     type={form.email.type}
                     autoCapitalize={'none'}
@@ -156,8 +113,7 @@ const LoginScreen = ({ navigation }) => {
                     placeholderTextColor={'rgba(0, 0, 0, 0.5)'}
                     onChangeText={value => updateInput('email', value)}
                 />
-                <TextInput
-                    style={styles.input}
+                <LoginInput
                     value={form.password.value}
                     type={form.password.type}
                     secureTextEntry={true}
@@ -168,15 +124,17 @@ const LoginScreen = ({ navigation }) => {
             </View>
             <View style={{ marginTop: 40 }}>
                 <TouchableOpacity onPress={() => login()}>
-                    <View style={styles.loginButton}>
-                        <Text>로그인하기</Text>
-                    </View>
+                    <LoginButton>
+                        <Text style={{ fontWeight: 600, fontSize: 12 }}>로그인하기</Text>
+                    </LoginButton>
                 </TouchableOpacity>
             </View>
             <View style={{ marginTop: 40 }}>
-                <View style={styles.signUpButton}>
-                    <Text style={{ color: '#FFFFFF' }}>회원가입하기</Text>
-                </View>
+                <TouchableOpacity onPress={() => navigation.navigate('join')}>
+                    <SignUpButton>
+                        <Text style={{ color: '#FFFFFF', fontWeight: 600, fontSize: 16 }}>회원가입하기</Text>
+                    </SignUpButton>
+                </TouchableOpacity>
             </View>
         </SafeAreaView>)
 }
