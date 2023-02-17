@@ -1,8 +1,10 @@
 import 'react-native-gesture-handler';
 import React, { useEffect, useRef, useState } from 'react';
-import { Text, TouchableOpacity, View } from "react-native";
+import { Text, TouchableOpacity, View, PermissionsAndroid, } from "react-native";
+import { request, check, PERMISSIONS, RESULTS } from 'react-native-permissions';
 
 import NaverMapView, { Align, Marker } from './NaverMap';
+import { TrackingMode } from './NaverMap';
 
 const P0 = { latitude: 37.564362, longitude: 126.977011 };
 const P1 = { latitude: 37.565051, longitude: 126.978567 };
@@ -20,14 +22,19 @@ const MapViewScreen = ({ navigation }) => {
     const [enableLayerGroup, setEnableLayerGroup] = useState(true);
 
     return <>
-        <NaverMapView ref={mapView}
+        <NaverMapView
+            ref={mapView}
             style={{ width: '100%', height: '100%' }}
             showsMyLocationButton={true}
             center={{ ...P0, zoom: 16 }}
-            onTouch={e => console.warn('onTouch', JSON.stringify(e.nativeEvent))}
-            onCameraChange={e => console.warn('onCameraChange', JSON.stringify(e))}
-            onMapClick={e => console.warn('onMapClick', JSON.stringify(e))}
-            useTextureView>
+            // onTouch={e => console.warn('onTouch', JSON.stringify(e.nativeEvent))}
+            // onCameraChange={e => console.warn('onCameraChange', JSON.stringify(e))}
+            // onMapClick={e => console.warn('onMapClick', JSON.stringify(e))}
+            // useTextureView
+            // setLocationTrackingMode={TrackingMode.Follow}
+            scaleBar={false}
+            zoomControl={true}
+        >
             {/* <Marker coordinate={P0}
                 onClick={() => {
                     console.warn('onClick! p0')
@@ -80,25 +87,61 @@ const MapViewScreen = ({ navigation }) => {
 
 
 async function requestLocationPermission() {
-    if (Platform.OS !== 'android') return;
-    try {
-        const granted = await PermissionsAndroid.request(
-            PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
-            {
-                title: 'Location Permission',
-                message: 'show my location need Location permission',
-                buttonNeutral: 'Ask Me Later',
-                buttonNegative: 'Cancel',
-                buttonPositive: 'OK',
-            },
-        );
-        if (granted === PermissionsAndroid.RESULTS.GRANTED) {
-            console.log('You can use the location');
-        } else {
-            console.log('Location permission denied');
-        }
-    } catch (err) {
-        console.warn(err);
+    if (Platform.OS === 'ios') {
+        request(PERMISSIONS.IOS.LOCATION_WHEN_IN_USE).then((result) => {
+            console.warn(result);
+        });
+        check(PERMISSIONS.IOS.LOCATION_WHEN_IN_USE)
+            .then((result) => {
+                switch (result) {
+                    case RESULTS.UNAVAILABLE:
+                        console.warn('This feature is not available (on this device / in this context)');
+                        break;
+                    case RESULTS.DENIED:
+                        console.warn('The permission has not been requested / is denied but requestable');
+                        break;
+                    case RESULTS.LIMITED:
+                        console.warn('The permission is limited: some actions are possible');
+                        break;
+                    case RESULTS.GRANTED:
+                        console.warn('The permission is granted');
+                        break;
+                    case RESULTS.BLOCKED:
+                        console.warn('The permission is denied and not requestable anymore');
+                        break;
+                }
+            })
+            .catch((error) => {
+                console.warn(error);
+            });
+    }
+    else {
+        request(PERMISSIONS.ANDROID.ACCESS_FINE_LOCATION).then((result) => {
+            console.warn(result);
+        });
+        check(PERMISSIONS.ANDROID.ACCESS_FINE_LOCATION)
+            .then((result) => {
+                switch (result) {
+                    case RESULTS.UNAVAILABLE:
+                        console.warn('This feature is not available (on this device / in this context)');
+                        break;
+                    case RESULTS.DENIED:
+                        console.warn('The permission has not been requested / is denied but requestable');
+                        break;
+                    case RESULTS.LIMITED:
+                        console.warn('The permission is limited: some actions are possible');
+                        break;
+                    case RESULTS.GRANTED:
+                        console.warn('The permission is granted');
+                        break;
+                    case RESULTS.BLOCKED:
+                        console.warn('The permission is denied and not requestable anymore');
+                        break;
+                }
+            })
+            .catch((error) => {
+                console.warn(error);
+            });
     }
 }
 
