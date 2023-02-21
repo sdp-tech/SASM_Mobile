@@ -1,5 +1,5 @@
 import { SASM_API_URL } from '@env';
-
+import axios from "axios";
 import { getAccessToken, getRefreshToken } from './storage';
 
 export class Request {
@@ -21,4 +21,20 @@ export class Request {
             }),
         });
     }
+    // get = async(path, params) => {
+    //     try {
+    //         const response = await axios.get(SASM_API_URL+path, {
+    //             params: params,
+    //             headers: {
+    //                 'Accept': 'application/json',
+    //                 'Content-Type': 'application/json',
+    //                 Authorization: "No Auth",
+    //             },
+    //         });
+    //     }
+    //     catch (error) {
+    //         console.error(error);
+    //     }
+    //     return response;
+    // }
 }
