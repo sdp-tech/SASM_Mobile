@@ -4,7 +4,7 @@ import NaverMapView, { Align, Circle, Marker, Path, Polygon, Polyline } from "./
 import { Image, ImageBackground, PermissionsAndroid, Platform, ScrollView, Text, TouchableOpacity, View, TextInput, StyleSheet, Button } from "react-native";
 import { NavigationContainer } from '@react-navigation/native';
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
-import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import { createNativeStackNavigator, NativeStackScreenProps } from '@react-navigation/native-stack';
 import { LayerGroup } from './components/map/NaverMap';
 
 import VectorImage from 'react-native-vector-image';
@@ -16,42 +16,54 @@ import CommunityScreen from './components/community/Community';
 import StoryScreen from './components/story/Story';
 import MyPickScreen from './components/mypick/MyPick';
 
-const Tab = createBottomTabNavigator();
+export type AppProps = {
+    'Home': any;
+    'Login': any;
+}
+
 const Stack = createNativeStackNavigator();
 
 
-const App = () => {
+const App = (): JSX.Element => {
     return <NavigationContainer>
         <Stack.Navigator
-            screenOptions={({ navigation, route }) => ({
+            screenOptions={() => ({
                 headerShown: false,
             })}
         >
-            <Stack.Screen name="home" component={HomeScreen} />
-            <Stack.Screen name="login" component={LoginScreen} />
+            <Stack.Screen name="Home" component={HomeScreen} />
+            <Stack.Screen name="Login" component={LoginScreen} />
         </Stack.Navigator>
     </NavigationContainer >
 }
 
-const NavbarIcon = (source) => {
+const NavbarIcon = (source: number) => {
+    type VectorProps = {
+        color: string,
+        size: number
+    }
     return (
-        ({ color, size }) => (<VectorImage
+        ({ color }: VectorProps) => (<VectorImage
             source={source} // 새로운 .svg 파일 사용 시, 'yarn react-native-vector-image generate' 수행 필요
             style={{
                 tintColor: color,
                 resizeMode: 'center'
             }}
-        />))
+        />)
+    )
 }
 
-const HomeScreen = () => {
-    const tabBarActiveTintColor = '#FFFFFF'
-    const tabBarInactiveTintColor = '#808080'
+
+const Tab = createBottomTabNavigator();
+type Props = NativeStackScreenProps<AppProps, 'Home'>
+const HomeScreen = ({navigation, route}:Props):JSX.Element => {
+    const tabBarActiveTintColor: string = '#FFFFFF'
+    const tabBarInactiveTintColor: string = '#808080'
 
     return (
         <Tab.Navigator
-            initialRouteName='Map'
-            screenOptions={({ route }) => ({
+            initialRouteName='맵'
+            screenOptions={() => ({
                 headerShown: false,
                 tabBarStyle: {
                     backgroundColor: '#000000',
