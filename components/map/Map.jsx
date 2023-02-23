@@ -7,6 +7,7 @@ import { TrackingMode } from './NaverMap';
 import axios from "axios";
 import { Request } from '../../common/requests';
 import MapList from './components/MapList';
+import Drawer from "react-native-draggable-view";
 
 const P0 = { latitude: 37.564362, longitude: 126.977011 };
 const P1 = { latitude: 37.565051, longitude: 126.978567 };
@@ -14,8 +15,61 @@ const P2 = { latitude: 37.565383, longitude: 126.976292 };
 const P4 = { latitude: 37.564834, longitude: 126.977218 };
 const P5 = { latitude: 37.562834, longitude: 126.976218 };
 
-const MapViewScreen = ({ navigation }) => {
-    const [hidden, setHidden] = useState(false);
+const Map = ({ navigation, placeData, setTempCoor, setSearchHere }) => {
+    const mapView = useRef(null);
+    //지도가 이동할때마다 지도의 중심 좌표를 임시로 저장
+    const onChangeCenter = (event) => {
+        setTempCoor({
+            center: {
+                latitude: event.latitude,
+                longitude: event.longitude,
+            },
+            zoom: 13,
+        })
+    }
+    useEffect(() => {
+        requestLocationPermission();
+    }, []);
+
+    const [enableLayerGroup, setEnableLayerGroup] = useState(true);
+
+    return <>
+        <NaverMapView
+            ref={mapView}
+            style={{ width: '100%', height: '100%', position: 'relative' }}
+            showsMyLocationButton={false}
+            center={{ ...P0, zoom: 13 }}
+            onCameraChange={e => onChangeCenter(e)}
+            scaleBar={false}
+            zoomControl={true}
+        >
+            {
+                placeData.map((data, index) => {
+                    const coor = { latitude: data.latitude, longitude: data.longitude }
+                    return (
+                        <Marker key={index} coordinate={coor} image={require("../../assets/marker.png")} width={30} height={48} caption={{
+                            text: `${data.place_name}`, align: Align.Bottom, textSize: 15, color: "black", haloColor: "white"
+
+                        }}></Marker>
+                    )
+                })}
+        </NaverMapView>
+        <TouchableOpacity style={styles.SearchHere} onPress={() => { setSearchHere(tempCoor) }}>
+            <Text style={styles.SearchHereText}>
+                지금 지도에서 검색
+            </Text>
+        </TouchableOpacity>
+        <TouchableOpacity style={{ position: 'absolute', bottom: '10%', right: 8 }} onPress={() => navigation.navigate('stack')}>
+            <View style={{ backgroundColor: 'gray', padding: 4 }}>
+                <Text style={{ color: 'white' }}>open stack</Text>
+            </View>
+        </TouchableOpacity>
+        {/* <Text style={{ position: 'absolute', bottom: '3%', width: '100%', textAlign: 'center' }}>SASM Map에 오신 것을 환영합니다.</Text> */}
+    </>
+};
+
+export default function MapViewScreen({ navigation }) {
+    const [loading, setLoading] = useState(true);
     const [placeData, setPlaceData] = useState([]);
     const [page, setPage] = useState(1);
     //tempCoor => 지도가 움직이때마다 center의 좌표
@@ -46,66 +100,38 @@ const MapViewScreen = ({ navigation }) => {
                 },
             });
             setPlaceData(response.data.data.results);
+            setLoading(false);
         }
         catch (error) {
             console.error(error);
         }
     }
-    const mapView = useRef(null);
-    //지도가 이동할때마다 지도의 중심 좌표를 임시로 저장
-    const onChangeCenter = (event) => {
-        setTempCoor({
-            center: {
-                latitude: event.latitude,
-                longitude: event.longitude,
-            },
-            zoom: 13,
-        })
-    }
     //searchHere, page가 변할 시 데이터 재검색
     useEffect(() => {
         getItem();
     }, [searchHere, page]);
-    useEffect(() => {
-        requestLocationPermission();
-    }, []);
 
-    const [enableLayerGroup, setEnableLayerGroup] = useState(true);
-
-    return <>
-        <NaverMapView
-            ref={mapView}
-            style={{ width: '100%', height: '100%', position: 'relative' }}
-            showsMyLocationButton={true}
-            center={{ ...P0, zoom: 13 }}
-            onCameraChange={e => onChangeCenter(e)}
-            scaleBar={false}
-            zoomControl={true}
-        >
-            {
-                placeData.map((data, index) => {
-                    const coor = { latitude: data.latitude, longitude: data.longitude }
-                    return (
-                        <Marker key={index} coordinate={coor} image={require("../../assets/marker.png")} width={30} height={48} caption={{
-                            text: `${data.place_name}`, align: Align.Bottom, textSize: 15, color: "black", haloColor: "white"
-
-                        }}></Marker>
-                    )
-                })}
-        </NaverMapView>
-        <TouchableOpacity style={styles.SearchHere} onPress={() => { setSearchHere(tempCoor) }}>
-            <Text style={styles.SearchHereText}>
-                지금 지도에서 검색
-            </Text>
-        </TouchableOpacity>
-        <TouchableOpacity style={{ position: 'absolute', bottom: '10%', right: 8 }} onPress={() => navigation.navigate('stack')}>
-            <View style={{ backgroundColor: 'gray', padding: 4 }}>
-                <Text style={{ color: 'white' }}>open stack</Text>
-            </View>
-        </TouchableOpacity>
-        {/* <Text style={{ position: 'absolute', bottom: '3%', width: '100%', textAlign: 'center' }}>SASM Map에 오신 것을 환영합니다.</Text> */}
-    </>
-};
+    return (
+        <>
+            {loading ? <View><Text>loading</Text></View> :
+                <Drawer
+                    initialDrawerSize={0.2}
+                    autoDrawerUp={1} // 1 to auto up, 0 to auto down
+                    renderContainerView={() => (
+                        <Map navigation={navigation} setTempCoor={setTempCoor} setSearchHere={searchHere} placeData={placeData} />
+                    )}
+                    renderDrawerView={() => (
+                        <MapList page={page} setPage={setPage} placeData={placeData} />
+                    )}
+                    renderInitDrawerView={() => (
+                        <View style={{ backgroundColor: 'black', height: 10 }}>
+                        </View>
+                    )}
+                    finalDrawerHeight={400}
+                />}
+        </>
+    )
+}
 
 
 async function requestLocationPermission() {
@@ -183,5 +209,3 @@ const styles = StyleSheet.create({
         borderRadius: 10,
     }
 })
-
-export default MapViewScreen;

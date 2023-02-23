@@ -5,9 +5,6 @@ import ItemCard from './ItemCard';
 
 const ListSection = styled.View`
   width: 100%;
-  height: 40%;
-  position: absolute;
-  bottom: 0;
   background-color: #FFFFFF;
   
 `
