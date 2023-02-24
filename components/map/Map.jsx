@@ -1,6 +1,6 @@
 import 'react-native-gesture-handler';
 import React, { useEffect, useRef, useState } from 'react';
-import { Text, TouchableOpacity, View, PermissionsAndroid, Button, StyleSheet, } from "react-native";
+import { Text, TouchableOpacity, View, PermissionsAndroid, Button, StyleSheet, SafeAreaView, } from "react-native";
 import { request, check, PERMISSIONS, RESULTS } from 'react-native-permissions';
 import NaverMapView, { Align, Marker } from './NaverMap';
 import { TrackingMode } from './NaverMap';
@@ -71,6 +71,7 @@ const Map = ({ navigation, placeData, setTempCoor, setSearchHere }) => {
 export default function MapViewScreen({ navigation }) {
     const [loading, setLoading] = useState(true);
     const [placeData, setPlaceData] = useState([]);
+    const [total, setTotal] = useState(0);
     const [page, setPage] = useState(1);
     //tempCoor => 지도가 움직이때마다 center의 좌표
     const [tempCoor, setTempCoor] = useState({
@@ -99,6 +100,7 @@ export default function MapViewScreen({ navigation }) {
                     Authorization: "No Auth",
                 },
             });
+            setTotal(response.data.data.count); 
             setPlaceData(response.data.data.results);
             setLoading(false);
         }
@@ -121,7 +123,7 @@ export default function MapViewScreen({ navigation }) {
                         <Map navigation={navigation} setTempCoor={setTempCoor} setSearchHere={searchHere} placeData={placeData} />
                     )}
                     renderDrawerView={() => (
-                        <MapList page={page} setPage={setPage} placeData={placeData} />
+                        <MapList page={page} setPage={setPage} total={total} placeData={placeData} />
                     )}
                     renderInitDrawerView={() => (
                         <View style={{ backgroundColor: 'black', height: 10 }}>
