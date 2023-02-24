@@ -28,26 +28,22 @@ type PaginationProps = {
 
 export default function Pagination({ total, page, setPage, limit }: PaginationProps): JSX.Element {
   const numPages: number = Math.ceil(total / limit);
-  let Pages: number[] = [];
-  for (let i = 1; i <= numPages; i++) {
-    Pages.push(i);
-  }
+
   return (
     <Section>
       <Button onPress={() => setPage(page - 1)} disabled={page === 1}>
         <ButtonText>&lt;</ButtonText>
       </Button>
       {
-        Pages.map(data => {
+        Array(numPages).fill(0).map((data, index) => {
           return (
             <Button
-              key={data}
-              onPress={() => setPage(data)}
+              key={index + 1}
+              onPress={() => setPage(index + 1)}
             >
-              <ButtonText style={{ color: data === page ? "#209DF5" : "rgba(0,0,0,0.5)" }}>
-                {data}</ButtonText>
-            </Button>
-          )
+              <ButtonText style={{ color: index + 1 === page ? "#209DF5" : "rgba(0,0,0,0.5)" }}>
+                {index + 1}</ButtonText>
+            </Button>)
         })
       }
       <Button onPress={() => setPage(page + 1)} disabled={page === numPages}>
