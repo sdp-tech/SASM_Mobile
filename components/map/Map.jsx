@@ -8,6 +8,8 @@ import MapList from './components/MapList';
 import Drawer from "react-native-draggable-view";
 import Loading from '../../common/Loading';
 import styled from 'styled-components/native';
+import SearchBar from '../../common/SearchBar';
+import Category from '../../common/Category';
 
 const ButtonWrapper = styled.View`
 	width: 100%;
@@ -31,7 +33,7 @@ const SearchHereText = styled.Text`
 `
 
 
-const Map = ({ navigation, placeData, setTempCoor, setSearchHere, tempCoor }) => {
+const Map = ({ navigation, placeData, setTempCoor, setSearchHere, setSearch, tempCoor, setPage, checkedList, setCheckedList }) => {
 	//지도의 중심 좌표
 	const [center, setCenter] = useState(
 		{ latitude: 37.564362, longitude: 126.977011 }
@@ -51,9 +53,14 @@ const Map = ({ navigation, placeData, setTempCoor, setSearchHere, tempCoor }) =>
 		requestLocationPermission();
 	}, []);
 	//placeData과 변경 될 때마다 첫 번째 장소로 지도 이동
-	useEffect(()=>{
-		setCenter({latitude:placeData[0].latitude, longitude:placeData[0].longitude})
-	},[placeData])
+	useEffect(() => {
+		if (placeData.length != 0) {
+			setCenter({ latitude: placeData[0].latitude, longitude: placeData[0].longitude })
+		}
+		else {
+			console.log('no data');
+		}
+	}, [placeData])
 
 	const [enableLayerGroup, setEnableLayerGroup] = useState(true);
 
@@ -72,19 +79,25 @@ const Map = ({ navigation, placeData, setTempCoor, setSearchHere, tempCoor }) =>
 				placeData.map((data, index) => {
 					const coor = { latitude: data.latitude, longitude: data.longitude }
 					return (
-						<Marker key={index} coordinate={coor} image={require("../../assets/img/marker.png")} width={20} height={30} caption={{
-							text: `${data.place_name}`, align: Align.Bottom, textSize: 15, color: "black", haloColor: "white"
-
-						}}></Marker>
+						<Marker
+							key={index}
+							coordinate={coor}
+							image={require("../../assets/img/marker.png")}
+							width={20} height={30}
+							caption={{
+								text: `${data.place_name}`, align: Align.Bottom, textSize: 15, color: "black", haloColor: "white"
+							}} />
 					)
 				})}
 		</NaverMapView>
 		<ButtonWrapper>
-		<SearchHereButton onPress={() => { setSearchHere(tempCoor) }}>
-			<SearchHereText>
-				지금 지도에서 검색
-			</SearchHereText>
-		</SearchHereButton>
+			<SearchBar setSearch={setSearch}></SearchBar>
+			<Category checkedList={checkedList} setCheckedList={setCheckedList} />
+			<SearchHereButton onPress={() => { setSearchHere(tempCoor); setPage(1); }}>
+				<SearchHereText>
+					지금 지도에서 검색
+				</SearchHereText>
+			</SearchHereButton>
 		</ButtonWrapper>
 		{/* <TouchableOpacity style={{ position: 'absolute', bottom: '10%', right: 8 }} onPress={() => navigation.navigate('stack')}>
             <View style={{ backgroundColor: 'gray', padding: 4 }}>
@@ -98,7 +111,11 @@ const Map = ({ navigation, placeData, setTempCoor, setSearchHere, tempCoor }) =>
 export default function MapViewScreen({ navigation }) {
 	const [loading, setLoading] = useState(true);
 	const [placeData, setPlaceData] = useState([]);
+	//checkedList => 카테고리 체크 복수 체크 가능
+	const [checkedList, setCheckedList] = useState([]);
 	const [total, setTotal] = useState(0);
+	//search => 검색어
+	const [search, setSearch] = useState("")
 	const [page, setPage] = useState(1);
 	//tempCoor => 지도가 움직이때마다 center의 좌표
 	const [tempCoor, setTempCoor] = useState({
@@ -117,8 +134,8 @@ export default function MapViewScreen({ navigation }) {
 				params: {
 					left: searchHere.center.latitude,
 					right: searchHere.center.longitude,
-					search: '',
-					filter: '',
+					search: search,
+					filter: checkedList,
 					page: page,
 				},
 				headers: {
@@ -138,7 +155,7 @@ export default function MapViewScreen({ navigation }) {
 	//searchHere, page가 변할 시 데이터 재검색
 	useEffect(() => {
 		getItem();
-	}, [searchHere, page]);
+	}, [searchHere, page, search, checkedList]);
 
 	return (
 		<>
@@ -147,7 +164,16 @@ export default function MapViewScreen({ navigation }) {
 					initialDrawerSize={0.2}
 					autoDrawerUp={1} // 1 to auto up, 0 to auto down
 					renderContainerView={() => (
-						<Map navigation={navigation} tempCoor={tempCoor} setTempCoor={setTempCoor} setSearchHere={setSearchHere} placeData={placeData} />
+						<Map
+							navigation={navigation}
+							checkedList={checkedList}
+							setCheckedList={setCheckedList}
+							tempCoor={tempCoor}
+							setSearch={setSearch}
+							setTempCoor={setTempCoor}
+							setSearchHere={setSearchHere}
+							placeData={placeData}
+							setPage={setPage} />
 					)}
 					renderDrawerView={() => (
 						<MapList page={page} setPage={setPage} total={total} placeData={placeData} />
