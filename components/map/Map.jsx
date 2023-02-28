@@ -13,7 +13,6 @@ import SearchBar from '../../common/SearchBar';
 import Category from '../../common/Category';
 import { requestPermission } from '../../common/Permission';
 
-
 const ButtonWrapper = styled.View`
 	width: 100%;
 	display: flex;
@@ -139,7 +138,6 @@ function MapContainer({ navigation, nowCoor }) {
 	//좌표, 검색어, 필터를 기반으로 장소들의 데이터 검색
 	const getItem = async () => {
 		try {
-			console.log(searchHere);
 			const response = await axios.get('https://api.sasmbe.com/places/place_search/', {
 				params: {
 					left: searchHere.latitude,
@@ -165,7 +163,7 @@ function MapContainer({ navigation, nowCoor }) {
 	//searchHere, page가 변할 시 데이터 재검색
 	useEffect(() => {
 		getItem();
-	}, [searchHere, page, search, checkedList, nowCoor]);
+	}, [searchHere, page, search, checkedList]);
 
 	return (
 		<>
