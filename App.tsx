@@ -60,6 +60,12 @@ const HomeScreen = ({navigation, route}:Props):JSX.Element => {
     const tabBarActiveTintColor: string = '#FFFFFF'
     const tabBarInactiveTintColor: string = '#808080'
 
+    const tabOptions = {
+        tabBarActiveTintColor: tabBarActiveTintColor,
+        tabBarInactiveTintColor: tabBarInactiveTintColor,
+        tabBarIcon: NavbarIcon(require('./assets/navbar/map.svg'))
+    }
+
     return (
         <Tab.Navigator
             initialRouteName='맵'
@@ -73,47 +79,27 @@ const HomeScreen = ({navigation, route}:Props):JSX.Element => {
             <Tab.Screen
                 name={"맵"}
                 component={MapViewScreen}
-                options={{
-                    tabBarActiveTintColor: tabBarActiveTintColor,
-                    tabBarInactiveTintColor: tabBarInactiveTintColor,
-                    tabBarIcon: NavbarIcon(require('./assets/navbar/map.svg'))
-                }}
+                options={tabOptions}
             />
             <Tab.Screen
                 name={"스토리"}
                 component={StoryScreen}
-                options={{
-                    tabBarActiveTintColor: tabBarActiveTintColor,
-                    tabBarInactiveTintColor: tabBarInactiveTintColor,
-                    tabBarIcon: NavbarIcon(require('./assets/navbar/map.svg'))
-                }}
+                options={tabOptions}
             />
             <Tab.Screen
                 name={"커뮤니티"}
                 component={CommunityScreen}
-                options={{
-                    tabBarActiveTintColor: tabBarActiveTintColor,
-                    tabBarInactiveTintColor: tabBarInactiveTintColor,
-                    tabBarIcon: NavbarIcon(require('./assets/navbar/map.svg'))
-                }}
+                options={tabOptions}
             />
             <Tab.Screen
                 name={"마이 픽"}
                 component={MyPickScreen}
-                options={{
-                    tabBarActiveTintColor: tabBarActiveTintColor,
-                    tabBarInactiveTintColor: tabBarInactiveTintColor,
-                    tabBarIcon: NavbarIcon(require('./assets/navbar/map.svg'))
-                }}
+                options={tabOptions}
             />
             <Tab.Screen
                 name={"마이 페이지"}
                 component={MyPageScreen}
-                options={{
-                    tabBarActiveTintColor: tabBarActiveTintColor,
-                    tabBarInactiveTintColor: tabBarInactiveTintColor,
-                    tabBarIcon: NavbarIcon(require('./assets/navbar/map.svg'))
-                }}
+                options={tabOptions}
             />
         </Tab.Navigator>
     )

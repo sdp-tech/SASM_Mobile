@@ -8,8 +8,10 @@ import MapList from './components/MapList';
 import Drawer from "react-native-draggable-view";
 import Loading from '../../common/Loading';
 import styled from 'styled-components/native';
+import Geolocation from 'react-native-geolocation-service';
 import SearchBar from '../../common/SearchBar';
 import Category from '../../common/Category';
+import { requestPermission } from '../../common/Permission';
 
 const ButtonWrapper = styled.View`
 	width: 100%;
@@ -33,36 +35,19 @@ const SearchHereText = styled.Text`
 `
 
 
-const Map = ({ navigation, placeData, setTempCoor, setSearchHere, setSearch, tempCoor, setPage, checkedList, setCheckedList }) => {
+const Map = ({ navigation, placeData, setSearchHere, setSearch, setPage, checkedList, setCheckedList, nowCoor }) => {
+	//tempCoor => 지도가 움직이때마다 center의 좌표
+	const [tempCoor, setTempCoor] = useState(nowCoor);
 	//지도의 중심 좌표
-	const [center, setCenter] = useState(
-		{ latitude: 37.564362, longitude: 126.977011 }
-	)
+	const [center, setCenter] = useState(nowCoor);
 	const mapView = useRef(null);
 	//지도가 이동할때마다 지도의 중심 좌표를 임시로 저장
 	const onChangeCenter = (event) => {
 		setTempCoor({
-			center: {
 				latitude: event.latitude,
 				longitude: event.longitude,
-			},
-			zoom: 13,
 		})
 	}
-	useEffect(() => {
-		requestLocationPermission();
-	}, []);
-	//placeData과 변경 될 때마다 첫 번째 장소로 지도 이동
-	useEffect(() => {
-		if (placeData.length != 0) {
-			setCenter({ latitude: placeData[0].latitude, longitude: placeData[0].longitude })
-		}
-		else {
-			console.log('no data');
-		}
-	}, [placeData])
-
-	const [enableLayerGroup, setEnableLayerGroup] = useState(true);
 
 	return <>
 		<NaverMapView
@@ -99,16 +84,47 @@ const Map = ({ navigation, placeData, setTempCoor, setSearchHere, setSearch, tem
 				</SearchHereText>
 			</SearchHereButton>
 		</ButtonWrapper>
-		{/* <TouchableOpacity style={{ position: 'absolute', bottom: '10%', right: 8 }} onPress={() => navigation.navigate('stack')}>
-            <View style={{ backgroundColor: 'gray', padding: 4 }}>
-                <Text style={{ color: 'white' }}>open stack</Text>
-            </View>
-        </TouchableOpacity> */}
-		{/* <Text style={{ position: 'absolute', bottom: '3%', width: '100%', textAlign: 'center' }}>SASM Map에 오신 것을 환영합니다.</Text> */}
 	</>
 };
 
-export default function MapViewScreen({ navigation }) {
+export default function MapScreenView() {
+	const [nowCoor, setNowCoor] = useState({
+		latitude: 37.5, longitude: 127.5,
+	})
+	const [loading, setLoading] = useState(true);
+
+	useEffect(() => {
+		requestPermission().then(result => {
+				if (result === "granted") {
+						Geolocation.getCurrentPosition(
+								pos => {
+										setLoading(false);
+										setNowCoor({ latitude: pos.coords.latitude, longitude: pos.coords.longitude });
+								},
+								error => {
+										console.log(error);
+								},
+								{
+										enableHighAccuracy: true,
+										timeout: 3600,
+										maximumAge: 3600,
+								},
+						);
+				}
+		});
+}, []);
+	return (
+		<>
+			{
+				loading ?
+					<Loading /> :
+					<MapContainer nowCoor={nowCoor} />
+			}
+		</>
+	)
+}
+
+function MapContainer({ navigation, nowCoor }) {
 	const [loading, setLoading] = useState(true);
 	const [placeData, setPlaceData] = useState([]);
 	//checkedList => 카테고리 체크 복수 체크 가능
@@ -117,23 +133,15 @@ export default function MapViewScreen({ navigation }) {
 	//search => 검색어
 	const [search, setSearch] = useState("")
 	const [page, setPage] = useState(1);
-	//tempCoor => 지도가 움직이때마다 center의 좌표
-	const [tempCoor, setTempCoor] = useState({
-		center: {
-			latitude: 37.551229,
-			longitude: 126.988205,
-		},
-		zoom: 13,
-	})
 	//searchHere => 특정 좌표에서 검색할때 tempCoor의 좌표를 기반으로 검색
-	const [searchHere, setSearchHere] = useState(tempCoor);
+	const [searchHere, setSearchHere] = useState({...nowCoor});
 	//좌표, 검색어, 필터를 기반으로 장소들의 데이터 검색
 	const getItem = async () => {
 		try {
 			const response = await axios.get('https://api.sasmbe.com/places/place_search/', {
 				params: {
-					left: searchHere.center.latitude,
-					right: searchHere.center.longitude,
+					left: searchHere.latitude,
+					right: searchHere.longitude,
 					search: search,
 					filter: checkedList,
 					page: page,
@@ -168,12 +176,11 @@ export default function MapViewScreen({ navigation }) {
 							navigation={navigation}
 							checkedList={checkedList}
 							setCheckedList={setCheckedList}
-							tempCoor={tempCoor}
 							setSearch={setSearch}
-							setTempCoor={setTempCoor}
 							setSearchHere={setSearchHere}
 							placeData={placeData}
-							setPage={setPage} />
+							setPage={setPage}
+							nowCoor={nowCoor} />
 					)}
 					renderDrawerView={() => (
 						<MapList page={page} setPage={setPage} total={total} placeData={placeData} />
@@ -193,64 +200,4 @@ export default function MapViewScreen({ navigation }) {
 				/>}
 		</>
 	)
-}
-
-
-async function requestLocationPermission() {
-	if (Platform.OS === 'ios') {
-		request(PERMISSIONS.IOS.LOCATION_WHEN_IN_USE).then((result) => {
-			console.warn(result);
-		});
-		check(PERMISSIONS.IOS.LOCATION_WHEN_IN_USE)
-			.then((result) => {
-				switch (result) {
-					case RESULTS.UNAVAILABLE:
-						console.warn('This feature is not available (on this device / in this context)');
-						break;
-					case RESULTS.DENIED:
-						console.warn('The permission has not been requested / is denied but requestable');
-						break;
-					case RESULTS.LIMITED:
-						console.warn('The permission is limited: some actions are possible');
-						break;
-					case RESULTS.GRANTED:
-						console.warn('The permission is granted');
-						break;
-					case RESULTS.BLOCKED:
-						console.warn('The permission is denied and not requestable anymore');
-						break;
-				}
-			})
-			.catch((error) => {
-				console.warn(error);
-			});
-	}
-	else {
-		request(PERMISSIONS.ANDROID.ACCESS_FINE_LOCATION).then((result) => {
-			console.warn(result);
-		});
-		check(PERMISSIONS.ANDROID.ACCESS_FINE_LOCATION)
-			.then((result) => {
-				switch (result) {
-					case RESULTS.UNAVAILABLE:
-						console.warn('This feature is not available (on this device / in this context)');
-						break;
-					case RESULTS.DENIED:
-						console.warn('The permission has not been requested / is denied but requestable');
-						break;
-					case RESULTS.LIMITED:
-						console.warn('The permission is limited: some actions are possible');
-						break;
-					case RESULTS.GRANTED:
-						console.warn('The permission is granted');
-						break;
-					case RESULTS.BLOCKED:
-						console.warn('The permission is denied and not requestable anymore');
-						break;
-				}
-			})
-			.catch((error) => {
-				console.warn(error);
-			});
-	}
 }
