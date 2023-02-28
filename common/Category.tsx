@@ -74,7 +74,7 @@ export default function Category({ checkedList, setCheckedList }: CategoryProps)
     <CategoryWrapper>
       {CATEGORY_LIST.map((data: ListProps) => {
         return (
-          <CategoryImageWrapper selected={checkedList.includes(data.data)} onPress={() => { handleCheckedList(data.data) }}>
+          <CategoryImageWrapper key={data.id} selected={checkedList.includes(data.data)} onPress={() => { handleCheckedList(data.data) }}>
             <VectorImage source={checkedList.includes(data.data) ? data.sourceWhite : data.source} />
           </CategoryImageWrapper>
         )
