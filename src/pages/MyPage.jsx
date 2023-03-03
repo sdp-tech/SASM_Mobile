@@ -2,11 +2,11 @@ import React, { useEffect, useState } from 'react';
 import { Text, View, SafeAreaView } from "react-native";
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 
-import MyPageMainScreen from './Main'
-import LoginScreen from './Login';
-import JoinScreen from './Join';
+import MyPageMainScreen from '../components/mypage/Main'
+import LoginScreen from '../components/mypage/Login';
+import JoinScreen from '../components/mypage/Join';
 
-import { getAccessToken, getRefreshToken } from '../../common/storage';
+import { getAccessToken, getRefreshToken } from '../common/storage';
 
 const Stack = createNativeStackNavigator();
 

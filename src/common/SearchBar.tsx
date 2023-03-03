@@ -19,11 +19,11 @@ interface SearchBarProps {
   setSearch: (search: string) => void;
 }
 export default function SearchBar({ setSearch }: SearchBarProps) {
-  const [tempSearch, setTempSearch] = useState('');
+  const [tempSearch, setTempSearch] = useState<string>('');
   return (
     <SearchWrapper>
       <StyledInput
-        onChangeText={(text) => { setTempSearch(text) }}
+        onChangeText={(text:string) => { setTempSearch(text) }}
       />
       <SubmitButton onPress={()=>{setSearch(tempSearch)}}>
         <Text>검색</Text>

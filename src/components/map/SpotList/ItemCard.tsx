@@ -1,7 +1,7 @@
 import React from 'react'
 import { Image, Text, View } from 'react-native'
 import styled from 'styled-components/native';
-import { DataTypes } from './MapList'
+import { DataTypes } from '../SpotList';
 
 type ItemCardProps = {
   data: DataTypes;

@@ -1,8 +1,8 @@
 import React from 'react'
 import { TouchableOpacity, ScrollView, Text, View, SafeAreaView } from 'react-native';
 import styled from 'styled-components/native';
-import Pagination from '../../../common/Pagination';
-import ItemCard from './ItemCard';
+import Pagination from '../../common/Pagination';
+import ItemCard from './SpotList/ItemCard';
 
 const ListSection = styled.View`
   background-color: #FFFFFF;
