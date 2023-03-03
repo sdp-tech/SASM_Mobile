@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { Ref } from 'react'
 import { TouchableOpacity, ScrollView, Text, View, SafeAreaView } from 'react-native';
 import styled from 'styled-components/native';
 import Pagination from '../../common/Pagination';
@@ -6,13 +6,12 @@ import ItemCard from './SpotList/ItemCard';
 
 const ListSection = styled.View`
   background-color: #FFFFFF;
-  padding-bottom: 450px;
+  height: 600px;
 `
 const PaginationSection = styled.View`
   height: 40px;
   display: flex;
   align-items: center;
-  
 `
 type MapListProps = {
   placeData: any[];
@@ -35,14 +34,17 @@ export default function MapList({ placeData, setPage, page, total }: MapListProp
   return (
     <ListSection>
       <ScrollView>
-        {placeData.map(data => {
-          return (
-            <ItemCard key={data.id} data={data} />
-          )
-        })}</ScrollView>
-      <PaginationSection>
-        <Pagination page={page} setPage={setPage} total={total} limit={20}></Pagination>
-      </PaginationSection>
+        {
+          placeData.map(data => {
+            return (
+              <ItemCard key={data.id} data={data} />
+            )
+          })
+        }
+        <PaginationSection>
+          <Pagination page={page} setPage={setPage} total={total} limit={20}></Pagination>
+        </PaginationSection>
+      </ScrollView>
     </ListSection>
   )
 }

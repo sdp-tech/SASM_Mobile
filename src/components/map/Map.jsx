@@ -4,15 +4,12 @@ import { Text, TouchableOpacity, View, PermissionsAndroid, Button, StyleSheet, S
 import { request, check, PERMISSIONS, RESULTS } from 'react-native-permissions';
 import NaverMapView, { Align, Marker } from './NaverMap';
 import axios from "axios";
-import SpotList from "./SpotList";
-import Drawer from "react-native-draggable-view";
 import Loading from '../../common/Loading';
 import styled from 'styled-components/native';
-import Geolocation from 'react-native-geolocation-service';
 import SearchBar from '../../common/SearchBar';
 import Category from '../../common/Category';
-import { requestPermission } from '../../common/Permission';
-import { GestureHandlerRootView } from 'react-native-gesture-handler';
+import BottomSheet from 'reanimated-bottom-sheet';
+import MapList from './SpotList';
 
 const ButtonWrapper = styled.View`
 	width: 100%;
@@ -36,7 +33,7 @@ const SearchHereText = styled.Text`
 `
 
 
-const Map = ({placeData, setSearchHere, setSearch, setPage, checkedList, setCheckedList, nowCoor }) => {
+const Map = ({ placeData, setSearchHere, setSearch, setPage, checkedList, setCheckedList, nowCoor }) => {
 	//tempCoor => 지도가 움직이때마다 center의 좌표
 	const [tempCoor, setTempCoor] = useState(nowCoor);
 	//지도의 중심 좌표
@@ -45,8 +42,8 @@ const Map = ({placeData, setSearchHere, setSearch, setPage, checkedList, setChec
 	//지도가 이동할때마다 지도의 중심 좌표를 임시로 저장
 	const onChangeCenter = (event) => {
 		setTempCoor({
-				latitude: event.latitude,
-				longitude: event.longitude,
+			latitude: event.latitude,
+			longitude: event.longitude,
 		})
 	}
 
@@ -54,7 +51,7 @@ const Map = ({placeData, setSearchHere, setSearch, setPage, checkedList, setChec
 		<NaverMapView
 			ref={mapView}
 			style={{ width: '100%', height: '100%', position: 'relative' }}
-			showsMyLocationButton={false}
+			showsMyLocationButton={true}
 			center={{ ...center, zoom: 13 }}
 			onCameraChange={e => onChangeCenter(e)}
 			scaleBar={false}
@@ -89,6 +86,8 @@ const Map = ({placeData, setSearchHere, setSearch, setPage, checkedList, setChec
 };
 
 export default function MapContainer({ nowCoor }) {
+	const sheetRef = useRef(null);
+	const listRef = useRef(null);
 	const [loading, setLoading] = useState(true);
 	const [placeData, setPlaceData] = useState([]);
 	//checkedList => 카테고리 체크 복수 체크 가능
@@ -98,8 +97,20 @@ export default function MapContainer({ nowCoor }) {
 	const [search, setSearch] = useState("")
 	const [page, setPage] = useState(1);
 	//searchHere => 특정 좌표에서 검색할때 tempCoor의 좌표를 기반으로 검색
-	const [searchHere, setSearchHere] = useState({...nowCoor});
+	const [searchHere, setSearchHere] = useState({ ...nowCoor });
 	//좌표, 검색어, 필터를 기반으로 장소들의 데이터 검색
+	const renderContent = () => {
+		return (
+				<MapList propsRef={listRef} page={page} setPage={setPage} total={total} placeData={placeData}/>
+		)
+	}
+	const renderHeader = () => {
+		return (
+			<View style={{height:10, width:'100%', display:'flex', alignItems:'center', justifyContent:'center', backgroundColor:'white', borderTopEndRadius:10, borderTopStartRadius: 10}}>
+				<View style={{width:'20%', height:5, backgroundColor:'#535151',borderRadius: 5}}></View>
+			</View>
+		)
+	}
 	const getItem = async () => {
 		try {
 			const response = await axios.get('https://api.sasmbe.com/places/place_search/', {
@@ -119,6 +130,7 @@ export default function MapContainer({ nowCoor }) {
 			setTotal(response.data.data.count);
 			setPlaceData(response.data.data.results);
 			setLoading(false);
+			sheetRef.current.snapTo(1);
 		}
 		catch (error) {
 			console.error(error);
@@ -131,36 +143,26 @@ export default function MapContainer({ nowCoor }) {
 
 	return (
 		<>
-			{loading ? <Loading /> :
-				<Drawer
-					initialDrawerSize={0.2}
-					autoDrawerUp={1} // 1 to auto up, 0 to auto down
-					renderContainerView={() => (
-						<Map
-							checkedList={checkedList}
-							setCheckedList={setCheckedList}
-							setSearch={setSearch}
-							setSearchHere={setSearchHere}
-							placeData={placeData}
-							setPage={setPage}
-							nowCoor={nowCoor} />
-					)}
-					renderDrawerView={() => (
-						<SpotList page={page} setPage={setPage} total={total} placeData={placeData} />
-					)}
-					renderInitDrawerView={() => (
-						<View style={{
-							backgroundColor: '#FFFFFF',
-							display: 'flex',
-							alignItems: 'center',
-							justifyContent: 'center',
-							height: 10
-						}}>
-							<View style={{ backgroundColor: '#535351', height: 5, width: '10%', borderRadius: 5 }} />
-						</View>
-					)}
-					finalDrawerHeight={400}
-				/>}
+			{loading ? 
+				<Loading /> :
+				<>
+					<Map
+						checkedList={checkedList}
+						setCheckedList={setCheckedList}
+						setSearch={setSearch}
+						setSearchHere={setSearchHere}
+						placeData={placeData}
+						setPage={setPage}
+						nowCoor={nowCoor} />
+					<BottomSheet
+						ref={sheetRef}
+						snapPoints={[600, 155, 10]}
+						renderContent={renderContent}
+						initialSnap={1}
+						renderHeader={renderHeader}
+					/>
+				</>
+			}
 		</>
 	)
 }
