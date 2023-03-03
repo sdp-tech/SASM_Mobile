@@ -5,16 +5,13 @@ import { Image, ImageBackground, PermissionsAndroid, Platform, ScrollView, Text,
 import { NavigationContainer } from '@react-navigation/native';
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { createNativeStackNavigator, NativeStackScreenProps } from '@react-navigation/native-stack';
-import { LayerGroup } from './components/map/NaverMap';
-
-import VectorImage from 'react-native-vector-image';
-
 import MapViewScreen from './components/map/Map';
 import LoginScreen from './components/mypage/Login';
 import MyPageScreen from './components/mypage/MyPage';
 import CommunityScreen from './components/community/Community';
 import StoryScreen from './components/story/Story';
 import MyPickScreen from './components/mypick/MyPick';
+import MenuIcon from "./assets/navbar/map.svg";
 
 export type AppProps = {
     'Home': any;
@@ -37,19 +34,9 @@ const App = (): JSX.Element => {
     </NavigationContainer >
 }
 
-const NavbarIcon = (source: number) => {
-    type VectorProps = {
-        color: string,
-        size: number
-    }
+const NavbarIcon = ():JSX.Element => {
     return (
-        ({ color }: VectorProps) => (<VectorImage
-            source={source} // 새로운 .svg 파일 사용 시, 'yarn react-native-vector-image generate' 수행 필요
-            style={{
-                tintColor: color,
-                resizeMode: 'center'
-            }}
-        />)
+        <MenuIcon/>
     )
 }
 
@@ -59,11 +46,10 @@ type Props = NativeStackScreenProps<AppProps, 'Home'>
 const HomeScreen = ({navigation, route}:Props):JSX.Element => {
     const tabBarActiveTintColor: string = '#FFFFFF'
     const tabBarInactiveTintColor: string = '#808080'
-
     const tabOptions = {
         tabBarActiveTintColor: tabBarActiveTintColor,
         tabBarInactiveTintColor: tabBarInactiveTintColor,
-        tabBarIcon: NavbarIcon(require('./assets/navbar/map.svg'))
+        tabBarIcon: NavbarIcon
     }
 
     return (
