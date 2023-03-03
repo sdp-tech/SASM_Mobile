@@ -12,6 +12,7 @@ import BottomSheet from 'reanimated-bottom-sheet';
 import MapList from './SpotList';
 import SpotDetail from './SpotDetail';
 
+
 const ButtonWrapper = styled.View`
 	width: 100%;
 	display: flex;
@@ -32,6 +33,7 @@ const SearchHereText = styled.Text`
 	font-weight: 500;
 	text-align: center;
 `
+
 
 
 const Map = ({ placeData, setSearchHere, setSearch, setPage, checkedList, setCheckedList, nowCoor, setTarget, detailRef }) => {
