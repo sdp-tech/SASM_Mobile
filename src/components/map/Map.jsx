@@ -4,7 +4,7 @@ import { Text, TouchableOpacity, View, PermissionsAndroid, Button, StyleSheet, S
 import { request, check, PERMISSIONS, RESULTS } from 'react-native-permissions';
 import NaverMapView, { Align, Marker } from './NaverMap';
 import axios from "axios";
-import MapList from './components/MapList';
+import SpotList from "./SpotList";
 import Drawer from "react-native-draggable-view";
 import Loading from '../../common/Loading';
 import styled from 'styled-components/native';
@@ -12,6 +12,7 @@ import Geolocation from 'react-native-geolocation-service';
 import SearchBar from '../../common/SearchBar';
 import Category from '../../common/Category';
 import { requestPermission } from '../../common/Permission';
+import { GestureHandlerRootView } from 'react-native-gesture-handler';
 
 const ButtonWrapper = styled.View`
 	width: 100%;
@@ -35,7 +36,7 @@ const SearchHereText = styled.Text`
 `
 
 
-const Map = ({ navigation, placeData, setSearchHere, setSearch, setPage, checkedList, setCheckedList, nowCoor }) => {
+const Map = ({placeData, setSearchHere, setSearch, setPage, checkedList, setCheckedList, nowCoor }) => {
 	//tempCoor => 지도가 움직이때마다 center의 좌표
 	const [tempCoor, setTempCoor] = useState(nowCoor);
 	//지도의 중심 좌표
@@ -87,44 +88,7 @@ const Map = ({ navigation, placeData, setSearchHere, setSearch, setPage, checked
 	</>
 };
 
-export default function MapScreenView() {
-	const [nowCoor, setNowCoor] = useState({
-		latitude: 37.5, longitude: 127.5,
-	})
-	const [loading, setLoading] = useState(true);
-
-	useEffect(() => {
-		requestPermission().then(result => {
-				if (result === "granted") {
-						Geolocation.getCurrentPosition(
-								pos => {
-										setLoading(false);
-										setNowCoor({ latitude: pos.coords.latitude, longitude: pos.coords.longitude });
-								},
-								error => {
-										console.log(error);
-								},
-								{
-										enableHighAccuracy: true,
-										timeout: 3600,
-										maximumAge: 3600,
-								},
-						);
-				}
-		});
-}, []);
-	return (
-		<>
-			{
-				loading ?
-					<Loading /> :
-					<MapContainer nowCoor={nowCoor} />
-			}
-		</>
-	)
-}
-
-function MapContainer({ navigation, nowCoor }) {
+export default function MapContainer({ nowCoor }) {
 	const [loading, setLoading] = useState(true);
 	const [placeData, setPlaceData] = useState([]);
 	//checkedList => 카테고리 체크 복수 체크 가능
@@ -173,7 +137,6 @@ function MapContainer({ navigation, nowCoor }) {
 					autoDrawerUp={1} // 1 to auto up, 0 to auto down
 					renderContainerView={() => (
 						<Map
-							navigation={navigation}
 							checkedList={checkedList}
 							setCheckedList={setCheckedList}
 							setSearch={setSearch}
@@ -183,7 +146,7 @@ function MapContainer({ navigation, nowCoor }) {
 							nowCoor={nowCoor} />
 					)}
 					renderDrawerView={() => (
-						<MapList page={page} setPage={setPage} total={total} placeData={placeData} />
+						<SpotList page={page} setPage={setPage} total={total} placeData={placeData} />
 					)}
 					renderInitDrawerView={() => (
 						<View style={{

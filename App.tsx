@@ -1,17 +1,18 @@
 import 'react-native-gesture-handler';
 import React, { useEffect, useRef, useState } from 'react';
-import NaverMapView, { Align, Circle, Marker, Path, Polygon, Polyline } from "./components/map/NaverMap";
+import NaverMapView, { Align, Circle, Marker, Path, Polygon, Polyline } from "./src/components/map/NaverMap";
 import { Image, ImageBackground, PermissionsAndroid, Platform, ScrollView, Text, TouchableOpacity, View, TextInput, StyleSheet, Button } from "react-native";
 import { NavigationContainer } from '@react-navigation/native';
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { createNativeStackNavigator, NativeStackScreenProps } from '@react-navigation/native-stack';
-import MapViewScreen from './components/map/Map';
-import LoginScreen from './components/mypage/Login';
-import MyPageScreen from './components/mypage/MyPage';
-import CommunityScreen from './components/community/Community';
-import StoryScreen from './components/story/Story';
-import MyPickScreen from './components/mypick/MyPick';
-import MenuIcon from "./assets/navbar/map.svg";
+import MapScreen from './src/pages/SpotMap';
+import LoginScreen from './src/components/mypage/Login';
+import MyPageScreen from './src/pages/MyPage';
+import CommunityScreen from './src/pages/Community';
+import StoryScreen from './src/pages/Story';
+import MyPickScreen from './src/pages/MyPick';
+import MenuIcon from "./src/assets/navbar/map.svg";
+import { GestureHandlerRootView } from 'react-native-gesture-handler';
 
 export type AppProps = {
     'Home': any;
@@ -22,28 +23,32 @@ const Stack = createNativeStackNavigator();
 
 
 const App = (): JSX.Element => {
-    return <NavigationContainer>
-        <Stack.Navigator
-            screenOptions={() => ({
-                headerShown: false,
-            })}
-        >
-            <Stack.Screen name="Home" component={HomeScreen} />
-            <Stack.Screen name="Login" component={LoginScreen} />
-        </Stack.Navigator>
-    </NavigationContainer >
+    return (
+        <GestureHandlerRootView style={{ flex: 1 }}>
+            <NavigationContainer>
+                <Stack.Navigator
+                    screenOptions={() => ({
+                        headerShown: false,
+                    })}
+                >
+                    <Stack.Screen name="Home" component={HomeScreen} />
+                    <Stack.Screen name="Login" component={LoginScreen} />
+                </Stack.Navigator>
+            </NavigationContainer >
+        </GestureHandlerRootView>
+    )
 }
 
-const NavbarIcon = ():JSX.Element => {
+const NavbarIcon = (): JSX.Element => {
     return (
-        <MenuIcon/>
+        <MenuIcon />
     )
 }
 
 
 const Tab = createBottomTabNavigator();
 type Props = NativeStackScreenProps<AppProps, 'Home'>
-const HomeScreen = ({navigation, route}:Props):JSX.Element => {
+const HomeScreen = ({ navigation, route }: Props): JSX.Element => {
     const tabBarActiveTintColor: string = '#FFFFFF'
     const tabBarInactiveTintColor: string = '#808080'
     const tabOptions = {
@@ -58,13 +63,14 @@ const HomeScreen = ({navigation, route}:Props):JSX.Element => {
             screenOptions={() => ({
                 headerShown: false,
                 tabBarStyle: {
+                    height:75,
                     backgroundColor: '#000000',
                 },
             })}
         >
             <Tab.Screen
                 name={"맵"}
-                component={MapViewScreen}
+                component={MapScreen}
                 options={tabOptions}
             />
             <Tab.Screen
