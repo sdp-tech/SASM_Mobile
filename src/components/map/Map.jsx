@@ -34,7 +34,7 @@ const SearchHereText = styled.Text`
 `
 
 
-const Map = ({ placeData, setSearchHere, setSearch, setPage, checkedList, setCheckedList, nowCoor }) => {
+const Map = ({ placeData, setSearchHere, setSearch, setPage, checkedList, setCheckedList, nowCoor, setTarget, detailRef }) => {
 	//tempCoor => 지도가 움직이때마다 center의 좌표
 	const [tempCoor, setTempCoor] = useState(nowCoor);
 	//지도의 중심 좌표
@@ -67,6 +67,7 @@ const Map = ({ placeData, setSearchHere, setSearch, setPage, checkedList, setChe
 							key={index}
 							coordinate={coor}
 							image={require("../../assets/img/marker.png")}
+							onClick={()=>{detailRef.current.snapTo(0); setTarget(data.id)}}
 							width={20} height={30}
 							caption={{
 								text: `${data.place_name}`, align: Align.Bottom, textSize: 15, color: "black", haloColor: "white"
@@ -165,7 +166,10 @@ export default function MapContainer({ nowCoor }) {
 						setSearchHere={setSearchHere}
 						placeData={placeData}
 						setPage={setPage}
-						nowCoor={nowCoor} />
+						nowCoor={nowCoor}
+						setTarget={setTarget}
+						detailRef={detailRef}
+					/>
 					<BottomSheet
 						ref={listRef}
 						snapPoints={[600, 155, 10]}
@@ -175,9 +179,9 @@ export default function MapContainer({ nowCoor }) {
 					/>
 					<BottomSheet
 						ref={detailRef}
-						snapPoints={[WindowHeight - 110, 0]}
+						snapPoints={[WindowHeight - 110, 500, 0]}
 						renderContent={renderDetail}
-						initialSnap={0}
+						initialSnap={2}
 						renderHeader={renderHeader}
 					/>
 				</>
