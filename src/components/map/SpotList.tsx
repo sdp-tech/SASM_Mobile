@@ -14,9 +14,11 @@ const PaginationSection = styled.View`
   align-items: center;
 `
 type MapListProps = {
+  detailRef: any;
   placeData: any[];
   page: number;
   total: number;
+  setTarget: (id: number) => void;
   setPage: (num: number) => void;
 }
 
@@ -30,14 +32,14 @@ export type DataTypes = {
   open_hours: string;
 }
 
-export default function MapList({ placeData, setPage, page, total }: MapListProps): JSX.Element {
+export default function MapList({ detailRef, placeData, setPage, page, total, setTarget }: MapListProps): JSX.Element {
   return (
     <ListSection>
       <ScrollView>
         {
           placeData.map(data => {
             return (
-              <ItemCard key={data.id} data={data} />
+              <ItemCard detailRef={detailRef} key={data.id} data={data} setTarget={setTarget} />
             )
           })
         }

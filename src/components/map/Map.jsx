@@ -1,6 +1,6 @@
 import 'react-native-gesture-handler';
 import React, { useEffect, useRef, useState } from 'react';
-import { Text, TouchableOpacity, View, PermissionsAndroid, Button, StyleSheet, SafeAreaView, } from "react-native";
+import { Text, TouchableOpacity, View, Button, StyleSheet, SafeAreaView, Dimensions, } from "react-native";
 import { request, check, PERMISSIONS, RESULTS } from 'react-native-permissions';
 import NaverMapView, { Align, Marker } from './NaverMap';
 import axios from "axios";
@@ -10,6 +10,8 @@ import SearchBar from '../../common/SearchBar';
 import Category from '../../common/Category';
 import BottomSheet from 'reanimated-bottom-sheet';
 import MapList from './SpotList';
+import SpotDetail from './SpotDetail';
+
 
 const ButtonWrapper = styled.View`
 	width: 100%;
@@ -33,7 +35,8 @@ const SearchHereText = styled.Text`
 `
 
 
-const Map = ({ placeData, setSearchHere, setSearch, setPage, checkedList, setCheckedList, nowCoor }) => {
+
+const Map = ({ placeData, setSearchHere, setSearch, setPage, checkedList, setCheckedList, nowCoor, setTarget, detailRef }) => {
 	//tempCoor => 지도가 움직이때마다 center의 좌표
 	const [tempCoor, setTempCoor] = useState(nowCoor);
 	//지도의 중심 좌표
@@ -66,6 +69,7 @@ const Map = ({ placeData, setSearchHere, setSearch, setPage, checkedList, setChe
 							key={index}
 							coordinate={coor}
 							image={require("../../assets/img/marker.png")}
+							onClick={()=>{detailRef.current.snapTo(0); setTarget(data.id)}}
 							width={20} height={30}
 							caption={{
 								text: `${data.place_name}`, align: Align.Bottom, textSize: 15, color: "black", haloColor: "white"
@@ -86,8 +90,14 @@ const Map = ({ placeData, setSearchHere, setSearch, setPage, checkedList, setChe
 };
 
 export default function MapContainer({ nowCoor }) {
-	const sheetRef = useRef(null);
+	//detail을 가져올 타겟
+	const [target, setTarget] = useState(0);
+	//SpotList의 ref
 	const listRef = useRef(null);
+	//SpotDetail의 ref
+	const detailRef = useRef(null);
+	//window의 높이
+	const WindowHeight = Dimensions.get('window').height
 	const [loading, setLoading] = useState(true);
 	const [placeData, setPlaceData] = useState([]);
 	//checkedList => 카테고리 체크 복수 체크 가능
@@ -101,13 +111,18 @@ export default function MapContainer({ nowCoor }) {
 	//좌표, 검색어, 필터를 기반으로 장소들의 데이터 검색
 	const renderContent = () => {
 		return (
-				<MapList propsRef={listRef} page={page} setPage={setPage} total={total} placeData={placeData}/>
+			<MapList detailRef={detailRef} page={page} setPage={setPage} total={total} placeData={placeData} setTarget={setTarget} />
+		)
+	}
+	const renderDetail = () => {
+		return (
+			<SpotDetail id={target} />
 		)
 	}
 	const renderHeader = () => {
 		return (
-			<View style={{height:10, width:'100%', display:'flex', alignItems:'center', justifyContent:'center', backgroundColor:'white', borderTopEndRadius:10, borderTopStartRadius: 10}}>
-				<View style={{width:'20%', height:5, backgroundColor:'#535151',borderRadius: 5}}></View>
+			<View style={{ height: 10, width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', backgroundColor: 'white', borderTopEndRadius: 10, borderTopStartRadius: 10 }}>
+				<View style={{ width: '20%', height: 5, backgroundColor: '#535151', borderRadius: 5 }}></View>
 			</View>
 		)
 	}
@@ -130,7 +145,7 @@ export default function MapContainer({ nowCoor }) {
 			setTotal(response.data.data.count);
 			setPlaceData(response.data.data.results);
 			setLoading(false);
-			sheetRef.current.snapTo(1);
+			listRef.current.snapTo(1);
 		}
 		catch (error) {
 			console.error(error);
@@ -143,7 +158,7 @@ export default function MapContainer({ nowCoor }) {
 
 	return (
 		<>
-			{loading ? 
+			{loading ?
 				<Loading /> :
 				<>
 					<Map
@@ -153,12 +168,22 @@ export default function MapContainer({ nowCoor }) {
 						setSearchHere={setSearchHere}
 						placeData={placeData}
 						setPage={setPage}
-						nowCoor={nowCoor} />
+						nowCoor={nowCoor}
+						setTarget={setTarget}
+						detailRef={detailRef}
+					/>
 					<BottomSheet
-						ref={sheetRef}
+						ref={listRef}
 						snapPoints={[600, 155, 10]}
 						renderContent={renderContent}
 						initialSnap={1}
+						renderHeader={renderHeader}
+					/>
+					<BottomSheet
+						ref={detailRef}
+						snapPoints={[WindowHeight - 110, 500, 0]}
+						renderContent={renderDetail}
+						initialSnap={2}
 						renderHeader={renderHeader}
 					/>
 				</>

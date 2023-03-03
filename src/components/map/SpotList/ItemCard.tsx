@@ -1,10 +1,12 @@
 import React from 'react'
-import { Image, Text, View } from 'react-native'
+import { Dimensions, Image, Text, TouchableOpacity, View } from 'react-native'
 import styled from 'styled-components/native';
 import { DataTypes } from '../SpotList';
 
 type ItemCardProps = {
   data: DataTypes;
+  detailRef: any;
+  setTarget: (id: number)=>void;
 }
 
 const StyledCard = styled.View`
@@ -23,13 +25,15 @@ const TextBox = styled.View`
   flex: 1;
 `
 
-export default function ItemCard({ data }: ItemCardProps): JSX.Element {
+export default function ItemCard({ data, detailRef, setTarget }: ItemCardProps): JSX.Element {
   const { address, category, id, place_name, place_review, rep_pic, open_hours } = data
   return (
     <StyledCard>
-      <ImageBox>
-        <Image source={{uri:rep_pic}} style={{width:130, height:130}}/>
-      </ImageBox>
+      <TouchableOpacity onPress={()=>{detailRef.current.snapTo(0); setTarget(data.id)}}>
+        <ImageBox>
+          <Image source={{ uri: rep_pic }} style={{ width: 130, height: 130 }} />
+        </ImageBox>
+      </TouchableOpacity>
       <TextBox>
         <Text>{place_name}</Text>
         <Text>{address}</Text>
