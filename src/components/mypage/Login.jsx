@@ -69,11 +69,11 @@ const LoginScreen = ({ navigation }) => {
                 password: form['password'].value,
             },
             null);
+            console.log(response);
         if (response.status == 200) {
-            let responseData = await response.json()
-            const nickname = responseData.data.nickname
-            const accessToken = responseData.data.access
-            const refreshToken = responseData.data.refresh
+            const nickname = response.data.data.nickname
+            const accessToken = response.data.data.access
+            const refreshToken = response.data.data.refresh
             setNickname(nickname)
             setAccessToken(accessToken)
             setRefreshToken(refreshToken)
