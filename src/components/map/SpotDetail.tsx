@@ -1,6 +1,7 @@
 import axios from 'axios';
 import React, { useEffect, useState } from 'react'
 import { Dimensions, View, Text } from 'react-native'
+import { Request } from '../../common/requests';
 
 interface DetailProps {
   id: number
@@ -29,6 +30,7 @@ interface detailDataProps {
 }
 
 export default function SpotDetail({ id }: DetailProps): JSX.Element {
+  const request = new Request();
   const [detailData, setDetailData] = useState<detailDataProps>({
     id: 0,
     place_name: '',
@@ -51,16 +53,7 @@ export default function SpotDetail({ id }: DetailProps): JSX.Element {
   const WindowHeight = Dimensions.get('window').height;
   const WindowWidth = Dimensions.get('window').width;
   const getItem = async () => {
-    const response = await axios.get('https://api.sasmbe.com/places/place_detail/', {
-      params: {
-        id: id,
-      },
-      headers: {
-        'Accept': 'application/json',
-        'Content-Type': 'application/json',
-        Authorization: "No Auth",
-      },
-    });
+    const response = await request.get('/places/place_detail/', { id: id });
     setDetailData(response.data.data);
   }
   useEffect(() => {
