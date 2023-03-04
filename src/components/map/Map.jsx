@@ -11,6 +11,7 @@ import Category from '../../common/Category';
 import BottomSheet from 'reanimated-bottom-sheet';
 import MapList from './SpotList';
 import SpotDetail from './SpotDetail';
+import { Request } from '../../common/requests';
 
 
 const ButtonWrapper = styled.View`
@@ -69,7 +70,7 @@ const Map = ({ placeData, setSearchHere, setSearch, setPage, checkedList, setChe
 							key={index}
 							coordinate={coor}
 							image={require("../../assets/img/marker.png")}
-							onClick={()=>{detailRef.current.snapTo(0); setTarget(data.id)}}
+							onClick={() => { detailRef.current.snapTo(0); setTarget(data.id) }}
 							width={20} height={30}
 							caption={{
 								text: `${data.place_name}`, align: Align.Bottom, textSize: 15, color: "black", haloColor: "white"
@@ -108,7 +109,8 @@ export default function MapContainer({ nowCoor }) {
 	const [page, setPage] = useState(1);
 	//searchHere => 특정 좌표에서 검색할때 tempCoor의 좌표를 기반으로 검색
 	const [searchHere, setSearchHere] = useState({ ...nowCoor });
-	//좌표, 검색어, 필터를 기반으로 장소들의 데이터 검색
+	const request = new Request();
+	//bottomSheet Content
 	const renderContent = () => {
 		return (
 			<MapList detailRef={detailRef} page={page} setPage={setPage} total={total} placeData={placeData} setTarget={setTarget} />
@@ -126,30 +128,20 @@ export default function MapContainer({ nowCoor }) {
 			</View>
 		)
 	}
+
+	//좌표, 검색어, 필터를 기반으로 장소들의 데이터 검색
 	const getItem = async () => {
-		try {
-			const response = await axios.get('https://api.sasmbe.com/places/place_search/', {
-				params: {
-					left: searchHere.latitude,
-					right: searchHere.longitude,
-					search: search,
-					filter: checkedList,
-					page: page,
-				},
-				headers: {
-					'Accept': 'application/json',
-					'Content-Type': 'application/json',
-					Authorization: "No Auth",
-				},
-			});
-			setTotal(response.data.data.count);
-			setPlaceData(response.data.data.results);
-			setLoading(false);
-			listRef.current.snapTo(1);
-		}
-		catch (error) {
-			console.error(error);
-		}
+		const response = await request.get('/places/place_search/', {
+			left: searchHere.latitude,
+			right: searchHere.longitude,
+			search: search,
+			filter: checkedList,
+			page: page,
+		});
+		setTotal(response.data.data.count);
+		setPlaceData(response.data.data.results);
+		setLoading(false);
+		listRef.current.snapTo(1);
 	}
 	//searchHere, page가 변할 시 데이터 재검색
 	useEffect(() => {
