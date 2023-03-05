@@ -1,15 +1,19 @@
 import axios from 'axios';
 import React, { useEffect, useState } from 'react'
 import { Dimensions, View, Text } from 'react-native'
+import Loading from '../../common/Loading';
 import { Request } from '../../common/requests';
+import DetailCard from './SpotDetail/DetailCard';
 
 interface DetailProps {
   id: number
 }
 
+interface url {
+  image ?: string;
+}
 
-
-interface detailDataProps {
+export interface detailDataProps {
   id: number;
   place_name: string;
   category: string;
@@ -27,10 +31,17 @@ interface detailDataProps {
   short_cur: string;
   latitude: number;
   longitude: number;
+  photos: url[];
+  sns: object[];
+  story_id: string;
+  place_like: string;
+  category_statistics: string
+
 }
 
 export default function SpotDetail({ id }: DetailProps): JSX.Element {
   const request = new Request();
+  const [loading , setLoading] = useState<boolean>(true);
   const [detailData, setDetailData] = useState<detailDataProps>({
     id: 0,
     place_name: '',
@@ -49,21 +60,26 @@ export default function SpotDetail({ id }: DetailProps): JSX.Element {
     short_cur: '',
     latitude: 0,
     longitude: 0,
+    photos: [{}],
+    sns: [{}],
+    story_id: '',
+    place_like: '',
+    category_statistics: ''
   });
   const WindowHeight = Dimensions.get('window').height;
   const WindowWidth = Dimensions.get('window').width;
   const getItem = async () => {
     const response = await request.get('/places/place_detail/', { id: id });
     setDetailData(response.data.data);
+    setLoading(false);
   }
   useEffect(() => {
     if (id != 0) getItem();
   }, [id])
   return (
-    <View style={{ width: WindowWidth, height: WindowHeight - 110, backgroundColor: '#FFFFFF' }}>
-      <Text>
-        {detailData.place_name} - {detailData.address}
-      </Text>
+    <View style={{ width: WindowWidth, height: WindowHeight - 100, backgroundColor: '#FFFFFF' }}>
+      {loading?<Loading/>:
+      <DetailCard detailData={detailData}/>}
     </View>
   )
 }

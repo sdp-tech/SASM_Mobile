@@ -123,7 +123,7 @@ export default function MapContainer({ nowCoor }) {
 	}
 	const renderHeader = () => {
 		return (
-			<View style={{ height: 10, width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', backgroundColor: 'white', borderTopEndRadius: 10, borderTopStartRadius: 10 }}>
+			<View style={{ height: 20, width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', backgroundColor: 'white', borderTopEndRadius: 10, borderTopStartRadius: 10 }}>
 				<View style={{ width: '20%', height: 5, backgroundColor: '#535151', borderRadius: 5 }}></View>
 			</View>
 		)
