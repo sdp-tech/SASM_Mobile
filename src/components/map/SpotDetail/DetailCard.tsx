@@ -126,7 +126,9 @@ export default function DetailCard({ detailData }: DetailCardProps): JSX.Element
                 </ShortCurBox>
               </View>
               :
-              <View></View>
+              <View>
+                <WriteReview category={detailData.category} id={detailData.id}/>
+              </View>
           }
         </Tab>
       </TextBox>
