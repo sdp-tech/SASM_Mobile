@@ -13,7 +13,7 @@ export class Request {
 
         let headerValue;
 
-        if (token === null || undefined) {
+        if (token === null || 'undefined') {
             headerValue = `No Auth`;
         } else {
             headerValue = `Bearer ${token}`;
