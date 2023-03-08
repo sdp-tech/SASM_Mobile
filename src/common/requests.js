@@ -6,14 +6,14 @@ export class Request {
     constructor() {
     }
     default = async (path, body) => {
-        accessToken = await getAccessToken();
-        refreshToken = await getRefreshToken();
+        const accessToken = await getAccessToken();
+        const refreshToken = await getRefreshToken();
 
         const url = SASM_API_URL + path;
 
         let headerValue;
 
-        if (accessToken === null || undefined) {
+        if (accessToken === null || accessToken === undefined || accessToken === false) {
             headerValue = `No Auth`;
         } else {
             headerValue = `Bearer ${accessToken}`;
