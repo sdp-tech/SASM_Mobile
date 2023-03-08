@@ -4,7 +4,9 @@ import styled from 'styled-components/native';
 import { detailDataProps } from '../SpotDetail';
 import OpenTime from "../../../assets/img/PlaceDetail/OpenTime.svg";
 import PlaceMarker from "../../../assets/img/PlaceDetail/PlaceMarker.svg";
-import { useFocusEffect } from '@react-navigation/native';
+import Heart from '../../../common/Heart';
+import { Request } from '../../../common/requests';
+import WriteReview from './WriteReview';
 
 const TextBox = styled.View`
   padding: 20px;
@@ -24,7 +26,7 @@ const TabsBox = styled.View`
   flex-flow: row wrap;
   margin-bottom: 20px;
 `
-const TabButton = styled.TouchableOpacity<{selected:boolean}>`
+const TabButton = styled.TouchableOpacity<{ selected: boolean }>`
   width: 50%;
   height: 40px;
   display: flex;
@@ -32,7 +34,7 @@ const TabButton = styled.TouchableOpacity<{selected:boolean}>`
   border-color: #44ADF7;
   border-bottom-width: ${props => (props.selected ? '3px' : '0px')};;
 `
-const TabText = styled.Text<{selected: boolean}>`
+const TabText = styled.Text<{ selected: boolean }>`
   font-weight: 700;
   color: ${props => (props.selected ? '#44ADF7' : '#808080')}
   font-size: 20px;
@@ -65,9 +67,19 @@ interface DetailCardProps {
 export default function DetailCard({ detailData }: DetailCardProps): JSX.Element {
   const WindowWidth = Dimensions.get('window').width;
   const [tab, setTab] = useState<boolean>(true);
+  const request = new Request();
+  const [like, setLike] = useState<boolean>(false);
   useEffect(() => {
     setTab(true);
-  }, [detailData])
+    if (detailData.place_like == 'ok') setLike(true);
+    else setLike(false);
+  }, [detailData]);
+
+  const toggleLike = async () => {
+    const response = await request.post('/places/place_like/', { id: detailData.id });
+    setLike(!like);
+  }
+
   return (
     <ScrollView>
       <Image source={{ uri: detailData.rep_pic }} style={{ width: WindowWidth, height: 200 }} />
@@ -75,7 +87,7 @@ export default function DetailCard({ detailData }: DetailCardProps): JSX.Element
         <InfoBox>
           <Text style={{ width: '70%', fontSize: 20, fontWeight: '700' }}>{detailData.place_name}</Text>
           <ButtonBox>
-            <View style={{ width: 15, height: 15, backgroundColor: 'red' }}></View>
+            <Heart like={like} onPress={toggleLike}></Heart>
             {
               detailData.story_id ?
                 <View style={{ width: 15, height: 15, backgroundColor: 'blue' }}></View> : null
@@ -114,7 +126,9 @@ export default function DetailCard({ detailData }: DetailCardProps): JSX.Element
                 </ShortCurBox>
               </View>
               :
-              <View></View>
+              <View>
+                <WriteReview category={detailData.category} id={detailData.id}/>
+              </View>
           }
         </Tab>
       </TextBox>
