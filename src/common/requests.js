@@ -4,19 +4,19 @@ import { getAccessToken, getRefreshToken, removeAccessToken, setAccessToken } fr
 
 export class Request {
     constructor() {
-        this.accessToken = getAccessToken()
-        this.refreshToken = getRefreshToken()
     }
     default = async (path, body) => {
-        const token = this.accessToken;
+        accessToken = await getAccessToken();
+        refreshToken = await getRefreshToken();
+
         const url = SASM_API_URL + path;
 
         let headerValue;
 
-        if (token === null || 'undefined') {
+        if (accessToken === null || undefined) {
             headerValue = `No Auth`;
         } else {
-            headerValue = `Bearer ${token}`;
+            headerValue = `Bearer ${accessToken}`;
         }
 
         try {
@@ -27,7 +27,8 @@ export class Request {
             if (err.response == undefined) {
                 // 백엔드와 통신 자체가 실패(ERR_CONNECTION_REFUSED)
                 console.log(err);
-                alert("ERR_CONNECTION_REFUSED");
+                alert("ERR_CONNECTION_REFUSED" + SASM_API_URL);
+                console.warn(SASM_API_URL);
                 throw err;
             }
             else if (
@@ -39,11 +40,10 @@ export class Request {
                 removeAccessToken(); //기존 access token 삭제
                 //refresh 토큰을 통해 access 토큰 재발급
                 try {
-                    const refreshtoken = this.refreshToken._j; // 쿠키에서 id 를 꺼내기
                     const response = await axios.post(
                         SASM_API_URL + "/users/token/refresh/",
                         {
-                            refresh: refreshtoken,
+                            refresh: refreshToken,
                         },
                         {
                             headers: {
@@ -51,8 +51,8 @@ export class Request {
                             },
                         }
                     );
-                    console.log("!!", response);
                     setAccessToken(response.data.access);
+                    console.warn("new access token", response.data.access)
                     headerValue = `Bearer ${response.data.access}`;
                 } catch (err) {
                     // refresh 토큰이 유효하지 않은 모든 경우(토큰 만료, 토큰 없음 등)
@@ -87,6 +87,7 @@ export class Request {
                 }
             );
             console.log("request test => ", response);
+            console.warn(response);
             return response;
         });
     }
