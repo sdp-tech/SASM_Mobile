@@ -21,12 +21,20 @@ npm install yarn
 yarn install
 ```
 
-### 6. Build
+### 6. (iOS의 경우) pod install 수행
+- 프로젝트 최초 설정 시 또는 **이후 새로운 패키지 설치/삭제 시** 아래 명령어 수행
+```
+npx pod-install
+```
+
+### 7. Build
 ```
 yarn react-native run-ios
 yarn react-native run-android
 ``` 
 
-### 7. 맵 초기 위치 설정
+### 8. 맵 초기 위치 설정
 - Xcode Features > Location > Custom Location에서 위치 설정 후 reload   
 ex. Latitude: 37.5, Longitude: 127.5
+
+
