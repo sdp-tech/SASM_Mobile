@@ -23,11 +23,11 @@ const Button = styled.TouchableOpacity`
   padding: 5px;
 `
 interface UserReviewsProps {
-  reviewData: reviewDataProps[] | undefined,
-  tab: boolean,
-  setTab: Dispatch<SetStateAction<boolean>>,
-  setReviewModal: Dispatch<SetStateAction<boolean>>,
-  setTargetId: Dispatch<SetStateAction<number>>,
+  reviewData: reviewDataProps[] | undefined;
+  tab: boolean;
+  setTab: Dispatch<SetStateAction<boolean>>;
+  setReviewModal: Dispatch<SetStateAction<boolean>>;
+  setTargetId: Dispatch<SetStateAction<number>>;
 }
 
 export default function UserReviews({ reviewData, tab, setTab, setReviewModal, setTargetId }: UserReviewsProps): JSX.Element {
@@ -61,7 +61,7 @@ export default function UserReviews({ reviewData, tab, setTab, setReviewModal, s
                 data?.photos.map((data, index) => {
                   {
                     return (
-                      <Image key={index} source={{ uri: data.imgfile }} style={{ width: 100, height: 100 }} />
+                      <Image key={index} source={{ uri: data.imgfile }} style={{ width: 100, height: 100, borderColor:'red', borderWidth:1 }} />
                     )
                   }
                 })
@@ -81,13 +81,13 @@ export default function UserReviews({ reviewData, tab, setTab, setReviewModal, s
                       { cancelable: false }
                     )
                   }}><Text>삭제</Text></Button>
-                  <Button onPress={()=>{}}><Text>수정</Text></Button>
+                  <Button onPress={() => { setReviewModal(true); setTargetId(data.id); }}><Text>수정</Text></Button>
                 </ButtonWrapper>
                 :
                 null
             }
             {
-              data.category.map((data, index)=>{return(<Text>{data.category}</Text>)})
+              data.category.map((data, index) => { return (<Text>{data.category}</Text>) })
             }
           </ReviewBox>
         )

@@ -35,7 +35,7 @@ export interface detailDataProps {
   sns: object[];
   story_id: string;
   place_like: string;
-  category_statistics: string
+  category_statistics: string[];
 }
 
 export default function SpotDetail({ id }: DetailProps): JSX.Element {
@@ -63,7 +63,7 @@ export default function SpotDetail({ id }: DetailProps): JSX.Element {
     sns: [{}],
     story_id: '',
     place_like: '',
-    category_statistics: ''
+    category_statistics: [],
   });
   const WindowHeight = Dimensions.get('window').height;
   const WindowWidth = Dimensions.get('window').width;

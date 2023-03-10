@@ -61,19 +61,27 @@ const ShortCurBox = styled.View`
   background: #E5E5E5;
   margin-bottom: 20px;
 `;
+const StatisticsBox = styled.View`
+  margin: 10px 0;
+`
+const StatisticsTitle = styled.View`
+  display: flex;
+  flex-flow: row wrap;
+  justify-content: space-between;
+`
 interface DetailCardProps {
-  detailData: detailDataProps,
+  detailData: detailDataProps;
 }
 export interface reviewDataProps {
-  category: any[],
-  contents: string,
-  created: string,
-  id: number,
-  nickname: string,
-  photos: any[],
-  place: number,
-  updated: string,
-  writer: string,
+  category: any[];
+  contents: string;
+  created: string;
+  id: number;
+  nickname: string;
+  photos: any[];
+  place: number;
+  updated: string;
+  writer: string;
 }
 export default function DetailCard({ detailData }: DetailCardProps): JSX.Element {
   const WindowWidth = Dimensions.get('window').width;
@@ -82,7 +90,7 @@ export default function DetailCard({ detailData }: DetailCardProps): JSX.Element
   const [reviewModal, setReviewModal] = useState<boolean>(false);
   const request = new Request();
   const [reviewData, setReviewData] = useState<reviewDataProps[]>();
-  const [targetData, setTargetData] = useState<reviewDataProps>();
+  const [targetData, setTargetData] = useState<reviewDataProps | null>();
   const [like, setLike] = useState<boolean>(false);
   useEffect(() => {
     setTab(true);
@@ -114,7 +122,6 @@ export default function DetailCard({ detailData }: DetailCardProps): JSX.Element
       getReview();
     }
   }, [tab]);
-
   return (
     <ScrollView>
       <Image source={{ uri: detailData.rep_pic }} style={{ width: WindowWidth, height: 200 }} />
@@ -132,7 +139,7 @@ export default function DetailCard({ detailData }: DetailCardProps): JSX.Element
         </InfoBox>
         <TabsBox>
           <TabButton selected={tab} onPress={() => { setTab(true) }}><TabText selected={tab}>홈</TabText></TabButton>
-          <TabButton selected={!tab} onPress={() => { setTab(false) }}><TabText selected={!tab}>리뷰</TabText></TabButton>
+          <TabButton selected={!tab} onPress={() => { setTab(false); setTargetId(0); setTargetData(null); }}><TabText selected={!tab}>리뷰</TabText></TabButton>
         </TabsBox>
         <Tab>
           {
@@ -162,13 +169,25 @@ export default function DetailCard({ detailData }: DetailCardProps): JSX.Element
               </View>
               :
               <View>
-                <View style={{ backgroundColor: '#E5E5E5', height: 30, borderRadius: 10, marginBottom: 10 }}>
-                  <TouchableOpacity style={{ height: '100%', display: 'flex', justifyContent: 'center' }} onPress={() => { setReviewModal(!reviewModal); setTargetData(undefined); }}><Text style={{ textAlign: 'center' }}>리뷰를 작성해주세요</Text></TouchableOpacity>
-                </View>
-                {reviewModal ?
-                  <WriteReview tab={tab} setTab={setTab} category={detailData.category} id={detailData.id} />
-                  :
-                  null
+                <StatisticsBox>
+                  {
+                    detailData.category_statistics.map((data, index) => {
+                      return (
+                        <StatisticsTitle key={index}><Text>{data[0]}</Text><Text>{data[1]}%</Text></StatisticsTitle>
+                      )
+                    })
+                  }
+                </StatisticsBox>
+                <ReviewBox>
+                  <TouchableOpacity style={{ display: 'flex', justifyContent: 'center' }} onPress={() => { setReviewModal(!reviewModal); setTargetData(undefined); }}>
+                    <Text style={{ textAlign: 'center' }}>리뷰를 작성해주세요</Text>
+                  </TouchableOpacity>
+                </ReviewBox>
+                {
+                  reviewModal ?
+                    <WriteReview tab={tab} setTab={setTab} category={detailData.category} id={detailData.id} targetData={targetData} setReviewModal={setReviewModal} />
+                    :
+                    null
                 }
                 <UserReviews tab={tab} setTab={setTab} reviewData={reviewData} setReviewModal={setReviewModal} setTargetId={setTargetId} />
               </View>
