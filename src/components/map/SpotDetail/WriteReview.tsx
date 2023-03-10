@@ -1,8 +1,9 @@
-import React, { useEffect, useState, useCallback } from 'react'
+import React, { useEffect, useState, useCallback, Dispatch, SetStateAction } from 'react'
 import { Text, TextInput, TouchableOpacity, View, Image, Alert } from 'react-native'
 import styled from 'styled-components/native';
 import { Request } from '../../../common/requests';
 import * as ImagePicker from 'react-native-image-picker';
+import { reviewDataProps } from './DetailCard';
 
 const KeywordBox = styled.View`
   border: 1px black solid;
@@ -41,6 +42,8 @@ const PhotoBox = styled.View`
 interface WriteProps {
   category: string;
   id: number;
+  tab: boolean,
+  setTab: Dispatch<SetStateAction<boolean>>,
 }
 
 interface FormProps {
@@ -57,7 +60,7 @@ interface Action {
   type: 'capture' | 'library';
   options: ImagePicker.CameraOptions | ImagePicker.ImageLibraryOptions;
 }
-export default function WriteReview({ category, id }: WriteProps) {
+export default function WriteReview({ category, id, tab, setTab }: WriteProps) {
   const [photos, setPhotos] = useState<any[]>();
   const request = new Request();
   const [form, setForm] = useState<FormProps>(
@@ -68,6 +71,7 @@ export default function WriteReview({ category, id }: WriteProps) {
     }
   )
   let keywordList: any[] = [
+    //카테고리 별 키워드 리스트
     ['분위기가 좋다', 1],
     ['혼자 가기 좋다', 2],
     ['함께 가기 좋다', 3],
@@ -94,6 +98,7 @@ export default function WriteReview({ category, id }: WriteProps) {
       break;
   }
   const actions: Action[] = [
+    //카메라 & 갤러리 세팅
     {
       title: '카메라',
       type: 'capture',
@@ -109,11 +114,16 @@ export default function WriteReview({ category, id }: WriteProps) {
         selectionLimit: 3,
         mediaType: 'photo',
         includeBase64: false,
+        maxHeight: 150,
+        maxWidth: 150,
       },
     }
   ];
   const onChangeKeyword = (value: number) => {
+    //키워드 선택
+    console.log(value);
     if (form.keywords.includes(value)) {
+      console.log('includes');
       setForm({
         ...form,
         keywords: form.keywords.filter((el) => el != value)
@@ -134,32 +144,40 @@ export default function WriteReview({ category, id }: WriteProps) {
     }
   }
   const onChangeText = (props: string) => (value: string) => {
+    //텍스트 입력
     setForm({
       ...form,
       [props]: value,
     });
   };
   const onButtonPress = useCallback((type: string, options: ImagePicker.CameraOptions | ImagePicker.ImageLibraryOptions) => {
+    //카메라 & 갤러리 열기
     if (type === 'capture') {
       ImagePicker.launchCamera(options, response => setPhotos(response.assets))
     } else {
       ImagePicker.launchImageLibrary(options, response => setPhotos(response.assets))
     }
   }, []);
-  const reviewUpload = async () => {
+  const uploadReview = async () => {
+    //리뷰 업로드
     const formData = new FormData();
     formData.append('place', form.id);
     formData.append('contents', form.contents);
     formData.append('category', form.keywords);
-    if(photos) {
-      for(let i =0; i<photos.length; i++) {
-        formData.append('photos', photos[i]);
+    if (photos) {
+      for (let i = 0; i < photos.length; i++) {
+        formData.append('photos', { uri: photos[i].uri, name: photos[i].fileName, type: photos[i].type });
       }
     }
-    const response = await request.post('/places/place_review/create/', formData, { "Content-Type": "multipart/form-data" });
+
+    const response_upload = await request.post('/places/place_review/create/', formData, { "Content-Type": "multipart/form-data" });
+
+    setTab(!tab);
   }
 
   return (
+
+    //review 작성
     <View>
       <KeywordBox>
         {keywordList.map(data => {
@@ -190,7 +208,7 @@ export default function WriteReview({ category, id }: WriteProps) {
           })
         }
       </PhotoBox>
-      <TouchableOpacity onPress={reviewUpload} style={{ borderColor: 'black', borderWidth: 1, width: '20%', padding: 5 }}>
+      <TouchableOpacity onPress={uploadReview} style={{ borderColor: 'black', borderWidth: 1, width: '20%', padding: 5 }}>
         <Text style={{ textAlign: 'center' }}>제출</Text>
       </TouchableOpacity>
     </View>

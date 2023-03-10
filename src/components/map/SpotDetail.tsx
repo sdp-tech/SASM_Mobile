@@ -36,7 +36,6 @@ export interface detailDataProps {
   story_id: string;
   place_like: string;
   category_statistics: string
-
 }
 
 export default function SpotDetail({ id }: DetailProps): JSX.Element {
@@ -68,18 +67,18 @@ export default function SpotDetail({ id }: DetailProps): JSX.Element {
   });
   const WindowHeight = Dimensions.get('window').height;
   const WindowWidth = Dimensions.get('window').width;
-  const getItem = async () => {
-    const response = await request.get('/places/place_detail/', { id: id });
-    setDetailData(response.data.data);
+  const getDetail = async () => {
+    const response_detail = await request.get('/places/place_detail/', { id: id });
+    setDetailData(response_detail.data.data);
     setLoading(false);
   }
   useEffect(() => {
-    if (id != 0) getItem();
+    if (id != 0) getDetail();
   }, [id])
   return (
     <View style={{ width: WindowWidth, height: WindowHeight - 100, backgroundColor: '#FFFFFF' }}>
       {loading?<Loading/>:
-      <DetailCard detailData={detailData}/>}
+      <DetailCard detailData={detailData} />}
     </View>
   )
 }

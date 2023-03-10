@@ -7,6 +7,7 @@ import PlaceMarker from "../../../assets/img/PlaceDetail/PlaceMarker.svg";
 import Heart from '../../../common/Heart';
 import { Request } from '../../../common/requests';
 import WriteReview from './WriteReview';
+import UserReviews from './UserReviews';
 
 const TextBox = styled.View`
   padding: 20px;
@@ -63,11 +64,25 @@ const ShortCurBox = styled.View`
 interface DetailCardProps {
   detailData: detailDataProps,
 }
-
+export interface reviewDataProps {
+  category: any[],
+  contents: string,
+  created: string,
+  id: number,
+  nickname: string,
+  photos: any[],
+  place: number,
+  updated: string,
+  writer: string,
+}
 export default function DetailCard({ detailData }: DetailCardProps): JSX.Element {
   const WindowWidth = Dimensions.get('window').width;
   const [tab, setTab] = useState<boolean>(true);
+  const [targetId, setTargetId] = useState<number>(0);
+  const [reviewModal, setReviewModal] = useState<boolean>(false);
   const request = new Request();
+  const [reviewData, setReviewData] = useState<reviewDataProps[]>();
+  const [targetData, setTargetData] = useState<reviewDataProps>();
   const [like, setLike] = useState<boolean>(false);
   useEffect(() => {
     setTab(true);
@@ -79,6 +94,26 @@ export default function DetailCard({ detailData }: DetailCardProps): JSX.Element
     const response = await request.post('/places/place_like/', { id: detailData.id });
     setLike(!like);
   }
+
+  const getReview = async () => {
+    const response_review = await request.get(`/places/place_review`, { id: detailData.id });
+    setReviewData(response_review.data.data.results);
+  }
+  useEffect(() => {
+    if (reviewData) {
+      for (let i = 0; i < reviewData.length; i++) {
+        if (reviewData[i].id == targetId) {
+          setTargetData(reviewData[i]);
+          break;
+        }
+      }
+    }
+  }, [targetId])
+  useEffect(() => {
+    if (!tab) {
+      getReview();
+    }
+  }, [tab]);
 
   return (
     <ScrollView>
@@ -127,7 +162,15 @@ export default function DetailCard({ detailData }: DetailCardProps): JSX.Element
               </View>
               :
               <View>
-                <WriteReview category={detailData.category} id={detailData.id}/>
+                <View style={{ backgroundColor: '#E5E5E5', height: 30, borderRadius: 10, marginBottom: 10 }}>
+                  <TouchableOpacity style={{ height: '100%', display: 'flex', justifyContent: 'center' }} onPress={() => { setReviewModal(!reviewModal); setTargetData(undefined); }}><Text style={{ textAlign: 'center' }}>리뷰를 작성해주세요</Text></TouchableOpacity>
+                </View>
+                {reviewModal ?
+                  <WriteReview tab={tab} setTab={setTab} category={detailData.category} id={detailData.id} />
+                  :
+                  null
+                }
+                <UserReviews tab={tab} setTab={setTab} reviewData={reviewData} setReviewModal={setReviewModal} setTargetId={setTargetId} />
               </View>
           }
         </Tab>
