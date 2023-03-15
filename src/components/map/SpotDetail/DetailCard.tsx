@@ -8,6 +8,7 @@ import Heart from '../../../common/Heart';
 import { Request } from '../../../common/requests';
 import WriteReview from './WriteReview';
 import UserReviews from './UserReviews';
+import { MapScreenProps } from '../../../pages/SpotMap';
 
 const TextBox = styled.View`
   padding: 20px;
@@ -69,7 +70,7 @@ const StatisticsTitle = styled.View`
   flex-flow: row wrap;
   justify-content: space-between;
 `
-interface DetailCardProps {
+interface DetailCardProps extends MapScreenProps{
   detailData: detailDataProps;
 }
 export interface reviewDataProps {
@@ -83,7 +84,7 @@ export interface reviewDataProps {
   updated: string;
   writer: string;
 }
-export default function DetailCard({ detailData }: DetailCardProps): JSX.Element {
+export default function DetailCard({ detailData, navigation, route }: DetailCardProps): JSX.Element {
   const WindowWidth = Dimensions.get('window').width;
   const [tab, setTab] = useState<boolean>(true);
   const [targetId, setTargetId] = useState<number>(0);
@@ -132,7 +133,7 @@ export default function DetailCard({ detailData }: DetailCardProps): JSX.Element
             <Heart like={like} onPress={toggleLike}></Heart>
             {
               detailData.story_id ?
-                <View style={{ width: 15, height: 15, backgroundColor: 'blue' }}></View> : null
+                <TouchableOpacity onPress={()=>{navigation.navigate('스토리', {id: detailData.story_id})}}><Text>스토리로 이동</Text></TouchableOpacity> : null
             }
           </ButtonBox>
           <Text style={{ fontSize: 16 }}>{detailData.category}</Text>

@@ -45,10 +45,18 @@ const NavbarIcon = (): JSX.Element => {
     )
 }
 
+export type TabProps = { 
+    '맵' : any;
+    '스토리': {
+        id: number;
+    };
+    '커뮤니티': any;
+    '마이 픽': any;
+    '마이 페이지': any;
+}
 
-const Tab = createBottomTabNavigator();
-type Props = NativeStackScreenProps<AppProps, 'Home'>
-const HomeScreen = ({ navigation, route }: Props): JSX.Element => {
+const Tab = createBottomTabNavigator<TabProps>();
+const HomeScreen = (): JSX.Element => {
     const tabBarActiveTintColor: string = '#FFFFFF'
     const tabBarInactiveTintColor: string = '#808080'
     const tabOptions = {

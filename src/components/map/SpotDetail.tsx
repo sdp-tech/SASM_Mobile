@@ -3,14 +3,15 @@ import React, { useEffect, useState } from 'react'
 import { Dimensions, View, Text } from 'react-native'
 import Loading from '../../common/Loading';
 import { Request } from '../../common/requests';
+import { MapScreenProps } from '../../pages/SpotMap';
 import DetailCard from './SpotDetail/DetailCard';
 
-interface DetailProps {
-  id: number
+interface DetailProps extends MapScreenProps {
+  id: number;
 }
 
 interface url {
-  image ?: string;
+  image?: string;
 }
 
 export interface detailDataProps {
@@ -33,14 +34,14 @@ export interface detailDataProps {
   longitude: number;
   photos: url[];
   sns: object[];
-  story_id: string;
+  story_id: number;
   place_like: string;
   category_statistics: string[];
 }
 
-export default function SpotDetail({ id }: DetailProps): JSX.Element {
+export default function SpotDetail({ id, navigation, route }: DetailProps): JSX.Element {
   const request = new Request();
-  const [loading , setLoading] = useState<boolean>(true);
+  const [loading, setLoading] = useState<boolean>(true);
   const [detailData, setDetailData] = useState<detailDataProps>({
     id: 0,
     place_name: '',
@@ -61,7 +62,7 @@ export default function SpotDetail({ id }: DetailProps): JSX.Element {
     longitude: 0,
     photos: [{}],
     sns: [{}],
-    story_id: '',
+    story_id: 0,
     place_like: '',
     category_statistics: [],
   });
@@ -77,8 +78,8 @@ export default function SpotDetail({ id }: DetailProps): JSX.Element {
   }, [id])
   return (
     <View style={{ width: WindowWidth, height: WindowHeight - 100, backgroundColor: '#FFFFFF' }}>
-      {loading?<Loading/>:
-      <DetailCard detailData={detailData} />}
+      {loading ? <Loading /> :
+        <DetailCard detailData={detailData} navigation={navigation} route={route}/>}
     </View>
   )
 }
