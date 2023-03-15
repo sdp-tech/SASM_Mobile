@@ -6,6 +6,9 @@ import { Request } from '../../../common/requests';
 import { useNavigation } from '@react-navigation/native';
 import Heart from '../../../common/Heart';
 import RenderHTML from 'react-native-render-html';
+import Comment from './Comment';
+import WriteComment from './WriteComment';
+import StoryRecommend from './StoryRecommend';
 
 const StoryDetailBox = (props) => {
     const width = Dimensions.get('screen');
@@ -20,15 +23,17 @@ const StoryDetailBox = (props) => {
 
     // 좋아요 클릭 이벤트
     const toggleLike = async () => {
-        if (!token) {
-        alert("로그인이 필요합니다.");
-        } else {
-        const response = await request.post("/stories/story_like/", { id: data.id }, null);
-        console.log("response", response);
+        // if (!token) {
+        // alert("로그인이 필요합니다.");
+        // } else {
+        // const response = await request.post("/stories/story_like/", { id: data.id }, null);
+        // console.log("response", response);
 
-        //색상 채우기
+        // //색상 채우기
+        // setLike(!like);
+        // }
+        const response = await request.post('/stories/story_like/', { id: props.id }, null);
         setLike(!like);
-        }
     };
 
     const handlePageGoToMap = (place_name) => {
@@ -59,7 +64,6 @@ const StoryDetailBox = (props) => {
 
     useEffect(() => {
         loadItem();
-        console.log('markup', markup)
     }, []);
 
     return (
@@ -83,10 +87,10 @@ const StoryDetailBox = (props) => {
                     </View>
                     <View style = {{ flexDirection: 'row' }}>
                         <Text>{data.place_name}</Text>
-                        {props.story_like === "ok" ? (
-                            <Heart like={!like} onClick={toggleLike} />
+                        {data.story_like === "ok" ? (
+                            <Heart like={!like} onPress={toggleLike} />
                         ) : (
-                            <Heart like={like} onClick={toggleLike} />
+                            <Heart like={like} onPress={toggleLike} />
                         )}
                     </View>
                     <Text>{data.tag}</Text>
@@ -117,7 +121,18 @@ const StoryDetailBox = (props) => {
                         }}>
                         <Text>Map에서 보기</Text>
                     </TouchableOpacity>
-                    
+                    {comment.results.map((data, index) => {
+                        return (
+                            <Comment data = {data} key = {index} />
+                        )
+                    })}
+                    <WriteComment id = {id} />
+                    <Text>{data.category} 카테고리의 다른 글을 확인하세요</Text>
+                    {recommend.count != 0 ? (
+                        <StoryRecommend data={recommend} />
+                    ) : (
+                        <></>
+                    )}
                 </ScrollView>
             )}
         </>
