@@ -6,6 +6,9 @@ import { Request } from '../../../common/requests';
 import { useNavigation } from '@react-navigation/native';
 import Heart from '../../../common/Heart';
 import RenderHTML from 'react-native-render-html';
+import Comment from './Comment';
+import WriteComment from './WriteComment';
+import StoryRecommend from './StoryRecommend';
 
 const StoryDetailBox = (props) => {
     const width = Dimensions.get('screen');
@@ -117,7 +120,18 @@ const StoryDetailBox = (props) => {
                         }}>
                         <Text>Map에서 보기</Text>
                     </TouchableOpacity>
-                    
+                    {comment.results.map((data, index) => {
+                        return (
+                            <Comment data = {data} key = {index} />
+                        )
+                    })}
+                    <WriteComment id = {id} />
+                    <Text>{data.category} 카테고리의 다른 글도 확인해보세요</Text>
+                    {recommend.count != 0 ? (
+                        <StoryRecommend data={recommend} />
+                    ) : (
+                        <></>
+                    )}
                 </ScrollView>
             )}
         </>

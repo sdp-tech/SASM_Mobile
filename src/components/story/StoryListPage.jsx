@@ -167,7 +167,6 @@ const StoryListPage = () => {
         }, null);
 
         setItem(response.data.data.results);
-        console.log("item => ", item)
         setPageCount(response.data.data.count);
         setLoading(false);
     }
