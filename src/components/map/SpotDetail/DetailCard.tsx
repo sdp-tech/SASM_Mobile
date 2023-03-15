@@ -95,8 +95,7 @@ export default function DetailCard({ detailData, navigation, route }: DetailCard
   const [like, setLike] = useState<boolean>(false);
   useEffect(() => {
     setTab(true);
-    if (detailData.place_like == 'ok') setLike(true);
-    else setLike(false);
+    setLike(detailData.place_like);
   }, [detailData]);
 
   const toggleLike = async () => {

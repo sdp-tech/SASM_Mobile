@@ -35,7 +35,7 @@ export interface detailDataProps {
   photos: url[];
   sns: object[];
   story_id: number;
-  place_like: string;
+  place_like: boolean;
   category_statistics: string[];
 }
 
@@ -63,7 +63,7 @@ export default function SpotDetail({ id, navigation, route }: DetailProps): JSX.
     photos: [{}],
     sns: [{}],
     story_id: 0,
-    place_like: '',
+    place_like: false,
     category_statistics: [],
   });
   const WindowHeight = Dimensions.get('window').height;
