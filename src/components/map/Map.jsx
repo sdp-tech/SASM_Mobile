@@ -90,7 +90,7 @@ const Map = ({ placeData, setSearchHere, setSearch, setPage, checkedList, setChe
 	</>
 };
 
-export default function MapContainer({ nowCoor }) {
+export default function MapContainer({ nowCoor, navigation, route }) {
 	//detail을 가져올 타겟
 	const [target, setTarget] = useState(0);
 	//SpotList의 ref
@@ -118,7 +118,7 @@ export default function MapContainer({ nowCoor }) {
 	}
 	const renderDetail = () => {
 		return (
-			<SpotDetail id={target} />
+			<SpotDetail id={target} navigation={navigation} route={route}/>
 		)
 	}
 	const renderHeader = () => {

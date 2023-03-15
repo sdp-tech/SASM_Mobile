@@ -13,7 +13,9 @@ const ReviewBox = styled.View`
 `
 const ImageBox = styled.View`
   display: flex;
-  justify-contents: space-around;
+  flex-flow: row wrap;
+  justify-content: space-around;
+  margin: 10px 0;
 `
 const ButtonWrapper = styled.View`
   display: flex;
@@ -61,7 +63,7 @@ export default function UserReviews({ reviewData, tab, setTab, setReviewModal, s
                 data?.photos.map((data, index) => {
                   {
                     return (
-                      <Image key={index} source={{ uri: data.imgfile }} style={{ width: 100, height: 100, borderColor:'red', borderWidth:1 }} />
+                      <Image key={index} source={{ uri: data.imgfile }} style={{ width: 100, height: 100 }} />
                     )
                   }
                 })
@@ -86,9 +88,9 @@ export default function UserReviews({ reviewData, tab, setTab, setReviewModal, s
                 :
                 null
             }
-            {
+            {/* {
               data.category.map((data, index) => { return (<Text>{data.category}</Text>) })
-            }
+            } */}
           </ReviewBox>
         )
       })}
