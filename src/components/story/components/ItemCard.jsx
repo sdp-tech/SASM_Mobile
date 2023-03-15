@@ -1,5 +1,5 @@
 import { useState, useEffect, useNavigate } from 'react';
-import { SafeAreaView, View, Text, TouchableOpacity, Image, StyleSheet, Dimensions } from 'react-native';
+import { SafeAreaView, View, Text, TouchableOpacity, Image, ImageBackground, StyleSheet, Dimensions } from 'react-native';
 import styled from 'styled-components';
 import { Request } from '../../../common/requests';
 import Loading from '../../../common/Loading';
@@ -168,17 +168,20 @@ const ItemCard = (props) => {
     // 좋아요 클릭 이벤트
     const toggleLike = async () => {
         // const token = cookies.name; // 쿠키에서 id 를 꺼내기
-        const token = localStorage.getItem("accessTK"); //localStorage에서 accesstoken꺼내기
+        // const token = localStorage.getItem("accessTK"); //localStorage에서 accesstoken꺼내기
 
-        if (!token) {
-            alert("로그인이 필요합니다.");
-        } else {
-            const response = await request.post("/stories/story_like/", { id: props.id }, null);
-            console.log("response", response);
+        // if (!token) {
+        //     alert("로그인이 필요합니다.");
+        // } else {
+        //     const response = await request.post("/stories/story_like/", { id: props.id }, null);
+        //     console.log("response", response);
 
-            //색상 채우기
-            setLike(!like);
-        }
+        //     //색상 채우기
+        //     setLike(!like);
+        // }
+        const response = await request.post('/stories/story_like/', { id: props.id }, null);
+        console.log("like => ", response)
+        setLike(!like);
     };
 
     // const setStories = () => {
@@ -218,13 +221,20 @@ const ItemCard = (props) => {
                     borderRadius: 24,
                     flexShrink: 1
                 }}
-                src = {props.rep_pic} />
+                src = {props.rep_pic}
+                resizeMode = 'cover' />
+                <View style = {{
+                    position: 'absolute',
+                    marginTop: 110,
+                    marginLeft: 20,
+                }}>
                     {/* {props.story_like === "ok" ? (
                         <Heart like={!like} onClick={toggleLike} />
                     ) : (
                         <Heart like={like} onClick={toggleLike} />
                     )} */}
-                
+                    <Heart like = {like} onPress = {toggleLike} />
+                </View>
             <SafeAreaView style = {{ flexShrink: 1, width: width * 0.5, margin: 10 }}>
                 <Text style = {textStyles.PlaceName}>{props.place_name}</Text>
                 <Text style = {textStyles.Title}>{props.title}</Text>
