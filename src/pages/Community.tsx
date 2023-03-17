@@ -9,6 +9,15 @@ import PostDetailScreen from '../components/community/PostDetail';
 import PostUploadScreen from '../components/community/PostUpload';
 
 
+export interface BoardFormat {
+  name: string;
+  supportsHashtags: boolean;
+  supportsPostPhotos: boolean;
+  supportsPostComments: boolean;
+  supportsPostCommentPhotos: boolean;
+  postContentStyle: string;
+}
+
 
 export type CommunityStackParams = {
   BoardList: any;
@@ -20,10 +29,12 @@ export type CommunityStackParams = {
     board_id: number;
     post_id: number;
     board_name: string;
+    boardFormat: BoardFormat;
   };
   PostUpload: {
     board_id?: number;// ?를 붙이면 optional
     post_id?: number;
+    boardFormat: BoardFormat;
   };
 };
 

@@ -22,14 +22,7 @@ interface Post {
     hashtagList: Array<string>;
 }
 
-interface BoardFormat {
-    name: string;
-    supportsHashtags: boolean;
-    supportsPostPhotos: boolean;
-    supportsPostComments: boolean;
-    supportsPostCommentPhotos: boolean;
-    postContentStyle: string;
-}
+
 
 interface Action {
     title: string;
@@ -56,8 +49,6 @@ const HashtagBox = ({ name, deleteFunc }: Hashtag) => (
 
 const PostUploadScreen = ({ navigation, route }: NativeStackScreenProps<CommunityStackParams, 'PostUpload'>) => {
     const [loading, setLoading] = useState(false);
-    const [boardFormat, setBoardFormat] = useState<BoardFormat>();
-
     const [title, setTitle] = useState<string>('');
     const [content, setContent] = useState<string>('');
     const [hashtags, setHashtags] = useState<string[]>([]);
@@ -69,12 +60,7 @@ const PostUploadScreen = ({ navigation, route }: NativeStackScreenProps<Communit
 
     const board_id = route.params.board_id;
     const post_id = route.params.post_id;
-
-
-    const getBoardFormat = async () => {
-        const response = await request.get(`/community/boards/${board_id}/`);
-        return response.data;
-    }
+    const boardFormat = route.params.boardFormat;
 
     const getPost = async () => {
         const response = await request.get(`/community/posts/${post_id}/`, {}, {});
@@ -190,9 +176,6 @@ const PostUploadScreen = ({ navigation, route }: NativeStackScreenProps<Communit
         async function _getData() {
             try {
                 setLoading(true);
-
-                setBoardFormat(await getBoardFormat());
-
                 if (post_id) {
                     const post = await getPost() as Post;
                     setTitle(post.title);
