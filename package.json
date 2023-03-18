@@ -10,6 +10,9 @@
     "test": "jest"
   },
   "dependencies": {
+    "@emotion/react": "^11.10.6",
+    "@emotion/styled": "^11.10.6",
+    "@mui/material": "^5.11.13",
     "@react-native-community/masked-view": "^0.1.11",
     "@react-navigation/bottom-tabs": "^6.5.4",
     "@react-navigation/native": "^6.1.3",
@@ -19,6 +22,8 @@
     "@types/styled-components-react-native": "^5.2.1",
     "axios": "^1.3.3",
     "react": "18.2.0",
+    "react-cookie": "^4.1.1",
+    "react-dom": "^18.2.0",
     "react-native": "0.71.2",
     "react-native-dotenv": "^3.4.7",
     "react-native-draggable-view": "^0.0.6",
@@ -27,6 +32,7 @@
     "react-native-image-picker": "^5.1.0",
     "react-native-keychain": "^8.1.1",
     "react-native-nmap": "git+https://github.com/sejongk/react-native-naver-map.git",
+    "react-native-paper": "^5.4.1",
     "react-native-permissions": "^3.6.1",
     "react-native-reanimated": "^2.14.4",
     "react-native-render-html": "^6.3.4",
@@ -35,6 +41,8 @@
     "react-native-svg": "^13.8.0",
     "react-native-svg-transformer": "^1.0.0",
     "react-navigation": "^4.4.4",
+    "react-responsive": "^9.0.2",
+    "react-router-dom": "^6.9.0",
     "reanimated-bottom-sheet": "^1.0.0-alpha.22",
     "styled-components": "^5.3.6"
   },
