@@ -32,8 +32,6 @@ const textStyles = StyleSheet.create({
         fontWeight: 500,
         lineHeight: 12,
         marginBottom: 8
-        // numberOfLines: 3,
-        // ellipsizeMode: 'tail'
     },
     More: {
         fontSize: 12,
@@ -41,124 +39,13 @@ const textStyles = StyleSheet.create({
         lineHeight: 14,
         color: '#01A0FC'
     }
-})
-const TitleBox = styled.View`
-  box-sizing: border-box;
-  display: flex;
-  width: 100%;
-  color: #6c6c6c;
-  margin-top: 7%;
-  @media screen and (max-width: 768px) {
-    width:100%;
-  }
-  font-size: 16px;
-`;
-
-const StoreNameBox = styled.View`
-  box-sizing: border-box;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  position: absolute;
-  width: 100%;
-  left: 0%;
-  top: 0%;
-  bottom: 0%;
-  
-  font-family: 'Pretendard';
-  font-style: bold;
-  font-weight: 700;
-  font-size: 20px;
-  line-height: 24px;
-  /* identical to box height */
-  
-  
-  color: #000000;
-`;
-
-const CategoryBox = styled.View`
-  box-sizing: border-box;
-  display: flex;
-  margin-top: 2.5%;
-  width: 100%;
-  color: #000000;
-  @media screen and (max-width: 768px) {
-    width:100%;
-  }
-  font-size:0.8rem;
-`;
-const OptionBox = styled.View`
-  box-sizing: border-box;
-  display: flex;
-  width: 100%;
-  color: #999999;
-  padding-left: 2%;
-  border-left: 2px solid #000000;
-  @media screen and (max-width: 768px) {
-    width:100%;
-  }
-  font-size: 0.8rem;
-`;
-
-const ContentBox = styled.View`
-  box-sizing: border-box;
-  display: flex;
-  //margin-top: 1rem;
-  width: 100%;
-  overflow: hidden;
-  min-height: 86px;
-  max-height: 86px;
-  color: #797979;
-  @media screen and (max-width: 768px) {
-    width:100%;
-  }
-  font-size: 0.8rem;
-`;
-
-// // 기존에 존재하는 버튼에 재스타일
-// const Button = styled.Button`
-//   background-color: #ffffff;
-//   height: 50px;
-//   font-size: 20px;
-//   font-weight: 700;
-//   border-radius: 15px;
-//   display: flex;
-//   justify-content: space-between;
-//   align-items: center;
-//   cursor: pointer;
-// `;
-
-// const LikeButton = styled(Button)({
-//   boxSizing: "border-box",
-//   border: "none",
-//   display: "flex",
-//   height: "30px",
-//   width: "30px",
-//   margin: "2% 3% 2% 0",
-// });
-
-// const StyledCard = styled(Card)`
-//   display: flex;
-//   min-height: 15vw;
-//   min-width: 30vw;
-//   max-height: 15vw;
-//   max-width: 30vw;
-//   flex-direction: row;
-//   @media screen and (max-width: 768px) {
-//     flex-direction: column;
-//     min-height: 120vw;
-//     min-width: 60vw;
-//     max-height: 120vw;
-//     max-width: 60vw;
-//   }
-// `
+});
 
 const ItemCard = (props) => {
 
     const [like, setLike] = useState(false);
     //const [cookies, setCookie, removeCookie] = useCookies(["name"]);
     const [loading, setLoading] = useState(true);
-    //const navigate = useNavigate();
     //const request = new Request(cookies, localStorage, navigate);
     const [items, setItems] = useState([]);
 
@@ -180,38 +67,14 @@ const ItemCard = (props) => {
         //     setLike(!like);
         // }
         const response = await request.post('/stories/story_like/', { id: props.id }, null);
-        console.log("like => ", response)
         setLike(!like);
     };
-
-    // const setStories = () => {
-    //     items.push({
-    //         _title: title,
-    //         _category: category,
-    //     })
-    // }
-
-    // const renderItem = ({ item }) => {
-    //     return (
-    //         <TouchableOpacity
-    //             onPress = {onPress}>
-    //             <Text>
-    //                 {title}
-    //                 {category}
-    //             </Text>
-    //         </TouchableOpacity>
-    //     )
-    // }
 
     const onPress = () => {
         navigation.navigate('StoryDetail', { id: props.id });
     }
 
     return (
-        // <FlatList
-        //     data = {items}
-        //     renderItem = {renderItem}
-        // />
         <SafeAreaView style = {{ flexDirection: 'row'}}>
             <Image
                 style = {{
@@ -228,12 +91,11 @@ const ItemCard = (props) => {
                     marginTop: 110,
                     marginLeft: 20,
                 }}>
-                    {/* {props.story_like === "ok" ? (
-                        <Heart like={!like} onClick={toggleLike} />
+                    {props.story_like === "ok" ? (
+                        <Heart like={!like} onPress={toggleLike} />
                     ) : (
-                        <Heart like={like} onClick={toggleLike} />
-                    )} */}
-                    <Heart like = {like} onPress = {toggleLike} />
+                        <Heart like={like} onPress={toggleLike} />
+                    )}
                 </View>
             <SafeAreaView style = {{ flexShrink: 1, width: width * 0.5, margin: 10 }}>
                 <Text style = {textStyles.PlaceName}>{props.place_name}</Text>

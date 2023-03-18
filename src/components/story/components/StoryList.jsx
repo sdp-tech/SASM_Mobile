@@ -69,17 +69,15 @@ const StoryList = ({ info }) => {
                                     place_name = {item.place_name}
                                     title = {item.title}
                                     category = {item.category}
-                                    // semi_category = {item.semi_category}
+                                    story_like = {item.story_like}
                                     preview = {item.preview}
                                  />
                             </CardSection>
                         )}
                         keyExtractor = {(item, index) => index}
-                        //numColumns = {1}
                      />
                 )}
             </>
-            //</StorySection>
     )
 }
 
