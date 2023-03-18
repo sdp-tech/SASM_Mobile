@@ -95,8 +95,7 @@ export default function DetailCard({ detailData, navigation, route }: DetailCard
   const [like, setLike] = useState<boolean>(false);
   useEffect(() => {
     setTab(true);
-    if (detailData.place_like == 'ok') setLike(true);
-    else setLike(false);
+    setLike(detailData?.place_like);
   }, [detailData]);
 
   const toggleLike = async () => {
@@ -107,7 +106,8 @@ export default function DetailCard({ detailData, navigation, route }: DetailCard
   const getReview = async () => {
     const response_review = await request.get(`/places/place_review`, { id: detailData.id });
     setReviewData(response_review.data.data.results);
-  }
+  };
+  
   useEffect(() => {
     if (reviewData) {
       for (let i = 0; i < reviewData.length; i++) {
@@ -117,7 +117,8 @@ export default function DetailCard({ detailData, navigation, route }: DetailCard
         }
       }
     }
-  }, [targetId])
+  }, [targetId]);
+
   useEffect(() => {
     if (!tab) {
       getReview();
@@ -145,6 +146,7 @@ export default function DetailCard({ detailData, navigation, route }: DetailCard
         <Tab>
           {
             tab ?
+              //홈
               <View>
                 <ReviewBox>
                   <Text>{detailData.place_review}</Text>
@@ -158,9 +160,9 @@ export default function DetailCard({ detailData, navigation, route }: DetailCard
                   <Text>{detailData.open_hours}</Text>
                 </View>
                 <ImageBox>
-                  <Image source={{ uri: detailData.photos[0].image }} style={{ width: 100, height: 100 }} />
-                  <Image source={{ uri: detailData.photos[1].image }} style={{ width: 100, height: 100 }} />
-                  <Image source={{ uri: detailData.photos[2].image }} style={{ width: 100, height: 100 }} />
+                  <Image source={{ uri: detailData?.photos[0]?.image }} style={{ width: 100, height: 100 }} />
+                  <Image source={{ uri: detailData?.photos[1]?.image }} style={{ width: 100, height: 100 }} />
+                  <Image source={{ uri: detailData?.photos[2]?.image }} style={{ width: 100, height: 100 }} />
                 </ImageBox>
                 <ShortCurBox>
                   <Text>
@@ -169,6 +171,7 @@ export default function DetailCard({ detailData, navigation, route }: DetailCard
                 </ShortCurBox>
               </View>
               :
+              //리뷰
               <View>
                 <StatisticsBox>
                   {

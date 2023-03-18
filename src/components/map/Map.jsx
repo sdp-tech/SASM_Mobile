@@ -13,7 +13,6 @@ import MapList from './SpotList';
 import SpotDetail from './SpotDetail';
 import { Request } from '../../common/requests';
 
-
 const ButtonWrapper = styled.View`
 	width: 100%;
 	display: flex;
@@ -37,7 +36,8 @@ const SearchHereText = styled.Text`
 
 
 
-const Map = ({ placeData, setSearchHere, setSearch, setPage, checkedList, setCheckedList, nowCoor, setTarget, detailRef }) => {
+const Map = ({ placeData, setSearchHere, setSearch, setPage, checkedList, setCheckedList, nowCoor, detailRef, setDetailData }) => {
+	const request = new Request();
 	//tempCoor => 지도가 움직이때마다 center의 좌표
 	const [tempCoor, setTempCoor] = useState(nowCoor);
 	//지도의 중심 좌표
@@ -51,6 +51,11 @@ const Map = ({ placeData, setSearchHere, setSearch, setPage, checkedList, setChe
 		})
 	}
 
+  const getDetail = async (_id) => {
+    const response_detail = await request.get('/places/place_detail/', { id: _id });
+    setDetailData(response_detail.data.data);
+		detailRef.current.snapTo(0); 
+  }
 	return <>
 		<NaverMapView
 			ref={mapView}
@@ -70,7 +75,7 @@ const Map = ({ placeData, setSearchHere, setSearch, setPage, checkedList, setChe
 							key={index}
 							coordinate={coor}
 							image={require("../../assets/img/marker.png")}
-							onClick={() => { detailRef.current.snapTo(0); setTarget(data.id) }}
+							onClick={() => { getDetail(data.id)}}
 							width={20} height={30}
 							caption={{
 								text: `${data.place_name}`, align: Align.Bottom, textSize: 15, color: "black", haloColor: "white"
@@ -91,8 +96,6 @@ const Map = ({ placeData, setSearchHere, setSearch, setPage, checkedList, setChe
 };
 
 export default function MapContainer({ nowCoor, navigation, route }) {
-	//detail을 가져올 타겟
-	const [target, setTarget] = useState(0);
 	//SpotList의 ref
 	const listRef = useRef(null);
 	//SpotDetail의 ref
@@ -101,6 +104,30 @@ export default function MapContainer({ nowCoor, navigation, route }) {
 	const WindowHeight = Dimensions.get('window').height
 	const [loading, setLoading] = useState(true);
 	const [placeData, setPlaceData] = useState([]);
+	const [detailData, setDetailData] = useState({
+    id: 0,
+    place_name: '',
+    category: '',
+    open_hours: '',
+    mon_hours: '',
+    tues_hours: '',
+    wed_hours: '',
+    thurs_hours: '',
+    fri_hours: '',
+    sat_hours: '',
+    sun_hours: '',
+    place_review: '',
+    address: '',
+    rep_pic: '',
+    short_cur: '',
+    latitude: 0,
+    longitude: 0,
+    photos: [{}],
+    sns: [{}],
+    story_id: 0,
+    place_like: false,
+    category_statistics: [],
+  });
 	//checkedList => 카테고리 체크 복수 체크 가능
 	const [checkedList, setCheckedList] = useState([]);
 	const [total, setTotal] = useState(0);
@@ -113,12 +140,12 @@ export default function MapContainer({ nowCoor, navigation, route }) {
 	//bottomSheet Content
 	const renderContent = () => {
 		return (
-			<MapList detailRef={detailRef} page={page} setPage={setPage} total={total} placeData={placeData} setTarget={setTarget} />
+			<MapList detailRef={detailRef} page={page} setPage={setPage} total={total} placeData={placeData} setDetailData={setDetailData} />
 		)
 	}
 	const renderDetail = () => {
 		return (
-			<SpotDetail id={target} navigation={navigation} route={route}/>
+			<SpotDetail navigation={navigation} route={route} detailData={detailData}/>
 		)
 	}
 	const renderHeader = () => {
@@ -161,8 +188,8 @@ export default function MapContainer({ nowCoor, navigation, route }) {
 						placeData={placeData}
 						setPage={setPage}
 						nowCoor={nowCoor}
-						setTarget={setTarget}
 						detailRef={detailRef}
+						setDetailData={setDetailData}
 					/>
 					<BottomSheet
 						ref={listRef}
