@@ -1,13 +1,13 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Request } from '../../../common/requests';
 import { useNavigation } from '@react-navigation/native';
-import { View, Text, TouchableOpacity, TextInput, StyleSheet } from 'react-native';
+import { View, Text, TouchableOpacity, TextInput, StyleSheet, Alert } from 'react-native';
 
 const WriteComment = ({ id }) => {
     const request = new Request();
     const navigation = useNavigation();
     const [comment, setComment] = useState('');
-    const uploadComment = async (event) => {
+    const uploadComment = async () => {
         // if (!token) {
         //     alert('로그인이 필요합니다.');
         //     navigate('/auth');
@@ -16,9 +16,11 @@ const WriteComment = ({ id }) => {
             const response = await request.post("/stories/comments/", {
                 story: id,
                 content: comment,
-            });
+            }, null);
         //}
-        setComment(comment);
+        Alert.alert("댓글이 등록되었습니다.");
+        navigation.replace('StoryDetail', { id: id });
+
     }
 
     return (
@@ -37,7 +39,7 @@ const WriteComment = ({ id }) => {
                 }}
             />
             <TouchableOpacity
-                onPress = {WriteComment}
+                onPress = {(e) => {uploadComment(e)}}
                 style = {{
                     backgroundColor: '#209DF5',
                     width: 60,
