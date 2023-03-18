@@ -7,6 +7,7 @@ import { MapScreenProps } from '../../pages/SpotMap';
 import DetailCard from './SpotDetail/DetailCard';
 
 interface DetailProps extends MapScreenProps {
+  detailData: detailDataProps;
   id: number;
 }
 
@@ -39,47 +40,13 @@ export interface detailDataProps {
   category_statistics: string[];
 }
 
-export default function SpotDetail({ id, navigation, route }: DetailProps): JSX.Element {
-  const request = new Request();
-  const [loading, setLoading] = useState<boolean>(true);
-  const [detailData, setDetailData] = useState<detailDataProps>({
-    id: 0,
-    place_name: '',
-    category: '',
-    open_hours: '',
-    mon_hours: '',
-    tues_hours: '',
-    wed_hours: '',
-    thurs_hours: '',
-    fri_hours: '',
-    sat_hours: '',
-    sun_hours: '',
-    place_review: '',
-    address: '',
-    rep_pic: '',
-    short_cur: '',
-    latitude: 0,
-    longitude: 0,
-    photos: [{}],
-    sns: [{}],
-    story_id: 0,
-    place_like: false,
-    category_statistics: [],
-  });
+export default function SpotDetail({ id, navigation, route, detailData }: DetailProps): JSX.Element {
   const WindowHeight = Dimensions.get('window').height;
   const WindowWidth = Dimensions.get('window').width;
-  const getDetail = async () => {
-    const response_detail = await request.get('/places/place_detail/', { id: id });
-    setDetailData(response_detail.data.data);
-    setLoading(false);
-  }
-  useEffect(() => {
-    if (id != 0) getDetail();
-  }, [id])
+
   return (
     <View style={{ width: WindowWidth, height: WindowHeight - 100, backgroundColor: '#FFFFFF' }}>
-      {loading ? <Loading /> :
-        <DetailCard detailData={detailData} navigation={navigation} route={route}/>}
+        <DetailCard detailData={detailData} navigation={navigation} route={route}/>
     </View>
   )
 }

@@ -1,12 +1,14 @@
-import React from 'react'
+import React, { Dispatch, SetStateAction } from 'react'
 import { Dimensions, Image, Text, TouchableOpacity, View } from 'react-native'
 import styled from 'styled-components/native';
+import { Request } from '../../../common/requests';
+import { detailDataProps } from '../SpotDetail';
 import { DataTypes } from '../SpotList';
 
 type ItemCardProps = {
   data: DataTypes;
   detailRef: any;
-  setTarget: (id: number)=>void;
+  setDetailData: Dispatch<SetStateAction<detailDataProps>>;
 }
 
 const StyledCard = styled.View`
@@ -25,11 +27,18 @@ const TextBox = styled.View`
   flex: 1;
 `
 
-export default function ItemCard({ data, detailRef, setTarget }: ItemCardProps): JSX.Element {
+export default function ItemCard({ data, detailRef, setDetailData }: ItemCardProps): JSX.Element {
+  const request = new Request();
   const { address, category, id, place_name, place_review, rep_pic, open_hours } = data
+  const getDetail = async () => {
+    const response_detail = await request.get('/places/place_detail/', { id: id });
+    setDetailData(response_detail.data.data);
+    detailRef.current.snapTo(0);
+  }
+
   return (
     <StyledCard>
-      <TouchableOpacity onPress={()=>{detailRef.current.snapTo(0); setTarget(data.id)}}>
+      <TouchableOpacity onPress={getDetail}>
         <ImageBox>
           <Image source={{ uri: rep_pic }} style={{ width: 130, height: 130 }} />
         </ImageBox>
