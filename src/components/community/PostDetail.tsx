@@ -80,11 +80,14 @@ const PostCommentItemSection = ({ id, content, isParent, group, email, nickname,
                                 </PhotoBox> : <></>
                         }
                         <View style={{ flexDirection: 'row' }}>
-                            <TouchableOpacity style={{ marginRight: 10 }} onPress={() => setReplying(true)}>
-                                <View style={{ backgroundColor: '#D3D3D3', borderWidth: 0.5, borderRadius: 10, width: 50, height: 25, alignItems: 'center', justifyContent: 'center' }}>
-                                    <Text style={{ fontSize: 15, fontWeight: '600' }}>대댓글</Text>
-                                </View>
-                            </TouchableOpacity>
+                            {
+                                isParent ?
+                                    <TouchableOpacity style={{ marginRight: 10 }} onPress={() => setReplying(true)}>
+                                        <View style={{ backgroundColor: '#D3D3D3', borderWidth: 0.5, borderRadius: 10, width: 50, height: 25, alignItems: 'center', justifyContent: 'center' }}>
+                                            <Text style={{ fontSize: 15, fontWeight: '600' }}>대댓글</Text>
+                                        </View>
+                                    </TouchableOpacity> : <></>
+                            }
                             <TouchableOpacity style={{ marginRight: 10 }} onPress={() => setEditing(true)}>
                                 <View style={{ backgroundColor: '#D3D3D3', borderWidth: 0.5, borderRadius: 10, width: 50, height: 25, alignItems: 'center', justifyContent: 'center' }}>
                                     <Text style={{ fontSize: 15, fontWeight: '600' }}>수정</Text>
