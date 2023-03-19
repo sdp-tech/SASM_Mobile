@@ -9,7 +9,7 @@ import { TabProps } from "../../App";
 
 export interface Coordinate {
 	latitude: number;
-	longitude: number
+	longitude: number;
 }
 
 export type MapScreenProps = StackScreenProps<TabProps, '맵'>;

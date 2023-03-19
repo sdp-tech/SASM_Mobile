@@ -2,6 +2,7 @@ import React, { Dispatch, SetStateAction } from 'react'
 import { Dimensions, Image, Text, TouchableOpacity, View } from 'react-native'
 import styled from 'styled-components/native';
 import { Request } from '../../../common/requests';
+import { Coordinate } from '../../../pages/SpotMap';
 import { detailDataProps } from '../SpotDetail';
 import { DataTypes } from '../SpotList';
 
@@ -9,6 +10,7 @@ type ItemCardProps = {
   data: DataTypes;
   detailRef: any;
   setDetailData: Dispatch<SetStateAction<detailDataProps>>;
+  setCenter: Dispatch<SetStateAction<Coordinate>>;
 }
 
 const StyledCard = styled.View`
@@ -27,12 +29,16 @@ const TextBox = styled.View`
   flex: 1;
 `
 
-export default function ItemCard({ data, detailRef, setDetailData }: ItemCardProps): JSX.Element {
+export default function ItemCard({ data, detailRef, setDetailData, setCenter }: ItemCardProps): JSX.Element {
   const request = new Request();
   const { address, category, id, place_name, place_review, rep_pic, open_hours } = data
   const getDetail = async () => {
     const response_detail = await request.get('/places/place_detail/', { id: id });
     setDetailData(response_detail.data.data);
+    setCenter({
+      latitude: response_detail.data.data.latitude,
+      longitude: response_detail.data.data.longitude
+    })
     detailRef.current.snapTo(0);
   }
 
