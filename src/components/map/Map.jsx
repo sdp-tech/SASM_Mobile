@@ -36,12 +36,10 @@ const SearchHereText = styled.Text`
 
 
 
-const Map = ({ placeData, setSearchHere, setSearch, setPage, checkedList, setCheckedList, nowCoor, detailRef, setDetailData }) => {
+const Map = ({ placeData, setSearchHere, setSearch, setPage, checkedList, setCheckedList, nowCoor, detailRef, setDetailData, center, setCenter }) => {
 	const request = new Request();
 	//tempCoor => 지도가 움직이때마다 center의 좌표
 	const [tempCoor, setTempCoor] = useState(nowCoor);
-	//지도의 중심 좌표
-	const [center, setCenter] = useState(nowCoor);
 	const mapView = useRef(null);
 	//지도가 이동할때마다 지도의 중심 좌표를 임시로 저장
 	const onChangeCenter = (event) => {
@@ -54,6 +52,10 @@ const Map = ({ placeData, setSearchHere, setSearch, setPage, checkedList, setChe
   const getDetail = async (_id) => {
     const response_detail = await request.get('/places/place_detail/', { id: _id });
     setDetailData(response_detail.data.data);
+		setCenter({
+			latitude: response_detail.data.data.latitude,
+			longitude: response_detail.data.data.longitude,
+		})
 		detailRef.current.snapTo(0); 
   }
 	return <>
@@ -128,6 +130,8 @@ export default function MapContainer({ nowCoor, navigation, route }) {
     place_like: false,
     category_statistics: [],
   });
+	//지도의 중심 좌표
+	const [center, setCenter] = useState(nowCoor);
 	//checkedList => 카테고리 체크 복수 체크 가능
 	const [checkedList, setCheckedList] = useState([]);
 	const [total, setTotal] = useState(0);
@@ -140,7 +144,7 @@ export default function MapContainer({ nowCoor, navigation, route }) {
 	//bottomSheet Content
 	const renderContent = () => {
 		return (
-			<MapList detailRef={detailRef} page={page} setPage={setPage} total={total} placeData={placeData} setDetailData={setDetailData} />
+			<MapList detailRef={detailRef} page={page} setPage={setPage} total={total} placeData={placeData} setDetailData={setDetailData} setCenter={setCenter}/>
 		)
 	}
 	const renderDetail = () => {
@@ -190,6 +194,8 @@ export default function MapContainer({ nowCoor, navigation, route }) {
 						nowCoor={nowCoor}
 						detailRef={detailRef}
 						setDetailData={setDetailData}
+						center={center}
+						setCenter={setCenter}
 					/>
 					<BottomSheet
 						ref={listRef}

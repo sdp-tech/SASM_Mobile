@@ -46,13 +46,13 @@ const NavbarIcon = (): JSX.Element => {
 }
 
 export type TabProps = { 
-    '맵' : any;
+    '맵' : undefined;
     '스토리': {
         id: number;
     };
-    '커뮤니티': any;
-    '마이 픽': any;
-    '마이 페이지': any;
+    '커뮤니티': undefined;
+    '마이 픽': undefined;
+    '마이 페이지': undefined;
 }
 
 const Tab = createBottomTabNavigator<TabProps>();
