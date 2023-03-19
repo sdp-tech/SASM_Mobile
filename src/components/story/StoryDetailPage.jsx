@@ -1,3 +1,4 @@
+import { useEffect } from 'react';
 import { View, Text } from 'react-native';
 import StoryDetailBox from './components/StoryDetailBox';
 
