@@ -36,7 +36,7 @@ const SearchHereText = styled.Text`
 
 
 
-const Map = ({ placeData, setSearchHere, setSearch, setPage, checkedList, setCheckedList, nowCoor, detailRef, setDetailData, center, setCenter }) => {
+const Map = ({ placeData, setSearchHere, setSearch, setPage, checkedList, setCheckedList, nowCoor, detailRef, setDetailData, center, setCenter,target }) => {
 	const request = new Request();
 	//tempCoor => 지도가 움직이때마다 center의 좌표
 	const [tempCoor, setTempCoor] = useState(nowCoor);
@@ -58,6 +58,11 @@ const Map = ({ placeData, setSearchHere, setSearch, setPage, checkedList, setChe
 		})
 		detailRef.current.snapTo(0); 
   }
+	useEffect(()=>{
+		if(target) {
+			getDetail(target);
+		}
+	}, [target]);
 	return <>
 		<NaverMapView
 			ref={mapView}
@@ -178,7 +183,6 @@ export default function MapContainer({ nowCoor, navigation, route }) {
 	useEffect(() => {
 		getItem();
 	}, [searchHere, page, search, checkedList]);
-
 	return (
 		<>
 			{loading ?
@@ -196,6 +200,7 @@ export default function MapContainer({ nowCoor, navigation, route }) {
 						setDetailData={setDetailData}
 						center={center}
 						setCenter={setCenter}
+						target={route.params?.id}
 					/>
 					<BottomSheet
 						ref={listRef}

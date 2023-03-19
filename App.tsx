@@ -2,7 +2,7 @@ import 'react-native-gesture-handler';
 import React, { useEffect, useRef, useState } from 'react';
 import NaverMapView, { Align, Circle, Marker, Path, Polygon, Polyline } from "./src/components/map/NaverMap";
 import { Image, ImageBackground, PermissionsAndroid, Platform, ScrollView, Text, TouchableOpacity, View, TextInput, StyleSheet, Button } from "react-native";
-import { NavigationContainer } from '@react-navigation/native';
+import { NavigationContainer, NavigationProp, useNavigation } from '@react-navigation/native';
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { createNativeStackNavigator, NativeStackScreenProps } from '@react-navigation/native-stack';
 import MapScreen from './src/pages/SpotMap';
@@ -45,10 +45,12 @@ const NavbarIcon = (): JSX.Element => {
     )
 }
 
-export type TabProps = { 
-    '맵' : undefined;
+export type TabProps = {
+    '맵': {
+        id: number | undefined;
+    };
     '스토리': {
-        id: number;
+        id: number | undefined;
     };
     '커뮤니티': undefined;
     '마이 픽': undefined;
@@ -64,6 +66,7 @@ const HomeScreen = (): JSX.Element => {
         tabBarInactiveTintColor: tabBarInactiveTintColor,
         tabBarIcon: NavbarIcon
     }
+    const navigation = useNavigation<NavigationProp<TabProps>>();
 
     return (
         <Tab.Navigator
@@ -71,7 +74,7 @@ const HomeScreen = (): JSX.Element => {
             screenOptions={() => ({
                 headerShown: false,
                 tabBarStyle: {
-                    height:75,
+                    height: 75,
                     backgroundColor: '#000000',
                 },
             })}
@@ -80,11 +83,23 @@ const HomeScreen = (): JSX.Element => {
                 name={"맵"}
                 component={MapScreen}
                 options={tabOptions}
+                listeners={{
+                    tabPress: (event) => {
+                        event.preventDefault();
+                        navigation.navigate('맵', { id: undefined });
+                    }
+                }}
             />
             <Tab.Screen
                 name={"스토리"}
                 component={StoryScreen}
                 options={tabOptions}
+                listeners={{
+                    tabPress: (event) => {
+                        event.preventDefault();
+                        navigation.navigate('스토리', { id: undefined });
+                    }
+                }}
             />
             <Tab.Screen
                 name={"커뮤니티"}
