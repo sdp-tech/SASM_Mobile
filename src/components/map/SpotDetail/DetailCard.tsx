@@ -70,8 +70,9 @@ const StatisticsTitle = styled.View`
   flex-flow: row wrap;
   justify-content: space-between;
 `
-interface DetailCardProps extends MapScreenProps{
+interface DetailCardProps extends MapScreenProps {
   detailData: detailDataProps;
+  rerenderScreen: ()=>void;
 }
 export interface reviewDataProps {
   category: any[];
@@ -84,7 +85,7 @@ export interface reviewDataProps {
   updated: string;
   writer: string;
 }
-export default function DetailCard({ detailData, navigation, route }: DetailCardProps): JSX.Element {
+export default function DetailCard({ detailData, navigation, route, rerenderScreen }: DetailCardProps): JSX.Element {
   const WindowWidth = Dimensions.get('window').width;
   const [tab, setTab] = useState<boolean>(true);
   const [targetId, setTargetId] = useState<number>(0);
@@ -95,19 +96,23 @@ export default function DetailCard({ detailData, navigation, route }: DetailCard
   const [like, setLike] = useState<boolean>(false);
   useEffect(() => {
     setTab(true);
-    setLike(detailData?.place_like);
+    //나중에 BE에서 boolean으로 변환 필요
+    if (detailData.place_like == 'ok') {
+      setLike(true);
+    }
   }, [detailData]);
 
   const toggleLike = async () => {
     const response = await request.post('/places/place_like/', { id: detailData.id });
     setLike(!like);
+    rerenderScreen();
   }
 
   const getReview = async () => {
     const response_review = await request.get(`/places/place_review`, { id: detailData.id });
     setReviewData(response_review.data.data.results);
   };
-  
+
   useEffect(() => {
     if (reviewData) {
       for (let i = 0; i < reviewData.length; i++) {
@@ -134,7 +139,7 @@ export default function DetailCard({ detailData, navigation, route }: DetailCard
             <Heart like={like} onPress={toggleLike}></Heart>
             {
               detailData.story_id ?
-                <TouchableOpacity onPress={()=>{navigation.navigate('스토리', {id: detailData.story_id})}}><Text>스토리로 이동</Text></TouchableOpacity> : null
+                <TouchableOpacity onPress={() => { navigation.navigate('스토리', { id: detailData.story_id }) }}><Text>스토리로 이동</Text></TouchableOpacity> : null
             }
           </ButtonBox>
           <Text style={{ fontSize: 16 }}>{detailData.category}</Text>
