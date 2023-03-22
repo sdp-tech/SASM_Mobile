@@ -7,6 +7,7 @@ import BoardListScreen from '../components/community/BoardList';
 import PostListScreen from '../components/community/PostList';
 import PostDetailScreen from '../components/community/PostDetail';
 import PostUploadScreen from '../components/community/PostUpload';
+import PhotoPreviewScreen from '../components/community/PhotoPreview';
 
 
 export interface BoardFormat {
@@ -36,6 +37,9 @@ export type CommunityStackParams = {
     post_id?: number;
     boardFormat: BoardFormat;
   };
+  PhotoPreview: {
+    photoUri: any;
+  }
 };
 
 const Stack = createNativeStackNavigator<CommunityStackParams>();
@@ -52,6 +56,7 @@ const Community = () => {
       <Stack.Screen name="PostList" component={PostListScreen} />
       <Stack.Screen name="PostDetail" component={PostDetailScreen} />
       <Stack.Screen name="PostUpload" component={PostUploadScreen} />
+      <Stack.Screen name="PhotoPreview" component={PhotoPreviewScreen} />
     </Stack.Navigator>
   );
 };
