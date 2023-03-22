@@ -36,8 +36,9 @@ const StoryDetailBox = (props) => {
         setLike(!like);
     };
 
-    const handlePageGoToMap = (place_name) => {
-        //window.location.href = `/map/${place_name}`
+    const handlePageGoToMap = async () => {
+        const response = await request.get('/stories/go_to_map/', {id: id});
+        navigation.navigate('맵', {id: response.data.data.id});
     }
 
     const markup = {
@@ -64,7 +65,7 @@ const StoryDetailBox = (props) => {
 
     useEffect(() => {
         loadItem();
-    }, []);
+    }, [id]);
 
     return (
         <>
@@ -87,7 +88,7 @@ const StoryDetailBox = (props) => {
                     </View>
                     <View style = {{ flexDirection: 'row' }}>
                         <Text>{data.place_name}</Text>
-                        {data.story_like === "ok" ? (
+                        {data.story_like === true ? (
                             <Heart like={!like} onPress={toggleLike} />
                         ) : (
                             <Heart like={like} onPress={toggleLike} />
