@@ -53,6 +53,7 @@ interface PostDetailSectionProps {
     boardFormat: BoardFormat;
     navToPostUpload: any;
     deletePost: any;
+    navToPhotoPreview: any;
 }
 
 const PostCommentItemSection = ({ id, content, isParent, group, email, nickname, created, updated, photoList, boardFormat, navigation, deleteComment, editComponent, replyComponent }: PostCommentItemSectionProps) => {
@@ -73,7 +74,9 @@ const PostCommentItemSection = ({ id, content, isParent, group, email, nickname,
                                     {
                                         photoList.map((uri, index) => {
                                             return (
-                                                <Image key={index} source={{ uri: uri }} style={{ width: 100, height: 100, margin: 5 }} />
+                                                <TouchableOpacity onPress={() => navigation.navigate('PhotoPreview', { photoUri: uri })}>
+                                                    <Image key={index} source={{ uri: uri }} style={{ width: 100, height: 100, margin: 5 }} />
+                                                </TouchableOpacity>
                                             )
                                         })
                                     }
@@ -135,7 +138,7 @@ const PostCommentItemSection = ({ id, content, isParent, group, email, nickname,
     )
 }
 
-const PostDetailSection = ({ post, boardFormat, navToPostUpload, deletePost }: PostDetailSectionProps) => {
+const PostDetailSection = ({ post, boardFormat, navToPostUpload, deletePost, navToPhotoPreview }: PostDetailSectionProps) => {
     return (
         <View style={{ paddingTop: 20, paddingBottom: 20, paddingLeft: 30, paddingRight: 30, borderBottomColor: 'gray', borderBottomWidth: 1 }}>
             <Text style={{ fontSize: 20, fontWeight: '700', marginBottom: 15 }}>{post.title}</Text>
@@ -157,7 +160,9 @@ const PostDetailSection = ({ post, boardFormat, navToPostUpload, deletePost }: P
                         {
                             post.photoList.map((uri, index) => {
                                 return (
-                                    <Image key={index} source={{ uri: uri }} style={{ width: 100, height: 100, margin: 5 }} />
+                                    <TouchableOpacity onPress={() => navToPhotoPreview(uri)}>
+                                        <Image key={index} source={{ uri: uri }} style={{ width: 100, height: 100, margin: 5 }} />
+                                    </TouchableOpacity>
                                 )
                             })
                         }
@@ -310,7 +315,8 @@ const PostDetailScreen = ({ navigation, route }: NativeStackScreenProps<Communit
                         // onEndReached={onEndReached}
                         // onEndReachedThreshold={0.6}
                         ListHeaderComponent={<>
-                            <PostDetailSection post={post} boardFormat={boardFormat} navToPostUpload={navToPostUpload} deletePost={deletePost} />
+                            <PostDetailSection post={post} boardFormat={boardFormat} navToPostUpload={navToPostUpload} deletePost={deletePost}
+                                navToPhotoPreview={(photoUri: string) => navigation.navigate('PhotoPreview', { photoUri: photoUri })} />
                             <PostCommentUploadSection post_id={post_id} board_id={board_id} boardFormat={boardFormat} isParent={true} navigation={navigation} reRenderScreen={reRenderScreen} />
                         </>}
                         ListFooterComponent={loading ? <ActivityIndicator /> : <></>}
