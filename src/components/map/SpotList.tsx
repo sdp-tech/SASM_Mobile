@@ -1,4 +1,4 @@
-import React, { Dispatch, Ref, SetStateAction } from 'react'
+import React, { Dispatch, Ref, SetStateAction, useEffect } from 'react'
 import { TouchableOpacity, ScrollView, Text, View, SafeAreaView } from 'react-native';
 import styled from 'styled-components/native';
 import Pagination from '../../common/Pagination';
@@ -33,6 +33,7 @@ export type DataTypes = {
   place_review: string;
   rep_pic: string;
   open_hours: string;
+  place_like: string;
 }
 
 export default function MapList({ detailRef, placeData, setPage, page, total, setDetailData, setCenter }: MapListProps): JSX.Element {
@@ -42,7 +43,7 @@ export default function MapList({ detailRef, placeData, setPage, page, total, se
         {
           placeData.map(data => {
             return (
-              <ItemCard detailRef={detailRef} key={data.id} data={data} setDetailData={setDetailData} setCenter={setCenter}/>
+              <ItemCard detailRef={detailRef} key={data.id} placeData={data} setDetailData={setDetailData} setCenter={setCenter} />
             )
           })
         }

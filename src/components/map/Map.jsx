@@ -135,6 +135,11 @@ export default function MapContainer({ nowCoor, navigation, route }) {
     place_like: false,
     category_statistics: [],
   });
+	//DetailCard에서 좋아요 누를 시 새로 고침
+	const [refresh, setRefresh] = useState(false);
+	const rerenderScreen = () => {
+		setRefresh(!refresh);
+	}
 	//지도의 중심 좌표
 	const [center, setCenter] = useState(nowCoor);
 	//checkedList => 카테고리 체크 복수 체크 가능
@@ -154,7 +159,7 @@ export default function MapContainer({ nowCoor, navigation, route }) {
 	}
 	const renderDetail = () => {
 		return (
-			<SpotDetail navigation={navigation} route={route} detailData={detailData}/>
+			<SpotDetail navigation={navigation} route={route} detailData={detailData} rerenderScreen={rerenderScreen}/>
 		)
 	}
 	const renderHeader = () => {
@@ -182,7 +187,7 @@ export default function MapContainer({ nowCoor, navigation, route }) {
 	//searchHere, page가 변할 시 데이터 재검색
 	useEffect(() => {
 		getItem();
-	}, [searchHere, page, search, checkedList]);
+	}, [searchHere, page, search, checkedList, refresh]);
 	return (
 		<>
 			{loading ?
