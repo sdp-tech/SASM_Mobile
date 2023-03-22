@@ -44,11 +44,8 @@ const textStyles = StyleSheet.create({
 const ItemCard = (props) => {
 
     const [like, setLike] = useState(false);
-    //const [cookies, setCookie, removeCookie] = useCookies(["name"]);
     const [loading, setLoading] = useState(true);
-    //const request = new Request(cookies, localStorage, navigate);
     const [items, setItems] = useState([]);
-
     const request = new Request();
     const navigation = useNavigation();
 
@@ -91,7 +88,7 @@ const ItemCard = (props) => {
                     marginTop: 110,
                     marginLeft: 20,
                 }}>
-                    {props.story_like === "ok" ? (
+                    {props.story_like === true ? (
                         <Heart like={!like} onPress={toggleLike} />
                     ) : (
                         <Heart like={like} onPress={toggleLike} />

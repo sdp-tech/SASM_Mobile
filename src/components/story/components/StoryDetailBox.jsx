@@ -88,7 +88,7 @@ const StoryDetailBox = (props) => {
                     </View>
                     <View style = {{ flexDirection: 'row' }}>
                         <Text>{data.place_name}</Text>
-                        {data.story_like === "ok" ? (
+                        {data.story_like === true ? (
                             <Heart like={!like} onPress={toggleLike} />
                         ) : (
                             <Heart like={like} onPress={toggleLike} />
