@@ -1,26 +1,23 @@
 import { useState, useEffect } from 'react';
 import { Request } from '../../../common/requests';
-import { useNavigation } from '@react-navigation/native';
 import { View, Text, TouchableOpacity, TextInput, StyleSheet, Alert } from 'react-native';
 
-const WriteComment = ({ id }) => {
-    const request = new Request();
-    const navigation = useNavigation();
+const WriteComment = ({ id, reRenderScreen }) => {
     const [comment, setComment] = useState('');
+    const request = new Request();
+    
     const uploadComment = async () => {
-        // if (!token) {
-        //     alert('로그인이 필요합니다.');
-        //     navigate('/auth');
-        // }
-        // else {
+        if(comment === "" || comment === null){
+            Alert.alert("댓글을 입력해주세요.");
+        }
+        else {
             const response = await request.post("/stories/comments/", {
                 story: id,
                 content: comment,
             }, null);
-        //}
-        Alert.alert("댓글이 등록되었습니다.");
-        navigation.replace('StoryDetail', { id: id });
-
+            Alert.alert("댓글이 등록되었습니다.");
+            reRenderScreen();
+        }
     }
 
     return (
