@@ -9,6 +9,7 @@ import DetailCard from './SpotDetail/DetailCard';
 interface DetailProps extends MapScreenProps {
   detailData: detailDataProps;
   id: number;
+  rerenderScreen: ()=>void;
 }
 
 interface url {
@@ -36,17 +37,17 @@ export interface detailDataProps {
   photos: url[];
   sns: object[];
   story_id: number;
-  place_like: boolean;
+  place_like: string;
   category_statistics: string[];
 }
 
-export default function SpotDetail({ id, navigation, route, detailData }: DetailProps): JSX.Element {
+export default function SpotDetail({ id, navigation, route, detailData, rerenderScreen }: DetailProps): JSX.Element {
   const WindowHeight = Dimensions.get('window').height;
   const WindowWidth = Dimensions.get('window').width;
 
   return (
     <View style={{ width: WindowWidth, height: WindowHeight - 100, backgroundColor: '#FFFFFF' }}>
-        <DetailCard detailData={detailData} navigation={navigation} route={route}/>
+      <DetailCard detailData={detailData} navigation={navigation} route={route} rerenderScreen={rerenderScreen}/>
     </View>
   )
 }
