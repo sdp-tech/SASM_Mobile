@@ -2,8 +2,13 @@ import { useState, useEffect } from 'react';
 import { Request } from '../../../common/requests';
 import { View, Text, TouchableOpacity, TextInput, StyleSheet, Alert } from 'react-native';
 
-const WriteComment = ({ id, reRenderScreen }) => {
-    const [comment, setComment] = useState('');
+interface WriteCommentParams {
+    id: number;
+    reRenderScreen: any;
+}
+
+const WriteComment = ({ id, reRenderScreen }: WriteCommentParams) => {
+    const [comment, setComment] = useState<string>('');
     const request = new Request();
     
     const uploadComment = async () => {
@@ -11,7 +16,7 @@ const WriteComment = ({ id, reRenderScreen }) => {
             Alert.alert("댓글을 입력해주세요.");
         }
         else {
-            const response = await request.post("/stories/comments/", {
+            const response = await request.post("/stories/comments/create/", {
                 story: id,
                 content: comment,
             }, null);
@@ -36,7 +41,7 @@ const WriteComment = ({ id, reRenderScreen }) => {
                 }}
             />
             <TouchableOpacity
-                onPress = {(e) => {uploadComment(e)}}
+                onPress = {uploadComment}
                 style = {{
                     backgroundColor: '#209DF5',
                     width: 60,

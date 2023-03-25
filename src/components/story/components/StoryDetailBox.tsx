@@ -9,32 +9,46 @@ import RenderHTML from 'react-native-render-html';
 import Comment from './Comment';
 import WriteComment from './WriteComment';
 import StoryRecommend from './StoryRecommend';
+import { TabProps } from '../../../../App';
 
-const StoryDetailBox = (props) => {
-    const width = Dimensions.get('screen');
-    const id = props.id;
-    const [data, setData] = useState([]);
-    const [comment, setComment] = useState([]);
-    const [recommend, setRecommend] = useState([]);
-    const [like, setLike] = useState(false);
-    const [loading, setLoading] = useState(true);
-    const [refreshing, setRefreshing] = useState(false);
-    const navigation = useNavigation();
+interface StoryDetailProps {
+    id: number;
+    navigation: any;
+}
+
+interface StoryDetail {
+    id: number;
+    title: string;
+    story_review: string;
+    tag: string;
+    story_like: boolean;
+    category: string;
+    semi_category: string;
+    place_name: string;
+    views: number;
+    html_content: string;
+}
+
+interface RecommendStory {
+    count: number;
+    results: Array<object>;
+}
+
+const StoryDetailBox = ({navigation, id}: StoryDetailProps) => {
+    const width = Number(Dimensions.get('screen'));
+    const [data, setData] = useState<StoryDetail>();
+    const [comment, setComment] = useState([] as any);
+    const [recommend, setRecommend] = useState<RecommendStory>();
+    const [like, setLike] = useState<boolean>(false);
+    const [loading, setLoading] = useState<boolean>(true);
+    const [refreshing, setRefreshing] = useState<boolean>(false);
+    //const navigation = useNavigation();
     const request = new Request();
 
-    // 좋아요 클릭 이벤트
     const toggleLike = async () => {
-        // if (!token) {
-        // alert("로그인이 필요합니다.");
-        // } else {
-        // const response = await request.post("/stories/story_like/", { id: data.id }, null);
-        // console.log("response", response);
-
-        // //색상 채우기
-        // setLike(!like);
-        // }
-        const response = await request.post('/stories/story_like/', { id: props.id }, null);
+        const response = await request.post('/stories/story_like/', { id: id }, null);
         setLike(!like);
+        //reRenderScreen();
     };
 
     const handlePageGoToMap = async () => {
@@ -43,7 +57,7 @@ const StoryDetailBox = (props) => {
     }
 
     const markup = {
-        html: `${data.html_content}`
+        html: `${data?.html_content}`
     }
 
     const renderersProps = {
@@ -54,12 +68,12 @@ const StoryDetailBox = (props) => {
     
     const loadItem = async () => {
         setLoading(true);
-        const response_detail = await request.get("/stories/story_detail/", { id: id }, null);
+        const response_detail = await request.get(`/stories/story_detail/${id}/`);
         const response_comment = await request.get("/stories/comments/", { story: id }, null);
         const recommend_story = await request.get("/stories/recommend_story/", { id: id }, null);
-        // console.log("data", response.data);.
-        setData(response_detail.data.data[0]);
+        setData(response_detail.data.data);
         setComment(response_comment.data.data.results);
+        console.log(response_comment.data.data.results)
         setRecommend(recommend_story.data.data);
         setLoading(false);
     };
@@ -103,20 +117,20 @@ const StoryDetailBox = (props) => {
                             <Text>Back</Text>
                         </TouchableOpacity>
                         <View style = {{ flexDirection: 'row' }}>
-                            <Text>{data.category}</Text>
+                            <Text>{data!.category}</Text>
                             <Text style = {{ marginHorizontal: 10}}>|</Text>
-                            <Text>{data.semi_category}</Text>
+                            <Text>{data!.semi_category}</Text>
                         </View>
                         <View style = {{ flexDirection: 'row' }}>
-                            <Text>{data.place_name}</Text>
-                            {data.story_like === true ? (
+                            <Text>{data!.place_name}</Text>
+                            {data!.story_like === true ? (
                                 <Heart like={!like} onPress={toggleLike} />
                             ) : (
                                 <Heart like={like} onPress={toggleLike} />
                             )}
                         </View>
-                        <Text>{data.tag}</Text>
-                        <Text>{data.story_review}</Text>
+                        <Text>{data!.tag}</Text>
+                        <Text>{data!.story_review}</Text>
                         <RenderHTML
                             contentWidth = {width}
                             source = {markup}
@@ -138,8 +152,6 @@ const StoryDetailBox = (props) => {
                                 shadowOffset: {
                                     width: 0,
                                     height: 3.25,
-                                    top: 3.25,
-                                    bottom: 0
                                 }
                             }}>
                             <Text>Map에서 보기</Text>
@@ -153,9 +165,9 @@ const StoryDetailBox = (props) => {
                     ListFooterComponent = {
                     <>
                         <WriteComment id = {id} reRenderScreen = {reRenderScreen}/>
-                        <Text>{data.category} 카테고리의 다른 글을 확인하세요</Text>
-                        {recommend.count != 0 ? (
-                            <StoryRecommend data={recommend} />
+                        <Text>{data!.category} 카테고리의 다른 글을 확인하세요</Text>
+                        {recommend!.count != 0 ? (
+                            <StoryRecommend data={recommend!.results} navigation = {navigation} />
                         ) : (
                             <></>
                         )}
