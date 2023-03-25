@@ -16,7 +16,7 @@ const WriteComment = ({ id, reRenderScreen }: WriteCommentParams) => {
             Alert.alert("댓글을 입력해주세요.");
         }
         else {
-            const response = await request.post("/stories/comments/", {
+            const response = await request.post("/stories/comments/create/", {
                 story: id,
                 content: comment,
             }, null);

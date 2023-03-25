@@ -33,7 +33,7 @@ const Comment = ({ data, reRenderScreen }: CommentProps) => {
     }
     const deleteComment = async () => {
         const _delete = async () => {
-            await request.delete(`/stories/comments/${data.id}/`, {});
+            await request.delete(`/stories/comments/delete/${data.id}/`, {});
             reRenderScreen();
         }
         Alert.alert(
@@ -56,7 +56,7 @@ const Comment = ({ data, reRenderScreen }: CommentProps) => {
     }
     
     const updateComment = async () => {
-        const response = await request.patch(`/stories/comments/${data.id}/`, {
+        const response = await request.put(`/stories/comments/update/${data.id}/`, {
             content: updateText,
         });
         Alert.alert("댓글이 수정되었습니다.");
