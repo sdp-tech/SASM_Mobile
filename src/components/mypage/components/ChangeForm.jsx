@@ -1,13 +1,10 @@
 import React, { useEffect, useState, useCallback } from 'react';
-import { ImageBackground,Text, ScrollView, View, TouchableOpacity, Alert,StyleSheet,SafeAreaView, localStorage,Image } from "react-native";
+import { ImageBackground,Text, ScrollView, View, TouchableOpacity, Alert,StyleSheet,SafeAreaView, Image } from "react-native";
 import { useFocusEffect, useNavigation } from '@react-navigation/native';
 import { getNickname, removeNickname, removeAccessToken, getEmail } from '../../../common/storage';
-import { onChange } from 'react-native-reanimated';
-import logo from '../../../assets/img/sasm_logo.png';
 import { launchImageLibrary } from 'react-native-image-picker';
 import editimage from '../../../assets/img/Edit_profileimage.png';
 import PhotoOptions from '../../../common/PhotoOptions';
-import ChangeForm from './ChangeForm';
 import { Request } from '../../../common/requests';
 import { TextInput } from 'react-native-gesture-handler';
 import styled, { css } from 'styled-components/native';

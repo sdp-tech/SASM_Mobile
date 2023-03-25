@@ -1,0 +1,124 @@
+{
+  "config": {
+    "adapter": [
+      "xhr",
+      "http"
+    ],
+    "data": "{\"type\":\"email\",\"email\":\"dgfh0450@gmail.cm\"}",
+    "env": {
+      "Blob": [Function Blob
+      ],
+      "FormData": [Function FormData
+      ]
+    },
+    "headers": [Object
+    ],
+    "maxBodyLength": -1,
+    "maxContentLength": -1,
+    "method": "post",
+    "timeout": 0,
+    "transformRequest": [
+      [Function transformRequest
+      ]
+    ],
+    "transformResponse": [
+      [Function transformResponse
+      ]
+    ],
+    "transitional": {
+      "clarifyTimeoutError": false,
+      "forcedJSONParsing": true,
+      "silentJSONParsing": true
+    },
+    "url": "https://api.sasmbe.com/users/rep_check/",
+    "validateStatus": [Function validateStatus
+    ],
+    "xsrfCookieName": "XSRF-TOKEN",
+    "xsrfHeaderName": "X-XSRF-TOKEN"
+  },
+  "data": {
+    "data": "사용 가능한 이메일입니다",
+    "status": "success"
+  },
+  "headers": {
+    "allow": "POST, OPTIONS",
+    "content-length": "65",
+    "content-type": "application/json",
+    "cross-origin-opener-policy": "same-origin",
+    "date": "Sat, 25 Mar 2023 12:43:04 GMT",
+    "referrer-policy": "same-origin",
+    "server": "nginx/1.19.0",
+    "vary": "Accept, Origin",
+    "x-content-type-options": "nosniff",
+    "x-frame-options": "DENY"
+  },
+  "request": {
+    "DONE": 4,
+    "HEADERS_RECEIVED": 2,
+    "LOADING": 3,
+    "OPENED": 1,
+    "UNSENT": 0,
+    "_aborted": false,
+    "_cachedResponse": undefined,
+    "_hasError": false,
+    "_headers": {
+      "accept": "application/json, text/plain, */*",
+      "authorization": "Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNjc5NzQ4NTExLCJpYXQiOjE2NzgzNjU2NDQsImp0aSI6IjM4ZmFmZmQwZGYxZDQzMTI5MGY4YzI0ZWRlYzU0MDg4IiwidXNlcl9pZCI6Mzd9.Q-Ip88n8JNpBqazThvYE4SoVbei3TsUGyKVDuDE65Y8",
+      "content-type": "application/json"
+    },
+    "_incrementalEvents": false,
+    "_lowerCaseResponseHeaders": {
+      "allow": "POST, OPTIONS",
+      "content-length": "65",
+      "content-type": "application/json",
+      "cross-origin-opener-policy": "same-origin",
+      "date": "Sat, 25 Mar 2023 12:43:04 GMT",
+      "referrer-policy": "same-origin",
+      "server": "nginx/1.19.0",
+      "vary": "Accept, Origin",
+      "x-content-type-options": "nosniff",
+      "x-frame-options": "DENY"
+    },
+    "_method": "POST",
+    "_perfKey": "network_XMLHttpRequest_https://api.sasmbe.com/users/rep_check/",
+    "_performanceLogger": {
+      "_closed": false,
+      "_extras": [Object
+      ],
+      "_pointExtras": [Object
+      ],
+      "_points": [Object
+      ],
+      "_timespans": [Object
+      ]
+    },
+    "_requestId": null,
+    "_response": "{\"status\":\"success\",\"data\":\"사용 가능한 이메일입니다\"}",
+    "_responseType": "",
+    "_sent": true,
+    "_subscriptions": [],
+    "_timedOut": false,
+    "_trackingName": "unknown",
+    "_url": "https://api.sasmbe.com/users/rep_check/",
+    "readyState": 4,
+    "responseHeaders": {
+      "Content-Length": "65",
+      "Content-Type": "application/json",
+      "Date": "Sat, 25 Mar 2023 12:43:04 GMT",
+      "Server": "nginx/1.19.0",
+      "Vary": "Accept, Origin",
+      "allow": "POST, OPTIONS",
+      "cross-origin-opener-policy": "same-origin",
+      "referrer-policy": "same-origin",
+      "x-content-type-options": "nosniff",
+      "x-frame-options": "DENY"
+    },
+    "responseURL": "https://api.sasmbe.com/users/rep_check/",
+    "status": 200,
+    "timeout": 0,
+    "upload": {},
+    "withCredentials": true
+  },
+  "status": 200,
+  "statusText": undefined
+}
