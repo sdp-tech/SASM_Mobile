@@ -1,5 +1,5 @@
-import { SafeAreaView, View, Text, StyleSheet, TouchableOpacity, Dimensions, ScrollView } from 'react-native';
-import { useState, useEffect } from 'react';
+import { SafeAreaView, View, Text, StyleSheet, TouchableOpacity, Dimensions, ScrollView, FlatList } from 'react-native';
+import { useState, useEffect, useMemo } from 'react';
 import styled from 'styled-components';
 import Loading from '../../../common/Loading';
 import { Request } from '../../../common/requests';
@@ -18,6 +18,7 @@ const StoryDetailBox = (props) => {
     const [recommend, setRecommend] = useState([]);
     const [like, setLike] = useState(false);
     const [loading, setLoading] = useState(true);
+    const [refreshing, setRefreshing] = useState(false);
     const navigation = useNavigation();
     const request = new Request();
 
@@ -49,7 +50,7 @@ const StoryDetailBox = (props) => {
         img: {
           enableExperimentalPercentWidth: true
         }
-      };
+    };
     
     const loadItem = async () => {
         setLoading(true);
@@ -58,87 +59,112 @@ const StoryDetailBox = (props) => {
         const recommend_story = await request.get("/stories/recommend_story/", { id: id }, null);
         // console.log("data", response.data);.
         setData(response_detail.data.data[0]);
-        setComment(response_comment.data.data);
+        setComment(response_comment.data.data.results);
         setRecommend(recommend_story.data.data);
         setLoading(false);
     };
 
+    const reRenderScreen = () => {
+        setRefreshing(true);
+        setRefreshing(false);
+    }
+
+    const onRefresh = async () => {
+        if(!refreshing){
+            setRefreshing(true);
+            await loadItem();
+            setRefreshing(false);
+        }
+    }
+
     useEffect(() => {
         loadItem();
-    }, [id]);
+    }, [refreshing]);
 
     return (
         <>
             {loading ? (
                 <Loading />
             ) : (
-                <ScrollView style = {{ margin: 25 }}>
-                    <TouchableOpacity style = {{
-                        alignItems: 'flex-end',
-                    }}
-                        onPress = {() => {
-                            navigation.goBack();
-                        }}>
-                        <Text>Back</Text>
-                    </TouchableOpacity>
-                    <View style = {{ flexDirection: 'row' }}>
-                        <Text>{data.category}</Text>
-                        <Text style = {{ marginHorizontal: 10}}>|</Text>
-                        <Text>{data.semi_category}</Text>
-                    </View>
-                    <View style = {{ flexDirection: 'row' }}>
-                        <Text>{data.place_name}</Text>
-                        {data.story_like === true ? (
-                            <Heart like={!like} onPress={toggleLike} />
-                        ) : (
-                            <Heart like={like} onPress={toggleLike} />
-                        )}
-                    </View>
-                    <Text>{data.tag}</Text>
-                    <Text>{data.story_review}</Text>
-                    <RenderHTML
-                        contentWidth = {width}
-                        source = {markup}
-                        renderersProps = {renderersProps} />
-                    <TouchableOpacity 
-                        onPress = {handlePageGoToMap}
-                        style = {{
-                            alignSelf: 'center',
-                            alignItems: 'center',
-                            justifyContent: 'space-around',
-                            backgroundColor: '#3AE89480',
-                            width: 129,
-                            height: 33,
-                            borderRadius: 24,
-                            shadowRadius: 3.25,
-                            shadowOpacity: 25,
-                            shadowColor: 'rgba(0, 0, 0, 0.25)',
-                            shadowOffset: {
-                                width: 0,
-                                height: 3.25,
-                                top: 3.25,
-                                bottom: 0
-                            }
-                        }}>
-                        <Text>Map에서 보기</Text>
-                    </TouchableOpacity>
-                    {comment.results.map((data, index) => {
+                <SafeAreaView style = {{ margin: 25 }}>
+                <FlatList
+                    data = {comment}
+                    onRefresh = {onRefresh}
+                    refreshing = {refreshing}
+                    disableVirtualization = {false}
+                    ListHeaderComponent={
+                    <>
+                        <TouchableOpacity style = {{
+                            alignItems: 'flex-end',
+                        }}
+                            onPress = {() => {
+                                navigation.goBack();
+                            }}>
+                            <Text>Back</Text>
+                        </TouchableOpacity>
+                        <View style = {{ flexDirection: 'row' }}>
+                            <Text>{data.category}</Text>
+                            <Text style = {{ marginHorizontal: 10}}>|</Text>
+                            <Text>{data.semi_category}</Text>
+                        </View>
+                        <View style = {{ flexDirection: 'row' }}>
+                            <Text>{data.place_name}</Text>
+                            {data.story_like === true ? (
+                                <Heart like={!like} onPress={toggleLike} />
+                            ) : (
+                                <Heart like={like} onPress={toggleLike} />
+                            )}
+                        </View>
+                        <Text>{data.tag}</Text>
+                        <Text>{data.story_review}</Text>
+                        <RenderHTML
+                            contentWidth = {width}
+                            source = {markup}
+                            // renderersProps = {renderersProps} 
+                            />
+                        <TouchableOpacity 
+                            onPress = {handlePageGoToMap}
+                            style = {{
+                                alignSelf: 'center',
+                                alignItems: 'center',
+                                justifyContent: 'space-around',
+                                backgroundColor: '#3AE89480',
+                                width: 129,
+                                height: 33,
+                                borderRadius: 24,
+                                shadowRadius: 3.25,
+                                shadowOpacity: 25,
+                                shadowColor: 'rgba(0, 0, 0, 0.25)',
+                                shadowOffset: {
+                                    width: 0,
+                                    height: 3.25,
+                                    top: 3.25,
+                                    bottom: 0
+                                }
+                            }}>
+                            <Text>Map에서 보기</Text>
+                        </TouchableOpacity>
+                    </>}
+                    renderItem = {({item}) => { 
                         return (
-                            <Comment data = {data} key = {index} />
+                            <Comment data = {item} reRenderScreen = {reRenderScreen}/>
                         )
-                    })}
-                    <WriteComment id = {id} />
-                    <Text>{data.category} 카테고리의 다른 글을 확인하세요</Text>
-                    {recommend.count != 0 ? (
-                        <StoryRecommend data={recommend} />
-                    ) : (
-                        <></>
-                    )}
-                </ScrollView>
+                    }}
+                    ListFooterComponent = {
+                    <>
+                        <WriteComment id = {id} reRenderScreen = {reRenderScreen}/>
+                        <Text>{data.category} 카테고리의 다른 글을 확인하세요</Text>
+                        {recommend.count != 0 ? (
+                            <StoryRecommend data={recommend} />
+                        ) : (
+                            <></>
+                        )}
+                    </>}
+                />
+                </SafeAreaView>
             )}
         </>
     )
 }
-
 
 export default StoryDetailBox;

@@ -53,16 +53,26 @@ const StoryListPage = ({ navigation, route }) => {
     const [orderList, setOrderList] = useState(true);
     const [page, setPage] = useState(1);
     const [pageCount, setPageCount] = useState([]);
+    const [nextPage, setNextPage] = useState(null);
     const [limit, setLimit] = useState(4);
     const [search, setSearch] = useState('');
+    const [isSearch, setIsSearch] = useState(false);
+    const [refreshing, setRefreshing] = useState(false);
+
     const request = new Request();
     
     useEffect(() => {
-        handleSearchToggle();
+        async function getData() {
+            setLoading(true);
+            setItem(await handleSearchToggle());
+            console.log(item);
+            setLoading(false);
+        }
+        getData();
     }, [page, search, orderList])
 
     const handleSearchToggle = async () => {
-        setLoading(true);
+        //setLoading(true);
 
         let newPage;
         if (page === 1) {
@@ -74,8 +84,10 @@ const StoryListPage = ({ navigation, route }) => {
         let searched;
         if (search === null || search === "") {
             searched = null;
+            setIsSearch(false);
         } else {
             searched = search;
+            setIsSearch(true);
         }
         
         const response = await request.get('/stories/story_search/', {
@@ -83,16 +95,34 @@ const StoryListPage = ({ navigation, route }) => {
             search: searched,
             latest: orderList
         }, null);
-        setItem(response.data.data.results);
+        //setItem(response.data.data.results);
         setPageCount(response.data.data.count);
-        setLoading(false);
+        setNextPage(response.data.data.next);
+        //setLoading(false);
+        return response.data.data.results;
     }
 
-    const onEndReached = () => {
-        if(loading)
+    const onRefresh = async () => {
+        if(!refreshing || page !== 1){
+            setRefreshing(true);
+            setItem(await handleSearchToggle());
+            setPage(1);
+            setRefreshing(false);
+        }
+    }
+
+    const onEndReached = async () => {
+        console.log('loading => ', loading, "search => ", isSearch)
+        if(loading || isSearch || nextPage === null){
             return;
+        }
         else {
             setPage(page + 1);
+            setLoading(true);
+            //setItem(item.concat(await handleSearchToggle()))
+            setItem([...item, ...await handleSearchToggle()]);
+            //item.push(await handleSearchToggle());
+            setLoading(false);
         }
     }
 
@@ -156,8 +186,10 @@ const StoryListPage = ({ navigation, route }) => {
                     </View>
                     <StoryList 
                         info = {item}
+                        onRefresh = {onRefresh}
+                        refreshing = {refreshing}
                         //onEndReached = {onEndReached}
-                        //loading = {loading}
+                        loading = {loading}
                     />
                     <FooterSection>
                         <Pagination

@@ -1,10 +1,7 @@
 import { useEffect, useState } from 'react';
 import styled from 'styled-components';
 import { View, Text, TouchableOpacity, Image, TextInput, Alert, FlatList } from 'react-native';
-// import { useCookies } from 'react-cookie';
 import { Request } from '../../../common/requests';
-import { useNavigation } from '@react-navigation/native';
-import WriteComment from './WriteComment';
 
 const TextButton = ({text, onPress}) => {
     return (
@@ -15,29 +12,45 @@ const TextButton = ({text, onPress}) => {
     )
 }
 
-const Comment = ({ data }) => {
+const Comment = ({ data, reRenderScreen }) => {
     const date = data.created_at.slice(0, 10);
     const [update, setUpdate] = useState(false);
-    //const [cookies, setCookie, removeCookie] = useCookies(["name"]);
-    // const token = cookies.name; // 쿠키에서 id 를 꺼내기
-    //const token = localStorage.getItem("accessTK"); //localStorage에서 accesstoken꺼내기
-    const navigation = useNavigation();
-    const request = new Request();
-    //const email = localStorage.getItem('email');
     const [updateText, setUpdateText] = useState(data.content);
+    const request = new Request();
 
     const handleUpdate = () => {
         setUpdate(!update);
     }
     const deleteComment = async () => {
-        const response = await request.delete(`/stories/comments/${data.id}/`, {});
-        navigation.replace('StoryDetail', { id: data.story });
+        const _delete = async () => {
+            await request.delete(`/stories/comments/${data.id}/`, {});
+            reRenderScreen();
+        }
+        Alert.alert(
+            "댓글 삭제 확인",
+            "정말로 삭제하시겠습니까?",
+            [
+                {
+                    text: "삭제",
+                    onPress: () => _delete(),
+
+                },
+                {
+                    text: "취소",
+                    onPress: () => { },
+                    style: "cancel"
+                },
+            ],
+            { cancelable: false }
+        );
     }
+    
     const updateComment = async () => {
         const response = await request.patch(`/stories/comments/${data.id}/`, {
             content: updateText,
         });
-        navigation.replace('StoryDetail', { id: data.story });
+        Alert.alert("댓글이 수정되었습니다.");
+        reRenderScreen();
     }
     // let isWriter = false;
     // if (data.email == email) {
