@@ -3,7 +3,17 @@ import styled from 'styled-components';
 import { View, Text, TouchableOpacity, Image, TextInput, Alert, FlatList } from 'react-native';
 import { Request } from '../../../common/requests';
 
-const TextButton = ({text, onPress}) => {
+interface CommentProps {
+    data: any;
+    reRenderScreen: any;
+}
+
+interface TextButtonProps {
+    text: string;
+    onPress: any;
+}
+
+const TextButton = ({text, onPress}: TextButtonProps) => {
     return (
         <TouchableOpacity
             onPress = {onPress}>
@@ -12,9 +22,9 @@ const TextButton = ({text, onPress}) => {
     )
 }
 
-const Comment = ({ data, reRenderScreen }) => {
+const Comment = ({ data, reRenderScreen }: CommentProps) => {
     const date = data.created_at.slice(0, 10);
-    const [update, setUpdate] = useState(false);
+    const [update, setUpdate] = useState<boolean>(false);
     const [updateText, setUpdateText] = useState(data.content);
     const request = new Request();
 
@@ -59,7 +69,7 @@ const Comment = ({ data, reRenderScreen }) => {
     return (
         <View>
             <View style = {{ flexDirection: 'row' }}>
-                <Image src = {data.profile_image}
+                <Image source = {{uri: data.profile_image}}
                     style = {{
                         width: 36,
                         height: 36,
@@ -77,8 +87,7 @@ const Comment = ({ data, reRenderScreen }) => {
                         <TextButton onPress = {() => {
                             handleUpdate();
                         }}
-                            text = '수정'
-                            style = {{ }} />
+                            text = '수정' />
                         <TextButton onPress = {deleteComment} text = '삭제' />
                     </>
                 }
