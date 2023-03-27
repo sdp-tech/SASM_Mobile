@@ -156,6 +156,9 @@ const PostDetailSection = ({ post, boardFormat, navToPostUpload, deletePost, nav
         const response = await request.post(`/community/posts/${post.id}/like/`);
         setLike(!like);
       }
+      useEffect(() => {
+        setLike(post.likes);
+      }, [post]);
 
     return (
         <View style={{ paddingTop: 20, paddingBottom: 20, paddingLeft: 30, paddingRight: 30, borderBottomColor: 'gray', borderBottomWidth: 1 }}>
