@@ -178,6 +178,7 @@ const PostListScreen = ({ navigation, route }: NativeStackScreenProps<CommunityS
     const [boardFormat, setBoardFormat] = useState<BoardFormat>();
     const [page, setPage] = useState(1);
     const [searchQuery, setSearchQuery] = useState('');
+    const [searchType, setSearchType] = useState('default');
     const [searchEnabled, setSearchEnabled] = useState(true);
     const [posts, setPosts] = useState([]); // id, title, preview, nickname, email, likeCount, created, commentCount
 
@@ -191,7 +192,7 @@ const PostListScreen = ({ navigation, route }: NativeStackScreenProps<CommunityS
         return response.data;
     }
 
-    const getPosts = async (searchQuery: string, searchType: string) => {
+    const getPosts = async (searchQuery: string, searchType: string, page: number) => {
         const response = await request.get("/community/posts/", {
             board: board_id,
             query: searchQuery,
@@ -206,17 +207,16 @@ const PostListScreen = ({ navigation, route }: NativeStackScreenProps<CommunityS
         if (!refreshing) {
             setPage(1);
             setRefreshing(true);
-            setPosts(await getPosts(searchQuery, 'default'));
+            setPosts(await getPosts(searchQuery, 'default', 1));
             setRefreshing(false);
         }
     }
 
     const onEndReached = async () => {
         if (!loading) {
+            const newPosts = await getPosts(searchQuery, searchType, page + 1);
+            setPosts([...posts, ...newPosts as never]);
             setPage(page + 1);
-            setLoading(true);
-            posts.push(await getPosts(searchQuery, 'default') as never);
-            setLoading(false);
         }
     }
 
@@ -230,7 +230,7 @@ const PostListScreen = ({ navigation, route }: NativeStackScreenProps<CommunityS
             try {
                 setLoading(true);
                 setBoardFormat(await getBoardFormat());
-                setPosts(await getPosts(searchQuery, 'default'));
+                setPosts(await getPosts(searchQuery, 'default', 1));
                 setLoading(false);
             }
             catch (err) {
@@ -250,12 +250,16 @@ const PostListScreen = ({ navigation, route }: NativeStackScreenProps<CommunityS
                         searchQuery={searchQuery}
                         onChange={async (searchQuery: string) => {
                             setSearchQuery(searchQuery);
-                            setPosts(await getPosts(searchQuery, 'default'));
+                            setSearchType('default');
+                            // TODO: BE로부터 받아오는 page의 size를 10으로 조정 필요, 현재 5개로는 한 페이지 cover 불가
+                            setPosts(await getPosts(searchQuery, 'default', 1));
+                            setPage(1);
                         }}
                         clearSearchQuery={async () => {
                             setSearchQuery('');
                             setSearchEnabled(true);
-                            setPosts(await getPosts('', 'default'));
+                            setSearchType('default');
+                            setPosts(await getPosts('', 'default', 1));
                         }}
                         searchEnabled={searchEnabled}
                     />
@@ -264,17 +268,18 @@ const PostListScreen = ({ navigation, route }: NativeStackScreenProps<CommunityS
                             <FlatList
                                 data={posts}
                                 // keyExtractor={(_) => _.title}
-                                style={styles.container}
+                                style={{ flexGrow: 1 }}
                                 // ListHeaderComponent={<StorySection />}
                                 onRefresh={onRefresh}
                                 refreshing={refreshing}
-                                // onEndReached={onEndReached}
-                                // onEndReachedThreshold={0}
-                                // ListFooterComponent={loading && <ActivityIndicator />}
+                                onEndReached={onEndReached}
+                                onEndReachedThreshold={0}
+                                ListFooterComponent={loading ? <ActivityIndicator /> : <></>}
                                 renderItem={({ item }) => {
                                     const { id, title, preview, nickname, created, commentCount, likeCount } = item;
                                     return (
                                         <PostItemSection
+                                            key={id}
                                             board_id={board_id}
                                             post_id={id}
                                             board_name={board_name}
@@ -303,7 +308,8 @@ const PostListScreen = ({ navigation, route }: NativeStackScreenProps<CommunityS
                                 doHashtagSearch={async (searchQuery: string) => {
                                     setSearchQuery('해시태그 \'' + searchQuery + '\' 검색 결과');
                                     setSearchEnabled(false);
-                                    setPosts(await getPosts(searchQuery, 'hashtag'));
+                                    setSearchType('hashtag');
+                                    setPosts(await getPosts(searchQuery, 'hashtag', 1));
                                 }} />
                         </>
                     }
@@ -317,6 +323,7 @@ const PostListScreen = ({ navigation, route }: NativeStackScreenProps<CommunityS
 const styles = StyleSheet.create({
     container: {
         flex: 1,
+        flexGrow: 1,
         backgroundColor: "white"
     }
 });
