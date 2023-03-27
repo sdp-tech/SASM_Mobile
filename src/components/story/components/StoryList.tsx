@@ -30,11 +30,11 @@ const StoryList = ({ info, onEndReached, loading, onRefresh, refreshing, navigat
                             navigation = {navigation}
                         />
                     )}
-                    initialNumToRender = {10}
+                    keyExtractor = {(item, index) => String(index)}
                     onRefresh = {onRefresh}
                     refreshing = {refreshing}
                     onEndReached = {onEndReached}
-                    //onEndReachedThreshold = {0.7}
+                    showsVerticalScrollIndicator = {true}
                     ListFooterComponent = {loading ? <ActivityIndicator /> : null}
                 />
             )}
