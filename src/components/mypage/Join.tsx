@@ -75,6 +75,10 @@ export default function JoinScreen(): JSX.Element {
           placeholder='이메일'
           onChangeText={(text) => { setForm({ ...form, email: text }) }}
           message={emailCheck ? "" : "이메일 형식이 올바르지 않습니다"}
+          spellCheck={false}
+          autoCapitalize="none"
+          keyboardType={'email-address'}
+          textContentType="emailAddress"
         />
         <InputWithMessage
           label='비밀번호'
@@ -82,6 +86,7 @@ export default function JoinScreen(): JSX.Element {
           placeholder='비밀번호'
           onChangeText={(text) => { setForm({ ...form, password: text }) }}
           secureTextEntry={true}
+          textContentType="newPassword"
         />
         <InputWithMessage
           label='메일 주소'
@@ -98,6 +103,7 @@ export default function JoinScreen(): JSX.Element {
           onPress={() => { checkDuplicate("nickname", form.nickname) }}
           placeholder='닉네임'
           onChangeText={(text) => { setForm({ ...form, nickname: text }) }}
+          textContentType="nickname"
         />
         <TouchableOpacity onPress={tryRegister}><Text>회원가입</Text></TouchableOpacity>
       </ScrollView>
