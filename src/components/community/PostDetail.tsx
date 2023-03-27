@@ -2,12 +2,14 @@ import React, { useState, useEffect } from 'react';
 import { View, FlatList, StyleSheet, Text, SafeAreaView, ActivityIndicator, TouchableOpacity, Image, Alert } from 'react-native';
 import type { NativeStackScreenProps } from '@react-navigation/native-stack';
 import styled from 'styled-components/native';
+import Heart from '../../common/Heart';
 
 import { BoardFormat, CommunityStackParams } from '../../pages/Community';
 import PostCommentUploadSection from './PostCommentUpload';
 import { Request } from '../../common/requests';
 
 interface Post {
+    id: number;
     board: number;
     title: string;
     content: string;
@@ -147,6 +149,17 @@ const PostCommentItemSection = ({ id, content, isParent, group, email, nickname,
 }
 
 const PostDetailSection = ({ post, boardFormat, navToPostUpload, deletePost, navToPhotoPreview }: PostDetailSectionProps) => {
+    const [like, setLike] = useState<boolean>(false);
+    const request = new Request();
+
+    const toggleLike = async () => {
+        const response = await request.post(`/community/posts/${post.id}/like/`);
+        setLike(!like);
+      }
+      useEffect(() => {
+        setLike(post.likes);
+      }, [post]);
+
     return (
         <View style={{ paddingTop: 20, paddingBottom: 20, paddingLeft: 30, paddingRight: 30, borderBottomColor: 'gray', borderBottomWidth: 1 }}>
             <Text style={{ fontSize: 20, fontWeight: '700', marginBottom: 15 }}>{post.title}</Text>
@@ -176,7 +189,6 @@ const PostDetailSection = ({ post, boardFormat, navToPostUpload, deletePost, nav
                         }
                     </PhotoBox> : <></>
             }
-
             <View style={{ flexDirection: 'row' }}>
                 <TouchableOpacity style={{ marginRight: 10 }} onPress={() => navToPostUpload()}>
                     <View style={{ backgroundColor: '#D3D3D3', borderWidth: 0.5, borderRadius: 10, width: 50, height: 25, alignItems: 'center', justifyContent: 'center' }}>
@@ -188,6 +200,7 @@ const PostDetailSection = ({ post, boardFormat, navToPostUpload, deletePost, nav
                         <Text style={{ fontSize: 15, fontWeight: '600' }}>삭제</Text>
                     </View>
                 </TouchableOpacity>
+                <Heart like={like} onPress={toggleLike}></Heart>
             </View>
         </View>
     )
@@ -242,7 +255,6 @@ const PostDetailScreen = ({ navigation, route }: NativeStackScreenProps<Communit
             setRefreshing(false);
         }
     }
-
 
     const deletePost = async () => {
         const _delete = async () => {
@@ -350,7 +362,6 @@ const PostDetailScreen = ({ navigation, route }: NativeStackScreenProps<Communit
                     />
                 </>
             }
-
         </SafeAreaView>
     );
 };
