@@ -136,6 +136,7 @@ const LoginScreen = ({ navigation }) => {
                     </SignUpButton>
                 </TouchableOpacity>
             </View>
+            <TouchableOpacity onPress={()=> navigation.navigate('findidpw')}><Text>아이디/비밀번호 찾기</Text></TouchableOpacity>
         </SafeAreaView>)
 }
 
