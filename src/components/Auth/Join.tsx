@@ -1,8 +1,8 @@
-import React, { useState } from 'react'
-import { ScrollView, Text, TextInput, TouchableOpacity, View, Alert } from 'react-native'
-import styled from 'styled-components/native'
-import { Request } from '../../common/requests'
-import InputWithMessage from './components/InputWithMessage'
+import React, { useState } from 'react';
+import { ScrollView, Text, TextInput, TouchableOpacity, View, Alert } from 'react-native';
+import styled from 'styled-components/native';
+import { Request } from '../../common/requests';
+import InputWithMessage from '../mypage/components/InputWithMessage';
 
 const StyledInput = styled.TextInput`
   height: 30px;
@@ -40,11 +40,11 @@ export default function JoinScreen(): JSX.Element {
     emailCheck = true;
   }
   // 비밀번호 확인 체크
-  let passwordCheck = false;
+  let passwordCheck:boolean = false;
   if (form.password === form.passwordConfirm || form.passwordConfirm === "")
     passwordCheck = true;
 
-  const checkDuplicate = async (type: string, data: string): Promise<void> => {
+  const checkDuplicate = async (type: string, data: string) => {
     let response_check;
     if (type == "email") {
       response_check = await request.post('/users/rep_check/', {

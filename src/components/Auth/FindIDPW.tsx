@@ -3,9 +3,12 @@ import React, { useState } from 'react';
 import { Alert, Text, TouchableOpacity, View } from 'react-native';
 import styled from 'styled-components/native';
 import { Request } from '../../common/requests';
-import IdExist from './components/IdExist';
-import IdNotExist from './components/IdNotExist';
-import InputWithMessage from './components/InputWithMessage';
+import FindId from './function/FindId';
+import IdExist from './IdExist';
+import IdNotExist from './IdNotExist';
+import InputWithMessage from '../mypage/components/InputWithMessage';
+import FindPw from './function/FindPw';
+import SetNewPassword from './SetNewPassword';
 
 const TabsBox = styled.View`
   display: flex;
@@ -36,7 +39,8 @@ export type findScreenProps = {
   };
   'idNotExist': {
     email: string;
-  }
+  };
+  'setNewpassword': any;
 }
 
 export default function FindIDPWScreen(): JSX.Element {
@@ -50,6 +54,7 @@ export default function FindIDPWScreen(): JSX.Element {
       <findStack.Screen name='home' component={FindIDPW} />
       <findStack.Screen name="idExist" component={IdExist} />
       <findStack.Screen name='idNotExist' component={IdNotExist} />
+      <findStack.Screen name='setNewpassword' component={SetNewPassword} />
     </findStack.Navigator>
   )
 }
@@ -75,15 +80,24 @@ const FindIDPW = ({ navigation, route }: StackScreenProps<findScreenProps, 'home
       Alert.alert("이메일을 입력해주세요");
     }
     else {
-      const response_exist = await request.post('/users/findid/', {
-        email: email,
-      });
-      if (response_exist.data.data === "존재하는 이메일입니다") {
+      const response = await FindId(email);
+      if (response.data.data === "존재하는 이메일입니다") {
         navigation.navigate('idExist', { email: email });
       }
-      else if (response_exist.data.data === "존재하지 않는 이메일입니다") {
+      else if (response.data.ddata === "존재하지 않는 이메일입니다") {
         navigation.navigate('idNotExist', { email: email });
       }
+    }
+  }
+
+  const postPassWordCode = async () => {
+    const response = await FindId(email);
+    if (response.data.data === "존재하는 이메일입니다") {
+      await FindPw(email);
+      navigation.navigate('setNewpassword');
+    }
+    else if (response.data.data === "존재하지 않는 이메일입니다") {
+      navigation.navigate('idNotExist', { email: email });
     }
   }
 
@@ -108,7 +122,19 @@ const FindIDPW = ({ navigation, route }: StackScreenProps<findScreenProps, 'home
               textContentType='emailAddress'
             />
           </View> :
-          <View><Text>비밀번호</Text></View>
+          <View>
+            <InputWithMessage
+              label='아이디'
+              buttonView={emailCheck}
+              placeholder="이메일"
+              onPress={postPassWordCode}
+              onChangeText={(text) => { setEmail(text) }}
+              message={emailCheck ? "" : "이메일 형식이 올바르지 않습니다"}
+              spellCheck={false}
+              autoCapitalize="none"
+              textContentType='emailAddress'
+            />
+          </View>
       }
     </View>
   )
