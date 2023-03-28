@@ -2,12 +2,12 @@ import React, { useEffect, useState } from 'react';
 import { Text, View, SafeAreaView } from "react-native";
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import UserInfoBox from '../components/mypage/components/UserInfoBox';
-import LoginScreen from '../components/mypage/Login';
-import JoinScreen from '../components/mypage/Join';
+import LoginScreen from '../components/Auth/Login';
+import JoinScreen from '../components/Auth/Join';
 import ChangeForm from '../components/mypage/components/ChangeForm';
 import PasswordChange from '../components/mypage/components/ChangePassword';
 import Feedback from '../components/mypage/components/GetFeedback';
-import FindIDPWScreen from '../components/mypage/FindIDPW';
+import FindIDPWScreen from '../components/Auth/FindIDPW';
 import { StackNavigationProp } from '@react-navigation/stack';
 
 export type MyPageProps = {
