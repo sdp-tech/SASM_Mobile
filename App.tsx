@@ -6,7 +6,7 @@ import { NavigationContainer, NavigationProp, useNavigation } from '@react-navig
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { createNativeStackNavigator, NativeStackScreenProps } from '@react-navigation/native-stack';
 import MapScreen from './src/pages/SpotMap';
-import LoginScreen from './src/components/mypage/Login';
+import LoginScreen from './src/components/Auth/Login';
 import MyPageScreen from './src/pages/MyPage';
 import CommunityScreen from './src/pages/Community';
 import StoryScreen from './src/pages/Story';

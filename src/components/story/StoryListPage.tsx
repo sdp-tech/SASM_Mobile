@@ -1,12 +1,11 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { SafeAreaView, Text, View, StyleSheet, TouchableOpacity } from 'react-native';
 import styled from 'styled-components/native';
 import SearchBar from '../../common/SearchBar';
-import Pagination from '../../common/Pagination';
 import Loading from "../../common/Loading";
 import StoryList from './components/StoryList';
 import { Request } from '../../common/requests';
-import { useNavigation, useIsFocused } from '@react-navigation/native';
+import { useIsFocused, useFocusEffect } from '@react-navigation/native';
 import { StoryProps } from '../../pages/Story';
 
 interface ToggleButtonProps {
@@ -14,19 +13,6 @@ interface ToggleButtonProps {
     text: string;
     color?: string;
 }
-
-const FooterSection = styled.View`
-  display: flex;
-  flex-direction: row;
-  position: absolute;
-  bottom: 0;
-  width: 100%;
-  // position: relative;
-  z-index: 20;
-  justify-content: center;
-  align-items: center;
-  background-color: #FFFFFF;
-`;
 
 const ToggleButton = ({onPress, text, color }: ToggleButtonProps) => {
     return (
@@ -57,62 +43,53 @@ const StoryListPage = ({ navigation, route }: StoryProps) => {
     const [loading, setLoading] = useState<boolean>(false);
     const [orderList, setOrderList] = useState<boolean>(true);
     const [page, setPage] = useState<number>(1);
-    const [pageCount, setPageCount] = useState<number>(0);
     const [nextPage, setNextPage] = useState<any>(null);
-    const [limit, setLimit] = useState<number>(4);
     const [search, setSearch] = useState<string>('');
     const [isSearch, setIsSearch] = useState<boolean>(false);
     const [refreshing, setRefreshing] = useState<boolean>(false);
+    const [latest, setLatest] = useState<boolean>(false);
 
     const request = new Request();
     const isFocused = useIsFocused();
     
     useEffect(() => {
-        async function getData() {
-            setLoading(true);
-            setItem(await handleSearchToggle());
-            setLoading(false);
-        }
-        if(isFocused){
-            getData();
-        }
-    }, [page, search, orderList, isFocused])
+        handleSearchToggle();
+        getStories();
+    }, [page, search, orderList]);
 
     const handleSearchToggle = async () => {
-        //setLoading(true);
-
-        let newPage;
-        if (page === 1) {
-            newPage = null;
-        } else {
-            newPage = page;
-        }
-
-        let searched;
         if (search === null || search === "") {
-            searched = null;
             setIsSearch(false);
         } else {
-            searched = search;
             setIsSearch(true);
+            setPage(1);
         }
-        
+    }
+
+    const getStories = async () => {
+        setLoading(true);
+
         const response = await request.get('/stories/story_search/', {
-            page: newPage,
-            search: searched,
+            page: page, 
+            search: search,
             latest: orderList
         }, null);
-        //setItem(response.data.data.results);
-        setPageCount(response.data.data.count);
+        
+        if(latest || page === 1){
+            setItem([...response.data.data.results]);
+            setLatest(false);
+            setIsSearch(false);
+        } else {
+            setItem([...item, ...response.data.data.results]);
+        }
         setNextPage(response.data.data.next);
-        //setLoading(false);
-        return response.data.data.results;
+        setLoading(false);
+        console.log(item);
     }
 
     const onRefresh = async () => {
         if(!refreshing || page !== 1){
             setRefreshing(true);
-            setItem(await handleSearchToggle());
             setPage(1);
             setRefreshing(false);
         }
@@ -123,12 +100,8 @@ const StoryListPage = ({ navigation, route }: StoryProps) => {
             return;
         }
         else {
-            //setPage(page + 1);
+            setPage(page + 1);
             setLoading(true);
-            //setItem(item.concat(await handleSearchToggle()))
-            //item.append(...await handleSearchToggle())
-            //setItem([...item, ...await handleSearchToggle()]);
-            //item.push(await handleSearchToggle());
             setLoading(false);
         }
     }
@@ -173,6 +146,8 @@ const StoryListPage = ({ navigation, route }: StoryProps) => {
                                     text = '최신 순'
                                     onPress={() => {
                                         setOrderList(!orderList);
+                                        setPage(1);
+                                        setLatest(true);
                                     }} />
                                 <ToggleButton 
                                     color = '#03B961'
@@ -187,6 +162,8 @@ const StoryListPage = ({ navigation, route }: StoryProps) => {
                                     text = '오래된 순'
                                     onPress={() => {
                                         setOrderList(!orderList);
+                                        setPage(1);
+                                        setLatest(true);
                                     }} />
                                 </>
                             }
@@ -199,14 +176,6 @@ const StoryListPage = ({ navigation, route }: StoryProps) => {
                         loading = {loading}
                         navigation = {navigation}
                     />
-                    <FooterSection>
-                        <Pagination
-                            total = {pageCount}
-                            limit = {limit}
-                            page = {page}
-                            setPage = {setPage}
-                        />
-                    </FooterSection>
                 </SafeAreaView>
             )}
         </>
