@@ -13,7 +13,7 @@ import { StackNavigationProp } from '@react-navigation/stack';
 export type MyPageProps = {
     'mypage': any;
     'login': any;
-    'join': any;
+    'register': any;
     'change': any;
     'changepw': any;
     'feedback': any;
@@ -30,7 +30,7 @@ const MyPageScreen = () => {
             })} >
             <MyPageStack.Screen name="mypage" component={UserInfoBox} />
             <MyPageStack.Screen name="login" component={LoginScreen} />
-            <MyPageStack.Screen name="join" component={RegisterScreen} />
+            <MyPageStack.Screen name="register" component={RegisterScreen} />
             <MyPageStack.Screen name='change' component={ChangeForm} />
             <MyPageStack.Screen name='changepw' component={PasswordChange} />
             <MyPageStack.Screen name='feedback' component={Feedback} />

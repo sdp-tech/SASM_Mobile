@@ -1,8 +1,10 @@
+import { StackScreenProps } from '@react-navigation/stack';
 import React, { useState } from 'react';
 import { ScrollView, Text, TextInput, TouchableOpacity, View, Alert } from 'react-native';
 import styled from 'styled-components/native';
 import { Request } from '../../common/requests';
 import InputWithMessage from '../mypage/components/InputWithMessage';
+import { MyPageProps } from '../../pages/MyPage';
 
 const StyledInput = styled.TextInput`
   height: 30px;
@@ -19,15 +21,23 @@ interface FormTypes {
   nickname: string;
 }
 
-export default function RegisterScreen(): JSX.Element {
+interface CheckTypes {
+  email: boolean;
+  nickname: boolean;
+}
+
+export default function RegisterScreen({ navigation, route }: StackScreenProps<MyPageProps, 'register'>): JSX.Element {
   const [form, setForm] = useState<FormTypes>({
     email: "",
     password: "",
     passwordConfirm: "",
     nickname: "",
   })
+  const [check, setCheck] = useState<CheckTypes>({
+    email: false,
+    nickname: false,
+  })
   const request = new Request();
-
   // 이메일 체크
   const isEmail = (email: string): boolean => {
     const emailRegex =
@@ -44,25 +54,40 @@ export default function RegisterScreen(): JSX.Element {
   if (form.password === form.passwordConfirm || form.passwordConfirm === "")
     passwordCheck = true;
 
-  const checkDuplicate = async (type: string, data: string) => {
-    let response_check;
-    if (type == "email") {
-      response_check = await request.post('/users/rep_check/', {
-        type: type,
-        email: data,
-      });
-    }
-    else {
-      response_check = await request.post('/users/rep_check/', {
-        type: type,
-        nickname: data,
-      })
+  const checkRepetition = async (type: string, data: string) => {
+    const response_check = await request.post('/users/rep_check/', {
+      type: type,
+      value: data,
+    })
+    if (response_check.data.data.includes("가능")) {
+      if (type == 'email') {
+        setCheck({ ...check, email: true });
+      }
+      else {
+        setCheck({ ...check, nickname: true });
+      }
     }
     Alert.alert(response_check.data.data);
   }
   const tryRegister = async () => {
-    const response_register = await request.post('/users/signup/', form);
-    Alert.alert('회원가입 인증 메일을 확인해주세요 : )');
+    if (form.email.length * form.nickname.length * form.passwordConfirm.length == 0 || !passwordCheck || !check.email || !check.nickname) {
+      if (form.email.length * form.nickname.length * form.passwordConfirm.length == 0) {
+        Alert.alert('빈 칸을 입력해주세요', '', [{ text: '취소', style: 'destructive' }]);
+      }
+      else if (!passwordCheck) {
+        Alert.alert('입력한 비밀번호와 일치하지 않습니다', '', [{ text: '취소', style: 'destructive' }]);
+      }
+      else if (!check.email) {
+        Alert.alert('이메일 중복확인을 해주세요', '', [{ text: '취소', style: 'destructive' }]);
+      }
+      else if (!check.nickname) {
+        Alert.alert('닉네임 중복확인을 해주세요', '', [{ text: '취소', style: 'destructive' }]);
+      }
+    }
+    else {
+      const response_register = await request.post('/users/signup/', form);
+      Alert.alert('회원가입 인증 메일을 확인해주세요 : )', '', [{ text: 'OK', onPress: () => { navigation.navigate('login'); } }]);
+    }
   }
   return (
     <View style={{ flex: 1 }}>
@@ -71,9 +96,9 @@ export default function RegisterScreen(): JSX.Element {
           label='메일 주소'
           buttonView={emailCheck}
           style={emailCheck ? { width: '65%' } : { width: '100%', backgroundColor: "#F9E3E3" }}
-          onPress={() => { checkDuplicate("email", form.email) }}
+          onPress={() => { checkRepetition("email", form.email) }}
           placeholder='이메일'
-          onChangeText={(text) => { setForm({ ...form, email: text }) }}
+          onChangeText={(text) => { setForm({ ...form, email: text }); setCheck({ ...check, email: false }) }}
           message={emailCheck ? "" : "이메일 형식이 올바르지 않습니다"}
           buttonText="중복확인"
         />
@@ -98,9 +123,9 @@ export default function RegisterScreen(): JSX.Element {
           style={{ width: '65%' }}
           label='닉네임'
           buttonView={true}
-          onPress={() => { checkDuplicate("nickname", form.nickname) }}
+          onPress={() => { checkRepetition("nickname", form.nickname) }}
           placeholder='닉네임'
-          onChangeText={(text) => { setForm({ ...form, nickname: text }) }}
+          onChangeText={(text) => { setForm({ ...form, nickname: text }); setCheck({ ...check, nickname: false }) }}
           buttonText="중복확인"
         />
         <TouchableOpacity onPress={tryRegister}><Text>회원가입</Text></TouchableOpacity>
