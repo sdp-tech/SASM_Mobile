@@ -1,27 +1,20 @@
-import { useState, useEffect, useNavigate } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { SafeAreaView, Text, View, StyleSheet, TouchableOpacity } from 'react-native';
 import styled from 'styled-components/native';
 import SearchBar from '../../common/SearchBar';
-import Pagination from '../../common/Pagination';
 import Loading from "../../common/Loading";
 import StoryList from './components/StoryList';
 import { Request } from '../../common/requests';
-import { useNavigation } from '@react-navigation/native';
+import { useIsFocused, useFocusEffect } from '@react-navigation/native';
+import { StoryProps } from '../../pages/Story';
 
-const FooterSection = styled.View`
-  display: flex;
-  flex-direction: row;
-  position: absolute;
-  bottom: 0;
-  width: 100%;
-  // position: relative;
-  z-index: 20;
-  justify-content: center;
-  align-items: center;
-  background-color: #FFFFFF;
-`;
+interface ToggleButtonProps {
+    onPress?: any;
+    text: string;
+    color?: string;
+}
 
-const ToggleButton = ({onPress, text, color, textColor }) => {
+const ToggleButton = ({onPress, text, color }: ToggleButtonProps) => {
     return (
         <TouchableOpacity
             onPress = {onPress}
@@ -37,62 +30,79 @@ const ToggleButton = ({onPress, text, color, textColor }) => {
                 shadowOffset: {
                     width: 0,
                     height: 2,
-                    top: 2,
-                    bottom: 0
                 },
                 
             }}>
-            <Text style = {{ color: textColor }}>{text}</Text>
+            <Text>{text}</Text>
         </TouchableOpacity>
     )
 }
 
-const StoryListPage = ({ navigation, route }) => {
-    const [item, setItem] = useState([]);
-    const [loading, setLoading] = useState(false);
-    const [orderList, setOrderList] = useState(true);
-    const [page, setPage] = useState(1);
-    const [pageCount, setPageCount] = useState([]);
-    const [limit, setLimit] = useState(4);
-    const [search, setSearch] = useState('');
+const StoryListPage = ({ navigation, route }: StoryProps) => {
+    const [item, setItem] = useState([] as any);
+    const [loading, setLoading] = useState<boolean>(false);
+    const [orderList, setOrderList] = useState<boolean>(true);
+    const [page, setPage] = useState<number>(1);
+    const [nextPage, setNextPage] = useState<any>(null);
+    const [search, setSearch] = useState<string>('');
+    const [isSearch, setIsSearch] = useState<boolean>(false);
+    const [refreshing, setRefreshing] = useState<boolean>(false);
+    const [latest, setLatest] = useState<boolean>(false);
+
     const request = new Request();
+    const isFocused = useIsFocused();
     
     useEffect(() => {
         handleSearchToggle();
-    }, [page, search, orderList])
+        getStories();
+    }, [page, search, orderList]);
 
     const handleSearchToggle = async () => {
-        setLoading(true);
-
-        let newPage;
-        if (page === 1) {
-            newPage = null;
-        } else {
-            newPage = page;
-        }
-
-        let searched;
         if (search === null || search === "") {
-            searched = null;
+            setIsSearch(false);
         } else {
-            searched = search;
+            setIsSearch(true);
+            setPage(1);
         }
-        
-        const response = await request.get('/stories/story_search/', {
-            page: newPage,
-            search: searched,
-            latest: orderList
-        }, null);
-        setItem(response.data.data.results);
-        setPageCount(response.data.data.count);
-        setLoading(false);
     }
 
-    const onEndReached = () => {
-        if(loading)
+    const getStories = async () => {
+        setLoading(true);
+
+        const response = await request.get('/stories/story_search/', {
+            page: page, 
+            search: search,
+            latest: orderList
+        }, null);
+        
+        if(latest || page === 1){
+            setItem([...response.data.data.results]);
+            setLatest(false);
+            setIsSearch(false);
+        } else {
+            setItem([...item, ...response.data.data.results]);
+        }
+        setNextPage(response.data.data.next);
+        setLoading(false);
+        console.log(item);
+    }
+
+    const onRefresh = async () => {
+        if(!refreshing || page !== 1){
+            setRefreshing(true);
+            setPage(1);
+            setRefreshing(false);
+        }
+    }
+
+    const onEndReached = async () => {
+        if(loading || isSearch || nextPage === null){
             return;
+        }
         else {
             setPage(page + 1);
+            setLoading(true);
+            setLoading(false);
         }
     }
 
@@ -107,14 +117,14 @@ const StoryListPage = ({ navigation, route }) => {
                 }}>
                     <Text style = {{
                         fontSize: 36,
-                        fontWeight: 700,
+                        fontWeight: '700',
                         lineHeight: 36,
                         marginTop: 23,
                         marginBottom: 8
                     }}>Story</Text>
                     <Text style = {{
                         fontSize: 12,
-                        fontWeight: 500,
+                        fontWeight: '500',
                         lineHeight: 14,
                         marginBottom: 20
                     }}>
@@ -136,6 +146,8 @@ const StoryListPage = ({ navigation, route }) => {
                                     text = '최신 순'
                                     onPress={() => {
                                         setOrderList(!orderList);
+                                        setPage(1);
+                                        setLatest(true);
                                     }} />
                                 <ToggleButton 
                                     color = '#03B961'
@@ -150,23 +162,20 @@ const StoryListPage = ({ navigation, route }) => {
                                     text = '오래된 순'
                                     onPress={() => {
                                         setOrderList(!orderList);
+                                        setPage(1);
+                                        setLatest(true);
                                     }} />
                                 </>
                             }
                     </View>
                     <StoryList 
                         info = {item}
-                        //onEndReached = {onEndReached}
-                        //loading = {loading}
+                        onRefresh = {onRefresh}
+                        refreshing = {refreshing}
+                        onEndReached = {onEndReached}
+                        loading = {loading}
+                        navigation = {navigation}
                     />
-                    <FooterSection>
-                        <Pagination
-                            total = {pageCount}
-                            limit = {limit}
-                            page = {page}
-                            setPage = {setPage}
-                        />
-                    </FooterSection>
                 </SafeAreaView>
             )}
         </>

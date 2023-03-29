@@ -1,13 +1,25 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react';
-import { Text, SafeAreaView, View, Button, Dimensions } from "react-native";
-import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import { createNativeStackNavigator, NativeStackScreenProps } from '@react-navigation/native-stack';
+import { useNavigation, useRoute, useFocusEffect } from '@react-navigation/native';
+
 import StoryListPage from '../components/story/StoryListPage';
 import StoryDetailPage from '../components/story/StoryDetailPage';
-import { useFocusEffect } from '@react-navigation/native';
 
-const Stack = createNativeStackNavigator();
+export interface StoryProps {
+  navigation: any;
+  route: any;
+}
 
-const StoryScreen = ({ navigation, route }) => {
+export type StoryStackParams = {
+  StoryList: undefined;
+  StoryDetail: {
+    id: number | undefined;
+  }
+}
+
+const Stack = createNativeStackNavigator<StoryStackParams>();
+
+const StoryScreen = ({ navigation, route }: StoryProps) => {
   useFocusEffect(useCallback(()=>{
     if(route.params.id) {
       // navigation.reset({routes: [{name: "StoryDetail", params: { id:route.params.id }}]});

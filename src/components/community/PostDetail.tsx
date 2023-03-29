@@ -2,12 +2,14 @@ import React, { useState, useEffect } from 'react';
 import { View, FlatList, StyleSheet, Text, SafeAreaView, ActivityIndicator, TouchableOpacity, Image, Alert } from 'react-native';
 import type { NativeStackScreenProps } from '@react-navigation/native-stack';
 import styled from 'styled-components/native';
+import Heart from '../../common/Heart';
 
 import { BoardFormat, CommunityStackParams } from '../../pages/Community';
 import PostCommentUploadSection from './PostCommentUpload';
 import { Request } from '../../common/requests';
 
 interface Post {
+    id: number;
     board: number;
     title: string;
     content: string;
@@ -64,46 +66,54 @@ const PostCommentItemSection = ({ id, content, isParent, group, email, nickname,
         !editing ?
             <>
                 <View style={{ paddingLeft: 10, paddingRight: 10, paddingBottom: 5, marginBottom: 10, borderBottomWidth: 1 }}>
-                    <View style={{ marginLeft: isParent ? 0 : 30 }}>
-                        <Text style={{ fontSize: 16, fontWeight: '700', color: 'black', marginBottom: 5 }}>{nickname}</Text>
-                        <Text style={{ fontSize: 15, fontWeight: '500', color: 'black', marginBottom: 5 }}>{content}</Text>
-                        <Text style={{ fontSize: 14, fontWeight: '500', color: 'gray', marginBottom: 5 }}>{(created.slice(0, 19) == updated.slice(0, 19)) ? created.slice(0, 10) : updated.slice(0, 10) + " (수정됨)"}</Text>
-                        {
-                            boardFormat.supportsPostCommentPhotos && photoList ?
-                                <PhotoBox>
-                                    {
-                                        photoList.map((uri, index) => {
-                                            return (
-                                                <TouchableOpacity onPress={() => navigation.navigate('PhotoPreview', { photoUri: uri })}>
-                                                    <Image key={index} source={{ uri: uri }} style={{ width: 100, height: 100, margin: 5 }} />
-                                                </TouchableOpacity>
-                                            )
-                                        })
-                                    }
-                                </PhotoBox> : <></>
-                        }
-                        <View style={{ flexDirection: 'row' }}>
+                    {
+                        !group ? // 대댓글이지만 parent가 삭제되어 없을 때
+                            <View style={{ marginLeft: 0 }}>
+                                <Text style={{ fontSize: 16, fontWeight: '700', color: 'gray', marginBottom: 5 }}>(삭제)</Text>
+                                <Text style={{ fontSize: 15, fontWeight: '500', color: 'gray', marginBottom: 5 }}>삭제된 댓글입니다.</Text>
+                                <View style={{ paddingLeft: 10, paddingRight: 10, paddingBottom: 5, marginBottom: 10, borderBottomWidth: 1 }}></View>
+                            </View>
+                        : <></>
+                    }
+                        <View style={{ marginLeft: isParent ? 0 : 30 }}>
+                            <Text style={{ fontSize: 16, fontWeight: '700', color: 'black', marginBottom: 5 }}>{nickname}</Text>
+                            <Text style={{ fontSize: 15, fontWeight: '500', color: 'black', marginBottom: 5 }}>{content}</Text>
+                            <Text style={{ fontSize: 14, fontWeight: '500', color: 'gray', marginBottom: 5 }}>{(created.slice(0, 19) == updated.slice(0, 19)) ? created.slice(0, 10) : updated.slice(0, 10) + " (수정됨)"}</Text>
                             {
-                                isParent ?
-                                    <TouchableOpacity style={{ marginRight: 10 }} onPress={() => setReplying(true)}>
-                                        <View style={{ backgroundColor: '#D3D3D3', borderWidth: 0.5, borderRadius: 10, width: 50, height: 25, alignItems: 'center', justifyContent: 'center' }}>
-                                            <Text style={{ fontSize: 15, fontWeight: '600' }}>대댓글</Text>
-                                        </View>
-                                    </TouchableOpacity> : <></>
+                                boardFormat.supportsPostCommentPhotos && photoList ?
+                                    <PhotoBox>
+                                        {
+                                            photoList.map((uri, index) => {
+                                                return (
+                                                    <TouchableOpacity onPress={() => navigation.navigate('PhotoPreview', { photoUri: uri })}>
+                                                        <Image key={index} source={{ uri: uri }} style={{ width: 100, height: 100, margin: 5 }} />
+                                                    </TouchableOpacity>
+                                                )
+                                            })
+                                        }
+                                    </PhotoBox> : <></>
                             }
-                            <TouchableOpacity style={{ marginRight: 10 }} onPress={() => setEditing(true)}>
-                                <View style={{ backgroundColor: '#D3D3D3', borderWidth: 0.5, borderRadius: 10, width: 50, height: 25, alignItems: 'center', justifyContent: 'center' }}>
-                                    <Text style={{ fontSize: 15, fontWeight: '600' }}>수정</Text>
-                                </View>
-                            </TouchableOpacity>
-                            <TouchableOpacity style={{ marginRight: 10 }} onPress={async () => await deleteComment(id)}>
-                                <View style={{ backgroundColor: '#D3D3D3', borderWidth: 0.5, borderRadius: 10, width: 50, height: 25, alignItems: 'center', justifyContent: 'center' }}>
-                                    <Text style={{ fontSize: 15, fontWeight: '600' }}>삭제</Text>
-                                </View>
-                            </TouchableOpacity>
+                            <View style={{ flexDirection: 'row' }}>
+                                {
+                                    isParent ?
+                                        <TouchableOpacity style={{ marginRight: 10 }} onPress={() => setReplying(true)}>
+                                            <View style={{ backgroundColor: '#D3D3D3', borderWidth: 0.5, borderRadius: 10, width: 50, height: 25, alignItems: 'center', justifyContent: 'center' }}>
+                                                <Text style={{ fontSize: 15, fontWeight: '600' }}>대댓글</Text>
+                                            </View>
+                                        </TouchableOpacity> : <></>
+                                }
+                                <TouchableOpacity style={{ marginRight: 10 }} onPress={() => setEditing(true)}>
+                                    <View style={{ backgroundColor: '#D3D3D3', borderWidth: 0.5, borderRadius: 10, width: 50, height: 25, alignItems: 'center', justifyContent: 'center' }}>
+                                        <Text style={{ fontSize: 15, fontWeight: '600' }}>수정</Text>
+                                    </View>
+                                </TouchableOpacity>
+                                <TouchableOpacity style={{ marginRight: 10 }} onPress={async () => await deleteComment(id)}>
+                                    <View style={{ backgroundColor: '#D3D3D3', borderWidth: 0.5, borderRadius: 10, width: 50, height: 25, alignItems: 'center', justifyContent: 'center' }}>
+                                        <Text style={{ fontSize: 15, fontWeight: '600' }}>삭제</Text>
+                                    </View>
+                                </TouchableOpacity>
+                            </View>
                         </View>
-                    </View>
-
                 </View>
                 {
                     replying ?
@@ -139,6 +149,17 @@ const PostCommentItemSection = ({ id, content, isParent, group, email, nickname,
 }
 
 const PostDetailSection = ({ post, boardFormat, navToPostUpload, deletePost, navToPhotoPreview }: PostDetailSectionProps) => {
+    const [like, setLike] = useState<boolean>(false);
+    const request = new Request();
+
+    const toggleLike = async () => {
+        const response = await request.post(`/community/posts/${post.id}/like/`);
+        setLike(!like);
+      }
+      useEffect(() => {
+        setLike(post.likes);
+      }, [post]);
+
     return (
         <View style={{ paddingTop: 20, paddingBottom: 20, paddingLeft: 30, paddingRight: 30, borderBottomColor: 'gray', borderBottomWidth: 1 }}>
             <Text style={{ fontSize: 20, fontWeight: '700', marginBottom: 15 }}>{post.title}</Text>
@@ -168,7 +189,6 @@ const PostDetailSection = ({ post, boardFormat, navToPostUpload, deletePost, nav
                         }
                     </PhotoBox> : <></>
             }
-
             <View style={{ flexDirection: 'row' }}>
                 <TouchableOpacity style={{ marginRight: 10 }} onPress={() => navToPostUpload()}>
                     <View style={{ backgroundColor: '#D3D3D3', borderWidth: 0.5, borderRadius: 10, width: 50, height: 25, alignItems: 'center', justifyContent: 'center' }}>
@@ -180,6 +200,7 @@ const PostDetailSection = ({ post, boardFormat, navToPostUpload, deletePost, nav
                         <Text style={{ fontSize: 15, fontWeight: '600' }}>삭제</Text>
                     </View>
                 </TouchableOpacity>
+                <Heart like={like} onPress={toggleLike}></Heart>
             </View>
         </View>
     )
@@ -234,7 +255,6 @@ const PostDetailScreen = ({ navigation, route }: NativeStackScreenProps<Communit
             setRefreshing(false);
         }
     }
-
 
     const deletePost = async () => {
         const _delete = async () => {
@@ -342,7 +362,6 @@ const PostDetailScreen = ({ navigation, route }: NativeStackScreenProps<Communit
                     />
                 </>
             }
-
         </SafeAreaView>
     );
 };
