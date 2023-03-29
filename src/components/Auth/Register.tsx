@@ -94,8 +94,7 @@ export default function RegisterScreen({ navigation, route }: StackScreenProps<M
       <ScrollView>
         <InputWithMessage
           label='메일 주소'
-          buttonView={emailCheck}
-          style={emailCheck ? { width: '65%' } : { width: '100%', backgroundColor: "#F9E3E3" }}
+          style={emailCheck ? { width: '65%' } : { width: '65%', backgroundColor: "#F9E3E3" }}
           onPress={() => { checkRepetition("email", form.email) }}
           placeholder='이메일'
           onChangeText={(text) => { setForm({ ...form, email: text }); setCheck({ ...check, email: false }) }}
@@ -105,14 +104,12 @@ export default function RegisterScreen({ navigation, route }: StackScreenProps<M
         <InputWithMessage
           style={{ width: '100%' }}
           label='비밀번호'
-          buttonView={false}
           placeholder='비밀번호'
           onChangeText={(text) => { setForm({ ...form, password: text }) }}
           secureTextEntry={true}
         />
         <InputWithMessage
           label='비밀번호 확인'
-          buttonView={passwordCheck}
           style={passwordCheck ? { width: '100%' } : { width: '100%', backgroundColor: "#F9E3E3" }}
           placeholder='비밀번호'
           onChangeText={(text) => { setForm({ ...form, passwordConfirm: text }) }}
@@ -122,7 +119,6 @@ export default function RegisterScreen({ navigation, route }: StackScreenProps<M
         <InputWithMessage
           style={{ width: '65%' }}
           label='닉네임'
-          buttonView={true}
           onPress={() => { checkRepetition("nickname", form.nickname) }}
           placeholder='닉네임'
           onChangeText={(text) => { setForm({ ...form, nickname: text }); setCheck({ ...check, nickname: false }) }}

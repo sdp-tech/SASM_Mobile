@@ -1,14 +1,14 @@
 import { useNavigation } from '@react-navigation/native';
+import { StackNavigationProp } from '@react-navigation/stack';
 import React, { useState } from 'react';
 import { Alert, View } from 'react-native';
 import { Request } from '../../common/requests';
-import { MyPageNavProps } from '../../pages/MyPage';
+import { MyPageProps } from '../../pages/MyPage';
 import InputWithMessage from '../mypage/components/InputWithMessage';
 import ChangePw, { formProps } from './function/ChangePw';
 
 export default function SetNewPassword(): JSX.Element {
-  const navigationToMyPage = useNavigation<MyPageNavProps>();
-  const request = new Request();
+  const navigationToMyPage = useNavigation<StackNavigationProp<MyPageProps>>();
   const [form, setForm] = useState<formProps>({
     code: "",
     password: "",
@@ -51,13 +51,11 @@ export default function SetNewPassword(): JSX.Element {
       <InputWithMessage
         label='새 비밀번호'
         placeholder='비밀번호'
-        buttonView={passwordCheck}
         onPress={() => { updateNewPassword(); }}
         message={passwordCheck ? "" : "입력한 비밀번호와 일치하지 않습니다"}
-        style={passwordCheck ? {} : { backgroundColor: "#F9E3E3" }}
+        style={passwordCheck ? { width: '65%' } : { width: '65%', backgroundColor: "#F9E3E3" }}
         onChangeText={(text) => { setForm({ ...form, passwordConfirm: text }) }}
-        spellCheck={false}
-        autoCapitalize="none"
+        buttonText="비밀번호 변경"
         textContentType='newPassword'
         secureTextEntry={true}
       />

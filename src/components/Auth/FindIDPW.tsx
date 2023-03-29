@@ -112,12 +112,11 @@ const FindIDPW = ({ navigation, route }: StackScreenProps<findScreenProps, 'home
           <View>
             <InputWithMessage
               label='아이디'
-              buttonView={emailCheck}
               placeholder="이메일"
               onPress={getEmailExist}
               onChangeText={(text) => { setEmail(text) }}
               message={emailCheck ? "" : "이메일 형식이 올바르지 않습니다"}
-              style={{ width: '100%' }}
+              style={emailCheck ? { width: '100%' } : { width: '100%', backgroundColor: "#F9E3E3" }}
               textContentType='emailAddress'
               buttonText='확인'
             />
@@ -125,12 +124,11 @@ const FindIDPW = ({ navigation, route }: StackScreenProps<findScreenProps, 'home
           <View>
             <InputWithMessage
               label='아이디'
-              buttonView={emailCheck}
               placeholder="이메일"
               onPress={postPassWordCode}
               onChangeText={(text) => { setEmail(text) }}
               message={emailCheck ? "" : "이메일 형식이 올바르지 않습니다"}
-              style={{ width: '100%' }}
+              style={emailCheck ? { width: '100%' } : { width: '100%', backgroundColor: "#F9E3E3" }}
               textContentType='emailAddress'
               buttonText='링크 발송하기'
             />
