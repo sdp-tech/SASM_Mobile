@@ -1,5 +1,5 @@
 import React, { Dispatch, Ref, SetStateAction, useEffect } from 'react'
-import { TouchableOpacity, ScrollView, Text, View, SafeAreaView } from 'react-native';
+import { ScrollView } from 'react-native-gesture-handler';
 import styled from 'styled-components/native';
 import Pagination from '../../common/Pagination';
 import { Coordinate } from '../../pages/SpotMap';
