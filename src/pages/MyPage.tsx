@@ -19,7 +19,6 @@ export type MyPageProps = {
     'feedback': any;
     'findidpw': any;
 }
-export type MyPageNavProps = StackNavigationProp<MyPageProps>;
 const MyPageStack = createNativeStackNavigator<MyPageProps>();
 
 const MyPageScreen = () => {

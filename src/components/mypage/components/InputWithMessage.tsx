@@ -12,7 +12,7 @@ const InputWrapper = styled.View`
 
 const StyledInput = styled.TextInput`
   height: 35px;
-  margin: 12px auto;
+  margin: 12px 0;
   padding: 5px;
   borderWidth: 1px;
   background: #FFFFFF;
@@ -22,7 +22,7 @@ const StyledInput = styled.TextInput`
 const SubmitButton = styled.TouchableOpacity`
   width: 30%;
   height: 35px;
-  margin: 12px auto;
+  margin: 12px 0;
   border-color: #000000;
   border-width: 1px;
   padding: 5px;
@@ -36,11 +36,10 @@ interface InputProps extends TextInputProps {
   label: string;
   message?: string;
   buttonText?: string;
-  buttonView?: boolean;
   onPress?: () => void | Promise<void>;
 }
 
-export default function InputWithMessage({ buttonText, label, message, buttonView, onPress, ...rest }: InputProps): JSX.Element {
+export default function InputWithMessage({ buttonText, label, message, onPress, ...rest }: InputProps): JSX.Element {
   return (
     <InputWrapper>
       <Text style={TextStyles.label}>{label}</Text>
@@ -50,7 +49,7 @@ export default function InputWithMessage({ buttonText, label, message, buttonVie
         spellCheck={false}
       />
       {
-        onPress && buttonView &&
+        onPress &&
         <SubmitButton onPress={onPress}>
           <Text style={TextStyles.submit}>{buttonText}</Text>
         </SubmitButton>
