@@ -53,7 +53,7 @@ export default function SetNewPassword(): JSX.Element {
         placeholder='비밀번호'
         onPress={() => { updateNewPassword(); }}
         message={passwordCheck ? "" : "입력한 비밀번호와 일치하지 않습니다"}
-        style={passwordCheck ? { width: '65%' } : { width: '65%', backgroundColor: "#F9E3E3" }}
+        style={passwordCheck ? { width: '100%' } : { width: '100%', backgroundColor: "#F9E3E3" }}
         onChangeText={(text) => { setForm({ ...form, passwordConfirm: text }) }}
         buttonText="비밀번호 변경"
         textContentType='newPassword'
