@@ -73,7 +73,6 @@ const StoryDetailBox = ({navigation, id}: StoryDetailProps) => {
         const recommend_story = await request.get("/stories/recommend_story/", { id: id }, null);
         setData(response_detail.data.data);
         setComment(response_comment.data.data.results);
-        console.log(response_comment.data.data.results)
         setRecommend(recommend_story.data.data);
         setLoading(false);
     };
