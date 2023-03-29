@@ -36,18 +36,15 @@ export default function SetNewPassword(): JSX.Element {
       <InputWithMessage
         label='인증코드'
         placeholder='인증코드'
+        style={{ width: '100%' }}
         onChangeText={(text) => { setForm({ ...form, code: text }) }}
-        spellCheck={false}
-        autoCapitalize="none"
         textContentType='oneTimeCode'
       />
       <InputWithMessage
         label='새 비밀번호'
         placeholder='비밀번호'
-        style={passwordCheck ? {} : { backgroundColor: "#F9E3E3" }}
+        style={passwordCheck ? { width: '100%' } : { width: '100%', backgroundColor: "#F9E3E3" }}
         onChangeText={(text) => { setForm({ ...form, password: text }) }}
-        spellCheck={false}
-        autoCapitalize="none"
         textContentType='newPassword'
         secureTextEntry={true}
       />
@@ -57,12 +54,11 @@ export default function SetNewPassword(): JSX.Element {
         buttonView={passwordCheck}
         onPress={() => { updateNewPassword(); }}
         message={passwordCheck ? "" : "입력한 비밀번호와 일치하지 않습니다"}
-        style={passwordCheck ? {} : { backgroundColor: "#F9E3E3" }}
+        style={passwordCheck ? { width: '100%' } : { width: '100%', backgroundColor: "#F9E3E3" }}
         onChangeText={(text) => { setForm({ ...form, passwordConfirm: text }) }}
-        spellCheck={false}
-        autoCapitalize="none"
         textContentType='newPassword'
         secureTextEntry={true}
+        buttonText="비밀번호 변경"
       />
     </View>
   )
