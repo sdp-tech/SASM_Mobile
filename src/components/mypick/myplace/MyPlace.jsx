@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { SafeAreaView, Text, View, StyleSheet, TouchableOpacity, Image,FlatList, ScrollView, Dimensions, Button } from 'react-native';
 import styled from 'styled-components/native';
-import { useCookies } from "react-cookie";
+//import { useCookies } from "react-cookie";
 import Loading from "../../../common/Loading";
 import ItemCard from "./ItemCard";
 import nothingIcon from "../../../assets/img/nothing.svg";
@@ -167,7 +167,7 @@ const styles = StyleSheet.create({
 
 const Myplace = () => {
   const [info, setInfo] = useState([]);
-  const [cookies, setCookie, removeCookie] = useCookies(["name"]);
+  //const [cookies, setCookie, removeCookie] = useCookies(["name"]);
   const [pageCount, setPageCount] = useState(1);
   const [limit, setLimit] = useState(6);
   const [page, setPage] = useState(1);
@@ -175,7 +175,7 @@ const Myplace = () => {
   const [checkedList, setCheckedList] = useState('');
   const offset = (page - 1) * limit;
   //console.log("pageInfo", page, offset); 현재 page 번호를 쿼리에 붙여서 api요청하도록 변경하기!
-   const token = cookies.name; // 쿠키에서 id 를 꺼내기
+   //const token = cookies.name; // 쿠키에서 id 를 꺼내기
   
   //const token = localStorage.getItem("accessTK"); //localStorage에서 accesstoken꺼내기
   const navigation = useNavigation();

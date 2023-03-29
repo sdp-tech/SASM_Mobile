@@ -5,7 +5,7 @@ import { TouchableOpacity, StyleSheet, Image, View,Button, Text } from 'react-na
 //import CardContent from "@mui/material/CardContent";
 //import { CardMedia } from "@mui/material";
 import HeartButton from "../../../common/Heart";
-import { useCookies } from "react-cookie";
+//import { useCookies } from "react-cookie";
 import axios from "axios";
 import Loading from "../../../common/Loading";
 //import Typography from "@mui/material/Typography";
@@ -91,7 +91,7 @@ function ItemCard(props) {
   // const width = isMobile ? '80vw' : '32vw';
   // const height = isMobile ? '45vw' : '18vw';
   const [like, setLike] = useState(false);
-  const [cookies, setCookie, removeCookie] = useCookies(["name"]);
+  //const [cookies, setCookie, removeCookie] = useCookies(["name"]);
   const [loading, setLoading] = useState(true);
   const navigation = useNavigation();
   const request = new Request();

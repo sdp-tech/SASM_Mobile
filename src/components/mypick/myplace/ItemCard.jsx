@@ -5,7 +5,7 @@ import { TouchableOpacity, View, Image, StyleSheet,Dimensions, Button, Text } fr
 //import CardContent from "@mui/material/CardContent";
 //import { CardMedia } from "@mui/material";
 import HeartButton from "../../../common/Heart";
-import { useCookies } from "react-cookie";
+//import { useCookies } from "react-cookie";
 import axios from "axios";
 import Loading from "../../../common/Loading";
 //import Typography from "@mui/material/Typography";
@@ -93,7 +93,7 @@ const styles = StyleSheet.create({
 
 export default function ItemCard(props) {
   const [like, setLike] = useState(false);
-  const [cookies, setCookie, removeCookie] = useCookies(["name"]);
+  //const [cookies, setCookie, removeCookie] = useCookies(["name"]);
   const [loading, setLoading] = useState(true);
   //const navigate = useNavigate();
   // const isMobile = useMediaQuery({ query: "(max-width:768px)" });

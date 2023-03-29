@@ -3,7 +3,7 @@ import { SafeAreaView, Text, View, StyleSheet, TouchableOpacity, Image, FlatList
 //import Grid from "@mui/material/Grid";
 import styled from "styled-components/native";
 import Pagination from "../../../common/Pagination";
-import { useCookies } from "react-cookie";
+//import { useCookies } from "react-cookie";
 //import axios from "axios";
 import Loading from "../../../common/Loading";
 import ItemCard from "./ItemCard";
@@ -167,13 +167,13 @@ const styles = StyleSheet.create({
 const Mystory = () => {
   const [checkedList, setCheckedList] = useState('');
   const [info, setInfo] = useState([]);
-  const [cookies, setCookie, removeCookie] = useCookies(["name"]);
+  //const [cookies, setCookie, removeCookie] = useCookies(["name"]);
   const [pageCount, setPageCount] = useState(1);
   const [limit, setLimit] = useState(4);
   const [page, setPage] = useState(1);
   const [loading, setLoading] = useState(true);
   const offset = (page - 1) * limit;
-   const token = cookies.name; // 쿠키에서 id 를 꺼내기
+   //const token = cookies.name; // 쿠키에서 id 를 꺼내기
   //const token = localStorage.getItem("accessTK"); //localStorage에서 accesstoken꺼내기
   const navigation = useNavigation();
   const request = new Request();
