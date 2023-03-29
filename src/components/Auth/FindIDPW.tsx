@@ -84,7 +84,7 @@ const FindIDPW = ({ navigation, route }: StackScreenProps<findScreenProps, 'home
       if (response.data.data === "존재하는 이메일입니다") {
         navigation.navigate('idExist', { email: email });
       }
-      else if (response.data.ddata === "존재하지 않는 이메일입니다") {
+      else if (response.data.data === "존재하지 않는 이메일입니다") {
         navigation.navigate('idNotExist', { email: email });
       }
     }
@@ -117,9 +117,9 @@ const FindIDPW = ({ navigation, route }: StackScreenProps<findScreenProps, 'home
               onPress={getEmailExist}
               onChangeText={(text) => { setEmail(text) }}
               message={emailCheck ? "" : "이메일 형식이 올바르지 않습니다"}
-              spellCheck={false}
-              autoCapitalize="none"
+              style={{ width: '100%' }}
               textContentType='emailAddress'
+              buttonText='확인'
             />
           </View> :
           <View>
@@ -130,9 +130,9 @@ const FindIDPW = ({ navigation, route }: StackScreenProps<findScreenProps, 'home
               onPress={postPassWordCode}
               onChangeText={(text) => { setEmail(text) }}
               message={emailCheck ? "" : "이메일 형식이 올바르지 않습니다"}
-              spellCheck={false}
-              autoCapitalize="none"
+              style={{ width: '100%' }}
               textContentType='emailAddress'
+              buttonText='링크 발송하기'
             />
           </View>
       }
