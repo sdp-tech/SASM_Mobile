@@ -24,13 +24,3 @@ const MyPickScreen = ({ navigation, route }) => {
   
   export default MyPickScreen;
 
-/*const MyPickScreen = ({ navigation }) => {
-    return (
-        <SafeAreaView>
-            <Text>MyPick</Text>
-        </SafeAreaView>
-    )
-}
-
-export default MyPickScreen;
-*/

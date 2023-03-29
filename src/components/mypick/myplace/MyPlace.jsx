@@ -1,5 +1,5 @@
-import { useState, useEffect, useNavigate } from 'react';
-import { SafeAreaView, Text, View, StyleSheet, TouchableOpacity, Image } from 'react-native';
+import { useState, useEffect } from 'react';
+import { SafeAreaView, Text, View, StyleSheet, TouchableOpacity, Image,FlatList, ScrollView, Dimensions, Button } from 'react-native';
 import styled from 'styled-components/native';
 import { useCookies } from "react-cookie";
 import Loading from "../../../common/Loading";
@@ -11,77 +11,161 @@ import Category, { CATEGORY_LIST, MatchCategory } from "../../../common/Category
 import { useNavigation } from '@react-navigation/native';
 import Pagination from '../../../common/Pagination';
 
-const Container = styled.View`
-  margin: 0 auto;
-  margin-top: 3%;
-  width: 80%;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-`
-const MyplaceSection = styled.View`
-  position: relative;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  flex-direction: column;
-  margin-top: 5%;
-  grid-area: story;
-`;
-const HeaderSection = styled.View`
-  display: flex;
-  width: 100%;
-  position: relative;
-  justify-content: space-around;
-  @media screen and (max-width: 768px) {
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-  }
-`
-const FooterSection = styled.View`
-  position: relative;
-  display: flex;
-  flex-direction: column;
-  grid-area: story;
-  height: 12%;
-`;
-const CardSection = styled.View`
-  box-sizing: border-box;
-  position: relative;
-  display: flex;
-  flex-direction: column;
-  overflow: hidden;
-  grid-area: story;
-  justify-content: center;
-  align-items: center;
-`;
-const NothingSearched = styled.View`
-  position: relative;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-`;
-const ChangeModeButton = styled.View`
-  width: 30%;
-  text-align: center;
-  font-size: 1.25rem;
-  z-index: 3;
-  @media screen and (max-width: 768px) {
-    position: absolute;
-    left: 0;
-    top: 0;
-  }
-`
-const FilterOptions = styled.View`
-  width: 30%;
-  @media screen and (max-width: 768px) {
-    width: 100%;
-  }
-`
+const WindowWidth = Dimensions.get("window").width;
+const WindowHeight = Dimensions.get("window").height;
 
-const Myplace = (props) => {
+const styles = StyleSheet.create({
+  Container:{
+    marginVertical: 0,
+    marginHorizontal: 'auto',
+    marginTop: '3%',
+    width: '80%',
+    //display: flex,
+    flex:1,
+    justifyContent: 'center',
+    alignItems: 'center'
+  },
+  MyplaceSection:{
+    position: 'relative',
+    //display: flex;
+    flex:1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    flexDirection: 'column',
+    marginTop: '5%'
+    //grid-area: story;
+  },
+  HeaderSection:{
+    //display: flex;
+    flex:1,
+    width: '100%',
+    position: 'relative',
+    justifyContent: 'space-around',
+    flesDirection:'column',
+    alignItems:'center',
+    justifyContent:'center'
+  //   @media screen and (max-width: 768) {
+  //     ≤   flex-direction: column;
+  //     align-items: center;
+  //   justify-content: center;
+  // }
+  },
+  FooterSection:{
+    position:'relative',
+    //display:'flex',
+    flex:1,
+    flexDirection:'column',
+    //grid-area:'story',
+    height:12
+  },
+  CardSection:{
+    position:'relative',
+    //display:'flex',
+    flex:1,
+    flexDirection:'column',
+    overflow:'hidden',
+    //girdarea:'story',
+    justifyContent:'center',
+    alignItems:'center'
+  },
+  NothingSerched:{
+    position:'relative',
+    //display:'flex',
+    flex:1,
+    flexDirection:'column',
+    justifyContent:'center',
+    alignItems:'center'
+  },
+  ChangeModeButton:{
+    width:'30%',
+    textAlign:'center',
+    fontSize:25,
+    Index:3
+    // @media screen and (max-width: 768px) {
+    //   position: absolute;
+    //   left: 0;
+    //   top: 0;
+    // }
+  },
+  FilterOptions:{
+    width:'30%'
+    // @media screen and (max-width: 768px) {
+    //   width: 100%;
+    // }
+  }
+});
+
+// const Container = styled.View`
+//   margin: 0 auto;
+//   margin-top: 3%;
+//   width: 80%;
+//   display: flex;
+//   justify-content: center;
+//   align-items: center;
+// `
+// const MyplaceSection = styled.View`
+//   position: relative;
+//   display: flex;
+//   justify-content: center;
+//   align-items: center;
+//   flex-direction: column;
+//   margin-top: 5%;
+//   grid-area: story;
+// `;
+// const HeaderSection = styled.View`
+//   display: flex;
+//   width: 100%;
+//   position: relative;
+//   justify-content: space-around;
+//   @media screen and (max-width: 768px) {
+//  ≤   flex-direction: column;
+//     align-items: center;
+//     justify-content: center;
+//   }
+// `
+// const FooterSection = styled.View`
+//   position: relative;
+//   display: flex;
+//   flex-direction: column;
+//   grid-area: story;
+//   height: 12%;
+// `;
+// const CardSection = styled.View`
+//   box-sizing: border-box;
+//   position: relative;
+//   display: flex;
+//   flex-direction: column;
+//   overflow: hidden;
+//   grid-area: story;
+//   justify-content: center;
+//   align-items: center;
+// `;
+// const NothingSearched = styled.View`
+//   position: relative;
+//   display: flex;
+//   flex-direction: column;
+//   justify-content: center;
+//   align-items: center;
+// `;
+// const ChangeModeButton = styled.View`
+//   width: 30%;
+//   text-align: center;
+//   font-size: 1.25rem;
+//   z-index: 3;
+//   @media screen and (max-width: 768px) {
+//     position: absolute;
+//     left: 0;
+//     top: 0;
+//   }
+// `
+// const FilterOptions = styled.View`
+//   width: 30%;
+//   @media screen and (max-width: 768px) {
+//     width: 100%;
+//   }
+// `
+
+const Myplace = () => {
   const [info, setInfo] = useState([]);
   const [cookies, setCookie, removeCookie] = useCookies(["name"]);
   const [pageCount, setPageCount] = useState(1);
@@ -94,7 +178,7 @@ const Myplace = (props) => {
    const token = cookies.name; // 쿠키에서 id 를 꺼내기
   
   //const token = localStorage.getItem("accessTK"); //localStorage에서 accesstoken꺼내기
-  //const navigate = useNavigate();
+  const navigation = useNavigation();
   const request = new Request();
   // onChange함수를 사용하여 이벤트 감지, 필요한 값 받아오기
   
@@ -121,7 +205,7 @@ const Myplace = (props) => {
     }, null);
     console.log("my place" , response);
     //setPageCount(response.data.data.count);
-    //setInfo(response.data.data.results);
+    setInfo(response.data.data.results);
     setLoading(false);
   };
 
@@ -135,58 +219,57 @@ const Myplace = (props) => {
         <Loading />
       ) : (
         <>
-          <MyplaceSection>
-            <HeaderSection>
-              <ChangeModeButton onClick={props.handleMode}>
+          <View style={styles.MyplaceSection}>
+            <View style={styles.HeaderSection}>
+              <Button style={styles.ChangeModeButton} onPress={()=>navigation.navigate('MyStory')} title = 'My Story'>
                 <Image src={ChangeMode} style={{ marginRight: 10 }} />
-                <Text>STORY</Text>
-              </ChangeModeButton>
-              {/* <span style={{ fontWeight: "500", fontSize: "1.6rem" }}> */}
+              </Button>
+              {/* <span ={{ fontWeight: "500", fontSize: "1.6rem" }}> */}
                 <Text>My PlACE</Text>
               {/* </span> */}
-              <FilterOptions>
+              <View style={styles.FilterOptions}>
                 <Category checkedList={checkedList} setCheckedList={setCheckedList} />
-              </FilterOptions>
-            </HeaderSection>
-            {/* <main style={{ width: '100%' }}> */}
-              <Container>
+              </View>
+            </View>
+            {/* <main ={{ width: '100%' }}> */}
+              <View style={styles.Container}>
                 {info.length === 0 ? (
-                  <NothingSearched>
+                  <View style={styles.NothingSearched}>
                     <Image
                       src={nothingIcon}
-                      style={{ marginTop: "50%", paddingTop: "50%" }}
+                      style={{ marginTop: '50%', paddingTop: '50%' }}
                     />
                     <Text>해당하는 장소가 없습니다</Text>
-                  </NothingSearched>
+                  </View>
                 ) : (
-                  <Grid container spacing={3} style={{ width: '100%' }}>
-                    {info.map((info, index) => (
-                      <Grid item key={info.id} xs={12} sm={12} md={6} lg={4}>
-                        <CardSection>
+                  <FlatList 
+                  data ={info}
+                  renderItem ={({item}) => (
+                    <View style={styles.CardSection}>
                           <ItemCard
-                            key={index}
-                            id={info.id}
-                            rep_pic={info.rep_pic}
-                            place_name={info.place_name}
-                            place_like={info.place_like}
-                            category={info.category}
+                            //key={index}
+                            place_id={item.id}
+                            rep_pic={item.rep_pic}
+                            place_name={item.place_name}
+                            place_like={item.place_like}
+                            category={item.category}
                           />
-                        </CardSection>
-                      </Grid>
-                    ))}
-                  </Grid>
+                    </View>
+                  )}
+                  keyExtractor = {(item, index) => index}
+                  />
                 )}
-              </Container>
+              </View>
             {/* </main> */}
-          </MyplaceSection>
-          <FooterSection>
+          </View>
+          <View style={styles.FooterSection}>
             <Pagination
               total={pageCount}
               limit={limit}
               page={page}
               setPage={setPage}
             />
-          </FooterSection>
+          </View>
         </>
       )}
     </>
