@@ -54,11 +54,12 @@ export default function SetNewPassword(): JSX.Element {
         buttonView={passwordCheck}
         onPress={() => { updateNewPassword(); }}
         message={passwordCheck ? "" : "입력한 비밀번호와 일치하지 않습니다"}
-        style={passwordCheck ? { width: '100%' } : { width: '100%', backgroundColor: "#F9E3E3" }}
+        style={passwordCheck ? {} : { backgroundColor: "#F9E3E3" }}
         onChangeText={(text) => { setForm({ ...form, passwordConfirm: text }) }}
+        spellCheck={false}
+        autoCapitalize="none"
         textContentType='newPassword'
         secureTextEntry={true}
-        buttonText="비밀번호 변경"
       />
     </View>
   )
