@@ -14,11 +14,11 @@ interface ToggleButtonProps {
     color?: string;
 }
 
-const ToggleButton = ({onPress, text, color }: ToggleButtonProps) => {
+const ToggleButton = ({ onPress, text, color }: ToggleButtonProps) => {
     return (
         <TouchableOpacity
-            onPress = {onPress}
-            style = {{
+            onPress={onPress}
+            style={{
                 width: 140,
                 height: 24,
                 justifyContent: 'center',
@@ -31,7 +31,7 @@ const ToggleButton = ({onPress, text, color }: ToggleButtonProps) => {
                     width: 0,
                     height: 2,
                 },
-                
+
             }}>
             <Text>{text}</Text>
         </TouchableOpacity>
@@ -40,7 +40,6 @@ const ToggleButton = ({onPress, text, color }: ToggleButtonProps) => {
 
 const StoryListPage = ({ navigation, route }: StoryProps) => {
     const [item, setItem] = useState([] as any);
-    const [loading, setLoading] = useState<boolean>(false);
     const [orderList, setOrderList] = useState<boolean>(true);
     const [page, setPage] = useState<number>(1);
     const [nextPage, setNextPage] = useState<any>(null);
@@ -51,7 +50,7 @@ const StoryListPage = ({ navigation, route }: StoryProps) => {
 
     const request = new Request();
     const isFocused = useIsFocused();
-    
+
     useEffect(() => {
         handleSearchToggle();
         getStories();
@@ -67,15 +66,14 @@ const StoryListPage = ({ navigation, route }: StoryProps) => {
     }
 
     const getStories = async () => {
-        setLoading(true);
 
         const response = await request.get('/stories/story_search/', {
-            page: page, 
+            page: page,
             search: search,
             latest: orderList
         }, null);
-        
-        if(latest || page === 1){
+
+        if (latest || page === 1) {
             setItem([...response.data.data.results]);
             setLatest(false);
             setIsSearch(false);
@@ -83,12 +81,11 @@ const StoryListPage = ({ navigation, route }: StoryProps) => {
             setItem([...item, ...response.data.data.results]);
         }
         setNextPage(response.data.data.next);
-        setLoading(false);
         console.log(item);
     }
 
     const onRefresh = async () => {
-        if(!refreshing || page !== 1){
+        if (!refreshing || page !== 1) {
             setRefreshing(true);
             setPage(1);
             setRefreshing(false);
@@ -96,89 +93,86 @@ const StoryListPage = ({ navigation, route }: StoryProps) => {
     }
 
     const onEndReached = async () => {
-        if(loading || isSearch || nextPage === null){
+        if (isSearch || nextPage === null) {
             return;
         }
         else {
             setPage(page + 1);
-            setLoading(true);
-            setLoading(false);
         }
     }
 
     return (
-        <>
-            {loading ? (
-                <Loading />
-            ) : (
-                <SafeAreaView style = {{
-                    flex: 1,
-                    alignItems: 'center',
-                }}>
-                    <Text style = {{
-                        fontSize: 36,
-                        fontWeight: '700',
-                        lineHeight: 36,
-                        marginTop: 23,
-                        marginBottom: 8
-                    }}>Story</Text>
-                    <Text style = {{
-                        fontSize: 12,
-                        fontWeight: '500',
-                        lineHeight: 14,
-                        marginBottom: 20
-                    }}>
-                        공간에 대한 깊은 이야기
-                    </Text>
-                    <SearchBar setSearch = {setSearch} />
-                    <View style = {{
-                        backgroundColor: '#EEEEEE',
-                        borderRadius: 12,
-                        width: 312,
-                        height: 32,
-                        flexDirection: 'row',
-                        alignItems: 'center',
-                        justifyContent: 'center'
-                    }}>
-                        {!orderList ?
-                                <>
-                                <ToggleButton
-                                    text = '최신 순'
-                                    onPress={() => {
-                                        setOrderList(!orderList);
-                                        setPage(1);
-                                        setLatest(true);
-                                    }} />
-                                <ToggleButton 
-                                    color = '#03B961'
-                                    text = '오래된 순' />
-                                </>
-                            :
-                                <>
-                                <ToggleButton
-                                    color = '#01A0FC'
-                                    text = '최신 순' />
-                                <ToggleButton 
-                                    text = '오래된 순'
-                                    onPress={() => {
-                                        setOrderList(!orderList);
-                                        setPage(1);
-                                        setLatest(true);
-                                    }} />
-                                </>
-                            }
-                    </View>
-                    <StoryList 
-                        info = {item}
-                        onRefresh = {onRefresh}
-                        refreshing = {refreshing}
-                        onEndReached = {onEndReached}
-                        loading = {loading}
-                        navigation = {navigation}
-                    />
-                </SafeAreaView>
-            )}
-        </>
+        <SafeAreaView style={{
+            flex: 1,
+            alignItems: 'center',
+        }}>
+            <Text style={{
+                fontSize: 36,
+                fontWeight: '700',
+                lineHeight: 36,
+                marginTop: 23,
+                marginBottom: 8
+            }}>Story</Text>
+            <Text style={{
+                fontSize: 12,
+                fontWeight: '500',
+                lineHeight: 14,
+                marginBottom: 20
+            }}>
+                공간에 대한 깊은 이야기
+            </Text>
+            <SearchBar
+                setPage={setPage}
+                search={search}
+                setSearch={setSearch}
+                style={{ backgroundColor: '#D9D9D9' }}
+                placeholder="장소명 / 내용 / 카테고리로 검색해보세요!"
+            />
+            <View style={{
+                backgroundColor: '#EEEEEE',
+                borderRadius: 12,
+                width: 312,
+                height: 32,
+                flexDirection: 'row',
+                alignItems: 'center',
+                justifyContent: 'center'
+            }}>
+                {!orderList ?
+                    <>
+                        <ToggleButton
+                            text='최신 순'
+                            onPress={() => {
+                                setOrderList(!orderList);
+                                setPage(1);
+                                setLatest(true);
+                            }} />
+                        <ToggleButton
+                            color='#03B961'
+                            text='오래된 순' />
+                    </>
+                    :
+                    <>
+                        <ToggleButton
+                            color='#01A0FC'
+                            text='최신 순' />
+                        <ToggleButton
+                            text='오래된 순'
+                            onPress={() => {
+                                setOrderList(!orderList);
+                                setPage(1);
+                                setLatest(true);
+                            }} />
+                    </>
+                }
+            </View>
+            <StoryList
+                info={item}
+                onRefresh={onRefresh}
+                refreshing={refreshing}
+                onEndReached={onEndReached}
+                navigation={navigation}
+            />
+        </SafeAreaView>
     )
 }
 
