@@ -130,7 +130,7 @@ const LoginScreen = ({ navigation }) => {
                 </TouchableOpacity>
             </View>
             <View style={{ marginTop: 40 }}>
-                <TouchableOpacity onPress={() => navigation.navigate('join')}>
+                <TouchableOpacity onPress={() => navigation.navigate('register')}>
                     <SignUpButton>
                         <Text style={{ color: '#FFFFFF', fontWeight: 600, fontSize: 16 }}>회원가입하기</Text>
                     </SignUpButton>
