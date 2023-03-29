@@ -1,54 +1,70 @@
 import React, { useEffect, useState, useCallback } from 'react';
-import { Text, ScrollView, View, TouchableOpacity, Alert,StyleSheet,SafeAreaView, localStorage,Image, ImageBackground } from "react-native";
+import { ImageBackground,Text, ScrollView, View, TouchableOpacity, Alert,StyleSheet,SafeAreaView, Image } from "react-native";
 import { useFocusEffect, useNavigation } from '@react-navigation/native';
 import { getNickname, removeNickname, removeAccessToken, getEmail } from '../../../common/storage';
-import { onChange } from 'react-native-reanimated';
 import { launchImageLibrary } from 'react-native-image-picker';
+import editimage from '../../../assets/img/Edit_profileimage.png';
 import PhotoOptions from '../../../common/PhotoOptions';
-import ChangeForm from './ChangeForm';
 import { Request } from '../../../common/requests';
-
+import { TextInput } from 'react-native-gesture-handler';
+import styled, { css } from 'styled-components/native';
 
 const request = new Request();
+
+const FeedbackBox = styled.TextInput`
+width: 350px;
+    height: 100px;
+    margin: 12px;
+    padding: 5px;
+    borderWidth: 1px;
+    background: #FFFFFF;
+    border-radius: 3px;
+    box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);`;
 
   //export default ViewStyleProps;   
 
 export default function UserInfoBox({ navigation }) {
 
-    const [nickname, setNickname] = useState('')
-    const [photo, setPhoto] = useState('');
-    const [email,setEmail] = useState('');
-    const [birthdate,setBirthdate] = useState('');
- 
-    const logout = () => {
-        removeNickname()
-        removeAccessToken()
-        setNickname('')
-        setEmail('')
-    }
+   
+  const [nickname, setNickname] = useState('')
+  const [photo, setPhoto] = useState('');
+  const [email,setEmail] = useState('');
+  const [birthdate,setBirthdate] = useState('');
 
+  const logout = () => {
+      removeNickname()
+      removeAccessToken()
+      setNickname('')
+      setEmail('')
+  }
+  const getUserinfo = async () => {
+    const response = await request.get(`/users/me/`,{},{});
+    console.log("응답 : ",response);
+    console.log("이메일 : ",response.data.data.email);
+    console.log("생년월일 : ", response.data.data.birthdate);
+    setEmail(response.data.data.email);
+    setBirthdate(response.data.data.birthdate)
+    setPhoto(response.data.data.profile_image)
     
-    const getUserinfo = async () => {
-      const response = await request.get(`/users/me/`,{},{});
-      console.log("응답 : ",response);
-      console.log("이메일 : ",response.data.data.email);
-      console.log("생년월일 : ", response.data.data.birthdate);
-      console.log("프로필 이미지 : ", response.data.data.profile_image)
-      setEmail(response.data.data.email);
-      setBirthdate(response.data.data.birthdate);
-      setPhoto(response.data.data.profile_image);
-    }
+  }
+  const SaveInfo = async () =>{
+    console.log("***이건 생년월일 변경된 정보", birthdate)
+    const response = await request.post('users/me/',birthdate);
+    console.log(response);
 
-  /*
-    useFocusEffect(useCallback(()=>{
-      async function _getEmail()
-      {
-        setEmail(await getEmail());
-      }
-      _getEmail();
-    },[email]))*/
+  }
 
-    //화면에 포커스 잡힘 -> 실행됨 
+    const handleChoosePhoto = () => {
+      launchImageLibrary({ noData: true }, (response) => {
+        // console.log(response);
+        if (response) {
+          console.log('bbbb',response)
+          setPhoto(response.uri);
+          console.log('aaaaa', photo,'bbbb');
+        }
+      });
+    };
+  
     useFocusEffect(
       useCallback(() => {
           // Do someth2ing when the screen is focused
@@ -62,13 +78,12 @@ export default function UserInfoBox({ navigation }) {
           //     // Useful for cleanup functions
           // };
       }, [nickname]))
-
-   
-
-
-      // React.js와 RN에서 화면 네비게이션 동작이 다르므로 useEffect 대신 useFocusEffect를 사용
-
+      
+      
   
+    const handleUploadPhoto = () => {
+//      const response = await request.post("/users/me/",photo );
+    };
 
 
   return (
@@ -79,40 +94,42 @@ export default function UserInfoBox({ navigation }) {
                   
                 <ScrollView>
 
-                  <View >
-                      <ImageBackground source={{uri: photo}} style = {styles.circle}/>
+                  <View>
+                    <ImageBackground source={{uri:photo}} style={styles.circle}/>
                     </View >    
 
-                        <Text>{nickname}님</Text>
+                    <TouchableOpacity onPress={handleChoosePhoto}>
+                      <Image source={editimage} ></Image>
+                    </TouchableOpacity>
+                    
+                    <Text>{nickname}님</Text>
                         <SafeAreaView style={{padding:'1%', flexDirection:'row'}}>
                         <View style={styles.oval}><Text>이메일</Text></View>                        
                         <View style={styles.rectangle}><Text style={{fontSize:7}}>{email}</Text></View>
+                      
                       </SafeAreaView>
 
                       <SafeAreaView style={{padding:'1%', flexDirection:'row'}}>
                         <View style={styles.oval}><Text>닉네임</Text></View>
-                        <View style={styles.rectangle}><Text>{nickname}</Text></View>
-                      </SafeAreaView>
+                        <FeedbackBox placeholder={nickname}/>
+                        </SafeAreaView>
 
                       <SafeAreaView style={{padding:'1%', flexDirection:'row'}}>
                         <View style={styles.oval}><Text>생년월일</Text></View>
-                        <View style={styles.rectangle}><Text style={{fontSize:7}}>{birthdate}</Text></View>
+                         <TextInput type="date"
+                      max="9999-12-31"
+                      defaultValue={birthdate}
+                      onChangeText={(event) => {
+                        setBirthdate(event
+                        );
+                      }}
+                    name="birthdate" />
                         </SafeAreaView>
 
-                        <SafeAreaView style={{padding:'5%', flexDirection:'row'}}>
-                        <TouchableOpacity onPress={()=>navigation.navigate('change')}>
-                        <View style={styles.oval0}><Text style={styles.text} >프로필 편집</Text></View>
+
+                        <TouchableOpacity onPress={async()=>await SaveInfo()}>
+                          <View style={styles.oval0}><Text style={styles.text}>저장하기</Text></View>
                         </TouchableOpacity>
-
-
-                        <TouchableOpacity style={{ }} onPress={() => navigation.navigate('changepw')}>
-                        <View style={styles.oval0}>
-                          <Text style={styles.text} >비밀번호 변경</Text>
-                          </View>
-                        </TouchableOpacity>             
-                        <TouchableOpacity style={{ }} onPress={() => navigation.navigate('feedback')}>
-                        <View style={styles.oval0}><Text style={styles.text} >의견 보내기</Text></View>
-                        </TouchableOpacity></SafeAreaView>
 
                     </ScrollView>
 
