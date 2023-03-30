@@ -13,11 +13,11 @@ interface ToggleButtonProps {
     color?: string;
 }
 
-const ToggleButton = ({onPress, text, color }: ToggleButtonProps) => {
+const ToggleButton = ({ onPress, text, color }: ToggleButtonProps) => {
     return (
         <TouchableOpacity
-            onPress = {onPress}
-            style = {{
+            onPress={onPress}
+            style={{
                 width: 140,
                 height: 24,
                 justifyContent: 'center',
@@ -30,7 +30,7 @@ const ToggleButton = ({onPress, text, color }: ToggleButtonProps) => {
                     width: 0,
                     height: 2,
                 },
-                
+
             }}>
             <Text>{text}</Text>
         </TouchableOpacity>
@@ -49,7 +49,6 @@ const StoryListPage = ({ navigation, route }: StoryProps) => {
 
     const request = new Request();
     const isFocused = useIsFocused();
-    
     useFocusEffect(useCallback(() => {
         handleSearchToggle();
         getStories();
@@ -66,12 +65,12 @@ const StoryListPage = ({ navigation, route }: StoryProps) => {
 
     const getStories = async () => {
         const response = await request.get('/stories/story_search/', {
-            page: page, 
+            page: page,
             search: search,
             latest: orderList
         }, null);
-        
-        if(latest || page === 1){
+
+        if (latest || page === 1) {
             setItem([...response.data.data.results]);
             setLatest(false);
             setIsSearch(false);
@@ -82,7 +81,7 @@ const StoryListPage = ({ navigation, route }: StoryProps) => {
     }
 
     const onRefresh = async () => {
-        if(!refreshing || page !== 1){
+        if (!refreshing || page !== 1) {
             setRefreshing(true);
             setPage(1);
             setRefreshing(false);
@@ -154,6 +153,17 @@ const StoryListPage = ({ navigation, route }: StoryProps) => {
                                 setPage(1);
                                 setLatest(true);
                             }} />
+                    </>
+                }
+            </View>
+            <StoryList
+                info={item}
+                onRefresh={onRefresh}
+                refreshing={refreshing}
+                onEndReached={onEndReached}
+                navigation={navigation}
+            />
+        </SafeAreaView>
                         </>
                     }
                 </View>

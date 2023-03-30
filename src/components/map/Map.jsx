@@ -36,7 +36,7 @@ const SearchHereText = styled.Text`
 
 
 
-const Map = ({ placeData, setSearchHere, setSearch, setPage, checkedList, setCheckedList, nowCoor, detailRef, setDetailData, center, setCenter,target }) => {
+const Map = ({ placeData, setSearchHere,search, setSearch, setPage, checkedList, setCheckedList, nowCoor, detailRef, setDetailData, center, setCenter,target }) => {
 	const request = new Request();
 	//tempCoor => 지도가 움직이때마다 center의 좌표
 	const [tempCoor, setTempCoor] = useState(nowCoor);
@@ -91,7 +91,13 @@ const Map = ({ placeData, setSearchHere, setSearch, setPage, checkedList, setChe
 				})}
 		</NaverMapView>
 		<ButtonWrapper>
-			<SearchBar setSearch={setSearch}></SearchBar>
+			<SearchBar
+				search={search}
+				setSearch={setSearch}
+				style={{backgroundColor:"#FFFFFF"}}
+				placeholder="장소를 검색해주세요"
+				setPage={setPage}
+				/>
 			<Category checkedList={checkedList} setCheckedList={setCheckedList} />
 			<SearchHereButton onPress={() => { setSearchHere(tempCoor); setPage(1); }}>
 				<SearchHereText>
@@ -196,6 +202,7 @@ export default function MapContainer({ nowCoor, navigation, route }) {
 					<Map
 						checkedList={checkedList}
 						setCheckedList={setCheckedList}
+						search={search}
 						setSearch={setSearch}
 						setSearchHere={setSearchHere}
 						placeData={placeData}
