@@ -90,7 +90,13 @@ const Map = ({ placeData, setSearchHere, setSearch, setPage, checkedList, setChe
 				})}
 		</NaverMapView>
 		<ButtonWrapper>
-			<SearchBar setSearch={setSearch}></SearchBar>
+			<SearchBar
+				search={search}
+				setSearch={setSearch}
+				style={{backgroundColor:"#FFFFFF"}}
+				placeholder="장소를 검색해주세요"
+				setPage={setPage}
+				/>
 			<Category checkedList={checkedList} setCheckedList={setCheckedList} />
 			<SearchHereButton onPress={() => { setSearchHere(tempCoor); setPage(1); }}>
 				<SearchHereText>
@@ -178,6 +184,7 @@ export default function MapContainer({ nowCoor, navigation, route }) {
 					<Map
 						checkedList={checkedList}
 						setCheckedList={setCheckedList}
+						search={search}
 						setSearch={setSearch}
 						setSearchHere={setSearchHere}
 						placeData={placeData}
