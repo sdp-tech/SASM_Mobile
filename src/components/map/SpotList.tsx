@@ -17,6 +17,7 @@ const PaginationSection = styled.View`
 `
 type MapListProps = {
   detailRef: any;
+  listRef: any;
   placeData: any[];
   page: number;
   total: number;
@@ -36,14 +37,14 @@ export type DataTypes = {
   place_like: string;
 }
 
-export default function MapList({ detailRef, placeData, setPage, page, total, setDetailData, setCenter }: MapListProps): JSX.Element {
+export default function MapList({ listRef, detailRef, placeData, setPage, page, total, setDetailData, setCenter }: MapListProps): JSX.Element {
   return (
     <ListSection>
       <ScrollView>
         {
           placeData.map(data => {
             return (
-              <ItemCard detailRef={detailRef} key={data.id} placeData={data} setDetailData={setDetailData} setCenter={setCenter} />
+              <ItemCard detailRef={detailRef} listRef={listRef} key={data.id} placeData={data} setDetailData={setDetailData} setCenter={setCenter} />
             )
           })
         }
