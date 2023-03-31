@@ -8,10 +8,9 @@ interface StoryListProps {
     onRefresh: any;
     refreshing: boolean;
     navigation: any;
-    page: number;
 }
 
-const StoryList = ({ info, onEndReached, onRefresh, refreshing, navigation, page }: StoryListProps) => {
+const StoryList = ({ info, onEndReached, onRefresh, refreshing, navigation }: StoryListProps) => {
     return (
         <>
             <FlatList
