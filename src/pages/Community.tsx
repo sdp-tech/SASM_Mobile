@@ -7,7 +7,17 @@ import BoardListScreen from '../components/community/BoardList';
 import PostListScreen from '../components/community/PostList';
 import PostDetailScreen from '../components/community/PostDetail';
 import PostUploadScreen from '../components/community/PostUpload';
+import PhotoPreviewScreen from '../components/community/PhotoPreview';
 
+
+export interface BoardFormat {
+  name: string;
+  supportsHashtags: boolean;
+  supportsPostPhotos: boolean;
+  supportsPostComments: boolean;
+  supportsPostCommentPhotos: boolean;
+  postContentStyle: string;
+}
 
 
 export type CommunityStackParams = {
@@ -20,11 +30,16 @@ export type CommunityStackParams = {
     board_id: number;
     post_id: number;
     board_name: string;
+    boardFormat: BoardFormat;
   };
   PostUpload: {
     board_id?: number;// ?를 붙이면 optional
     post_id?: number;
+    boardFormat: BoardFormat;
   };
+  PhotoPreview: {
+    photoUri: any;
+  }
 };
 
 const Stack = createNativeStackNavigator<CommunityStackParams>();
@@ -41,6 +56,7 @@ const Community = () => {
       <Stack.Screen name="PostList" component={PostListScreen} />
       <Stack.Screen name="PostDetail" component={PostDetailScreen} />
       <Stack.Screen name="PostUpload" component={PostUploadScreen} />
+      <Stack.Screen name="PhotoPreview" component={PhotoPreviewScreen} />
     </Stack.Navigator>
   );
 };

@@ -1,18 +1,15 @@
-import 'react-native-gesture-handler';
-import React, { useEffect, useRef, useState } from 'react';
+import BottomSheet from "@gorhom/bottom-sheet";
+import React, { useEffect, useRef, useState, useMemo } from 'react';
 import { Text, TouchableOpacity, View, Button, StyleSheet, SafeAreaView, Dimensions, } from "react-native";
 import { request, check, PERMISSIONS, RESULTS } from 'react-native-permissions';
 import NaverMapView, { Align, Marker } from './NaverMap';
-import axios from "axios";
 import Loading from '../../common/Loading';
 import styled from 'styled-components/native';
 import SearchBar from '../../common/SearchBar';
 import Category from '../../common/Category';
-import BottomSheet from 'reanimated-bottom-sheet';
 import MapList from './SpotList';
 import SpotDetail from './SpotDetail';
 import { Request } from '../../common/requests';
-
 
 const ButtonWrapper = styled.View`
 	width: 100%;
@@ -37,11 +34,10 @@ const SearchHereText = styled.Text`
 
 
 
-const Map = ({ placeData, setSearchHere, setSearch, setPage, checkedList, setCheckedList, nowCoor, setTarget, detailRef }) => {
+const Map = ({ placeData, setSearchHere, setSearch, setPage, checkedList, setCheckedList, nowCoor, detailRef, search, listRef, setDetailData, center, setCenter, target }) => {
+	const request = new Request();
 	//tempCoor => 지도가 움직이때마다 center의 좌표
 	const [tempCoor, setTempCoor] = useState(nowCoor);
-	//지도의 중심 좌표
-	const [center, setCenter] = useState(nowCoor);
 	const mapView = useRef(null);
 	//지도가 이동할때마다 지도의 중심 좌표를 임시로 저장
 	const onChangeCenter = (event) => {
@@ -51,6 +47,21 @@ const Map = ({ placeData, setSearchHere, setSearch, setPage, checkedList, setChe
 		})
 	}
 
+	const getDetail = async (_id) => {
+		const response_detail = await request.get('/places/place_detail/', { id: _id });
+		setDetailData(response_detail.data.data);
+		setCenter({
+			latitude: response_detail.data.data.latitude,
+			longitude: response_detail.data.data.longitude,
+		})
+		listRef.current.snapToIndex(0);
+		detailRef.current.snapToIndex(1);
+	}
+	useEffect(() => {
+		if (target) {
+			getDetail(target);
+		}
+	}, [target]);
 	return <>
 		<NaverMapView
 			ref={mapView}
@@ -70,7 +81,7 @@ const Map = ({ placeData, setSearchHere, setSearch, setPage, checkedList, setChe
 							key={index}
 							coordinate={coor}
 							image={require("../../assets/img/marker.png")}
-							onClick={() => { detailRef.current.snapTo(0); setTarget(data.id) }}
+							onClick={() => { getDetail(data.id) }}
 							width={20} height={30}
 							caption={{
 								text: `${data.place_name}`, align: Align.Bottom, textSize: 15, color: "black", haloColor: "white"
@@ -79,7 +90,13 @@ const Map = ({ placeData, setSearchHere, setSearch, setPage, checkedList, setChe
 				})}
 		</NaverMapView>
 		<ButtonWrapper>
-			<SearchBar setSearch={setSearch}></SearchBar>
+			<SearchBar
+				search={search}
+				setSearch={setSearch}
+				style={{backgroundColor:"#FFFFFF"}}
+				placeholder="장소를 검색해주세요"
+				setPage={setPage}
+				/>
 			<Category checkedList={checkedList} setCheckedList={setCheckedList} />
 			<SearchHereButton onPress={() => { setSearchHere(tempCoor); setPage(1); }}>
 				<SearchHereText>
@@ -90,9 +107,7 @@ const Map = ({ placeData, setSearchHere, setSearch, setPage, checkedList, setChe
 	</>
 };
 
-export default function MapContainer({ nowCoor }) {
-	//detail을 가져올 타겟
-	const [target, setTarget] = useState(0);
+export default function MapContainer({ nowCoor, navigation, route }) {
 	//SpotList의 ref
 	const listRef = useRef(null);
 	//SpotDetail의 ref
@@ -101,6 +116,37 @@ export default function MapContainer({ nowCoor }) {
 	const WindowHeight = Dimensions.get('window').height
 	const [loading, setLoading] = useState(true);
 	const [placeData, setPlaceData] = useState([]);
+	const [detailData, setDetailData] = useState({
+		id: 0,
+		place_name: '',
+		category: '',
+		open_hours: '',
+		mon_hours: '',
+		tues_hours: '',
+		wed_hours: '',
+		thurs_hours: '',
+		fri_hours: '',
+		sat_hours: '',
+		sun_hours: '',
+		place_review: '',
+		address: '',
+		rep_pic: '',
+		short_cur: '',
+		latitude: 0,
+		longitude: 0,
+		photos: [{}],
+		sns: [{}],
+		story_id: 0,
+		place_like: false,
+		category_statistics: [],
+	});
+	//DetailCard에서 좋아요 누를 시 새로 고침
+	const [refresh, setRefresh] = useState(false);
+	const rerenderScreen = () => {
+		setRefresh(!refresh);
+	}
+	//지도의 중심 좌표
+	const [center, setCenter] = useState(nowCoor);
 	//checkedList => 카테고리 체크 복수 체크 가능
 	const [checkedList, setCheckedList] = useState([]);
 	const [total, setTotal] = useState(0);
@@ -110,24 +156,8 @@ export default function MapContainer({ nowCoor }) {
 	//searchHere => 특정 좌표에서 검색할때 tempCoor의 좌표를 기반으로 검색
 	const [searchHere, setSearchHere] = useState({ ...nowCoor });
 	const request = new Request();
+	const snapPoints = useMemo(() => ['3%', '70%'], []);
 	//bottomSheet Content
-	const renderContent = () => {
-		return (
-			<MapList detailRef={detailRef} page={page} setPage={setPage} total={total} placeData={placeData} setTarget={setTarget} />
-		)
-	}
-	const renderDetail = () => {
-		return (
-			<SpotDetail id={target} />
-		)
-	}
-	const renderHeader = () => {
-		return (
-			<View style={{ height: 20, width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', backgroundColor: 'white', borderTopEndRadius: 10, borderTopStartRadius: 10 }}>
-				<View style={{ width: '20%', height: 5, backgroundColor: '#535151', borderRadius: 5 }}></View>
-			</View>
-		)
-	}
 
 	//좌표, 검색어, 필터를 기반으로 장소들의 데이터 검색
 	const getItem = async () => {
@@ -141,13 +171,11 @@ export default function MapContainer({ nowCoor }) {
 		setTotal(response.data.data.count);
 		setPlaceData(response.data.data.results);
 		setLoading(false);
-		listRef.current.snapTo(1);
 	}
 	//searchHere, page가 변할 시 데이터 재검색
 	useEffect(() => {
 		getItem();
-	}, [searchHere, page, search, checkedList]);
-
+	}, [searchHere, page, search, checkedList, refresh]);
 	return (
 		<>
 			{loading ?
@@ -156,28 +184,42 @@ export default function MapContainer({ nowCoor }) {
 					<Map
 						checkedList={checkedList}
 						setCheckedList={setCheckedList}
+						search={search}
 						setSearch={setSearch}
 						setSearchHere={setSearchHere}
 						placeData={placeData}
 						setPage={setPage}
 						nowCoor={nowCoor}
-						setTarget={setTarget}
+						listRef={listRef}
 						detailRef={detailRef}
-					/>
-					<BottomSheet
-						ref={listRef}
-						snapPoints={[600, 155, 10]}
-						renderContent={renderContent}
-						initialSnap={1}
-						renderHeader={renderHeader}
+						setDetailData={setDetailData}
+						center={center}
+						setCenter={setCenter}
+						target={route.params?.id}
 					/>
 					<BottomSheet
 						ref={detailRef}
-						snapPoints={[WindowHeight - 110, 500, 0]}
-						renderContent={renderDetail}
-						initialSnap={2}
-						renderHeader={renderHeader}
-					/>
+						snapPoints={snapPoints}
+						index={0}
+						enablePanDownToClose={true}
+					>
+						<SpotDetail navigation={navigation} route={route} detailData={detailData} rerenderScreen={rerenderScreen} />
+					</BottomSheet>
+					<BottomSheet
+						ref={listRef}
+						snapPoints={snapPoints}
+						index={0}
+					>
+						<MapList
+							detailRef={detailRef}
+							listRef={listRef}
+							page={page}
+							setPage={setPage}
+							total={total}
+							placeData={placeData}
+							setDetailData={setDetailData}
+							setCenter={setCenter} />
+					</BottomSheet>
 				</>
 			}
 		</>

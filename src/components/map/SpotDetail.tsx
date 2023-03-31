@@ -1,16 +1,20 @@
 import axios from 'axios';
+import { SafeAreaView } from 'react-native';
 import React, { useEffect, useState } from 'react'
 import { Dimensions, View, Text } from 'react-native'
 import Loading from '../../common/Loading';
 import { Request } from '../../common/requests';
+import { MapScreenProps } from '../../pages/SpotMap';
 import DetailCard from './SpotDetail/DetailCard';
 
-interface DetailProps {
-  id: number
+interface DetailProps extends MapScreenProps {
+  detailData: detailDataProps;
+  id: number;
+  rerenderScreen: ()=>void;
 }
 
 interface url {
-  image ?: string;
+  image?: string;
 }
 
 export interface detailDataProps {
@@ -33,52 +37,17 @@ export interface detailDataProps {
   longitude: number;
   photos: url[];
   sns: object[];
-  story_id: string;
+  story_id: number;
   place_like: string;
   category_statistics: string[];
 }
 
-export default function SpotDetail({ id }: DetailProps): JSX.Element {
-  const request = new Request();
-  const [loading , setLoading] = useState<boolean>(true);
-  const [detailData, setDetailData] = useState<detailDataProps>({
-    id: 0,
-    place_name: '',
-    category: '',
-    open_hours: '',
-    mon_hours: '',
-    tues_hours: '',
-    wed_hours: '',
-    thurs_hours: '',
-    fri_hours: '',
-    sat_hours: '',
-    sun_hours: '',
-    place_review: '',
-    address: '',
-    rep_pic: '',
-    short_cur: '',
-    latitude: 0,
-    longitude: 0,
-    photos: [{}],
-    sns: [{}],
-    story_id: '',
-    place_like: '',
-    category_statistics: [],
-  });
-  const WindowHeight = Dimensions.get('window').height;
+export default function SpotDetail({ id, navigation, route, detailData, rerenderScreen }: DetailProps): JSX.Element {
   const WindowWidth = Dimensions.get('window').width;
-  const getDetail = async () => {
-    const response_detail = await request.get('/places/place_detail/', { id: id });
-    setDetailData(response_detail.data.data);
-    setLoading(false);
-  }
-  useEffect(() => {
-    if (id != 0) getDetail();
-  }, [id])
+
   return (
-    <View style={{ width: WindowWidth, height: WindowHeight - 100, backgroundColor: '#FFFFFF' }}>
-      {loading?<Loading/>:
-      <DetailCard detailData={detailData} />}
-    </View>
+    <SafeAreaView style={{ backgroundColor: '#FFFFFF' }}>
+      <DetailCard detailData={detailData} navigation={navigation} route={route} rerenderScreen={rerenderScreen}/>
+    </SafeAreaView>
   )
 }

@@ -1,12 +1,18 @@
-import React from 'react'
-import { Dimensions, Image, Text, TouchableOpacity, View } from 'react-native'
+import React, { Dispatch, SetStateAction, useEffect, useRef, useState } from 'react'
+import { Dimensions, Image, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
 import styled from 'styled-components/native';
+import Heart from '../../../common/Heart';
+import { Request } from '../../../common/requests';
+import { Coordinate } from '../../../pages/SpotMap';
+import { detailDataProps } from '../SpotDetail';
 import { DataTypes } from '../SpotList';
 
 type ItemCardProps = {
-  data: DataTypes;
+  placeData: DataTypes;
+  listRef: any;
   detailRef: any;
-  setTarget: (id: number)=>void;
+  setDetailData: Dispatch<SetStateAction<detailDataProps>>;
+  setCenter: Dispatch<SetStateAction<Coordinate>>;
 }
 
 const StyledCard = styled.View`
@@ -24,20 +30,79 @@ const TextBox = styled.View`
   flex-direction: column;
   flex: 1;
 `
+const TitleBox = styled.View`
+  border-color: #999999;
+  border-bottom-width: 1px;
+`
 
-export default function ItemCard({ data, detailRef, setTarget }: ItemCardProps): JSX.Element {
-  const { address, category, id, place_name, place_review, rep_pic, open_hours } = data
+export default function ItemCard({ placeData, listRef, detailRef, setDetailData, setCenter }: ItemCardProps): JSX.Element {
+  const request = new Request();
+  const [like, setLike] = useState<boolean>(false);
+  const getDetail = async () => {
+    const response_detail = await request.get('/places/place_detail/', { id: placeData.id });
+    setDetailData(response_detail.data.data);
+    setCenter({
+      latitude: response_detail.data.data.latitude,
+      longitude: response_detail.data.data.longitude
+    })
+		listRef.current.snapToIndex(0);
+		detailRef.current.snapToIndex(1);
+  }
+
+  const toggleLike = async () => {
+    const response = await request.post('/places/place_like/', { id: placeData.id });
+    setLike(!like);
+  }
+  useEffect(() => {
+    if (placeData.place_like == "ok") setLike(true);
+    else setLike(false);
+  }, [placeData]);
   return (
-    <StyledCard>
-      <TouchableOpacity onPress={()=>{detailRef.current.snapTo(0); setTarget(data.id)}}>
-        <ImageBox>
-          <Image source={{ uri: rep_pic }} style={{ width: 130, height: 130 }} />
-        </ImageBox>
-      </TouchableOpacity>
-      <TextBox>
-        <Text>{place_name}</Text>
-        <Text>{address}</Text>
-      </TextBox>
-    </StyledCard>
+    <View>
+      <StyledCard>
+        <TouchableOpacity onPress={getDetail}>
+          <ImageBox>
+            <Image source={{ uri: placeData.rep_pic }} style={{ width: 130, height: 130 }} />
+          </ImageBox>
+        </TouchableOpacity>
+        <TextBox>
+          <TitleBox>
+            <View style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between' }}>
+              <TouchableOpacity onPress={getDetail}>
+                <Text style={TextStyle.placeName}>{placeData.place_name}</Text>
+              </TouchableOpacity>
+              <Heart like={like} onPress={toggleLike} />
+            </View>
+            <Text style={TextStyle.category}>{placeData.category}</Text>
+          </TitleBox>
+          <View>
+            <Text style={TextStyle.placeReview}>{placeData.place_review}</Text>
+            <Text style={TextStyle.address}>{placeData.address}</Text>
+            <Text style={TextStyle.openHours}>{placeData.open_hours}</Text>
+          </View>
+        </TextBox>
+      </StyledCard>
+    </View>
   )
 }
+
+const TextStyle = StyleSheet.create({
+  placeName: {
+    fontSize: 18
+  },
+  category: {
+    fontSize: 14,
+  },
+  placeReview: {
+    fontSize: 14,
+    color: '#999999',
+  },
+  address: {
+    fontSize: 14,
+    marginTop: 5,
+    marginBottom: 5
+  },
+  openHours: {
+    fontSize: 14,
+  }
+})

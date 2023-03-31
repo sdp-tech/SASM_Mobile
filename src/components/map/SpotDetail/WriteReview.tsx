@@ -2,9 +2,8 @@ import React, { useEffect, useState, useCallback, Dispatch, SetStateAction } fro
 import { Text, TextInput, TouchableOpacity, View, Image, Alert } from 'react-native'
 import styled from 'styled-components/native';
 import { Request } from '../../../common/requests';
-import * as ImagePicker from 'react-native-image-picker';
 import { reviewDataProps } from './DetailCard';
-import { CameraActions } from '../../../common/PhotoOptions';
+import PhotoOptions from '../../../common/PhotoOptions';
 
 const KeywordBox = styled.View`
   border: 1px black solid;
@@ -16,22 +15,12 @@ const KeywordButton = styled.TouchableOpacity`
 `
 const KeywordTitle = styled.Text<{ isSelected: boolean }>`
   color: ${props => props.isSelected ? 'red' : 'black'};
-
 `
 const ContentsInput = styled.TextInput<{ value: string }>`
   border: 1px #000000 solid;
   height: 30px;
   margin: 10px 0;
   padding: 5px;
-`
-const PhotosInput = styled.View`
-  display: flex; 
-  flex-flow: row wrap;
-  border: 1px black solid;
-`
-const PhotoButton = styled.TouchableOpacity`
-  width: 50%;
-  padding: 10px;
 `
 const PhotoBox = styled.View`
   display: flex;
@@ -60,7 +49,10 @@ interface SubmitProps {
 }
 
 export default function WriteReview({ category, id, tab, setTab, targetData, setReviewModal }: WriteProps) {
-  const [photos, setPhotos] = useState<any[]>();
+  //업로드할 사진 목록
+  const [photos, setPhotos] = useState<any[]>([]);
+  //수정할 사진 목록
+  const [photoList, setPhotoList] = useState<any[]>([]);
   const request = new Request();
   const [form, setForm] = useState<FormProps>(
     {
@@ -96,7 +88,7 @@ export default function WriteReview({ category, id, tab, setTab, targetData, set
       keywordList.push(['관리가 잘 되어 있다', 16])
       break;
   }
-  
+
   const onChangeKeyword = (value: number) => {
     //키워드 선택
     if (form.keywords.includes(value)) {
@@ -126,14 +118,10 @@ export default function WriteReview({ category, id, tab, setTab, targetData, set
       [props]: value,
     });
   };
-  const onButtonPress = useCallback((type: string, options: ImagePicker.CameraOptions | ImagePicker.ImageLibraryOptions) => {
-    //카메라 & 갤러리 열기
-    if (type === 'capture') {
-      ImagePicker.launchCamera(options, response => setPhotos(response.assets))
-    } else {
-      ImagePicker.launchImageLibrary(options, response => setPhotos(response.assets))
-    }
-  }, []);
+  const deletePhoto = (data: any, state: any[], setState: Dispatch<SetStateAction<any[]>>) => {
+    //각각의 photoList와 photos를 위해 state를 props로 전달
+    setState(state.filter((el) => el !== data));
+  }
   const uploadReview = async () => {
     //리뷰 업로드
     const formData = new FormData();
@@ -142,103 +130,96 @@ export default function WriteReview({ category, id, tab, setTab, targetData, set
     formData.append('category', form.keywords);
     if (photos) {
       for (let i = 0; i < photos.length; i++) {
-        formData.append('photos', { uri: photos[i].uri, name: photos[i].fileName, type: photos[i].type });
+        formData.append('photos', {
+          uri: photos[i].uri,
+          name: photos[i].fileName,
+          type: 'image/jpeg/png',
+        });
       }
     }
-    if (targetData) {
-      const response_update = await request.put(`/places/place_review/${targetData.id}/`, formData, { "Content-Type": "multipart/form-data" });
+    if (photoList) {
+      for (let i = 0; i < photoList.length; i++) {
+        formData.append('photoList', photoList[i].imgfile);
+      }
+    }
+
+    for(let item of formData.getParts()){
+      console.log(item);
+    }
+    if (photoList.length + photos.length > 3 || form.contents.length==0) {
+      if(form.contents.length==0) {
+        Alert.alert(
+          '댓글을 작성해주세요',
+          '',
+          [{
+            text: '확인'
+          }]
+        )
+      }
+      if(photoList.length + photos.length > 3) {
+        Alert.alert(
+          '사진은 최대 3장까지 업로드',
+          '',
+          [{
+            text: '확인'
+          }]
+        )
+      }
     }
     else {
-      const response_upload = await request.post('/places/place_review/', formData, { "Content-Type": "multipart/form-data" });
+      if (targetData) {
+        const response_update = await request.put(`/places/place_review/${targetData.id}/update`, formData, { "Content-Type": "multipart/form-data" });
+      }
+      else {
+        const response_upload = await request.post('/places/place_review/create/', formData, { "Content-Type": "multipart/form-data" });
+      }
+      setReviewModal(false);
+      setTab(!tab);
     }
-    setReviewModal(false);
-    setTab(!tab);
   }
   useEffect(() => {
     let tempCategory = [];
     if (targetData) {
+      setPhotoList(targetData.photos);
       for (let i = 0; i < targetData?.category.length; i++) {
         tempCategory.push(targetData.category[i].category);
       }
     }
     setForm({ ...form, keywords: tempCategory });
   }, [targetData]);
-  useEffect(() => {
-    console.log(form);
-  }, [form])
   return (
     <View>
-      {targetData ?
-        //review 수정
-        <View>
-          <KeywordBox>
-            {keywordList.map(data => {
-              const isSelected = form.keywords.includes(data[1]);
-              return (<KeywordButton onPress={() => onChangeKeyword(data[1])} key={data[1]}><KeywordTitle isSelected={isSelected}>{data[0]}</KeywordTitle></KeywordButton>)
-            })}
-          </KeywordBox>
-          <ContentsInput placeholder={targetData.contents} value={form.contents} onChangeText={onChangeText('contents')} />
-          <PhotosInput>
-            {
-              CameraActions.map(({ title, type, options }) => {
-                return (
-                  <PhotoButton
-                    key={title}
-                    onPress={() => onButtonPress(type, options)}>
-                    <Text style={{ textAlign: 'center' }}>{title}</Text>
-                  </PhotoButton>
-                );
-              })
-            }
-          </PhotosInput>
-          <PhotoBox>
-            {
-              photos?.map((data, index) => {
-                return (
-                  <Image key={index} source={{ uri: data.uri }} style={{ width: 100, height: 100, margin: 5 }} />
-                )
-              })
-            }
-          </PhotoBox>
-          <TouchableOpacity onPress={uploadReview} style={{ borderColor: 'black', borderWidth: 1, width: '20%', padding: 5 }}>
-            <Text style={{ textAlign: 'center' }}>수정</Text>
-          </TouchableOpacity>
-        </View> :
-        //review 작성
-        <View>
-          <KeywordBox>
-            {keywordList.map(data => {
-              const isSelected = form.keywords.includes(data[1]);
-              return (<KeywordButton onPress={() => onChangeKeyword(data[1])} key={data[1]}><KeywordTitle isSelected={isSelected}>{data[0]}</KeywordTitle></KeywordButton>)
-            })}
-          </KeywordBox>
-          <ContentsInput placeholder='리뷰를 작성해주세요' value={form.contents} onChangeText={onChangeText('contents')} />
-          <PhotosInput>
-            {
-              CameraActions.map(({ title, type, options }) => {
-                return (
-                  <PhotoButton
-                    key={title}
-                    onPress={() => onButtonPress(type, options)}>
-                    <Text style={{ textAlign: 'center' }}>{title}</Text>
-                  </PhotoButton>
-                );
-              })
-            }
-          </PhotosInput>
-          <PhotoBox>
-            {
-              photos?.map((data, index) => {
-                return (
-                  <Image key={index} source={{ uri: data.uri }} style={{ width: 100, height: 100, margin: 5 }} />
-                )
-              })
-            }
-          </PhotoBox>
-          <TouchableOpacity onPress={uploadReview} style={{ borderColor: 'black', borderWidth: 1, width: '20%', padding: 5 }}>
-            <Text style={{ textAlign: 'center' }}>제출</Text>
-          </TouchableOpacity>
-        </View>}
+      <KeywordBox>
+        {keywordList.map(data => {
+          const isSelected = form.keywords.includes(data[1]);
+          return (<KeywordButton onPress={() => onChangeKeyword(data[1])} key={data[1]}><KeywordTitle isSelected={isSelected}>{data[0]}</KeywordTitle></KeywordButton>)
+        })}
+      </KeywordBox>
+      <ContentsInput placeholder={targetData ? targetData.contents : '댓글을 작성해주세요'} value={form.contents} onChangeText={onChangeText('contents')} />
+      <PhotoOptions setPhoto={setPhotos} max={3} />
+      <PhotoBox>
+        {
+          photos?.map((data, index) => {
+            return (
+              <TouchableOpacity onPress={()=>deletePhoto(data,photos,setPhotos)}>
+                <Image key={index} source={{ uri: data.uri }} style={{ width: 100, height: 100, margin: 5 }} />
+              </TouchableOpacity>
+            )
+          })
+        }
+        {
+          photoList?.map((data, index) => {
+            return (
+              <TouchableOpacity onPress={()=>deletePhoto(data, photoList, setPhotoList)}>
+                <Image key={index} source={{ uri: data.imgfile }} style={{ width: 100, height: 100, margin: 5 }} />
+              </TouchableOpacity>
+            )
+          })
+        }
+      </PhotoBox>
+      <TouchableOpacity onPress={uploadReview} style={{ borderColor: 'black', borderWidth: 1, width: '20%', padding: 5 }}>
+        <Text style={{ textAlign: 'center' }}>{targetData ? '수정' : '작성'}</Text>
+      </TouchableOpacity>
     </View>
   )
 }

@@ -1,7 +1,9 @@
-import React, { Ref } from 'react'
-import { TouchableOpacity, ScrollView, Text, View, SafeAreaView } from 'react-native';
+import React, { Dispatch, Ref, SetStateAction, useEffect } from 'react'
+import { ScrollView } from 'react-native-gesture-handler';
 import styled from 'styled-components/native';
 import Pagination from '../../common/Pagination';
+import { Coordinate } from '../../pages/SpotMap';
+import { detailDataProps } from './SpotDetail';
 import ItemCard from './SpotList/ItemCard';
 
 const ListSection = styled.View`
@@ -15,11 +17,13 @@ const PaginationSection = styled.View`
 `
 type MapListProps = {
   detailRef: any;
+  listRef: any;
   placeData: any[];
   page: number;
   total: number;
-  setTarget: (id: number) => void;
   setPage: (num: number) => void;
+  setDetailData: Dispatch<SetStateAction<detailDataProps>>;
+  setCenter: Dispatch<SetStateAction<Coordinate>>;
 }
 
 export type DataTypes = {
@@ -30,16 +34,17 @@ export type DataTypes = {
   place_review: string;
   rep_pic: string;
   open_hours: string;
+  place_like: string;
 }
 
-export default function MapList({ detailRef, placeData, setPage, page, total, setTarget }: MapListProps): JSX.Element {
+export default function MapList({ listRef, detailRef, placeData, setPage, page, total, setDetailData, setCenter }: MapListProps): JSX.Element {
   return (
     <ListSection>
       <ScrollView>
         {
           placeData.map(data => {
             return (
-              <ItemCard detailRef={detailRef} key={data.id} data={data} setTarget={setTarget} />
+              <ItemCard detailRef={detailRef} listRef={listRef} key={data.id} placeData={data} setDetailData={setDetailData} setCenter={setCenter} />
             )
           })
         }

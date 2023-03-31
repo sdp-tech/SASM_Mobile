@@ -1,5 +1,6 @@
 import React, { useEffect, useState, useCallback } from 'react'
-import { Dimensions, Image, View, Text, TouchableOpacity, ScrollView } from 'react-native'
+import { Dimensions, Image, View, Text, TouchableOpacity } from 'react-native'
+import { ScrollView } from 'react-native-gesture-handler';
 import styled from 'styled-components/native';
 import { detailDataProps } from '../SpotDetail';
 import OpenTime from "../../../assets/img/PlaceDetail/OpenTime.svg";
@@ -8,6 +9,7 @@ import Heart from '../../../common/Heart';
 import { Request } from '../../../common/requests';
 import WriteReview from './WriteReview';
 import UserReviews from './UserReviews';
+import { MapScreenProps } from '../../../pages/SpotMap';
 
 const TextBox = styled.View`
   padding: 20px;
@@ -69,8 +71,9 @@ const StatisticsTitle = styled.View`
   flex-flow: row wrap;
   justify-content: space-between;
 `
-interface DetailCardProps {
+interface DetailCardProps extends MapScreenProps {
   detailData: detailDataProps;
+  rerenderScreen: ()=>void;
 }
 export interface reviewDataProps {
   category: any[];
@@ -83,7 +86,7 @@ export interface reviewDataProps {
   updated: string;
   writer: string;
 }
-export default function DetailCard({ detailData }: DetailCardProps): JSX.Element {
+export default function DetailCard({ detailData, navigation, route, rerenderScreen }: DetailCardProps): JSX.Element {
   const WindowWidth = Dimensions.get('window').width;
   const [tab, setTab] = useState<boolean>(true);
   const [targetId, setTargetId] = useState<number>(0);
@@ -94,19 +97,23 @@ export default function DetailCard({ detailData }: DetailCardProps): JSX.Element
   const [like, setLike] = useState<boolean>(false);
   useEffect(() => {
     setTab(true);
-    if (detailData.place_like == 'ok') setLike(true);
-    else setLike(false);
+    //나중에 BE에서 boolean으로 변환 필요
+    if (detailData.place_like == 'ok') {
+      setLike(true);
+    }
   }, [detailData]);
 
   const toggleLike = async () => {
     const response = await request.post('/places/place_like/', { id: detailData.id });
     setLike(!like);
+    rerenderScreen();
   }
 
   const getReview = async () => {
     const response_review = await request.get(`/places/place_review`, { id: detailData.id });
     setReviewData(response_review.data.data.results);
-  }
+  };
+
   useEffect(() => {
     if (reviewData) {
       for (let i = 0; i < reviewData.length; i++) {
@@ -116,7 +123,8 @@ export default function DetailCard({ detailData }: DetailCardProps): JSX.Element
         }
       }
     }
-  }, [targetId])
+  }, [targetId]);
+
   useEffect(() => {
     if (!tab) {
       getReview();
@@ -132,7 +140,7 @@ export default function DetailCard({ detailData }: DetailCardProps): JSX.Element
             <Heart like={like} onPress={toggleLike}></Heart>
             {
               detailData.story_id ?
-                <View style={{ width: 15, height: 15, backgroundColor: 'blue' }}></View> : null
+                <TouchableOpacity onPress={() => { navigation.navigate('스토리', { id: detailData.story_id }) }}><Text>스토리로 이동</Text></TouchableOpacity> : null
             }
           </ButtonBox>
           <Text style={{ fontSize: 16 }}>{detailData.category}</Text>
@@ -144,6 +152,7 @@ export default function DetailCard({ detailData }: DetailCardProps): JSX.Element
         <Tab>
           {
             tab ?
+              //홈
               <View>
                 <ReviewBox>
                   <Text>{detailData.place_review}</Text>
@@ -157,9 +166,9 @@ export default function DetailCard({ detailData }: DetailCardProps): JSX.Element
                   <Text>{detailData.open_hours}</Text>
                 </View>
                 <ImageBox>
-                  <Image source={{ uri: detailData.photos[0].image }} style={{ width: 100, height: 100 }} />
-                  <Image source={{ uri: detailData.photos[1].image }} style={{ width: 100, height: 100 }} />
-                  <Image source={{ uri: detailData.photos[2].image }} style={{ width: 100, height: 100 }} />
+                  <Image source={{ uri: detailData?.photos[0]?.image }} style={{ width: 100, height: 100 }} />
+                  <Image source={{ uri: detailData?.photos[1]?.image }} style={{ width: 100, height: 100 }} />
+                  <Image source={{ uri: detailData?.photos[2]?.image }} style={{ width: 100, height: 100 }} />
                 </ImageBox>
                 <ShortCurBox>
                   <Text>
@@ -168,6 +177,7 @@ export default function DetailCard({ detailData }: DetailCardProps): JSX.Element
                 </ShortCurBox>
               </View>
               :
+              //리뷰
               <View>
                 <StatisticsBox>
                   {
