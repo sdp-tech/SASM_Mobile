@@ -3,45 +3,55 @@ import { StyleProp, StyleSheet, Text, TextInput, TextInputProps, TextStyle, Touc
 import styled from 'styled-components/native';
 
 const InputWrapper = styled.View`
-  height: 80px;
   width: 100%;
   display: flex;
   justify-content: space-between;
   flex-flow: row wrap;
   padding: 0 5%;
-`
+  `
 
 const StyledInput = styled.TextInput`
-  width: 70%;
-  height: 30px;
-  border-color: #000000;
-  border-width: 1px;
-  margin: 0;
+  height: 35px;
+  margin: 12px 0;
+  padding: 5px;
+  borderWidth: 1px;
+  background: #FFFFFF;
+  border-radius: 3px;
+  box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
 `
 const SubmitButton = styled.TouchableOpacity`
-  width: 20%;
+  width: 30%;
+  height: 35px;
+  margin: 12px 0;
   border-color: #000000;
   border-width: 1px;
+  padding: 5px;
   background-color: #44ADF7;
   display: flex;
   justify-content: center;
+  border-radius: 3px;
+  box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
 `
 interface InputProps extends TextInputProps {
   label: string;
   message?: string;
-  buttonView?: boolean;
+  buttonText?: string;
   onPress?: () => void | Promise<void>;
 }
 
-export default function InputWithMessage({ label, message, buttonView, onPress, ...rest }: InputProps): JSX.Element {
+export default function InputWithMessage({ buttonText, label, message, onPress, ...rest }: InputProps): JSX.Element {
   return (
     <InputWrapper>
       <Text style={TextStyles.label}>{label}</Text>
-      <StyledInput {...rest} />
+      <StyledInput
+        {...rest}
+        autoCapitalize="none"
+        spellCheck={false}
+      />
       {
-        onPress && buttonView &&
+        onPress &&
         <SubmitButton onPress={onPress}>
-          <Text style={TextStyles.submit}>중복확인</Text>
+          <Text style={TextStyles.submit}>{buttonText}</Text>
         </SubmitButton>
       }
       <Text style={TextStyles.message}>{message}</Text>

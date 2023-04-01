@@ -5,6 +5,7 @@ import styled from 'styled-components/native';
 
 import { CommunityStackParams, BoardFormat } from '../../pages/Community'
 import { Request } from '../../common/requests';
+import SearchBar from '../../common/SearchBar';
 
 interface PostItemSectionProps {
     board_id: number;
@@ -202,7 +203,16 @@ const PostListScreen = ({ navigation, route }: NativeStackScreenProps<CommunityS
         }, null);
         return response.data.data.results;
     }
-
+    const getPostsBySearch = async () => {
+        const response = await request.get("/community/posts/", {
+            board: board_id,
+            query: searchQuery,
+            query_type: searchType,
+            page: page,
+            latest: true,
+        }, null);
+        setPosts(response.data.data.results);
+    }
     const onRefresh = async () => {
         if (!refreshing) {
             setPage(1);
@@ -240,29 +250,21 @@ const PostListScreen = ({ navigation, route }: NativeStackScreenProps<CommunityS
         _getData();
     }, [route]);
 
+    useEffect(() => {
+        getPostsBySearch();
+    }, [searchQuery]);
+
     return (
         <SafeAreaView style={styles.container}>
             <BoardListHeaderSection board_name={board_name} />
             {loading || boardFormat == undefined ?
                 <ActivityIndicator /> :
                 <>
-                    <SearchBarSection
-                        searchQuery={searchQuery}
-                        onChange={async (searchQuery: string) => {
-                            setSearchQuery(searchQuery);
-                            setSearchType('default');
-                            // TODO: BE로부터 받아오는 page의 size를 10으로 조정 필요, 현재 5개로는 한 페이지 cover 불가
-                            setPosts(await getPosts(searchQuery, 'default', 1));
-                            setPage(1);
-                        }}
-                        clearSearchQuery={async () => {
-                            setSearchQuery('');
-                            setSearchEnabled(true);
-                            setSearchType('default');
-                            setPosts(await getPosts('', 'default', 1));
-                        }}
-                        searchEnabled={searchEnabled}
-                    />
+                    <SearchBar
+                        search={searchQuery}
+                        setSearch={setSearchQuery}
+                        setPage={setPage}
+                        style={{ backgroundColor: "#E9E9E9" }} />
                     {!hashtagSearching() ?
                         <>
                             <FlatList

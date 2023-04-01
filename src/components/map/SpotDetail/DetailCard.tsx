@@ -1,5 +1,6 @@
 import React, { useEffect, useState, useCallback } from 'react'
-import { Dimensions, Image, View, Text, TouchableOpacity, ScrollView } from 'react-native'
+import { Dimensions, Image, View, Text, TouchableOpacity } from 'react-native'
+import { ScrollView } from 'react-native-gesture-handler';
 import styled from 'styled-components/native';
 import { detailDataProps } from '../SpotDetail';
 import OpenTime from "../../../assets/img/PlaceDetail/OpenTime.svg";

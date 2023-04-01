@@ -1,4 +1,5 @@
 import axios from 'axios';
+import { SafeAreaView } from 'react-native';
 import React, { useEffect, useState } from 'react'
 import { Dimensions, View, Text } from 'react-native'
 import Loading from '../../common/Loading';
@@ -42,12 +43,11 @@ export interface detailDataProps {
 }
 
 export default function SpotDetail({ id, navigation, route, detailData, rerenderScreen }: DetailProps): JSX.Element {
-  const WindowHeight = Dimensions.get('window').height;
   const WindowWidth = Dimensions.get('window').width;
 
   return (
-    <View style={{ width: WindowWidth, height: WindowHeight - 100, backgroundColor: '#FFFFFF' }}>
+    <SafeAreaView style={{ backgroundColor: '#FFFFFF' }}>
       <DetailCard detailData={detailData} navigation={navigation} route={route} rerenderScreen={rerenderScreen}/>
-    </View>
+    </SafeAreaView>
   )
 }

@@ -1,33 +1,46 @@
-import React, { useState } from 'react';
-import { Text, TextInput, TouchableOpacity, View } from 'react-native';
+import React, { Dispatch, SetStateAction, useState } from 'react';
+import { Text, TextInputProps, TextStyle, TouchableOpacity, View } from 'react-native';
 import styled from 'styled-components/native';
 const SearchWrapper = styled.View`
   display: flex;
+  width: 80%;
+  margin: 0 auto;
+  height: 40px;
   flex-direction: row;
   margin-bottom: 10px;
+  box-shadow: 3px 3px 4px rgba(0, 0, 0, 0.1);
+  border-radius: 10px;
 `
 const StyledInput = styled.TextInput`
-  border: 1px black solid;
-  width: 180px;
-  height: 25px;
-  background-color: #FFFFFF;
+  width: 85%;
+  padding: 0 5%;
 `
-const SubmitButton = styled.TouchableOpacity`
-  border: 1px black solid;
+const ResetButton = styled.TouchableOpacity`
+  width: 15%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 `
-interface SearchBarProps {
-  setSearch: (search: string) => void;
+interface SearchBarProps extends TextInputProps {
+  search: string;
+  style: TextStyle;
+  setPage: Dispatch<SetStateAction<number>>;
+  setSearch: Dispatch<SetStateAction<string>>;
 }
-export default function SearchBar({ setSearch }: SearchBarProps) {
-  const [tempSearch, setTempSearch] = useState<string>('');
+export default function SearchBar({ style, search, setSearch, setPage, ...rest }: SearchBarProps) {
   return (
-    <SearchWrapper>
+    <SearchWrapper
+      style={style}
+    >
       <StyledInput
-        onChangeText={(text:string) => { setTempSearch(text) }}
+        value={search}
+        spellCheck={false}
+        onChangeText={(text: string) => { setSearch(text); setPage(1); }}
+        {...rest}
       />
-      <SubmitButton onPress={()=>{setSearch(tempSearch)}}>
-        <Text>검색</Text>
-      </SubmitButton>
-    </SearchWrapper>
+      <ResetButton onPress={() => setSearch("")}>
+        <Text>X</Text>
+      </ResetButton>
+    </SearchWrapper >
   )
 }
