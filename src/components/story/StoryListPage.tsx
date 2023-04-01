@@ -178,6 +178,9 @@ const StoryListPage = ({ navigation, route }: StoryProps) => {
                 />
                 </>
             )}
+            <TouchableOpacity onPress={()=>{navigation.navigate('WriteStory')}}>
+                <Text>스토리 작성</Text>
+            </TouchableOpacity>
             </ScrollView>
         </>
     )
