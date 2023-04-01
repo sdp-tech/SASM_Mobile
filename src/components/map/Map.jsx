@@ -34,7 +34,7 @@ const SearchHereText = styled.Text`
 
 
 
-const Map = ({ placeData, setSearchHere, setSearch, setPage, checkedList, setCheckedList, nowCoor, detailRef, listRef, setDetailData, center, setCenter, target }) => {
+const Map = ({ placeData, setSearchHere, setSearch, setPage, checkedList, setCheckedList, nowCoor, detailRef, search, listRef, setDetailData, center, setCenter, target }) => {
 	const request = new Request();
 	//tempCoor => 지도가 움직이때마다 center의 좌표
 	const [tempCoor, setTempCoor] = useState(nowCoor);
