@@ -6,18 +6,13 @@ import { Coordinate } from '../../pages/SpotMap';
 import { detailDataProps } from './SpotDetail';
 import ItemCard from './SpotList/ItemCard';
 
-const ListSection = styled.View`
-  background-color: #FFFFFF;
-  height: 600px;
-`
 const PaginationSection = styled.View`
   height: 40px;
   display: flex;
   align-items: center;
 `
 type MapListProps = {
-  detailRef: any;
-  listRef: any;
+  setSheetMode: Dispatch<SetStateAction<boolean>>;
   placeData: any[];
   page: number;
   total: number;
@@ -37,14 +32,13 @@ export type DataTypes = {
   place_like: string;
 }
 
-export default function MapList({ listRef, detailRef, placeData, setPage, page, total, setDetailData, setCenter }: MapListProps): JSX.Element {
+export default function MapList({ placeData,setSheetMode,  setPage, page, total, setDetailData, setCenter }: MapListProps): JSX.Element {
   return (
-    <ListSection>
       <ScrollView>
         {
           placeData.map(data => {
             return (
-              <ItemCard detailRef={detailRef} listRef={listRef} key={data.id} placeData={data} setDetailData={setDetailData} setCenter={setCenter} />
+              <ItemCard setSheetMode={setSheetMode} key={data.id} placeData={data} setDetailData={setDetailData} setCenter={setCenter} />
             )
           })
         }
@@ -52,6 +46,5 @@ export default function MapList({ listRef, detailRef, placeData, setPage, page, 
           <Pagination page={page} setPage={setPage} total={total} limit={20}></Pagination>
         </PaginationSection>
       </ScrollView>
-    </ListSection>
   )
 }
