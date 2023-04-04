@@ -9,7 +9,7 @@ export interface formProps {
 export default async function ChangePw(form: formProps): Promise<any> {
   const request = new Request();
   if (form.code && form.password) {
-    const response = await request.post('/users/pwchange/', {
+    const response = await request.put('/users/pw_reset/', {
       code: form.code,
       password: form.password,
     });
