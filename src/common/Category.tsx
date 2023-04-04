@@ -49,24 +49,14 @@ export const CATEGORY_LIST: ListProps[] = [
   { id: 5, data: "녹색 공간", name: "녹색공간", sourceWhite: require("../assets/img/Category/CategoryWhite5.svg") },
 ];
 
-// export function MatchCategory(data: string): number {
-//   let index: number = 0;
-//   for (let i: number = 0; i < 6; i++) {
-//     if (CATEGORY_LIST[i].data == data) {
-//       index = i;
-//     }
-//   }
-//   return index;
-// }
-
-export function MatchCategory(data: string): string {
+export function MatchCategory(data: string): number {
   let index: number = 0;
   for (let i: number = 0; i < 6; i++) {
     if (CATEGORY_LIST[i].data == data) {
       index = i;
     }
   }
-  return '../../../assets/img/Category/Category'+index+'.svg';
+  return index;
 }
 
 
