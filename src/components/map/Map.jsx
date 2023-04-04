@@ -1,6 +1,6 @@
 import BottomSheet from "@gorhom/bottom-sheet";
 import React, { useEffect, useRef, useState, useMemo } from 'react';
-import { Text, TouchableOpacity, View, Button, StyleSheet, SafeAreaView, Dimensions, } from "react-native";
+import { Text, TouchableOpacity, View, Button, StyleSheet, SafeAreaView, Dimensions, ActivityIndicator, } from "react-native";
 import { request, check, PERMISSIONS, RESULTS } from 'react-native-permissions';
 import NaverMapView, { Align, Marker } from './NaverMap';
 import Loading from '../../common/Loading';
@@ -32,9 +32,7 @@ const SearchHereText = styled.Text`
 	text-align: center;
 `
 
-
-
-const Map = ({ placeData, setSearchHere, setSearch, setPage, checkedList, setCheckedList, nowCoor, detailRef, search, listRef, setDetailData, center, setCenter, target }) => {
+const Map = ({ setSheetMode, placeData, setSearchHere, setSearch, setPage, checkedList, setCheckedList, nowCoor, search, setDetailData, center, setCenter, target }) => {
 	const request = new Request();
 	//tempCoor => 지도가 움직이때마다 center의 좌표
 	const [tempCoor, setTempCoor] = useState(nowCoor);
@@ -54,8 +52,7 @@ const Map = ({ placeData, setSearchHere, setSearch, setPage, checkedList, setChe
 			latitude: response_detail.data.data.latitude,
 			longitude: response_detail.data.data.longitude,
 		})
-		listRef.current.snapToIndex(0);
-		detailRef.current.snapToIndex(1);
+		setSheetMode(false);
 	}
 	useEffect(() => {
 		if (target) {
@@ -109,11 +106,7 @@ const Map = ({ placeData, setSearchHere, setSearch, setPage, checkedList, setChe
 
 export default function MapContainer({ nowCoor, navigation, route }) {
 	//SpotList의 ref
-	const listRef = useRef(null);
-	//SpotDetail의 ref
-	const detailRef = useRef(null);
-	//window의 높이
-	const WindowHeight = Dimensions.get('window').height
+	const modalRef = useRef(null);
 	const [loading, setLoading] = useState(true);
 	const [placeData, setPlaceData] = useState([]);
 	const [detailData, setDetailData] = useState({
@@ -140,6 +133,8 @@ export default function MapContainer({ nowCoor, navigation, route }) {
 		place_like: false,
 		category_statistics: [],
 	});
+	//BottomSheet에서 list(true)를 보일지 detail(false)을 보일지
+	const [sheetMode, setSheetMode] = useState(true);
 	//DetailCard에서 좋아요 누를 시 새로 고침
 	const [refresh, setRefresh] = useState(false);
 	const rerenderScreen = () => {
@@ -161,6 +156,7 @@ export default function MapContainer({ nowCoor, navigation, route }) {
 
 	//좌표, 검색어, 필터를 기반으로 장소들의 데이터 검색
 	const getItem = async () => {
+		setLoading(true);
 		const response = await request.get('/places/place_search/', {
 			left: searchHere.latitude,
 			right: searchHere.longitude,
@@ -177,51 +173,56 @@ export default function MapContainer({ nowCoor, navigation, route }) {
 		getItem();
 	}, [searchHere, page, search, checkedList, refresh]);
 	return (
-		<>
-			{loading ?
-				<Loading /> :
-				<>
-					<Map
-						checkedList={checkedList}
-						setCheckedList={setCheckedList}
-						search={search}
-						setSearch={setSearch}
-						setSearchHere={setSearchHere}
-						placeData={placeData}
-						setPage={setPage}
-						nowCoor={nowCoor}
-						listRef={listRef}
-						detailRef={detailRef}
-						setDetailData={setDetailData}
-						center={center}
-						setCenter={setCenter}
-						target={route.params?.id}
-					/>
-					<BottomSheet
-						ref={detailRef}
-						snapPoints={snapPoints}
-						index={0}
-						enablePanDownToClose={true}
-					>
-						<SpotDetail navigation={navigation} route={route} detailData={detailData} rerenderScreen={rerenderScreen} />
-					</BottomSheet>
-					<BottomSheet
-						ref={listRef}
-						snapPoints={snapPoints}
-						index={0}
-					>
-						<MapList
-							detailRef={detailRef}
-							listRef={listRef}
-							page={page}
-							setPage={setPage}
-							total={total}
-							placeData={placeData}
-							setDetailData={setDetailData}
-							setCenter={setCenter} />
-					</BottomSheet>
-				</>
-			}
-		</>
+		<SafeAreaView>
+			<Map
+				checkedList={checkedList}
+				setCheckedList={setCheckedList}
+				search={search}
+				setSearch={setSearch}
+				setSearchHere={setSearchHere}
+				placeData={placeData}
+				setPage={setPage}
+				nowCoor={nowCoor}
+				setDetailData={setDetailData}
+				center={center}
+				setSheetMode={setSheetMode}
+				setCenter={setCenter}
+				target={route.params?.id}
+			/>
+			<BottomSheet
+				ref={modalRef}
+				snapPoints={snapPoints}
+				index={1}
+				onAnimate={(fromIndex, toIndex) => {
+					if (fromIndex == 1 && toIndex == 0) {
+						setSheetMode(true);
+					}
+				}}
+			>
+				{
+					loading ?
+						<ActivityIndicator /> :
+						<>
+							{
+								sheetMode ?
+									<MapList
+										modalRef={modalRef}
+										page={page}
+										setPage={setPage}
+										total={total}
+										placeData={placeData}
+										setDetailData={setDetailData}
+										setSheetMode={setSheetMode}
+										setCenter={setCenter} />
+									:
+									<SpotDetail
+										navigation={navigation}
+										route={route}
+										detailData={detailData}
+										rerenderScreen={rerenderScreen} />
+							}</>
+				}
+			</BottomSheet>
+		</SafeAreaView>
 	)
 }

@@ -9,8 +9,7 @@ import { DataTypes } from '../SpotList';
 
 type ItemCardProps = {
   placeData: DataTypes;
-  listRef: any;
-  detailRef: any;
+  setSheetMode: Dispatch<SetStateAction<boolean>>;
   setDetailData: Dispatch<SetStateAction<detailDataProps>>;
   setCenter: Dispatch<SetStateAction<Coordinate>>;
 }
@@ -35,7 +34,7 @@ const TitleBox = styled.View`
   border-bottom-width: 1px;
 `
 
-export default function ItemCard({ placeData, listRef, detailRef, setDetailData, setCenter }: ItemCardProps): JSX.Element {
+export default function ItemCard({ placeData, setSheetMode, setDetailData, setCenter }: ItemCardProps): JSX.Element {
   const request = new Request();
   const [like, setLike] = useState<boolean>(false);
   const getDetail = async () => {
@@ -45,8 +44,7 @@ export default function ItemCard({ placeData, listRef, detailRef, setDetailData,
       latitude: response_detail.data.data.latitude,
       longitude: response_detail.data.data.longitude
     })
-		listRef.current.snapToIndex(0);
-		detailRef.current.snapToIndex(1);
+    setSheetMode(false);
   }
 
   const toggleLike = async () => {

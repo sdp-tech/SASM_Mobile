@@ -4,6 +4,7 @@ import { useNavigation, useRoute, useFocusEffect } from '@react-navigation/nativ
 
 import StoryListPage from '../components/story/StoryListPage';
 import StoryDetailPage from '../components/story/StoryDetailPage';
+import WriteStoryPage from '../components/story/WriteStoryPage';
 
 export interface StoryProps {
   navigation: any;
@@ -15,6 +16,7 @@ export type StoryStackParams = {
   StoryDetail: {
     id: number | undefined;
   }
+  WriteStory : undefined;
 }
 
 const Stack = createNativeStackNavigator<StoryStackParams>();
@@ -37,6 +39,7 @@ const StoryScreen = ({ navigation, route }: StoryProps) => {
     >
       <Stack.Screen name = "StoryList" component = {StoryListPage} />
       <Stack.Screen name = "StoryDetail" component = {StoryDetailPage} />
+      <Stack.Screen name = "WriteStory" component={WriteStoryPage} />
     </Stack.Navigator>
   )
 }
