@@ -54,8 +54,8 @@ export default function ItemCard(props) {
   const [loading, setLoading] = useState(true);
   const navigation = useNavigation();
   const request = new Request();
-  // const categoryImg = MatchCategory(props.category);
-  // const categorySrc = require(categoryImg);
+  const categoryIndex = MatchCategory(props.category);
+  const categorySrc = '../../../assets/img/Category/Category'+categoryIndex+'.svg'
   // console.log("catgory", categoryIndex);
   
 
