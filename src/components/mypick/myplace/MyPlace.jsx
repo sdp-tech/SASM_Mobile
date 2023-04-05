@@ -11,29 +11,28 @@ import Category, { CATEGORY_LIST, MatchCategory } from "../../../common/Category
 import { useNavigation } from '@react-navigation/native';
 import Pagination from '../../../common/Pagination';
 
-const WindowWidth = Dimensions.get("window").width;
-const WindowHeight = Dimensions.get("window").height;
-
 const styles = StyleSheet.create({
   Container:{
     marginVertical: 0,
     marginHorizontal: 'auto',
     marginTop: '3%',
-    width: '80%',
+    width: '100%',
     //display: flex,
-    flex:1,
+    flex:5,
     justifyContent: 'center',
-    alignItems: 'center'
+    alignItems: 'center',
+    //backgroundColor:'yellow'
   },
   MyplaceSection:{
     position: 'relative',
     //display: flex;
-    flex:1,
+    flex:40,
     justifyContent: 'center',
     alignItems: 'center',
     flexDirection: 'column',
-    marginTop: '5%'
+    marginTop: '5%',
     //grid-area: story;
+    //backgroundColor:'green'
   },
   HeaderSection:{
     //display: flex;
@@ -43,12 +42,8 @@ const styles = StyleSheet.create({
     justifyContent: 'space-around',
     flesDirection:'column',
     alignItems:'center',
-    justifyContent:'center'
-  //   @media screen and (max-width: 768) {
-  //     ≤   flex-direction: column;
-  //     align-items: center;
-  //   justify-content: center;
-  // }
+    justifyContent:'center',
+    //backgroundColor:'blue'
   },
   FooterSection:{
     position:'relative',
@@ -56,22 +51,26 @@ const styles = StyleSheet.create({
     flex:1,
     flexDirection:'column',
     //grid-area:'story',
-    height:12
+    marginTop:5,
+    //backgroundColor:'red'
   },
   CardSection:{
     position:'relative',
     //display:'flex',
-    flex:1,
+    //flex:1,
     flexDirection:'column',
     overflow:'hidden',
     //girdarea:'story',
     justifyContent:'center',
-    alignItems:'center'
+    alignItems:'center',
+    width: 350,
+    height: 300,
+    //backgroundColor:'purple'
   },
   NothingSerched:{
     position:'relative',
     //display:'flex',
-    flex:1,
+    //flex:1,
     flexDirection:'column',
     justifyContent:'center',
     alignItems:'center'
@@ -80,90 +79,16 @@ const styles = StyleSheet.create({
     width:'30%',
     textAlign:'center',
     fontSize:25,
-    Index:3
-    // @media screen and (max-width: 768px) {
-    //   position: absolute;
-    //   left: 0;
-    //   top: 0;
-    // }
+    Index:3,
+    //backgroundColor:'brown'
   },
   FilterOptions:{
-    width:'30%'
-    // @media screen and (max-width: 768px) {
-    //   width: 100%;
-    // }
+    width:'100%',
+    //backgroundColor:'gray',
+    //alignItems:'center',
+    //justifyContent:'center'
   }
 });
-
-// const Container = styled.View`
-//   margin: 0 auto;
-//   margin-top: 3%;
-//   width: 80%;
-//   display: flex;
-//   justify-content: center;
-//   align-items: center;
-// `
-// const MyplaceSection = styled.View`
-//   position: relative;
-//   display: flex;
-//   justify-content: center;
-//   align-items: center;
-//   flex-direction: column;
-//   margin-top: 5%;
-//   grid-area: story;
-// `;
-// const HeaderSection = styled.View`
-//   display: flex;
-//   width: 100%;
-//   position: relative;
-//   justify-content: space-around;
-//   @media screen and (max-width: 768px) {
-//  ≤   flex-direction: column;
-//     align-items: center;
-//     justify-content: center;
-//   }
-// `
-// const FooterSection = styled.View`
-//   position: relative;
-//   display: flex;
-//   flex-direction: column;
-//   grid-area: story;
-//   height: 12%;
-// `;
-// const CardSection = styled.View`
-//   box-sizing: border-box;
-//   position: relative;
-//   display: flex;
-//   flex-direction: column;
-//   overflow: hidden;
-//   grid-area: story;
-//   justify-content: center;
-//   align-items: center;
-// `;
-// const NothingSearched = styled.View`
-//   position: relative;
-//   display: flex;
-//   flex-direction: column;
-//   justify-content: center;
-//   align-items: center;
-// `;
-// const ChangeModeButton = styled.View`
-//   width: 30%;
-//   text-align: center;
-//   font-size: 1.25rem;
-//   z-index: 3;
-//   @media screen and (max-width: 768px) {
-//     position: absolute;
-//     left: 0;
-//     top: 0;
-//   }
-// `
-// const FilterOptions = styled.View`
-//   width: 30%;
-//   @media screen and (max-width: 768px) {
-//     width: 100%;
-//   }
-// `
 
 const Myplace = () => {
   const [info, setInfo] = useState([]);
@@ -221,11 +146,16 @@ const Myplace = () => {
         <>
           <View style={styles.MyplaceSection}>
             <View style={styles.HeaderSection}>
-              <Button style={styles.ChangeModeButton} onPress={()=>navigation.navigate('MyStory')} title = 'My Story'>
+              <View style={styles.ChangeModeButton}>
+                <Button onPress={()=>navigation.navigate('MyStory')} title = 'My Story'>
+                  <Image src={ChangeMode} style={{ marginRight: 10 }} />
+                  </Button>
+              </View>
+              {/* <Button style={styles.ChangeModeButton} onPress={()=>navigation.navigate('MyStory')} title = 'My Story'>
                 <Image src={ChangeMode} style={{ marginRight: 10 }} />
-              </Button>
+              </Button> */}
               {/* <span ={{ fontWeight: "500", fontSize: "1.6rem" }}> */}
-                <Text>My PlACE</Text>
+                <Text style={{fontSize:25, fontWeight: 600}}>My PlACE</Text>
               {/* </span> */}
               <View style={styles.FilterOptions}>
                 <Category checkedList={checkedList} setCheckedList={setCheckedList} />
@@ -242,10 +172,11 @@ const Myplace = () => {
                     <Text>해당하는 장소가 없습니다</Text>
                   </View>
                 ) : (
-                  <FlatList 
+                  <FlatList
                   data ={info}
                   renderItem ={({item}) => (
                     <View style={styles.CardSection}>
+                       {/* <Text>----------ItemCard Start.----------</Text> */}
                           <ItemCard
                             //key={index}
                             place_id={item.id}
@@ -254,6 +185,7 @@ const Myplace = () => {
                             place_like={item.place_like}
                             category={item.category}
                           />
+                          {/* <Text>---------ItemCard Fin.---------</Text> */}
                     </View>
                   )}
                   keyExtractor = {(item, index) => index}
@@ -263,12 +195,12 @@ const Myplace = () => {
             {/* </main> */}
           </View>
           <View style={styles.FooterSection}>
-            <Pagination
+            {/* <Pagination
               total={pageCount}
               limit={limit}
               page={page}
               setPage={setPage}
-            />
+            /> */}
           </View>
         </>
       )}
