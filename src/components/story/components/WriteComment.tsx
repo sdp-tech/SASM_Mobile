@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Request } from '../../../common/requests';
-import { View, Text, TouchableOpacity, TextInput, StyleSheet, Alert } from 'react-native';
+import { View, Text, TouchableOpacity, TextInput, StyleSheet, Alert, Dimensions } from 'react-native';
 
 interface WriteCommentParams {
     id: number;
@@ -8,6 +8,7 @@ interface WriteCommentParams {
 }
 
 const WriteComment = ({ id, reRenderScreen }: WriteCommentParams) => {
+    const { width, height } = Dimensions.get('screen');
     const [comment, setComment] = useState<string>('');
     const request = new Request();
     
@@ -26,32 +27,28 @@ const WriteComment = ({ id, reRenderScreen }: WriteCommentParams) => {
     }
 
     return (
-        <View style = {{ flexDirection: 'row' }}>
+        <View style={{backgroundColor: 'rgba(217, 217, 217, 0.2)', width: width, height: 100}}>
             <TextInput
                 value = {comment}
                 onChangeText = {setComment}
-                placeholder = '댓글을 달아주세요.'
-                style = {{
-                    borderColor: 'rgba(0, 0, 0, 0.3)',
-                    borderRadius: 24,
-                    borderWidth: 1,
-                    width: 250,
-                    height: 24,
-                    textAlign: 'center'
-                }}
+                // placeholder = '댓글을 달아주세요.'
+                multiline = {true}
+                style = {{ maxHeight: 90, includeFontPadding: true, width: width-50}}
             />
+            <View style={{ position: 'absolute', marginTop: 60, marginLeft: width - 50}}>
             <TouchableOpacity
                 onPress = {uploadComment}
                 style = {{
                     backgroundColor: '#209DF5',
-                    width: 60,
+                    width: 40,
                     height: 24,
                     borderRadius: 24,
                     alignItems: 'center',
                     justifyContent: 'space-around'
                 }}>
-                <Text style = {{ color: '#FFFFFF' }}>등록</Text>
+                <Text style = {{ fontSize: 12, fontWeight: '600', color: '#FFFFFF' }}>작성</Text>
             </TouchableOpacity>
+            </View>
         </View>
     )
 }
