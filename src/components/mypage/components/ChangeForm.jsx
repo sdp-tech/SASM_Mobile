@@ -1,13 +1,17 @@
 import React, { useEffect, useState, useCallback } from 'react';
-import { ImageBackground,Text, ScrollView, View, TouchableOpacity, Alert,StyleSheet,SafeAreaView, Image } from "react-native";
+import { ImageBackground,Text, ScrollView, View, TouchableOpacity, Alert,StyleSheet,SafeAreaView, localStorage,Image } from "react-native";
 import { useFocusEffect, useNavigation } from '@react-navigation/native';
 import { getNickname, removeNickname, removeAccessToken, getEmail } from '../../../common/storage';
+import { event, onChange } from 'react-native-reanimated';
+import logo from '../../../assets/img/sasm_logo.png';
 import { launchImageLibrary } from 'react-native-image-picker';
 import editimage from '../../../assets/img/Edit_profileimage.png';
 import PhotoOptions from '../../../common/PhotoOptions';
+import ChangeForm from './ChangeForm';
 import { Request } from '../../../common/requests';
 import { TextInput } from 'react-native-gesture-handler';
 import styled, { css } from 'styled-components/native';
+
 
 const request = new Request();
 
@@ -24,12 +28,15 @@ width: 350px;
   //export default ViewStyleProps;   
 
 export default function UserInfoBox({ navigation }) {
-
-   
+ 
+  const formData = new FormData();
   const [nickname, setNickname] = useState('')
+  const [changednick,setChangednick] = useState(''); 
   const [photo, setPhoto] = useState('');
   const [email,setEmail] = useState('');
   const [birthdate,setBirthdate] = useState('');
+  const [info,setInfo] = useState('');
+  const [newphoto,setNewphoto] = useState('');
 
   const logout = () => {
       removeNickname()
@@ -42,16 +49,37 @@ export default function UserInfoBox({ navigation }) {
     console.log("응답 : ",response);
     console.log("이메일 : ",response.data.data.email);
     console.log("생년월일 : ", response.data.data.birthdate);
+    console.log("프로필 사진 : ", response.data.data.profile_image)
+    
+    setChangednick(response.data.data.nickname)
     setEmail(response.data.data.email);
     setBirthdate(response.data.data.birthdate)
     setPhoto(response.data.data.profile_image)
-    
   }
   const SaveInfo = async () =>{
-    console.log("***이건 생년월일 변경된 정보", birthdate)
-    const response = await request.post('users/me/',birthdate);
+
+    //동작 맞게 하는 것 같음 -> 커뮤니티의 경우에도 오브젝트로 보내는 형태에 네트워크 에러 뜸
+    console.log("닉네임 : ",changednick);
+    console.log("생년월일 : ", birthdate);
+    console.log("프로필 사진 : " , newphoto[0].uri)
+      // console.log(file);
+      setPhoto(newphoto[0].uri)
+
+    var changephoto = {
+      uri: newphoto[0].uri,
+      name: newphoto[0].fileName,
+      type: 'image/jpeg/png',
+    }
+    formData.append('nickname',changednick)
+    formData.append('birthdate', birthdate);
+    formData.append('profile_image',changephoto)
+     
+    console.log(formData);
+
+    const response = await request.post('/users/me/',formData, { "Content-Type": "multipart/form-data" });
     console.log(response);
 
+    navigation.navigate('mypage');
   }
 
     const handleChoosePhoto = () => {
@@ -85,7 +113,7 @@ export default function UserInfoBox({ navigation }) {
 //      const response = await request.post("/users/me/",photo );
     };
 
-
+  useEffect(()=>{console.log('프로필정보',newphoto)}, [newphoto])
   return (
       <View>
           {nickname ? (
@@ -94,15 +122,15 @@ export default function UserInfoBox({ navigation }) {
                   
                 <ScrollView>
 
+                    
                   <View>
                     <ImageBackground source={{uri:photo}} style={styles.circle}/>
                     </View >    
 
-                    <TouchableOpacity onPress={handleChoosePhoto}>
-                      <Image source={editimage} ></Image>
-                    </TouchableOpacity>
-                    
                     <Text>{nickname}님</Text>
+                    
+                    <PhotoOptions setPhoto={setNewphoto} max={1}/>
+
                         <SafeAreaView style={{padding:'1%', flexDirection:'row'}}>
                         <View style={styles.oval}><Text>이메일</Text></View>                        
                         <View style={styles.rectangle}><Text style={{fontSize:7}}>{email}</Text></View>
@@ -111,19 +139,25 @@ export default function UserInfoBox({ navigation }) {
 
                       <SafeAreaView style={{padding:'1%', flexDirection:'row'}}>
                         <View style={styles.oval}><Text>닉네임</Text></View>
-                        <FeedbackBox placeholder={nickname}/>
+                        <TextInput defaultValue={changednick} 
+                        onChangeText={
+                          (event) => {
+                            setChangednick(event);
+                          }
+                        } />
                         </SafeAreaView>
 
                       <SafeAreaView style={{padding:'1%', flexDirection:'row'}}>
                         <View style={styles.oval}><Text>생년월일</Text></View>
-                         <TextInput type="date"
-                      max="9999-12-31"
+                         <TextInput 
+                      maxLength={10}
+                      keyboardType='numeric'
                       defaultValue={birthdate}
                       onChangeText={(event) => {
                         setBirthdate(event
                         );
                       }}
-                    name="birthdate" />
+/>
                         </SafeAreaView>
 
 
