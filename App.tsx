@@ -13,6 +13,7 @@ import StoryScreen from './src/pages/Story';
 import MyPickScreen from './src/pages/MyPick';
 import MenuIcon from "./src/assets/navbar/map.svg";
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
+import HomeScreen from './src/pages/Home';
 
 export type AppProps = {
     'Home': any;
@@ -31,7 +32,7 @@ const App = (): JSX.Element => {
                         headerShown: false,
                     })}
                 >
-                    <Stack.Screen name="Home" component={HomeScreen} />
+                    <Stack.Screen name="Home" component={HomeScreens} />
                     <Stack.Screen name="Login" component={LoginScreen} />
                 </Stack.Navigator>
             </NavigationContainer >
@@ -46,6 +47,7 @@ const NavbarIcon = (): JSX.Element => {
 }
 
 export type TabProps = {
+    '홈': undefined;
     '맵': {
         id: number | undefined;
     };
@@ -58,7 +60,7 @@ export type TabProps = {
 }
 
 const Tab = createBottomTabNavigator<TabProps>();
-const HomeScreen = (): JSX.Element => {
+const HomeScreens = (): JSX.Element => {
     const tabBarActiveTintColor: string = '#FFFFFF'
     const tabBarInactiveTintColor: string = '#808080'
     const tabOptions = {
@@ -70,7 +72,7 @@ const HomeScreen = (): JSX.Element => {
 
     return (
         <Tab.Navigator
-            initialRouteName='맵'
+            initialRouteName='홈'
             screenOptions={() => ({
                 headerShown: false,
                 tabBarStyle: {
@@ -79,6 +81,11 @@ const HomeScreen = (): JSX.Element => {
                 },
             })}
         >
+            <Tab.Screen
+                name={"홈"}
+                component={HomeScreen}
+                options={tabOptions}
+            />
             <Tab.Screen
                 name={"맵"}
                 component={MapScreen}
