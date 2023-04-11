@@ -2,8 +2,8 @@ import React, { Dispatch, Ref, SetStateAction, useEffect } from 'react'
 import { ScrollView } from 'react-native-gesture-handler';
 import styled from 'styled-components/native';
 import Pagination from '../../common/Pagination';
-import { Coordinate } from '../../pages/SpotMap';
-import { detailDataProps } from './SpotDetail';
+import { Coord } from 'react-native-nmap';
+import { detailDataProps } from './Map';
 import ItemCard from './SpotList/ItemCard';
 
 const PaginationSection = styled.View`
@@ -18,18 +18,7 @@ type MapListProps = {
   total: number;
   setPage: (num: number) => void;
   setDetailData: Dispatch<SetStateAction<detailDataProps>>;
-  setCenter: Dispatch<SetStateAction<Coordinate>>;
-}
-
-export type DataTypes = {
-  address: string;
-  category: string;
-  id: number;
-  place_name: string;
-  place_review: string;
-  rep_pic: string;
-  open_hours: string;
-  place_like: string;
+  setCenter: Dispatch<SetStateAction<Coord>>;
 }
 
 export default function MapList({ placeData,setSheetMode,  setPage, page, total, setDetailData, setCenter }: MapListProps): JSX.Element {

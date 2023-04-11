@@ -106,6 +106,7 @@ export interface NaverMapViewProps {
     stopGesturesEnabled?: boolean;
     liteModeEnabled?: boolean;
     useTextureView?: boolean;
+    children?: React.ReactNode;
 }
 export default class NaverMapView extends Component<NaverMapViewProps, {}> {
     ref?: RNNaverMapView;
