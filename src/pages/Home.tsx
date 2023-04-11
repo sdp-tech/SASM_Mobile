@@ -44,7 +44,6 @@ export type HomeStackParams = {
     id: number;
   }
 }
-
 const TextStyles = StyleSheet.create({
   Title: {
     // fontFamily:"Inter",
@@ -130,6 +129,7 @@ function CurationHome({ navigation, route }: StackScreenProps<HomeStackParams, '
   useEffect(()=>{
     getStory();
   }, [])
+
   return (
     <SafeAreaView style={{ backgroundColor: '#FFFFFF' }}>
       <ScrollView>

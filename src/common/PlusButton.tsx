@@ -4,6 +4,7 @@ import { View, Text, TouchableOpacity, Dimensions, Pressable } from 'react-nativ
 import styled from 'styled-components/native';
 import Animated, { Easing, useAnimatedStyle, useSharedValue, withTiming } from 'react-native-reanimated';
 
+
 const ButtonWrapper = styled.TouchableOpacity`
   width: 50px;
   height: 50px;
