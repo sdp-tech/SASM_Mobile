@@ -7,9 +7,8 @@ const SearchWrapper = styled.View`
   margin: 0 auto;
   height: 40px;
   flex-direction: row;
-  margin-bottom: 10px;
   box-shadow: 3px 3px 4px rgba(0, 0, 0, 0.1);
-  border-radius: 10px;
+  border-radius: 20px;
 `
 const StyledInput = styled.TextInput`
   width: 85%;
