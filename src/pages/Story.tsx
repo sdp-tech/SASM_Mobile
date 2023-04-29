@@ -2,9 +2,11 @@ import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { createNativeStackNavigator, NativeStackScreenProps } from '@react-navigation/native-stack';
 import { useNavigation, useRoute, useFocusEffect } from '@react-navigation/native';
 
+import StoryMainPage from '../components/story/StoryMainPage';
 import StoryListPage from '../components/story/StoryListPage';
 import StoryDetailPage from '../components/story/StoryDetailPage';
 import WriteStoryPage from '../components/story/WriteStoryPage';
+import CommentListPage from '../components/story/CommentListPage';
 
 export interface StoryProps {
   navigation: any;
@@ -12,11 +14,13 @@ export interface StoryProps {
 }
 
 export type StoryStackParams = {
+  StoryMain: undefined;
   StoryList: undefined;
   StoryDetail: {
     id: number | undefined;
   }
   WriteStory : undefined;
+  CommentList: undefined;
 }
 
 const Stack = createNativeStackNavigator<StoryStackParams>();
@@ -28,18 +32,20 @@ const StoryScreen = ({ navigation, route }: StoryProps) => {
       navigation.navigate('StoryDetail', {id: route.params.id});
     }
     else{
-      navigation.navigate('StoryList');
+      navigation.navigate('StoryMain');
     }
   }, [route.params.id]));
   return (
     <Stack.Navigator 
       screenOptions = {() => ({
-        headerShown: true,
+        headerShown: false,
       })}
     >
+      <Stack.Screen name = "StoryMain" component = {StoryMainPage} />
       <Stack.Screen name = "StoryList" component = {StoryListPage} />
       <Stack.Screen name = "StoryDetail" component = {StoryDetailPage} />
       <Stack.Screen name = "WriteStory" component={WriteStoryPage} />
+      <Stack.Screen name = "CommentList" component={CommentListPage} />
     </Stack.Navigator>
   )
 }

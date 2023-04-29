@@ -1,18 +1,14 @@
 import { useState, useEffect, useCallback } from "react";
 import { SafeAreaView, Text, View, StyleSheet, TouchableOpacity, Image, FlatList, ScrollView, Button} from 'react-native';
-//import Grid from "@mui/material/Grid";
 import styled from "styled-components/native";
 import Pagination from "../../../common/Pagination";
 //import { useCookies } from "react-cookie";
-//import axios from "axios";
 import Loading from "../../../common/Loading";
 import ItemCard from "./ItemCard";
 import nothingIcon from "../../../assets/img/nothing.svg";
-//import { useNavigate } from "react-router-dom";
 import { useNavigation } from '@react-navigation/native';
 import {Request} from "../../../common/requests";
 import ChangeMode from "../../../assets/img/Mypick/ChangeMode.svg"
-//import CategorySelector, { CATEGORY_LIST, MatchCategory } from "../../../common/Category"
 import Category, { CATEGORY_LIST, MatchCategory } from "../../../common/Category";
 
 const styles = StyleSheet.create({
@@ -67,7 +63,8 @@ const styles = StyleSheet.create({
     overflow:'hidden',
     //girdarea:'story',
     justifyContent:'center',
-    alignItems:'center'
+    alignItems:'center',
+    width:'100%'
   },
   NothingSerched:{
     position:'relative',
@@ -89,81 +86,14 @@ const styles = StyleSheet.create({
     // }
   },
   FilterOptions:{
-    width:'30%'
+    width:'100%'
     // @media screen and (max-width: 768px) {
     //   width: 100%;
     // }
   }
 });
 
-// const Container = styled.View`
-//   margin: 0 auto;
-//   margin-top: 3%;
-//   width: 80%;
-//   display: flex;
-//   justify-content: center;
-//   align-items: center;
-// `
-// const MyplaceSection = styled.View`
-//   position: relative;
-//   display: flex;
-//   justify-content: center;
-//   align-items: center;
-//   flex-direction: column;
-//   margin-top: 5%;
-//   grid-area: story;
-// `;
-// const HeaderSection = styled.View`
-//   display: flex;
-//   width: 100%;
-//   position: relative;
-//   justify-content: space-around;
-//   @media screen and (max-width: 768px) {
-//     flex-direction: column;
-//     justify-content: center;
-//     align-items: center;
-//   }
-// `
-// const FooterSection = styled.View`
-//   position: relative;
-//   display: flex;
-//   flex-direction: column;
-//   grid-area: story;
-// `;
-// const CardSection = styled.View`
-//   box-sizing: border-box;
-//   position: relative;
-//   display: flex;
-//   flex-direction: column;
-//   overflow: hidden;
-//   grid-area: story;
-//   justify-content: center;
-//   align-items: center;
-// `;
-// const NothingSearched = styled.View`
-//   position: relative;
-//   display: flex;
-//   flex-direction: column;
-//   justify-content: center;
-//   align-items: center;
-// `;
-// const ChangeModeButton = styled.View`
-//   width: 30%;
-//   text-align: center;
-//   font-size: 1.25rem;
-//   z-index: 3;
-//   @media screen and (max-width: 768px) {
-//     position: absolute;
-//     left: 0;
-//     top: 0;
-//   }
-// `
-// const FilterOptions = styled.View`
-//   width: 30%;
-//   @media screen and (max-width: 768px) {
-//     width: 100%;
-//   }
-// `
+
 const Mystory = () => {
   const [checkedList, setCheckedList] = useState('');
   const [info, setInfo] = useState([]);
@@ -261,7 +191,7 @@ const Mystory = () => {
                               rep_pic={item.rep_pic}
                               title={item.title}
                               place_name={item.place_name}
-                              place_like={item.place_like}
+                              story_like={item.story_like}
                               preview={item.preview}
                             />
                           </View>
