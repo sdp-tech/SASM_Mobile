@@ -36,54 +36,48 @@ const SearchCard = ({id, place_name, title, rep_pic, story_like, category, previ
   }
     
   return (
-    <View style={{alignItems:'center'}}>
-      <View style={{flexDirection: 'row'}}>
-        { verified ? (
-          <View style={{backgroundColor: '#209DF5', borderRadius: 10, width: 120, height: 25, justifyContent: 'center', alignItems: 'center'}}>
-            <Text style={textStyles.writer}>Editor {writer} 님의 이야기</Text>
-          </View>
-        ): (
-          <View style={{backgroundColor: '#89C77F', borderRadius: 10, width: 120, height: 25, justifyContent: 'center', alignItems: 'center'}}>
-            <Text style={textStyles.writer}>User 사슴{writer} 님의 이야기</Text>
-          </View>
-        )}
-        <View style={{marginLeft: 160}}>
-          {story_like ? (
-            <Heart like={!like} onPress={toggleLike} />
-          ) : (
-            <Heart like={like} onPress={toggleLike} />
-          )}
+    <View>
+      <View style={{flexDirection: 'row', alignItems: 'center'}}>
+        <View style={{flexDirection: 'row', flex: 4}}>
+          <Text style={textStyles.writer}>{verified ? ('Editor') : ('User')} 사슴 님의 이야기</Text>
+          <View style={{backgroundColor: verified ? '#209DF5' : '#89C77F', width: 14, height: 14, borderRadius: 60, marginTop: 1, marginLeft: 5}}/>
+        </View>
+        <View style={{flex: 1}}>
+          <Text style={textStyles.date}>2023.4.5 작성</Text>
         </View>
       </View>
-      <TouchableOpacity style={{marginTop: 5, marginBottom: 20}} onPress={onPress}>
+      <TouchableOpacity style={{marginTop: 10, marginBottom: 20}} onPress={onPress}>
         <View style={{flexDirection: 'row'}}>
           <ImageBackground 
             source={{uri: rep_pic}}
-            style={{width: width*0.5, height: width*0.53}}
+            style={{width: width*0.55, height: width*0.6}}
             imageStyle={{borderRadius: 5}}
           >
-            <View style={{width: width*0.5, height: width*0.53, borderRadius: 5, backgroundColor: 'rgba(0, 0, 0, 0.3)'}}>
-              <View style={{marginLeft: 15}}>
-                <View style={{flexDirection: 'row'}}>
+            <View style={{width: width*0.55, height: width*0.6, borderRadius: 5, backgroundColor: 'rgba(0, 0, 0, 0.3)', padding: 10}}>
+              <View style={{flexDirection: 'row', padding: 8, flex: 1}}>
+                <View style={{width: '70%'}}>
+                  <Text style={textStyles.title}>{title}</Text>
                   <Text style={textStyles.placename}>{place_name}</Text>
-                  <Text style={textStyles.address}>서울특별시 마포구 양화로 6길 60 1층</Text>
                 </View>
-                <Text style={textStyles.title}>{title}</Text>
-                <Text style={textStyles.preview} numberOfLines={3} ellipsizeMode={'tail'}>{preview}</Text>
+                <View style={{marginLeft: 35}}>
+                  {story_like ? (
+                    <Heart like={!like} onPress={toggleLike} />
+                  ) : (
+                    <Heart like={like} onPress={toggleLike} />
+                  )}
+                </View>
               </View>
-            </View>
-            <View style={{position: 'absolute', marginTop: 185, marginLeft: 10}}>
-              <Text style={textStyles.tag}>#{category}</Text>
+              <Text style={textStyles.preview} numberOfLines={6} ellipsizeMode={'tail'}>{preview}</Text>
             </View>
           </ImageBackground>
-          <View style={{marginHorizontal: 10}}>
+          <View style={{marginLeft: 7}}>
             <Image 
               source={{uri: rep_pic}}
-              style={{width: width*0.25, height: width*0.25, borderRadius: 5, marginBottom: 10}}
+              style={{width: width*0.27, height: width*0.29, borderRadius: 5, marginBottom: 7}}
             />
             <Image 
               source={{uri: rep_pic}}
-              style={{width: width*0.25, height: width*0.25, borderRadius: 5}}
+              style={{width: width*0.275, height: width*0.29, borderRadius: 5}}
             />
           </View>
         </View>
@@ -93,19 +87,18 @@ const SearchCard = ({id, place_name, title, rep_pic, story_like, category, previ
 }
 
 const textStyles = StyleSheet.create({
-  placename: {
-    fontSize: 16,
-    fontWeight: '700',
-    lineHeight: 18,
-    color: 'white',
-    marginTop: 20,
-  },
   title: {
     fontSize: 10,
     fontWeight: '600',
     lineHeight: 12,
     color: 'white',
-    marginVertical: 7,
+    marginBottom: 5
+  },
+  placename: {
+    fontSize: 14,
+    fontWeight: '700',
+    lineHeight: 18,
+    color: 'white'
   },
   tag: {
     fontSize: 8,
@@ -127,10 +120,14 @@ const textStyles = StyleSheet.create({
     alignSelf: 'flex-end',
     marginBottom: 2,
   },
-  writer: {
-    color: 'white', 
-    fontSize: 10,
+  writer: { 
+    fontSize: 14,
     fontWeight: '600',
+  },
+  date: {
+    fontSize: 10,
+    fontWeight: '400',
+    color: '#676767'
   }
 });
 
