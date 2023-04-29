@@ -1,6 +1,5 @@
 import { useEffect, useState } from 'react';
 import { View, Text, FlatList, Image } from 'react-native';
-import Arrow from '../assets/img/common/Arrow.svg';
 
 interface CardViewProps {
     gap: number;    // 카드 사이 간격은 renderItem에서 marginHorizontal: gap / 2로 설정해주기
@@ -13,7 +12,6 @@ interface CardViewProps {
     onEndReached?: () => void;
     onRefresh?: () => void;
     refreshing?: boolean;
-    onArrowPressed?: () => void;
 }
 
 interface DotProps {
@@ -32,7 +30,7 @@ const Dot = ({focused}: DotProps) => {
     )
 }
 
-const CardView = ({ gap, offset, height, data, pageWidth, renderItem, dot, onEndReached, onRefresh, refreshing, onArrowPressed }: CardViewProps) => {
+const CardView = ({ gap, offset, height, data, pageWidth, renderItem, dot, onEndReached, onRefresh, refreshing }: CardViewProps) => {
     const [page, setPage] = useState<number>(0);
     const onScroll = (e: any) => {
         const newPage = Math.round(
@@ -40,6 +38,7 @@ const CardView = ({ gap, offset, height, data, pageWidth, renderItem, dot, onEnd
         )
         setPage(newPage);
     }
+
 
     return (
         <View style = {{
@@ -67,11 +66,9 @@ const CardView = ({ gap, offset, height, data, pageWidth, renderItem, dot, onEnd
             />
             {dot? (
                 <View style = {{ flexDirection: 'row', alignItems: 'center' }}>
-                    {page !== 0 ? (<Arrow transform={[{rotateY: '180deg'}]} />) : (<></>)}
-                    {Array.from({length: 4}, (_, i) => i).map((i) => (
+                    {Array.from({length: data.length}, (_, i) => i).map((i) => (
                         <Dot key={i} focused={i === page ? true : false} />
                     ))}
-                    <Arrow onPress = {onArrowPressed}/>
                 </View>
             ):(<></>)}
         </View>

@@ -9,7 +9,7 @@ import Arrow from '../../assets/img/common/Arrow.svg';
 const CommentListPage = ({ navigation, route }: StoryProps) => {
   const { width } = Dimensions.get('screen');
   return (
-    <SafeAreaView>
+    <SafeAreaView style={{flex: 1}}>
       <View style={{height: 50, alignItems: 'center', justifyContent: 'center'}}>
         <TouchableOpacity style={{position: 'absolute', left: 10}} onPress={() => {navigation.goBack()}}>
           <Arrow width={20} height={20} transform={[{rotateY: '180deg'}]}/>

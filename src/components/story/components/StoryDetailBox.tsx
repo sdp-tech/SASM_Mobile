@@ -9,7 +9,6 @@ import RenderHTML from 'react-native-render-html';
 import Comment from './Comment';
 import WriteComment from './WriteComment';
 import StoryRecommend from './StoryRecommend';
-import { TabProps } from '../../../../App';
 import Place from '../../../assets/img/Story/Place.svg';
 import Arrow from '../../../assets/img/common/Arrow.svg';
 import CardView from '../../../common/CardView';
@@ -185,9 +184,9 @@ const StoryDetailBox = ({navigation, id}: StoryDetailProps) => {
                                 />
                             )}
                         />
-                        <View style = {{ flexDirection: 'row', margin: 20 }}>
+                        <Text style={[textStyles.category, {marginLeft: 20, marginTop: 20}]}>{data!.category}</Text>
+                        <View style = {{ flexDirection: 'row', marginHorizontal: 20, marginBottom: 20 }}>
                             <View style={{flex: 6, justifyContent: 'center'}}>
-                                <Text style={textStyles.category}>{data!.category}</Text>
                                 <Text style={textStyles.title}>{data!.title}</Text>
                                 <Text style={textStyles.semi_title}>{data!.story_review}</Text>
                                 <Text style={textStyles.date}>2023.4.1 작성</Text>
@@ -195,7 +194,10 @@ const StoryDetailBox = ({navigation, id}: StoryDetailProps) => {
                             <View style = {{flex: 1, alignSelf: 'center'}}>
                                 {/* <Image></Image> */}
                                 <View style={{width:50,height:50,borderRadius:60,backgroundColor:'#CCCCCC'}}></View>
-                                { data!.writer_is_verified ? (
+                                <View style={{position: 'absolute', width: 34, height: 12, backgroundColor: data!.writer_is_verified ? '#209DF5' : '#89C77F', borderRadius: 10, top: 42, left: 8.5}}>
+                                    <Text style={textStyles.verified}>{data!.writer_is_verified ? 'Editor' : 'User'}</Text>
+                                </View>
+                                {/* { data!.writer_is_verified ? (
                                     <View style={{position: 'absolute', width: 34, height: 12, backgroundColor: '#209DF5', borderRadius: 10, top: 42, left: 8.5}}>
                                         <Text style={textStyles.verified}>Editor</Text>
                                     </View>
@@ -203,8 +205,8 @@ const StoryDetailBox = ({navigation, id}: StoryDetailProps) => {
                                     <View style={{position: 'absolute', width: 34, height: 12, backgroundColor: '#89C77F', borderRadius: 10, top: 42, left: 8.5}}>
                                         <Text style={textStyles.verified}>User</Text>
                                     </View>
-                                )}
-                                <Text style={textStyles.writer}>사슴{data!.writer}</Text>
+                                )} */}
+                                <Text style={textStyles.writer}>사슴</Text>
                             </View>
                         </View>
                         <View style={{borderBottomColor: '#D9D9D9', width: width, borderBottomWidth: 1}} />
