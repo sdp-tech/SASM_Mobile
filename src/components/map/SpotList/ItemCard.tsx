@@ -3,15 +3,15 @@ import { Dimensions, Image, StyleSheet, Text, TouchableOpacity, View } from 'rea
 import styled from 'styled-components/native';
 import Heart from '../../../common/Heart';
 import { Request } from '../../../common/requests';
-import { Coordinate } from '../../../pages/SpotMap';
-import { detailDataProps } from '../SpotDetail';
-import { DataTypes } from '../SpotList';
+import { Coord } from 'react-native-nmap';
+import { detailDataProps, placeDataProps } from '../Map';
+import { DataTypes } from '../Map';
 
-type ItemCardProps = {
-  placeData: DataTypes;
+interface ItemCardProps {
+  placeData: placeDataProps;
   setSheetMode: Dispatch<SetStateAction<boolean>>;
   setDetailData: Dispatch<SetStateAction<detailDataProps>>;
-  setCenter: Dispatch<SetStateAction<Coordinate>>;
+  setCenter: Dispatch<SetStateAction<Coord>>;
 }
 
 const StyledCard = styled.View`
