@@ -1,6 +1,6 @@
-import React, { useEffect, useRef, useState } from 'react'
-import { SafeAreaView, ScrollView, Text, TextInput, TouchableOpacity } from 'react-native'
-import { RichEditor, RichToolbar, actions } from 'react-native-pell-rich-editor'
+import React, { useEffect, useRef, useState } from 'react';
+import { SafeAreaView, ScrollView, Text, TextInput, TouchableOpacity } from 'react-native';
+import { RichEditor, RichToolbar, actions } from 'react-native-pell-rich-editor';
 import { ImageLibraryOptions, launchImageLibrary } from 'react-native-image-picker';
 import { Request } from '../../common/requests';
 import ModalSelector from 'react-native-modal-selector';
@@ -41,7 +41,7 @@ export default function WriteStoryPage() {
     });
 
     const response = await request.post("/sdp_admin/stories/photos/", formData, { "Content-Type": "multipart/form-data" });
-    editor.current?.insertImage(response.data.data.location);
+    editor.current?.insertImage(response.data.data.location, 'width: 100%; height: auto;');
   };
 
   const saveStory = async () => {

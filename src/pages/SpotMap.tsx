@@ -6,16 +6,12 @@ import Loading from "../common/Loading";
 import MapContainer from "../components/map/Map";
 import { StackScreenProps } from "@react-navigation/stack";
 import { TabProps } from "../../App";
-
-export interface Coordinate {
-	latitude: number;
-	longitude: number;
-}
+import { Coord } from "react-native-nmap";
 
 export type MapScreenProps = StackScreenProps<TabProps, '맵'>;
 
 export default function MapScreen({ navigation, route }: MapScreenProps): JSX.Element {
-	const [nowCoor, setNowCoor] = useState<Coordinate>({
+	const [nowCoor, setNowCoor] = useState<Coord>({
 		latitude: 37.5, longitude: 127.5,
 	})
 	const [loading, setLoading] = useState<boolean>(true);
