@@ -2,6 +2,7 @@ import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { createNativeStackNavigator, NativeStackScreenProps } from '@react-navigation/native-stack';
 import { useNavigation, useRoute, useFocusEffect } from '@react-navigation/native';
 
+import StoryMainPage from '../components/story/StoryMainPage';
 import StoryListPage from '../components/story/StoryListPage';
 import StoryDetailPage from '../components/story/StoryDetailPage';
 import WriteStoryPage from '../components/story/WriteStoryPage';
@@ -13,6 +14,7 @@ export interface StoryProps {
 }
 
 export type StoryStackParams = {
+  StoryMain: undefined;
   StoryList: undefined;
   StoryDetail: {
     id: number | undefined;
@@ -30,7 +32,7 @@ const StoryScreen = ({ navigation, route }: StoryProps) => {
       navigation.navigate('StoryDetail', {id: route.params.id});
     }
     else{
-      navigation.navigate('StoryList');
+      navigation.navigate('StoryMain');
     }
   }, [route.params.id]));
   return (
@@ -39,6 +41,7 @@ const StoryScreen = ({ navigation, route }: StoryProps) => {
         headerShown: false,
       })}
     >
+      <Stack.Screen name = "StoryMain" component = {StoryMainPage} />
       <Stack.Screen name = "StoryList" component = {StoryListPage} />
       <Stack.Screen name = "StoryDetail" component = {StoryDetailPage} />
       <Stack.Screen name = "WriteStory" component={WriteStoryPage} />
