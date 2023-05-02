@@ -2,7 +2,7 @@ import React, { useEffect, useState, useCallback } from 'react'
 import { Dimensions, Image, View, Text, TouchableOpacity } from 'react-native'
 import { ScrollView } from 'react-native-gesture-handler';
 import styled from 'styled-components/native';
-import { detailDataProps } from '../SpotDetail';
+import { detailDataProps } from '../Map';
 import OpenTime from "../../../assets/img/PlaceDetail/OpenTime.svg";
 import PlaceMarker from "../../../assets/img/PlaceDetail/PlaceMarker.svg";
 import Heart from '../../../common/Heart';
@@ -86,6 +86,7 @@ export interface reviewDataProps {
   updated: string;
   writer: string;
 }
+
 export default function DetailCard({ detailData, navigation, route, rerenderScreen }: DetailCardProps): JSX.Element {
   const WindowWidth = Dimensions.get('window').width;
   const [tab, setTab] = useState<boolean>(true);
@@ -181,7 +182,8 @@ export default function DetailCard({ detailData, navigation, route, rerenderScre
               <View>
                 <StatisticsBox>
                   {
-                    detailData.category_statistics.map((data, index) => {
+                    detailData.category_statistics.map((data:string, index:number) => {
+                      console.error(data);
                       return (
                         <StatisticsTitle key={index}><Text>{data[0]}</Text><Text>{data[1]}%</Text></StatisticsTitle>
                       )
