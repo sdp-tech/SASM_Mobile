@@ -24,6 +24,13 @@ interface PhotoProps {
   max: number;
 }
 
+export interface PhotoResultProps {
+  fileName: string;
+  width: number;
+  height: number;
+  uri: string;
+}
+
 export default function PhotoOptions({setPhoto, max}:PhotoProps): JSX.Element {
   
   const CameraActions: Action[] = [
@@ -35,8 +42,8 @@ export default function PhotoOptions({setPhoto, max}:PhotoProps): JSX.Element {
         selectionLimit: max,
         mediaType: 'photo',
         includeBase64: false,
-        maxHeight: 150,
-        maxWidth: 150,
+        maxHeight: 300,
+        maxWidth: 300,
       },
     },
     {
@@ -46,8 +53,8 @@ export default function PhotoOptions({setPhoto, max}:PhotoProps): JSX.Element {
         selectionLimit: max,
         mediaType: 'photo',
         includeBase64: false,
-        maxHeight: 150,
-        maxWidth: 150,
+        maxHeight: 300,
+        maxWidth: 300,
       },
     }
   ];
