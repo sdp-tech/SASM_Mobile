@@ -91,6 +91,7 @@ export interface detailDataProps extends Coord, DataTypes {
   fri_hours: string;
   sat_hours: string;
   sun_hours: string;
+  etc_hours: string;
   short_cur: string;
   photos: url[];
   sns: object[];
@@ -190,6 +191,7 @@ export default function MapContainer({ nowCoor }: MapContainerProps): JSX.Elemen
     fri_hours: '',
     sat_hours: '',
     sun_hours: '',
+    etc_hours: '',
     place_review: '',
     address: '',
     rep_pic: '',
@@ -330,7 +332,7 @@ export default function MapContainer({ nowCoor }: MapContainerProps): JSX.Elemen
             onPress={handleToCenter} />
         </MoveToCenterButton>
       </Animated.View>
-      <PlusButton onPress={()=>{setPlaceformModal(true)}}>
+      <PlusButton onPress={() => { setPlaceformModal(true) }}>
         <AddWhite />
       </PlusButton>
       {/* <SearchHereButton onPress={() => { setSearchHere(tempCoor); setPage(1); }}>
@@ -339,7 +341,7 @@ export default function MapContainer({ nowCoor }: MapContainerProps): JSX.Elemen
 					</SearchHereText>
 				</SearchHereButton> */}
       <Modal visible={placeformModal}>
-        <PlaceForm setPlaceformModal={setPlaceformModal}/>
+        <PlaceForm setPlaceformModal={setPlaceformModal} />
       </Modal>
     </View>
   )

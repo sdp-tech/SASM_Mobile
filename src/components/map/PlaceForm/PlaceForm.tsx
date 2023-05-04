@@ -1,8 +1,20 @@
-import React, { Dispatch, ReactElement, ReactNode, SetStateAction } from 'react';
-import { SafeAreaView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import React, { Dispatch, ReactElement, ReactNode, SetStateAction, useState } from 'react';
+import { Button, SafeAreaView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import Close from "../../../assets/img/common/Close.svg";
 import styled from 'styled-components/native';
-import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import PlaceFormUser from './PlaceFormUser';
+import PlaceFormOwner from './PlaceFormOwner';
+import PlaceUser from "../../../assets/img/Map/PlaceUser.svg";
+
+const Header = styled.View<{ color: string }>`
+  background-color: ${props => props.color};
+  height: 12.5%;
+  display: flex;
+  flex-flow: row wrap;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10%;
+`
 
 const CloseButton = styled.TouchableOpacity`
   position: absolute;
@@ -11,7 +23,7 @@ const CloseButton = styled.TouchableOpacity`
   z-index: 2;
 `
 const Section = styled.View`
-  height: 100%;
+  height: 87.5%;
   padding-horizontal: 35px;
   display: flex;
   justify-content: center;
@@ -32,28 +44,40 @@ interface PlaceFormProps {
   setPlaceformModal: Dispatch<SetStateAction<boolean>>;
 }
 
-export type PlaceFormParamList = {
-  'Home': undefined;
-  'User': undefined;
-  'Owner': undefined
-}
-
 export default function PlaceForm({ setPlaceformModal }: PlaceFormProps): JSX.Element {
+  const [tab, setTab] = useState<number>(0);
   return (
-    <SafeAreaView>
-      <CloseButton onPress={() => { setPlaceformModal(false) }}>
-        <Close color={'#000000'} />
-      </CloseButton>
+    <View>
+      <Header color={tab==1?'#75E59B':'#FFFFFF'}>
+        <Text style={{...TextStyles.Link, fontSize:24}}>장소 제보하기</Text>
+        <CloseButton onPress={() => { setPlaceformModal(false) }}>
+          <Close color={tab==1?'#FFFFFF':'#000000'} />
+        </CloseButton>
+      </Header>
       <Section>
-        <Text>SASM에 없는 장소를 제보해주세요</Text>
-        <Link>
-          <Text style={TextStyles.Link}>이미지로 제보하기</Text>
-        </Link>
-        <Link>
-          <Text style={TextStyles.Link}>사업주입니다!</Text>
-        </Link>
+        {
+          {
+            0:
+              <>
+                <Text style={TextStyles.title}>SASM에 없는</Text>
+                <Text style={TextStyles.title}>장소를 제보해주세요</Text>
+                <Link onPress={() => { setTab(1) }}>
+                  <Text style={TextStyles.Link}>이미지로 제보하기</Text>
+                  <PlaceUser/>
+                </Link>
+                <Link onPress={() => { setTab(2) }}>
+                  <Text style={TextStyles.Link}>사업주입니다!</Text>
+                  <PlaceUser/>
+                </Link>
+              </>
+            ,
+            1: <PlaceFormUser />,
+            2: <PlaceFormOwner />
+          }[tab]
+        }
+
       </Section>
-    </SafeAreaView>
+    </View >
   )
 }
 
@@ -62,5 +86,9 @@ const TextStyles = StyleSheet.create({
     fontSize: 20,
     color: '#FFFFFF',
     fontWeight: "700"
+  },
+  title: {
+    fontSize: 24,
+    fontWeight:'700'
   }
 })
