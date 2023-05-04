@@ -71,8 +71,8 @@ export default function PlaceForm({ setPlaceformModal }: PlaceFormProps): JSX.El
                 </Link>
               </>
             ,
-            1: <PlaceFormUser />,
-            2: <PlaceFormOwner />
+            1: <PlaceFormUser setPlaceformModal={setPlaceformModal}/>,
+            2: <PlaceFormOwner setPlaceformModal={setPlaceformModal}/>
           }[tab]
         }
 

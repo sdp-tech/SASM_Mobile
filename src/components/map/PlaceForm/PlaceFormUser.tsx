@@ -1,7 +1,7 @@
-import React, { ReactElement, ReactNode, useEffect, useState } from 'react';
+import React, { Dispatch, ReactElement, ReactNode, SetStateAction, useEffect, useState } from 'react';
 import { Alert, Dimensions, Image, Modal, SafeAreaView, StyleSheet, Text, TextInput, TextInputProps, TouchableOpacity, View } from 'react-native';
 import styled from 'styled-components/native';
-import PhotoOptions from '../../../common/PhotoOptions';
+import PhotoOptions, { PhotoResultProps } from '../../../common/PhotoOptions';
 import Category from '../../../common/Category';
 import Postcode from '@actbase/react-daum-postcode';
 import Close from "../../../assets/img/common/Close.svg";
@@ -106,7 +106,7 @@ const InputTouchWithLabel = ({ label, onPress, children }: InputTouchProps) => {
   )
 }
 
-interface FormProps {
+export interface PlaceFormProps {
   place_name: string;
   category: string;
   mon_hours: string;
@@ -121,23 +121,24 @@ interface FormProps {
   address: string;
   short_cur: string;
   phone_num: string;
-  rep_pic: any;
-  vegan_category: string;
-  tumblur_category: boolean;
-  reusable_con_category: boolean;
-  pet_category: boolean;
-  photos: any[];
+  vegan_category: string | null;
+  tumblur_category: boolean ;
+  reusable_con_category: boolean ;
+  pet_category: boolean ;
+  longitude: number;
+  latitude: number;
+  snscount: number;
   [index: string]: any;
 }
 
-export default function PlaceFormUser(): JSX.Element {
+export default function PlaceFormUser({setPlaceformModal}:{setPlaceformModal: Dispatch<SetStateAction<boolean>>}): JSX.Element {
   //주소 입력 Modal
   const [postModal, setPostModal] = useState<boolean>(false);
   //영업시간 입력 Modal
   const [hourModal, setHourModal] = useState<boolean>(false);
   //카테고리 선택
   const [checkedList, setCheckedList] = useState<string[]>([]);
-  const [form, setForm] = useState<FormProps>({
+  const [form, setForm] = useState<PlaceFormProps>({
     place_name: '',
     category: '',
     mon_hours: '',
@@ -149,20 +150,26 @@ export default function PlaceFormUser(): JSX.Element {
     sun_hours: '',
     place_review: '',
     address: '',
-    rep_pic: {
-      width: 1,
-      height: 1,
-      uri: ''
-    },
     short_cur: '',
-    photos: [{}],
     phone_num: '',
     etc_hours: '',
-    vegan_category: '',
+    vegan_category: null,
     pet_category: false,
     reusable_con_category: false,
     tumblur_category: false,
+    longitude: 0,
+    latitude: 0,
+    snscount: 0,
   });
+
+  const request = new Request();
+  const [rep_pic, setRep_pic] = useState<PhotoResultProps[]>([{
+    width: 1,
+    height: 1,
+    fileName: '',
+    uri: ''
+  }])
+  const [photos, setPhotos] = useState<PhotoResultProps[]>([]);
   //영업시간 리스트
   const open_hours = [
     { name: 'mon_hours', day: '월' },
@@ -184,24 +191,25 @@ export default function PlaceFormUser(): JSX.Element {
   }, [checkedList])
 
   const uploadPlace = async () => {
-    const request = new Request();
     const formData = new FormData();
     for (let i of Object.keys(form)) {
-      if (i === 'photos') {
-        for (let j = 0; j < form.photos.length; j++) {
-          formData.append(`placephoto${j + 1}`, {
-            uri: form.photos[j].uri,
-            name: form.photos[j].fileName,
-            type: 'image/jpeg/png',
-          })
-        }
-      }
-      else {
-        console.log(i, form[i]);
-        formData.append(`${i}`, form[i]);
-      }
+      formData.append(`${i}`, `${form[i]}`);
     }
-    const response = request.post('/sdp_admin/places/save_place/', formData, { "Content-Type": "multipart/form-data" });
+    formData.append(`rep_pic`, {
+      uri: rep_pic[0].uri,
+      name: rep_pic[0].fileName,
+      type: 'image/jpeg/png',
+    })
+    for (let i = 0; i < photos.length; i++) {
+      formData.append(`placephoto${i + 1}`, {
+        uri: photos[i].uri,
+        name: photos[i].fileName,
+        type: 'image/jpeg/png',
+      })
+    }
+    formData.append('0', ',,')
+    const response = await request.post("/sdp_admin/places/save_place/", formData, { "Content-Type": "multipart/form-data" });
+    setPlaceformModal(false);
   }
 
   return (
@@ -211,25 +219,23 @@ export default function PlaceFormUser(): JSX.Element {
       <Text style={{ ...TextStyles.label, marginTop: 40, marginVertical: 20 }}>이미지 등록하기 *</Text>
       <Text style={TextStyles.label}>대표 사진</Text>
       <ReppicBox>
-        <Image style={{ width: width - 70, height: ((width - 70) / form.rep_pic.width) * form.rep_pic.height, maxHeight: width - 70 }}
-          source={{ uri: form.rep_pic.uri }}
+        <Image style={{ width: width - 70, height: ((width - 70) / rep_pic[0].width) * rep_pic[0].height, maxHeight: width - 70 }}
+          source={{ uri: rep_pic[0].uri }}
           alt='대표 사진'
           resizeMode='contain' />
       </ReppicBox>
       <PhotoOptions
         max={1}
-        setPhoto={(e) => { setForm({ ...form, rep_pic: e[0] }) }} />
+        setPhoto={setRep_pic} />
       <Text style={TextStyles.label}>장소 사진</Text>
       <PhotoBox>
         {
-          form.photos.map((data, index) =>
-            <Image source={{ uri: data.uri }} alt={`장소 사진 ${index}`} style={{ width: (width - 70) / 3, height: (width - 70) / 3 }} resizeMode='contain' />
-          )
+          photos.map((data, index) => <Image source={{ uri: data.uri }} alt={`장소 사진 ${index}`} style={{ width: (width - 70) / 3, height: (width - 70) / 3 }} resizeMode='contain' />)
         }
       </PhotoBox>
       <PhotoOptions
         max={3}
-        setPhoto={(e) => { setForm({ ...form, photos: e }) }} />
+        setPhoto={setPhotos} />
       <InputWithLabel label="장소명 *"
         onChangeText={(e) => { setForm({ ...form, place_name: e }) }} />
       <InputTouchWithLabel label='장소 등록 *'
