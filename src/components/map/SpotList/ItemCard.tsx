@@ -77,8 +77,8 @@ export default function ItemCard({ placeData, setSheetMode, setDetailData, setCe
       </TextBox>
       <ImageBox>
         <Image source={{ uri: placeData.rep_pic }} style={{ width: '33%', height: '100%' }} />
-        <Image source={{ uri: placeData.rep_pic }} style={{ width: '33%', height: '100%' }} />
-        <Image source={{ uri: placeData.rep_pic }} style={{ width: '33%', height: '100%' }} />
+        <Image source={{ uri: placeData.extra_pic[0] }} style={{ width: '33%', height: '100%' }} />
+        <Image source={{ uri: placeData.extra_pic[1] }} style={{ width: '33%', height: '100%' }} />
       </ImageBox>
     </StyledCard>
   )

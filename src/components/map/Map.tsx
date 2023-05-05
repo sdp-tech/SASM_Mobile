@@ -74,7 +74,8 @@ export interface DataTypes {
 
 // DataTypes에서 Marker를 위해 좌표 추가
 export interface placeDataProps extends Coord, DataTypes {
-  distance: number
+  distance: number;
+  extra_pic: string[];
 }
 
 // 사진 모음
