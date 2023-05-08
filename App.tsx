@@ -4,7 +4,7 @@ import NaverMapView, { Align, Circle, Marker, Path, Polygon, Polyline } from "./
 import { Image, ImageBackground, PermissionsAndroid, Platform, ScrollView, Text, TouchableOpacity, View, TextInput, StyleSheet, Button } from "react-native";
 import { NavigationContainer, NavigationProp, useNavigation } from '@react-navigation/native';
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
-import { createNativeStackNavigator, NativeStackScreenProps } from '@react-navigation/native-stack';
+import { createNativeStackNavigator, NativeStackScreenProps, NativeStackNavigationProp} from '@react-navigation/native-stack';
 import MapScreen from './src/pages/SpotMap';
 import LoginScreen from './src/components/Auth/Login';
 import MyPageScreen from './src/pages/MyPage';
@@ -68,7 +68,7 @@ const HomeScreens = (): JSX.Element => {
         tabBarInactiveTintColor: tabBarInactiveTintColor,
         tabBarIcon: NavbarIcon
     }
-    const navigation = useNavigation<NavigationProp<TabProps>>();
+    const tabNavigation = useNavigation<NativeStackNavigationProp<TabProps>>();
 
     return (
         <Tab.Navigator
@@ -93,7 +93,7 @@ const HomeScreens = (): JSX.Element => {
                 listeners={{
                     tabPress: (event) => {
                         event.preventDefault();
-                        navigation.navigate('맵', { id: undefined });
+                        tabNavigation.navigate('맵', { id: undefined });
                     }
                 }}
             />
@@ -104,7 +104,7 @@ const HomeScreens = (): JSX.Element => {
                 listeners={{
                     tabPress: (event) => {
                         event.preventDefault();
-                        navigation.navigate('스토리', { id: undefined });
+                        tabNavigation.navigate('스토리', { id: undefined });
                     }
                 }}
             />

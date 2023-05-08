@@ -2,11 +2,11 @@ import React, { useState, useEffect } from "react";
 import { getCurrentPosition } from "react-native-geolocation-service";
 import Geolocation from 'react-native-geolocation-service';
 import { requestPermission } from "../common/Permission";
-import Loading from "../common/Loading";
 import MapContainer from "../components/map/Map";
 import { StackScreenProps } from "@react-navigation/stack";
 import { TabProps } from "../../App";
 import { Coord } from "react-native-nmap";
+import { ActivityIndicator } from "react-native";
 
 export type MapScreenProps = StackScreenProps<TabProps, '맵'>;
 
@@ -41,8 +41,8 @@ export default function MapScreen({ navigation, route }: MapScreenProps): JSX.El
 		<>
 			{
 				loading ?
-					<Loading /> :
-					<MapContainer nowCoor={nowCoor} navigation={navigation} route={route}/>
+					<ActivityIndicator /> :
+					<MapContainer nowCoor={nowCoor} />
 			}
 		</>
 	)
