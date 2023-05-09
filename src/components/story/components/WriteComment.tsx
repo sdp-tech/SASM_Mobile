@@ -27,7 +27,7 @@ const WriteComment = ({ id, reRenderScreen }: WriteCommentParams) => {
     }
 
     return (
-        <View style={{backgroundColor: 'rgba(217, 217, 217, 0.2)', width: width, height: 100}}>
+        <View style={{backgroundColor: 'rgba(217, 217, 217, 0.2)', width: width, height: 100, padding: 10}}>
             <TextInput
                 value = {comment}
                 onChangeText = {setComment}
