@@ -8,15 +8,17 @@ import Selector2 from "../assets/img/Category/Selector2.svg";
 import Selector3 from "../assets/img/Category/Selector3.svg";
 import Selector4 from "../assets/img/Category/Selector4.svg";
 
-const CategoryWrapper = styled.TouchableOpacity<{ selected: boolean, color: string }>`
+const CategoryWrapper = styled.TouchableOpacity<{ selected: boolean, color: string, story: boolean }>`
   display: flex;
   flex-direction: row;
   align-items: center;
   background-color: ${props => props.selected ? props.color : '#FFFFFF'};
-  height: 30px;
-  border-radius: 10px
-  padding: 0 10px;
+  height: ${props => props.story ? `20px` : `30px`}
+  border-radius: 10px;
+  padding: 0 ${props => props.story ? `1px` : `10px`};
   margin: 0 10px;
+  border-color: '#444444';
+  border-bottom-width: ${props => props.selected && props.story ? 1 : 0};
 `
 
 interface ListProps {
@@ -49,9 +51,10 @@ export function MatchCategory(data: string): number {
 interface CategoryProps {
   checkedList: string[];
   setCheckedList: (list: string[]) => void;
+  story?: boolean;
 }
 
-export default function Category({ checkedList, setCheckedList }: CategoryProps): JSX.Element {
+export default function Category({ checkedList, setCheckedList, story }: CategoryProps): JSX.Element {
   const handleCheckedList = (data: string): void => {
     if (checkedList.includes(data)) {
       setCheckedList(checkedList.filter(element => element != data));
@@ -72,10 +75,22 @@ export default function Category({ checkedList, setCheckedList }: CategoryProps)
         return (
           <CategoryWrapper
             selected={isSelected}
-            color={item.color}
+            color={story ? 'white': item.color}
+            story={story ? true : false}
             onPress={() => { handleCheckedList(item.data) }}>
             {
-              {
+              story ?
+              ({
+                0: <Selector05 color={item.color}/>,
+                1: <Selector1 color={item.color}/>,
+                2: <Selector2 color={item.color}/>,
+                3: <Selector3 color={item.color}/>,
+                4: <Selector4 color={item.color}/>,
+                5: <Selector05 color={item.color}/>
+
+              }[item.id])
+              :
+              ({
                 0: <Selector05 color={isSelected ? '#FFFFFF' : item.color}/>,
                 1: <Selector1 color={isSelected ? '#FFFFFF' : item.color}/>,
                 2: <Selector2 color={isSelected ? '#FFFFFF' : item.color}/>,
@@ -83,9 +98,9 @@ export default function Category({ checkedList, setCheckedList }: CategoryProps)
                 4: <Selector4 color={isSelected ? '#FFFFFF' : item.color}/>,
                 5: <Selector05 color={isSelected ? '#FFFFFF' : item.color}/>
 
-              }[item.id]
+              }[item.id])
             }
-            <Text style={{ fontSize: 15, color: isSelected ? '#FFFFFF' : '#000000', marginHorizontal: 5 }}>{item.name}</Text>
+            <Text style={{ fontSize: story ? 10 : 15, color: story ? '#444444' : (isSelected ? '#FFFFFF' : '#000000'), marginHorizontal: 5 }}>{item.name}</Text>
           </CategoryWrapper>
         )
       }}

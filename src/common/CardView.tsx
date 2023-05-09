@@ -23,9 +23,10 @@ const Dot = ({focused}: DotProps) => {
         <View style = {{
             width: focused ? 8 : 4,
             height: focused ? 8 : 4,
-            marginHorizontal: 4,
+            marginHorizontal: 6,
             borderRadius: 16,
-            backgroundColor: focused ? '#209DF5' : '#3B3B3B'
+            backgroundColor: '#209DF5',
+            opacity: focused ? 1 : 0.3
         }}/>
     )
 }
