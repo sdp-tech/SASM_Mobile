@@ -69,7 +69,7 @@ const Comment = ({ data, reRenderScreen }: CommentProps) => {
         <View>
             <View style = {{ flexDirection: 'row', marginTop: 20, marginLeft: 20}}>
                 <View style = {{alignSelf: 'center'}}>
-                    <Image source={{uri: data.profile_image}} style={{width:50,height:50,borderRadius:60,backgroundColor:'#CCCCCC'}} />
+                    <Image source={{uri: data.profile_image}} style={{width:50,height:50,borderRadius:60,}} />
                     { data!.writer_is_verified ? (
                         <View style={{position: 'absolute', width: 34, height: 12, backgroundColor: '#209DF5', borderRadius: 10, top: 42, left: 8.5}}>
                             <Text style={textStyles.verified}>Editor</Text>

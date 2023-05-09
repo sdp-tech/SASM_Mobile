@@ -4,7 +4,6 @@ import styled from 'styled-components';
 import { Request } from '../../../common/requests';
 import Loading from '../../../common/Loading';
 import Heart from '../../../common/Heart';
-import { useNavigation } from '@react-navigation/native';
 
 interface SearchCardProps {
   id: number;
@@ -15,13 +14,13 @@ interface SearchCardProps {
   category: string;
   preview: string;
   writer: string;
+  nickname: string;
   writer_is_verified: boolean;
   navigation: any;
 }
 
-const { width, height, fontScale } = Dimensions.get('screen');
-
-const SearchCard = ({id, place_name, title, rep_pic, story_like, category, preview, writer, writer_is_verified, navigation} : SearchCardProps) => {
+const SearchCard = ({id, place_name, title, rep_pic, story_like, category, preview, writer, nickname, writer_is_verified, navigation} : SearchCardProps) => {
+  const { width, height } = Dimensions.get('screen');
   const [like, setLike] = useState<boolean>(false);
   const [verified, setVerified] = useState<boolean>(writer_is_verified);
   const request = new Request();
@@ -39,7 +38,7 @@ const SearchCard = ({id, place_name, title, rep_pic, story_like, category, previ
     <View>
       <View style={{flexDirection: 'row', alignItems: 'center'}}>
         <View style={{flexDirection: 'row', flex: 4}}>
-          <Text style={textStyles.writer}>{verified ? ('Editor') : ('User')} 사슴 님의 이야기</Text>
+          <Text style={textStyles.writer}>{verified ? ('Editor') : ('User')} {nickname} 님의 이야기</Text>
           <View style={{backgroundColor: verified ? '#209DF5' : '#89C77F', width: 14, height: 14, borderRadius: 60, marginTop: 1, marginLeft: 5}}/>
         </View>
         <View style={{flex: 1}}>
@@ -61,9 +60,9 @@ const SearchCard = ({id, place_name, title, rep_pic, story_like, category, previ
                 </View>
                 <View style={{marginLeft: 35}}>
                   {story_like ? (
-                    <Heart like={!like} onPress={toggleLike} />
+                    <Heart like={!like} onPress={toggleLike} white={true} />
                   ) : (
-                    <Heart like={like} onPress={toggleLike} />
+                    <Heart like={like} onPress={toggleLike} white={true} />
                   )}
                 </View>
               </View>
