@@ -43,21 +43,6 @@ const ToggleButton = ({ onPress, text, color }: ToggleButtonProps) => {
     )
 }
 
-export interface StoryListProps {
-    category: string;
-    id: number;
-    nickname: string;
-    place_name: string;
-    preview: string;
-    rep_pic: string;
-    semi_category: string;
-    story_like: boolean;
-    title: string;
-    views: number;
-    writer: string;
-    writer_is_verified: boolean;
-}
-
 const StoryListPage = ({ navigation, route }: StoryProps) => {
     const [item, setItem] = useState([] as any);
     const [orderList, setOrderList] = useState<boolean>(true);
