@@ -2,6 +2,7 @@ import React from 'react';
 import { TextStyle } from 'react-native';
 import { Image, TouchableOpacity, View } from 'react-native';
 import styled from 'styled-components/native';
+import { CurationProps } from '../../pages/Home';
 
 const CardWrapper = styled.TouchableOpacity`
   position: relative;
@@ -17,12 +18,10 @@ const CardTitle = styled.Text`
 
 interface ItemCardProps {
   style: TextStyle;
-  data: any;
+  data: CurationProps;
   onPress: () => void;
 
 }
-
-
 
 export default function ItemCard({ style, data, onPress }: ItemCardProps): JSX.Element {
   return (
@@ -30,10 +29,10 @@ export default function ItemCard({ style, data, onPress }: ItemCardProps): JSX.E
       <Image
         style={{ width: '100%', height: '100%' }}
         source={{
-          uri: 'https://reactnative.dev/img/tiny_logo.png',
+          uri: data.rep_pic
         }}
       />
-      <CardTitle>{data.text}</CardTitle>
+      <CardTitle>{data.title}</CardTitle>
     </CardWrapper>
   )
 }

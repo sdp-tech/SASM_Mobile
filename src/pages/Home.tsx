@@ -9,10 +9,11 @@ import { StackNavigationProp, StackScreenProps } from '@react-navigation/stack';
 import CurationDetail from '../components/Home/CurationDetail';
 import SearchBar from '../common/SearchBar';
 import ItemCard from '../components/Home/ItemCard';
-import PlusButton from '../common/PlusButton';
+import AddColor from "../assets/img/common/AddColor.svg";
 import { useNavigation } from '@react-navigation/native';
 import { TabProps } from '../../App';
 import { Request } from '../common/requests';
+import CurationForm from '../components/Home/CurationForm';
 
 
 const { width, height } = Dimensions.get('screen');
@@ -37,12 +38,25 @@ const TextBox = styled.View`
   margin: 0 8px;
   margin-bottom: 10px;
 `
+const PlusButton = styled.TouchableOpacity`
+  width: 55px;
+  height: 55px;
+  border-radius: 27.5px;
+  position: absolute;
+  bottom: 20px;
+  right: 20px;
+  background-color: #75E59B;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+`
 export type HomeStackParams = {
   "Home": undefined;
   "List": undefined;
   "Detail": {
     id: number;
   }
+  "Form": undefined;
 }
 const TextStyles = StyleSheet.create({
   Title: {
@@ -78,6 +92,7 @@ export default function HomeScreen(): JSX.Element {
       <HomeStack.Screen name="Home" component={CurationHome} />
       <HomeStack.Screen name="List" component={CurationList} />
       <HomeStack.Screen name="Detail" component={CurationDetail} />
+      <HomeStack.Screen name="Form" component={CurationForm} />
     </HomeStack.Navigator>
   )
 }
@@ -108,6 +123,14 @@ export const item = [
   }
 ]
 
+export interface CurationProps {
+  id: number;
+  is_selected: boolean;
+  rep_pic: string;
+  title: string;
+  writer: string;
+}
+
 function CurationHome({ navigation, route }: StackScreenProps<HomeStackParams, 'Home'>): JSX.Element {
   const navigationToMap = useNavigation<StackNavigationProp<TabProps>>();
   // 큐레이션 검색어
@@ -117,6 +140,18 @@ function CurationHome({ navigation, route }: StackScreenProps<HomeStackParams, '
   // 연관 스토리 검색
   const [storyData, setStoryData] = useState([]);
   const request = new Request();
+  const [curationRep, setCurationRep] = useState<CurationProps[]>([]);
+  const [curationAdmin, setCurationAdmin] = useState<CurationProps[]>([]);
+  const [curationVerified, setCurationVerified] = useState<CurationProps[]>([]);
+
+  const getCuration = async () => {
+    const response_admin = await request.get('/curations/admin_curations/');
+    setCurationAdmin(response_admin.data.data);
+    const response_verified = await request.get('/curations/verified_user_curations/');
+    setCurationVerified(response_verified.data.data);
+    const response_rep = await request.get('/curations/rep_curations/')
+    setCurationRep(response_rep.data.data);
+  }
 
   const getStory = async () => {
     const response = await request.get('/stories/story_search/',{
@@ -128,6 +163,7 @@ function CurationHome({ navigation, route }: StackScreenProps<HomeStackParams, '
   }
   useEffect(()=>{
     getStory();
+    getCuration();
   }, [])
 
   return (
@@ -143,7 +179,7 @@ function CurationHome({ navigation, route }: StackScreenProps<HomeStackParams, '
           gap={0}
           offset={0}
           height={height * 0.45}
-          data={item}
+          data={curationRep}
           pageWidth={width}
           dot={true}
           renderItem={({ item }: any) => (
@@ -180,7 +216,7 @@ function CurationHome({ navigation, route }: StackScreenProps<HomeStackParams, '
             <TouchableOpacity onPress={() => { navigation.navigate('List') }}><Text style={TextStyles.SubBlack}>모두보기 &gt;</Text></TouchableOpacity>
             <Text style={TextStyles.Sub}>유저가 직접 작성한 큐레이션</Text>
           </TextBox>
-          <ItemCard
+          {/* <ItemCard
             data={item[0]}
             style={{ width: width - 16, height: height * 0.25, margin: 8 }}
             onPress={() => { navigation.navigate('Detail', { id: item[0].id }) }} />
@@ -191,7 +227,7 @@ function CurationHome({ navigation, route }: StackScreenProps<HomeStackParams, '
           <ItemCard
             data={item[2]}
             style={{ width: width - 16, height: height * 0.25, margin: 8 }}
-            onPress={() => { navigation.navigate('Detail', { id: item[2].id }) }} />
+            onPress={() => { navigation.navigate('Detail', { id: item[2].id }) }} /> */}
         </SectionCuration>
         <SectionCuration>
           <TextBox>
@@ -264,7 +300,9 @@ function CurationHome({ navigation, route }: StackScreenProps<HomeStackParams, '
           ></CardView>
         </SectionCuration>
       </ScrollView>
-      <PlusButton onPress={() => { console.log('clicked') }} />
+      <PlusButton onPress={() => { navigation.navigate('Form') }}>
+        <AddColor color={'#FFFFFF'}/>
+      </PlusButton>
     </SafeAreaView>
   )
 }
