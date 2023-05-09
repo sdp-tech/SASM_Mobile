@@ -61,7 +61,7 @@ const MainCard = ({id, place_name, title, rep_pic, story_like, category, preview
           </View>
         </SafeAreaView>
       </ImageBackground>
-      <View style={{width: width*0.84, height: 130, borderBottomRightRadius:5, borderBottomLeftRadius: 5, borderColor: 'black', borderWidth: 1, paddingVertical: 20, paddingHorizontal: 25}}>
+      <View style={{width: width*0.84, height: 130, borderBottomRightRadius:5, borderBottomLeftRadius: 5, backgroundColor: 'white', shadowColor: 'black', shadowOpacity: 0.25, shadowOffset: { width: 0, height: 4}, paddingVertical: 20, paddingHorizontal: 25}}>
         <View style={{flexDirection: 'row', alignSelf: 'flex-end'}}>
           <View style={{backgroundColor: verified ? '#209DF5' : '#89C77F', width: 7, height: 7, borderRadius: 60, marginTop: 2}}/>
           <Text style={[textStyles.writer, {color: verified ? '#209DF5' : '#89C77F'}]}>{verified ? ('Editor') : ('User')}</Text>

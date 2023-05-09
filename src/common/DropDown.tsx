@@ -15,15 +15,13 @@ const DropDown = ({ items }: DropDownProps) => {
       items={items}
       setOpen={setOpen}
       setValue={setValue}
-      style={{borderWidth:0, height: 10, justifyContent: 'flex-start', alignItems: 'flex-start'}}
-      textStyle={{fontSize: 10}}
-      containerStyle={{height: 10, padding: 0}}
+      style={{borderWidth: 0, minHeight: 15}}
+      textStyle={{fontSize: 10, lineHeight: 12}}
       dropDownContainerStyle={{borderWidth: 0}}
       listItemContainerStyle={{height: 15}}
       tickIconStyle={{width: 10, height: 10}}
       arrowIconStyle={{width: 15, height: 15}}
-      //zIndex={3000}
-      //zIndexInverse={3000}
+      containerStyle={{maxWidth: 90}}
     />
   )
 }

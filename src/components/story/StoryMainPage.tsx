@@ -105,8 +105,8 @@ const StoryMainPage = ({ navigation, route }: StoryProps) => {
         setPage={setPage}
         search={search}
         setSearch={setSearch}
-        style={{ backgroundColor: "#D9D9D9", opacity: 0.3, marginTop: 20 }}
-        placeholder="장소명 / 내용 / 카테고리로 검색해보세요!"
+        style={{ backgroundColor: "#D9D9D9", opacity: 0.3, marginTop: 20, borderRadius: 10, height: 30, width: 350 }}
+        placeholder="궁금한 내용을 검색해보세요"
         placeholderTextColor={"black"}
       />
       {search.length > 0 ? (
@@ -123,12 +123,12 @@ const StoryMainPage = ({ navigation, route }: StoryProps) => {
         />
       ) : (
         <View>
-          <View style={{ flexDirection: "row", paddingHorizontal: 30, paddingTop: 30 }}>
+          <View style={{ flexDirection: "row", paddingHorizontal: 30, paddingTop: 20, paddingBottom: 10 }}>
             <View style={{flex: 1}}>
               <Text style={textStyles.title}>{toggleItems[orderList].label}</Text>
               <Text style={textStyles.subtitle}>{toggleItems[orderList].title}</Text>
             </View>
-            <TouchableOpacity onPress={() => setOrderList((orderList+1)%3)}>
+            <TouchableOpacity onPress={() => setOrderList((orderList+1)%3)} style={{marginTop: 10}}>
               <Arrow transform={[{rotate: '90deg'}]}/>
             </TouchableOpacity>
           </View>
@@ -140,7 +140,7 @@ const StoryMainPage = ({ navigation, route }: StoryProps) => {
             />
           </View>
           <View style={{paddingVertical: 20}}>
-            <CardView data={item} gap={0} offset={0} pageWidth={width} height={width*0.84+150} dot={true}
+            <CardView data={item} gap={0} offset={0} pageWidth={width} height={width*0.84+160} dot={true}
               renderItem={({item}: any) => {
                 return (
                   <MainCard
@@ -160,25 +160,9 @@ const StoryMainPage = ({ navigation, route }: StoryProps) => {
                 )
               }}/>
           </View>
-          <TouchableOpacity
-          onPress={() => {
-            navigation.navigate("WriteStory");
-          }}
-          style={{
-            position: "absolute",
-            width: 45,
-            height: 45,
-            top: height * 0.7,
-            left: width * 0.85,
-            borderRadius: 60,
-            alignItems: "center",
-            justifyContent: "center",
-            backgroundColor: "#209DF5",
-            opacity: 0.7
-          }}
-        >
-          <Add />
-        </TouchableOpacity>
+          <TouchableOpacity onPress={() => {navigation.navigate("WriteStory")}} style={{position: "absolute", top: height * 0.7, left: width * 0.85, shadowColor: 'black', shadowOffset: { width: 0, height: 5 }, shadowOpacity: 0.3}}>
+            <Add />
+          </TouchableOpacity>
         </View>
       )}
     </SafeAreaView>
@@ -187,14 +171,14 @@ const StoryMainPage = ({ navigation, route }: StoryProps) => {
 
 const textStyles = StyleSheet.create({
   title: {
-    fontSize: 18,
+    fontSize: 21,
     fontWeight: "700",
   },
   subtitle: {
     fontSize: 10,
     fontWeight: "400",
-    marginTop: 2,
-    marginBottom: 5,
+    marginTop: 5,
+    color: '#444444'
   },
 });
 
