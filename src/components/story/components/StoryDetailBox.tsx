@@ -24,7 +24,7 @@ interface StoryDetailProps {
     navigation: any;
 }
 
-interface StoryDetail {
+export interface StoryDetail {
     id: number;
     title: string;
     created: string;
