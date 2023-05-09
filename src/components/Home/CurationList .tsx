@@ -6,7 +6,7 @@ import { HomeStackParams, item } from '../../pages/Home';
 import SearchBar from '../../common/SearchBar';
 import ItemCard from './ItemCard';
 import styled from 'styled-components/native';
-import GoBack from "../../assets/img/common/GoBack.svg";
+import Arrow from "../../assets/img/common/Arrow.svg";
 import PlusButton from '../../common/PlusButton';
 
 const Header = styled.View`
@@ -30,7 +30,7 @@ export default function CurationList({ navigation, route }: StackScreenProps<Hom
         ListHeaderComponent={
           <Header>
             <TouchableOpacity onPress={navigation.goBack}>
-              <GoBack/>
+              <Arrow/>
             </TouchableOpacity>
             <SearchBar
               setPage={setPage}

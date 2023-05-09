@@ -19,6 +19,19 @@ import MainCard from "./components/MainCard";
 import DropDown from "../../common/DropDown";
 import Arrow from "../../assets/img/common/Arrow.svg";
 
+export interface StoryListProps {
+  id: number;
+  place_name: string;
+  title: string;
+  category: string;
+  semi_category: string;
+  preview: string;
+  rep_pic: string;
+  story_like: boolean;
+  writer: string;
+  writer_is_verified: boolean;
+}
+
 const StoryMainPage = ({ navigation, route }: StoryProps) => {
   const [item, setItem] = useState([] as any);
   //const [orderList, setOrderList] = useState<boolean>(true);

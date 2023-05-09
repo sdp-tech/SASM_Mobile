@@ -11,7 +11,7 @@ import { Request } from '../../common/requests';
 import { Coord } from "react-native-nmap";
 import Animated, { useAnimatedStyle, useSharedValue, withTiming } from "react-native-reanimated";
 import PlaceForm from "./PlaceForm/PlaceForm";
-import AddWhite from "../../assets/img/common/AddWhite.svg";
+import AddColor from "../../assets/img/common/AddColor.svg";
 
 const ButtonWrapper = styled.View`
 	width: 100%;
@@ -334,7 +334,7 @@ export default function MapContainer({ nowCoor }: MapContainerProps): JSX.Elemen
         </MoveToCenterButton>
       </Animated.View>
       <PlusButton onPress={() => { setPlaceformModal(true) }}>
-        <AddWhite />
+        <AddColor color={'#FFFFFF'}/>
       </PlusButton>
       {/* <SearchHereButton onPress={() => { setSearchHere(tempCoor); setPage(1); }}>
 					<SearchHereText>
