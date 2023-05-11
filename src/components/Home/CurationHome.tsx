@@ -27,6 +27,11 @@ const RecommendPlace = styled.TouchableOpacity`
   height: ${width / 5};
   border-radius: ${width / 10};
 `
+const RecommendWrapper = styled.View`
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+`
 const TextBox = styled.View`
   display: flex;
   flex-flow: row wrap;
@@ -102,7 +107,7 @@ export default function CurationHome({ navigation, route }: StackScreenProps<Hom
   }
 
   let verifedList = [];
-  for(let i=0; i<Math.min(3, verifedCuration.length); i++) {
+  for (let i = 0; i < Math.min(3, verifedCuration.length); i++) {
     verifedList.push(verifedCuration[i]);
   }
 
@@ -163,10 +168,10 @@ export default function CurationHome({ navigation, route }: StackScreenProps<Hom
               </TextBox>
               {
                 verifedList.map((data, index) =>
-                <ItemCard
-                  data={verifedCuration[index]}
-                  style={{ width: width - 16, height: height * 0.25, margin: 8 }}
-                />)
+                  <ItemCard
+                    data={verifedCuration[index]}
+                    style={{ width: width - 16, height: height * 0.25, margin: 8 }}
+                  />)
               }
             </SectionCuration>
             <SectionCuration>
@@ -174,50 +179,54 @@ export default function CurationHome({ navigation, route }: StackScreenProps<Hom
                 <Text style={TextStyles.Title}>추천 장소</Text>
               </TextBox>
               <View style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-around' }}>
-                <RecommendPlace
-                  onPress={() => { navigationToTab.navigate('맵', { id: 0 }) }}>
-                  <ImageBackground
-                    imageStyle={{ borderRadius: width / 10 }}
-                    style={{ flex: 1 }}
-                    resizeMode='contain'
-                    source={{
-                      uri: 'https://reactnative.dev/img/tiny_logo.png',
-                    }}
-                  />
-                </RecommendPlace>
-                <RecommendPlace
-                  onPress={() => { navigationToTab.navigate('맵', { id: 0 }) }}>
-                  <ImageBackground
-                    imageStyle={{ borderRadius: width / 10 }}
-                    style={{ flex: 1 }}
-                    resizeMode='cover'
-                    source={{
-                      uri: 'https://reactnative.dev/img/tiny_logo.png',
-                    }}
-                  />
-                </RecommendPlace>
-                <RecommendPlace
-                  onPress={() => { navigationToTab.navigate('맵', { id: 0 }) }}>
-                  <ImageBackground
-                    imageStyle={{ borderRadius: width / 10 }}
-                    style={{ flex: 1 }}
-                    resizeMode='cover'
-                    source={{
-                      uri: 'https://reactnative.dev/img/tiny_logo.png',
-                    }}
-                  />
-                </RecommendPlace>
-                <RecommendPlace
-                  onPress={() => { navigationToTab.navigate('맵', { id: 0 }) }}>
-                  <ImageBackground
-                    imageStyle={{ borderRadius: width / 10 }}
-                    style={{ flex: 1 }}
-                    resizeMode='cover'
-                    source={{
-                      uri: 'https://reactnative.dev/img/tiny_logo.png',
-                    }}
-                  />
-                </RecommendPlace>
+                <RecommendWrapper>
+                  <RecommendPlace
+                    onPress={() => { navigationToTab.navigate('맵', { coor: { latitude: 10, longitude: 10 } }) }}>
+                    <ImageBackground
+                      imageStyle={{ borderRadius: width / 10 }}
+                      style={{ flex: 1 }}
+                      resizeMode='contain'
+                      source={require('../../assets/img/Home/place_seongsu.png')}
+                    />
+                  </RecommendPlace>
+                  <Text style={TextStyles.recommend}>성수동</Text>
+                </RecommendWrapper>
+                <RecommendWrapper>
+                  <RecommendPlace
+                    onPress={() => { navigationToTab.navigate('맵', { coor: { latitude: 10, longitude: 10 } }) }}>
+                    <ImageBackground
+                      imageStyle={{ borderRadius: width / 10 }}
+                      style={{ flex: 1 }}
+                      resizeMode='contain'
+                      source={require('../../assets/img/Home/place_songridan.png')}
+                    />
+                  </RecommendPlace>
+                  <Text style={TextStyles.recommend}>송리단길</Text>
+                </RecommendWrapper>
+                <RecommendWrapper>
+                  <RecommendPlace
+                    onPress={() => { navigationToTab.navigate('맵', { coor: { latitude: 30, longitude: 127 } }) }}>
+                    <ImageBackground
+                      imageStyle={{ borderRadius: width / 10 }}
+                      style={{ flex: 1 }}
+                      resizeMode='cover'
+                      source={require('../../assets/img/Home/place_mangwon.png')}
+                    />
+                  </RecommendPlace>
+                  <Text style={TextStyles.recommend}>망원동</Text>
+                </RecommendWrapper>
+                <RecommendWrapper>
+                  <RecommendPlace
+                    onPress={() => { navigationToTab.navigate('맵', { coor: { latitude: 40, longitude: 10 } }) }}>
+                    <ImageBackground
+                      imageStyle={{ borderRadius: width / 10 }}
+                      style={{ flex: 1 }}
+                      resizeMode='cover'
+                      source={require('../../assets/img/Home/place_namdaemun.png')}
+                    />
+                  </RecommendPlace>
+                  <Text style={TextStyles.recommend}>남대문</Text>
+                </RecommendWrapper>
               </View>
             </SectionCuration>
             <SectionCuration style={{ marginBottom: 30 }}>
@@ -277,5 +286,15 @@ const TextStyles = StyleSheet.create({
     fontWeight: "400",
     fontSize: 10,
     lineHeight: 12,
+  },
+  recommend: {
+    color:'#FFFFFF',
+    backgroundColor: '#3B3B3B',
+    fontSize: 12,
+    paddingHorizontal: 6,
+    paddingVertical: 3,
+    borderRadius: 8,
+    overflow: 'hidden',
+    marginTop: 5
   }
 })

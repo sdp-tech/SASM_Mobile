@@ -14,6 +14,7 @@ import MyPickScreen from './src/pages/MyPick';
 import MenuIcon from "./src/assets/navbar/map.svg";
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import HomeScreen from './src/pages/Home';
+import { Coord } from 'react-native-nmap';
 
 export type AppProps = {
     'Home': any;
@@ -49,7 +50,8 @@ const NavbarIcon = (): JSX.Element => {
 export type TabProps = {
     '홈': undefined;
     '맵': {
-        id: number | undefined;
+        id?: number;
+        coor?: Coord;
     };
     '스토리': {
         id: number | undefined;
@@ -93,7 +95,7 @@ const HomeScreens = (): JSX.Element => {
                 listeners={{
                     tabPress: (event) => {
                         event.preventDefault();
-                        tabNavigation.navigate('맵', { id: undefined });
+                        tabNavigation.navigate('맵', { id: undefined, coor:undefined });
                     }
                 }}
             />
