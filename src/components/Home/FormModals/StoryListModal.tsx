@@ -71,6 +71,7 @@ export default function StoryListModal({ selectedPlace, setStoryListModal, selec
     { label: '최신순', value: 1 },
     { label: '오래된순', value: 2 },
   ]
+
   //BottomSheet 중단점
   const snapPoints = useMemo(() => [500], []);
   const storyRef = useRef<BottomSheetModal>(null);

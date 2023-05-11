@@ -11,14 +11,14 @@ import Selector4 from "../assets/img/Category/Selector4.svg";
 const CategoryWrapper = styled.TouchableOpacity<{ selected: boolean, color: string, story: boolean }>`
   display: flex;
   flex-direction: row;
-  align-items: center;
+  align-items: ${props => props.story ? `flex-start` : `center`}
   background-color: ${props => props.selected ? props.color : '#FFFFFF'};
-  height: ${props => props.story ? `20px` : `30px`}
-  border-radius: 10px;
-  padding: 0 ${props => props.story ? `1px` : `10px`};
+  height: ${props => props.story ? `25px` : `30px`}
+  border-radius: ${props => props.story ? `0px` : `10px`}
+  padding: 0 ${props => props.story ? `0px` : `10px`};
   margin: 0 10px;
   border-color: '#444444';
-  border-bottom-width: ${props => props.selected && props.story ? 1 : 0};
+  border-bottom-width: ${props => props.selected && props.story ? 2 : 0};
 `
 
 interface ListProps {
@@ -66,7 +66,7 @@ export default function Category({ checkedList, setCheckedList, story }: Categor
 
   return (
     <FlatList
-      style={{ marginVertical: 10 }}
+      style={{ marginTop: 10, marginBottom: story ? 0 : 10 }}
       showsHorizontalScrollIndicator={false}
       data={CATEGORY_LIST}
       horizontal
@@ -100,7 +100,7 @@ export default function Category({ checkedList, setCheckedList, story }: Categor
 
               }[item.id])
             }
-            <Text style={{ fontSize: story ? 10 : 15, color: story ? '#444444' : (isSelected ? '#FFFFFF' : '#000000'), marginHorizontal: 5 }}>{item.name}</Text>
+            <Text style={{ fontSize: story ? 10 : 15, lineHeight: 15, color: story ? '#444444' : (isSelected ? '#FFFFFF' : '#000000'), marginHorizontal: 5 }}>{item.name}</Text>
           </CategoryWrapper>
         )
       }}

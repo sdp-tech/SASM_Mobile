@@ -23,8 +23,6 @@ const DropDown = ({ items, isBorder, value, setValue }: DropDownProps) => {
       listItemContainerStyle={{ height: 20, borderTopWidth: isBorder ? 1 : 0, }}
       tickIconStyle={{ width: 10, height: 10 }}
       arrowIconStyle={{ width: 15, height: 15 }}
-    //zIndex={3000}
-    //zIndexInverse={3000}
     />
   )
 }

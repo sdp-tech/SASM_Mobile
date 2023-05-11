@@ -114,9 +114,6 @@ export default function CurationDetail({ navigation, route }: StackScreenProps<H
     getCurationStoryDetail();
   }, []))
 
-  // useEffect(() => {
-  // }, [])
-
   return (
     <>
       <ScrollView style={{ backgroundColor: '#FFFFFF' }}>
