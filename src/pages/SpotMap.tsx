@@ -42,7 +42,7 @@ export default function MapScreen({ navigation, route }: MapScreenProps): JSX.El
 			{
 				loading ?
 					<ActivityIndicator /> :
-					<MapContainer nowCoor={nowCoor} />
+					<MapContainer nowCoor={nowCoor} navigation={navigation} route={route} />
 			}
 		</>
 	)

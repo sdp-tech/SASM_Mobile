@@ -12,6 +12,9 @@ import { Coord } from "react-native-nmap";
 import Animated, { useAnimatedStyle, useSharedValue, withTiming } from "react-native-reanimated";
 import PlaceForm from "./PlaceForm/PlaceForm";
 import AddColor from "../../assets/img/common/AddColor.svg";
+import { StackScreenProps } from "@react-navigation/stack";
+import { TabProps } from "../../../App";
+import { useFocusEffect } from "@react-navigation/native";
 
 const ButtonWrapper = styled.View`
 	width: 100%;
@@ -168,11 +171,11 @@ const Map = ({ mapView, setSheetMode, placeData, nowCoor, setDetailData, center,
   )
 };
 
-interface MapContainerProps {
+interface MapContainerProps extends StackScreenProps<TabProps, '맵'> {
   nowCoor: Coord;
 }
 
-export default function MapContainer({ nowCoor }: MapContainerProps): JSX.Element {
+export default function MapContainer({ nowCoor, navigation, route }: MapContainerProps): JSX.Element {
   //지도의 Ref
   const mapView = useRef<any>(null);
   const [loading, setLoading] = useState<boolean>(true);
@@ -210,6 +213,7 @@ export default function MapContainer({ nowCoor }: MapContainerProps): JSX.Elemen
     pet_category: false,
     phone_num: '',
   });
+
   //장소 작성 모달
   const [placeformModal, setPlaceformModal] = useState<boolean>(false);
   //지도의 중심 좌표
@@ -251,6 +255,15 @@ export default function MapContainer({ nowCoor }: MapContainerProps): JSX.Elemen
   // useEffect(()=>{
   // 	getLikePlaces();
   // }, [])
+
+  useFocusEffect(useCallback(() => {
+    if (route.params.coor) {
+      mapView?.current.animateToCoordinate(route.params.coor)
+    }
+    else {
+      mapView?.current.animateToCoordinate(nowCoor);
+    }
+  }, [route.params]))
 
   /////////////////////////////////////////////////////// BottomSheet
   //BottomSheet에서 list(true)를 보일지 detail(false)을 보일지
@@ -334,7 +347,7 @@ export default function MapContainer({ nowCoor }: MapContainerProps): JSX.Elemen
         </MoveToCenterButton>
       </Animated.View>
       <PlusButton onPress={() => { setPlaceformModal(true) }}>
-        <AddColor color={'#FFFFFF'}/>
+        <AddColor color={'#FFFFFF'} />
       </PlusButton>
       {/* <SearchHereButton onPress={() => { setSearchHere(tempCoor); setPage(1); }}>
 					<SearchHereText>
