@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { SafeAreaView, View, TouchableOpacity, Text, Dimensions, ActivityIndicator, StyleSheet, ImageBackground } from "react-native";
 import { ScrollView } from "react-native-gesture-handler";
-import SearchBar from "../../common/SearchBar";
 import ItemCard from "./ItemCard";
 import { Request } from "../../common/requests";
 import { StackScreenProps, StackNavigationProp } from "@react-navigation/stack";
@@ -11,7 +10,8 @@ import { TabProps } from "../../../App";
 import styled from "styled-components/native";
 import AddColor from "../../assets/img/common/AddColor.svg";
 import CardView from "../../common/CardView";
-import { BottomSheetModalProvider, BottomSheetModal } from "@gorhom/bottom-sheet";
+import Arrow from "../../assets/img/common/Arrow.svg";
+import Search from "../../assets/img/common/Search.svg";
 
 const { width, height } = Dimensions.get('screen');
 
@@ -47,7 +47,16 @@ const PlusButton = styled.TouchableOpacity`
   justify-content: center;
   align-items: center;
 `
-
+const SearchButton = styled.TouchableOpacity`
+  width: 80%;
+  background-color: #F1F1F1;
+  height: 35px;
+  margin: 0 auto;
+  border-radius: 20px;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+`
 export interface CurationProps {
   title: string;
   id: number;
@@ -61,7 +70,7 @@ export default function CurationHome({ navigation, route }: StackScreenProps<Hom
   const [adminCuration, setAdminCuration] = useState<CurationProps[]>([]);
   const [repCuration, setRepCuration] = useState<CurationProps[]>([]);
   const [verifedCuration, setVerifiedCuration] = useState<CurationProps[]>([]);
-  const navigationToMap = useNavigation<StackNavigationProp<TabProps>>();
+  const navigationToTab = useNavigation<StackNavigationProp<TabProps>>();
   // 큐레이션 검색어
   const [search, setSearch] = useState<string>("");
   // 큐레이션 페이지
@@ -78,17 +87,25 @@ export default function CurationHome({ navigation, route }: StackScreenProps<Hom
     });
     setStoryData(response.data.data.results);
   }
+
   const getCurration = async () => {
     setLoading(true);
     const response_admin = await request.get('/curations/admin_curations/');
+    setAdminCuration(response_admin.data.data);
     console.error('admin : ', response_admin.data.data);
     const response_rep = await request.get('/curations/rep_curations/');
     setRepCuration(response_rep.data.data)
     const response_verifed = await request.get('/curations/verified_user_curations/');
     setVerifiedCuration(response_verifed.data.data)
-    console.log(response_verifed.data.data);
+    console.error('verifed : ', response_verifed.data.data);
     setLoading(false);
   }
+
+  let verifedList = [];
+  for(let i=0; i<Math.min(3, verifedCuration.length); i++) {
+    verifedList.push(verifedCuration[i]);
+  }
+
   useEffect(() => {
     getStory();
     getCurration();
@@ -99,12 +116,11 @@ export default function CurationHome({ navigation, route }: StackScreenProps<Hom
       {loading ? <ActivityIndicator />
         : <>
           <ScrollView>
-            <SearchBar
-              style={{ width: '80%', backgroundColor: '#F1F1F1', marginBottom: 10 }}
-              search={search}
-              setSearch={setSearch}
-              setPage={setPage}
-            />
+            <SearchButton onPress={() => { navigation.navigate('List', { data: [] }) }}>
+              <View style={{ width: '15%', display: 'flex', alignItems: 'center' }}>
+                <Search />
+              </View>
+            </SearchButton>
             <CardView
               gap={0}
               offset={0}
@@ -116,19 +132,18 @@ export default function CurationHome({ navigation, route }: StackScreenProps<Hom
                 <ItemCard
                   data={item}
                   style={{ width: width - 16, height: height * 0.4, margin: 8 }}
-                  onPress={() => { navigation.navigate('Detail', { id: item.id }) }} />
+                />
               )}
             />
-
             <SectionCuration>
               <TextBox>
                 <Text style={TextStyles.Title}>큐레이션</Text>
-                <TouchableOpacity onPress={() => { navigation.navigate('List') }}><Text style={TextStyles.SubBlack}>모두보기 &gt;</Text></TouchableOpacity>
+                <TouchableOpacity onPress={() => { navigation.navigate('List', { data: adminCuration }) }}><Text style={TextStyles.SubBlack}>모두보기 <Arrow /></Text></TouchableOpacity>
               </TextBox>
               <CardView
                 gap={16}
                 offset={24}
-                data={verifedCuration}
+                data={adminCuration}
                 pageWidth={width * 0.6}
                 height={height * 0.4}
                 dot={false}
@@ -136,28 +151,23 @@ export default function CurationHome({ navigation, route }: StackScreenProps<Hom
                   <ItemCard
                     style={{ width: width * 0.6, height: height * 0.4, marginHorizontal: 8 }}
                     data={item}
-                    onPress={() => { navigation.navigate('Detail', { id: item.id }) }} />
+                  />
                 )}
               />
             </SectionCuration>
             <SectionCuration>
               <TextBox>
                 <Text style={TextStyles.Title}>이 큐레이션은 어때요?</Text>
-                <TouchableOpacity onPress={() => { navigation.navigate('List') }}><Text style={TextStyles.SubBlack}>모두보기 &gt;</Text></TouchableOpacity>
+                <TouchableOpacity onPress={() => { navigation.navigate('List', { data: verifedCuration }) }}><Text style={TextStyles.SubBlack}>모두보기 <Arrow /></Text></TouchableOpacity>
                 <Text style={TextStyles.Sub}>유저가 직접 작성한 큐레이션</Text>
               </TextBox>
-              {/* <ItemCard
-                data={item[0]}
-                style={{ width: width - 16, height: height * 0.25, margin: 8 }}
-                onPress={() => { navigation.navigate('Detail', { id: item[0].id }) }} />
-              <ItemCard
-                data={item[1]}
-                style={{ width: width - 16, height: height * 0.25, margin: 8 }}
-                onPress={() => { navigation.navigate('Detail', { id: item[1].id }) }} />
-              <ItemCard
-                data={item[2]}
-                style={{ width: width - 16, height: height * 0.25, margin: 8 }}
-                onPress={() => { navigation.navigate('Detail', { id: item[2].id }) }} /> */}
+              {
+                verifedList.map((data, index) =>
+                <ItemCard
+                  data={verifedCuration[index]}
+                  style={{ width: width - 16, height: height * 0.25, margin: 8 }}
+                />)
+              }
             </SectionCuration>
             <SectionCuration>
               <TextBox>
@@ -165,7 +175,7 @@ export default function CurationHome({ navigation, route }: StackScreenProps<Hom
               </TextBox>
               <View style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-around' }}>
                 <RecommendPlace
-                  onPress={() => { navigationToMap.navigate('맵', { id: 0 }) }}>
+                  onPress={() => { navigationToTab.navigate('맵', { id: 0 }) }}>
                   <ImageBackground
                     imageStyle={{ borderRadius: width / 10 }}
                     style={{ flex: 1 }}
@@ -176,7 +186,7 @@ export default function CurationHome({ navigation, route }: StackScreenProps<Hom
                   />
                 </RecommendPlace>
                 <RecommendPlace
-                  onPress={() => { navigationToMap.navigate('맵', { id: 0 }) }}>
+                  onPress={() => { navigationToTab.navigate('맵', { id: 0 }) }}>
                   <ImageBackground
                     imageStyle={{ borderRadius: width / 10 }}
                     style={{ flex: 1 }}
@@ -187,7 +197,7 @@ export default function CurationHome({ navigation, route }: StackScreenProps<Hom
                   />
                 </RecommendPlace>
                 <RecommendPlace
-                  onPress={() => { navigationToMap.navigate('맵', { id: 0 }) }}>
+                  onPress={() => { navigationToTab.navigate('맵', { id: 0 }) }}>
                   <ImageBackground
                     imageStyle={{ borderRadius: width / 10 }}
                     style={{ flex: 1 }}
@@ -198,7 +208,7 @@ export default function CurationHome({ navigation, route }: StackScreenProps<Hom
                   />
                 </RecommendPlace>
                 <RecommendPlace
-                  onPress={() => { navigationToMap.navigate('맵', { id: 0 }) }}>
+                  onPress={() => { navigationToTab.navigate('맵', { id: 0 }) }}>
                   <ImageBackground
                     imageStyle={{ borderRadius: width / 10 }}
                     style={{ flex: 1 }}
@@ -225,18 +235,26 @@ export default function CurationHome({ navigation, route }: StackScreenProps<Hom
                   <ItemCard
                     style={{ width: width * 0.4, height: height * 0.25, marginHorizontal: 5 }}
                     data={item}
-                    onPress={() => { navigation.navigate('Detail', { id: item.id }) }} />
+                    onPress={() => { navigationToTab.navigate('스토리', { id: item.id }) }}
+                  />
                 )}
               ></CardView>
             </SectionCuration>
           </ScrollView>
-          <PlusButton onPress={() => { navigation.navigate('Form') }}>
-            <AddColor color={'#FFFFFF'} />
-          </PlusButton>
+          <CurationPlusButton />
         </>
       }
-      
+
     </SafeAreaView>
+  )
+}
+
+export const CurationPlusButton = () => {
+  const navigation = useNavigation<StackNavigationProp<HomeStackParams>>();
+  return (
+    <PlusButton onPress={() => { navigation.navigate('Form') }}>
+      <AddColor color={'#FFFFFF'} />
+    </PlusButton>
   )
 }
 
