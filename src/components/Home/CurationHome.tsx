@@ -181,7 +181,7 @@ export default function CurationHome({ navigation, route }: StackScreenProps<Hom
               <View style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-around' }}>
                 <RecommendWrapper>
                   <RecommendPlace
-                    onPress={() => { navigationToTab.navigate('맵', { coor: { latitude: 10, longitude: 10 } }) }}>
+                    onPress={() => { navigationToTab.navigate('맵', { coor: { latitude: 37.544641605, longitude: 127.055896738 } }) }}>
                     <ImageBackground
                       imageStyle={{ borderRadius: width / 10 }}
                       style={{ flex: 1 }}
@@ -193,7 +193,7 @@ export default function CurationHome({ navigation, route }: StackScreenProps<Hom
                 </RecommendWrapper>
                 <RecommendWrapper>
                   <RecommendPlace
-                    onPress={() => { navigationToTab.navigate('맵', { coor: { latitude: 10, longitude: 10 } }) }}>
+                    onPress={() => { navigationToTab.navigate('맵', { coor: { latitude: 37.5090846971287, longitude: 127.108220751231 } }) }}>
                     <ImageBackground
                       imageStyle={{ borderRadius: width / 10 }}
                       style={{ flex: 1 }}
@@ -205,7 +205,7 @@ export default function CurationHome({ navigation, route }: StackScreenProps<Hom
                 </RecommendWrapper>
                 <RecommendWrapper>
                   <RecommendPlace
-                    onPress={() => { navigationToTab.navigate('맵', { coor: { latitude: 30, longitude: 127 } }) }}>
+                    onPress={() => { navigationToTab.navigate('맵', { coor: { latitude: 37.555833333333325, longitude: 126.89999999999999 } }) }}>
                     <ImageBackground
                       imageStyle={{ borderRadius: width / 10 }}
                       style={{ flex: 1 }}
@@ -217,7 +217,7 @@ export default function CurationHome({ navigation, route }: StackScreenProps<Hom
                 </RecommendWrapper>
                 <RecommendWrapper>
                   <RecommendPlace
-                    onPress={() => { navigationToTab.navigate('맵', { coor: { latitude: 40, longitude: 10 } }) }}>
+                    onPress={() => { navigationToTab.navigate('맵', { coor: { latitude: 37.55972222222222, longitude: 126.9752777777778 } }) }}>
                     <ImageBackground
                       imageStyle={{ borderRadius: width / 10 }}
                       style={{ flex: 1 }}
@@ -288,7 +288,7 @@ const TextStyles = StyleSheet.create({
     lineHeight: 12,
   },
   recommend: {
-    color:'#FFFFFF',
+    color: '#FFFFFF',
     backgroundColor: '#3B3B3B',
     fontSize: 12,
     paddingHorizontal: 6,
