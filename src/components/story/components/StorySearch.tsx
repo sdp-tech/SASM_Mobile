@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Text, View, TouchableOpacity, Dimensions } from 'react-native';
 import SearchList from './SearchList';
 import Category from '../../../common/Category';
@@ -21,7 +21,7 @@ interface StorySearch {
 const StorySearch = ({ item, count, checkedList, setCheckedList, onEndReached, refreshing, onRefresh, navigation }: StorySearch) => {
   const [cardView, setCardView] = useState<boolean>(true);
   const { width, height } = Dimensions.get('screen');
-
+  const [value, setValue] = useState<number>(1);
   const toggleView = () => {
     setCardView(!cardView);
   }
@@ -40,7 +40,7 @@ const StorySearch = ({ item, count, checkedList, setCheckedList, onEndReached, r
       <View style={{flexDirection: 'row', height: 30, zIndex: 3000}}>
         <Text style={{fontSize: 12, fontWeight: '400', flex: 1}}>전체 검색결과 {count}개</Text>
         <View style={{width: 100, zIndex: 2000}}>
-          <DropDown items={toggleItems} />
+          <DropDown value={value} setValue={setValue} isBorder={false} items={toggleItems} />
         </View>
         <TouchableOpacity onPress={toggleView}>
           {

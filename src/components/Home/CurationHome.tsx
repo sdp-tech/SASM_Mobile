@@ -41,8 +41,8 @@ const TextBox = styled.View`
   margin-bottom: 10px;
 `
 const PlusButton = styled.TouchableOpacity`
-  width: 55px;
-  height: 55px;
+  width: 45px;
+  height: 45px;
   border-radius: 27.5px;
   position: absolute;
   bottom: 20px;
@@ -57,6 +57,7 @@ const SearchButton = styled.TouchableOpacity`
   background-color: #F1F1F1;
   height: 35px;
   margin: 0 auto;
+  margin-bottom: 20px;
   border-radius: 20px;
   display: flex;
   align-items: flex-end;
@@ -262,7 +263,7 @@ export const CurationPlusButton = () => {
   const navigation = useNavigation<StackNavigationProp<HomeStackParams>>();
   return (
     <PlusButton onPress={() => { navigation.navigate('Form') }}>
-      <AddColor color={'#FFFFFF'} />
+      <AddColor width={25} height={25} color={'#FFFFFF'} />
     </PlusButton>
   )
 }

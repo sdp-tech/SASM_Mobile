@@ -110,15 +110,15 @@ export default function CurationForm({ navigation, route }: StackScreenProps<Hom
       formData.append('stories', i.id);
       formData.append('short_curations', '.');
     }
-    if(form.title.length ==0 || form.contents.length==0) {
+    if (form.title.length == 0 || form.contents.length == 0) {
       Alert.alert('빈 칸을 전부 채워주세요.')
       return;
     }
-    if(rep_pic[0].uri=='') {
+    if (rep_pic[0].uri == '') {
       Alert.alert('대표 사진을 설정해주세요.')
       return;
     }
-    if(selectedStory.length<3) {
+    if (selectedStory.length < 3) {
       Alert.alert('최소 3개의 스토리를 선택해주세요.')
       return;
     }
@@ -140,7 +140,7 @@ export default function CurationForm({ navigation, route }: StackScreenProps<Hom
   }
 
   return (
-    <ScrollView>
+    <ScrollView style={{ backgroundColor: '#FFFFFF' }}>
       <ReppicBox onPress={handleRepPic}>
         <Image style={{ width: width, height: height / 2 }}
           source={{ uri: rep_pic[0].uri }}
@@ -153,8 +153,11 @@ export default function CurationForm({ navigation, route }: StackScreenProps<Hom
         <Text style={TextStyles.List}>선택된 스토리</Text>
         <StorySection>
           {
-            selectedStory.map(data =>
-              <StoryImage source={{ uri: data.rep_pic }} />
+            selectedStory.map((data, index) =>
+              <View style={{ position: 'relative' }}>
+                <StoryImage style={index == 0 && { borderColor: '#209DF5', borderWidth: 2 }} source={{ uri: data.rep_pic }} />
+                {index == 0 && <Text style={TextStyles.rep}>대표</Text>}
+              </View>
             )
           }
           <Button onPress={() => [setSelectStoryModal(true)]}>
@@ -182,4 +185,17 @@ const TextStyles = StyleSheet.create({
     fontSize: 16,
     fontWeight: '600'
   },
+  rep: {
+    position: 'absolute',
+    right: 0,
+    color:'#FFFFFF',
+    fontSize: 10,
+    backgroundColor:'#209DF5',
+    paddingHorizontal: 5,
+    paddingVertical:2,
+    textAlign:'center',
+    overflow:'hidden',
+    borderRadius:6,
+    fontWeight: '500'
+  }
 })

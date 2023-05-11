@@ -7,6 +7,7 @@ import { BottomSheetModalProvider, BottomSheetModal, BottomSheetBackdrop } from 
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import Arrow from "../../../assets/img/common/Arrow.svg";
 import StoryDetailModal from "./StoryDetailModal";
+import DropDown from "../../../common/DropDown";
 
 const { width, height } = Dimensions.get('window');
 
@@ -41,10 +42,12 @@ export default function StoryListModal({ selectedPlace, setStoryListModal, selec
   const [total, setTotal] = useState<number>(0);
   const [page, setPage] = useState<number>(1);
   const [loading, setLoading] = useState<boolean>(true);
+  const [dropValue, setDropValue] = useState<number>(1);
   const getStoryList = async () => {
     setLoading(true);
     const response_story_list = await request.get('/stories/story_search/', {
       search: selectedPlace.place_name,
+      latest: dropValue==1 ? true: false
     })
     setStoryList([...storyList, ...response_story_list.data.data.results]);
     setTotal(response_story_list.data.data.count);
@@ -53,7 +56,7 @@ export default function StoryListModal({ selectedPlace, setStoryListModal, selec
 
   useEffect(() => {
     getStoryList();
-  }, [page])
+  }, [page, dropValue])
 
   const handleSelectedStory = (id: number, rep_pic: string) => {
     if (selectedStory.filter(el => el.id == id).length > 0) {
@@ -64,6 +67,10 @@ export default function StoryListModal({ selectedPlace, setStoryListModal, selec
     }
   }
 
+  const toggleItems = [
+    { label: '최신순', value: 1 },
+    { label: '오래된순', value: 2 },
+  ]
   //BottomSheet 중단점
   const snapPoints = useMemo(() => [500], []);
   const storyRef = useRef<BottomSheetModal>(null);
@@ -78,10 +85,13 @@ export default function StoryListModal({ selectedPlace, setStoryListModal, selec
         <TouchableOpacity onPress={() => { setStoryListModal(false) }}>
           <Arrow width={20} height={20} transform={[{ rotateY: '180deg' }]} />
         </TouchableOpacity>
-        <View style={{ paddingHorizontal: 15, marginVertical: 10 }}>
+        <View style={{ paddingHorizontal: 15, marginTop: 10, zIndex:3000 }}>
           <Text style={{ ...ListTextStyles.title, fontSize: 20, marginBottom: 20 }}>스토리 선택</Text>
           <Text style={{ ...ListTextStyles.title, fontSize: 20 }}>{selectedPlace.place_name}</Text>
           <Text style={{ ...ListTextStyles.address, fontSize: 12, marginVertical: 5 }}>{selectedPlace.address}</Text>
+          <View style={{width:100, marginVertical: 10}}>
+            <DropDown value={dropValue} setValue={setDropValue} isBorder={true} items={toggleItems}/>
+          </View>
         </View>
         <FlatList
           data={storyList}
