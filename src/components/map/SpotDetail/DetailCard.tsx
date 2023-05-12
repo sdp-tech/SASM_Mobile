@@ -1,79 +1,80 @@
-import React, { useEffect, useState, useCallback } from 'react'
-import { Dimensions, Image, View, Text, TouchableOpacity } from 'react-native'
+import React, { useEffect, useState, useCallback, useRef } from 'react';
+import { Dimensions, Image, View, Text, TouchableOpacity, StyleSheet, Button, Linking, Modal, SafeAreaView } from 'react-native';
 import { ScrollView } from 'react-native-gesture-handler';
 import styled from 'styled-components/native';
-import { detailDataProps } from '../SpotDetail';
+import { detailDataProps } from '../Map';
 import OpenTime from "../../../assets/img/PlaceDetail/OpenTime.svg";
 import PlaceMarker from "../../../assets/img/PlaceDetail/PlaceMarker.svg";
 import Heart from '../../../common/Heart';
 import { Request } from '../../../common/requests';
 import WriteReview from './WriteReview';
 import UserReviews from './UserReviews';
-import { MapScreenProps } from '../../../pages/SpotMap';
+import SharePlace from "../../../assets/img/Map/SharePlace.svg";
+import LikePlace from "../../../assets/img/Map/LikePlace.svg";
+import FilledLikePlace from "../../../assets/img/Map/FilledLikePlace.svg";
+import PlusWhite from "../../../assets/img/Map/PlusWhite.svg";
+import CardView from '../../../common/CardView';
+import ToggleOpen from "../../../assets/img/Map/ToggleOpen.svg";
+import ArrowTop from "../../../assets/img/common/ArrowTop.svg";
 
 const TextBox = styled.View`
-  padding: 20px;
-`
-const InfoBox = styled.View`
-  display: flex;
-  flex-flow: row wrap;
-  margin-bottom: 20px;
-`
-const ButtonBox = styled.View`
-  width: 30%;
-  display: flex;
-  justify-content: center;
+  position: absolute;
+  top: 240px;
+  left: 15px;
 `
 const TabsBox = styled.View`
+  width:100%;
   display: flex;
-  flex-flow: row wrap;
-  margin-bottom: 20px;
+  flex-direction: row;
+  justify-content: flex-end;
+  padding-horizontal: 20px;
+`
+const ButtonBox = styled.View`
+  display: flex;
+  justify-content: space-between;
+  height: 125px;
+  position: absolute;
+  right: 15px;
+  top: 100px;
 `
 const TabButton = styled.TouchableOpacity<{ selected: boolean }>`
-  width: 50%;
+  width: 15%;
   height: 40px;
   display: flex;
   justify-content: center;
-  border-color: #44ADF7;
-  border-bottom-width: ${props => (props.selected ? '3px' : '0px')};;
+  align-items: center;
+`
+const Section = styled.View`
+  min-height: 200px;
+`
+const Box = styled.View`
+  border-color: #DDDDDD;
+  border-bottom-width: 1px;
+  padding-vertical: 20px;
+`
+const PaddingBox = styled(Box)`
+  padding-horizontal: 20px;
 `
 const TabText = styled.Text<{ selected: boolean }>`
-  font-weight: 700;
-  color: ${props => (props.selected ? '#44ADF7' : '#808080')}
-  font-size: 20px;
-  text-align: center;
+  font-size: 16px;
+  color: ${props => props.selected ? '#000000' : '#CECECE'}
 `
-const Tab = styled.View`
-`
-const ReviewBox = styled.View`
-  padding: 5px 10px;
-  border-radius: 10px;
-  background: #E5E5E5;
-  margin-bottom: 20px;
-`;
-const ImageBox = styled.View`
+const GoToTop = styled.TouchableOpacity`
   display: flex;
-  flex-flow: row wrap;
-  justify-content: space-between;
-  margin-bottom: 20px;
+  align-items: center;
+  justify-content: center;  
+  padding: 3px;
+  width: 30px;
+  height: 30px;
+  position: absolute;
+  right: 20px;
+  bottom: 20px;
+  border: 1px black solid;
+  background-color: #FFFFFF;
 `
-const ShortCurBox = styled.View`
-  padding: 5px 10px;
-  border-radius: 10px;
-  background: #E5E5E5;
-  margin-bottom: 20px;
-`;
-const StatisticsBox = styled.View`
-  margin: 10px 0;
-`
-const StatisticsTitle = styled.View`
-  display: flex;
-  flex-flow: row wrap;
-  justify-content: space-between;
-`
-interface DetailCardProps extends MapScreenProps {
+
+interface DetailCardProps {
   detailData: detailDataProps;
-  rerenderScreen: ()=>void;
 }
 export interface reviewDataProps {
   category: any[];
@@ -86,9 +87,11 @@ export interface reviewDataProps {
   updated: string;
   writer: string;
 }
-export default function DetailCard({ detailData, navigation, route, rerenderScreen }: DetailCardProps): JSX.Element {
-  const WindowWidth = Dimensions.get('window').width;
-  const [tab, setTab] = useState<boolean>(true);
+
+export default function DetailCard({ detailData }: DetailCardProps): JSX.Element {
+  const detailRef = useRef<ScrollView>(null);
+  const [viewHours, setViewHours] = useState<boolean>(false);
+  const [tab, setTab] = useState<number>(0);
   const [targetId, setTargetId] = useState<number>(0);
   const [reviewModal, setReviewModal] = useState<boolean>(false);
   const request = new Request();
@@ -96,24 +99,40 @@ export default function DetailCard({ detailData, navigation, route, rerenderScre
   const [targetData, setTargetData] = useState<reviewDataProps | null>();
   const [like, setLike] = useState<boolean>(false);
   useEffect(() => {
-    setTab(true);
+    setTab(0);
     //나중에 BE에서 boolean으로 변환 필요
     if (detailData.place_like == 'ok') {
       setLike(true);
     }
   }, [detailData]);
-
+  const tabs: { index: number, name: string }[] = [
+    {
+      index: 0,
+      name: '홈',
+    },
+    {
+      index: 1,
+      name: '리뷰',
+    },
+    {
+      index: 2,
+      name: '스토리',
+    }
+  ]
   const toggleLike = async () => {
     const response = await request.post('/places/place_like/', { id: detailData.id });
     setLike(!like);
-    rerenderScreen();
   }
 
   const getReview = async () => {
-    const response_review = await request.get(`/places/place_review`, { id: detailData.id });
+    const response_review = await request.get(`/places/place_review/`, { id: detailData.id });
     setReviewData(response_review.data.data.results);
   };
-
+  const scrollToTop = () => {
+    if (detailRef.current) {
+      detailRef?.current.scrollTo(0);
+    }
+  }
   useEffect(() => {
     if (reviewData) {
       for (let i = 0; i < reviewData.length; i++) {
@@ -124,86 +143,142 @@ export default function DetailCard({ detailData, navigation, route, rerenderScre
       }
     }
   }, [targetId]);
-
   useEffect(() => {
-    if (!tab) {
-      getReview();
+    getReview();
+    if (detailData.place_like == 'ok') {
+      setLike(true);
     }
+    else {
+      setLike(false);
+    }
+  }, [])
+  useEffect(() => {
+    if (tab == 1) getReview();
   }, [tab]);
   return (
-    <ScrollView>
-      <Image source={{ uri: detailData.rep_pic }} style={{ width: WindowWidth, height: 200 }} />
-      <TextBox>
-        <InfoBox>
-          <Text style={{ width: '70%', fontSize: 20, fontWeight: '700' }}>{detailData.place_name}</Text>
-          <ButtonBox>
-            <Heart like={like} onPress={toggleLike}></Heart>
+    <View>
+      <Modal style={{ position: 'absolute' }} visible={reviewModal}>
+        <WriteReview id={detailData.id} category={detailData.category} setReviewModal={setReviewModal} setTab={setTab}/>
+      </Modal>
+      <ScrollView style={{ position: 'relative' }} ref={detailRef}>
+        <Image source={{ uri: detailData.rep_pic }} style={{ width: '100%', height: 350 }} />
+        <ButtonBox>
+          <TouchableOpacity>
+            <SharePlace />
+          </TouchableOpacity>
+          <TouchableOpacity onPress={toggleLike}>
             {
-              detailData.story_id ?
-                <TouchableOpacity onPress={() => { navigation.navigate('스토리', { id: detailData.story_id }) }}><Text>스토리로 이동</Text></TouchableOpacity> : null
+              like ?
+                <FilledLikePlace /> :
+                <LikePlace />
             }
-          </ButtonBox>
-          <Text style={{ fontSize: 16 }}>{detailData.category}</Text>
-        </InfoBox>
-        <TabsBox>
-          <TabButton selected={tab} onPress={() => { setTab(true) }}><TabText selected={tab}>홈</TabText></TabButton>
-          <TabButton selected={!tab} onPress={() => { setTab(false); setTargetId(0); setTargetData(null); }}><TabText selected={!tab}>리뷰</TabText></TabButton>
-        </TabsBox>
-        <Tab>
-          {
-            tab ?
-              //홈
-              <View>
-                <ReviewBox>
-                  <Text>{detailData.place_review}</Text>
-                </ReviewBox>
-                <View style={{ display: 'flex', flexDirection: 'row', alignItems: "center", marginBottom: 10 }}>
-                  <PlaceMarker width={25} height={25} style={{ marginRight: 15 }} />
-                  <Text>{detailData.address}</Text>
-                </View>
-                <View style={{ display: 'flex', flexDirection: 'row', alignItems: "center", marginBottom: 10 }}>
-                  <OpenTime width={25} height={25} style={{ marginRight: 15 }} />
-                  <Text>{detailData.open_hours}</Text>
-                </View>
-                <ImageBox>
-                  <Image source={{ uri: detailData?.photos[0]?.image }} style={{ width: 100, height: 100 }} />
-                  <Image source={{ uri: detailData?.photos[1]?.image }} style={{ width: 100, height: 100 }} />
-                  <Image source={{ uri: detailData?.photos[2]?.image }} style={{ width: 100, height: 100 }} />
-                </ImageBox>
-                <ShortCurBox>
-                  <Text>
-                    {detailData.short_cur}
-                  </Text>
-                </ShortCurBox>
-              </View>
-              :
-              //리뷰
-              <View>
-                <StatisticsBox>
+          </TouchableOpacity>
+          <TouchableOpacity onPress={() => {
+            //navigation.navigate('Review', { id: 1, category: 'test' })
+            setReviewModal(true);
+          }}>
+            <PlusWhite />
+          </TouchableOpacity>
+        </ButtonBox>
+        <TextBox>
+          <Text style={TextStyles.info}>{detailData.category}</Text>
+          <Text style={TextStyles.place_name}>{detailData.place_name}</Text>
+          <Text style={TextStyles.info}>{detailData.place_review}</Text>
+        </TextBox>
+        <View>
+          <TabsBox>
+            {
+              tabs.map((data: { index: number, name: string }) => {
+                return (
+                  <TabButton
+                    key={data.index}
+                    selected={tab == data.index}
+                    onPress={() => { setTab(data.index) }}>
+                    <TabText selected={tab == data.index}>{data.name}</TabText>
+                  </TabButton>
+                )
+              })
+            }
+          </TabsBox>
+          <View>
+            {
+              {
+                0: <Section>
+                  <PaddingBox>
+                    <TouchableOpacity onPress={() => { Linking.openURL(`tel:${detailData.phone_num}`) }}>
+                      <Text style={TextStyles.common}>
+                        {detailData.phone_num}
+                      </Text>
+                    </TouchableOpacity>
+                    <TouchableOpacity onPress={() => { setViewHours(!viewHours) }} style={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
+                      <Text style={TextStyles.common}>
+                        {detailData.open_hours}
+                      </Text>
+                      <View style={{ marginLeft: 20, transform: [{ rotate: viewHours ? '180deg' : '0deg' }] }}><ToggleOpen /></View>
+                    </TouchableOpacity>
+                    {
+                      viewHours &&
+                      <>
+                        <Text>월 : {detailData.mon_hours}</Text>
+                        <Text>화 : {detailData.tues_hours}</Text>
+                        <Text>수 : {detailData.wed_hours}</Text>
+                        <Text>목 : {detailData.thurs_hours}</Text>
+                        <Text>금 : {detailData.fri_hours}</Text>
+                        <Text>토 : {detailData.sat_hours}</Text>
+                        <Text>일 : {detailData.sun_hours}</Text>
+                      </>
+                    }
+                    <Text style={TextStyles.common}>
+                      {detailData.short_cur}
+                    </Text>
+                  </PaddingBox>
+                  <Box>
+                    <CardView
+                      height={200}
+                      pageWidth={200}
+                      offset={10}
+                      gap={10}
+                      dot={false}
+                      data={detailData.photos}
+                      renderItem={({ item }: any) => <Image source={{ uri: item.image }} style={{ width: 200, height: 200, marginHorizontal: 5 }} />}
+                    />
+                  </Box>
                   {
-                    detailData.category_statistics.map((data, index) => {
-                      return (
-                        <StatisticsTitle key={index}><Text>{data[0]}</Text><Text>{data[1]}%</Text></StatisticsTitle>
-                      )
-                    })
+                    reviewData && <UserReviews reviewData={reviewData[0]} />
                   }
-                </StatisticsBox>
-                <ReviewBox>
-                  <TouchableOpacity style={{ display: 'flex', justifyContent: 'center' }} onPress={() => { setReviewModal(!reviewModal); setTargetData(undefined); }}>
-                    <Text style={{ textAlign: 'center' }}>리뷰를 작성해주세요</Text>
-                  </TouchableOpacity>
-                </ReviewBox>
-                {
-                  reviewModal ?
-                    <WriteReview tab={tab} setTab={setTab} category={detailData.category} id={detailData.id} targetData={targetData} setReviewModal={setReviewModal} />
-                    :
-                    null
-                }
-                <UserReviews tab={tab} setTab={setTab} reviewData={reviewData} setReviewModal={setReviewModal} setTargetId={setTargetId} />
-              </View>
-          }
-        </Tab>
-      </TextBox>
-    </ScrollView>
+                </Section>,
+                1: <Section>
+                  {
+                    reviewData && reviewData.map((data: reviewDataProps) => (
+                      <UserReviews reviewData={data} />
+                    ))
+                  }
+                </Section>,
+                2: <Section></Section>,
+              }[tab]
+            }
+          </View>
+        </View>
+      </ScrollView>
+      <GoToTop onPress={scrollToTop}><ArrowTop /></GoToTop>
+    </View>
   )
 }
+
+
+const TextStyles = StyleSheet.create({
+  info: {
+    fontSize: 16,
+    color: '#FFFFFF',
+  },
+  common: {
+    fontSize: 14,
+    marginVertical: 10
+  },
+  place_name: {
+    fontSize: 18,
+    fontWeight: '900',
+    color: '#FFFFFF',
+    marginBottom: 20
+  }
+})

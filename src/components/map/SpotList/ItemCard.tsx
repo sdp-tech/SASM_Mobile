@@ -1,32 +1,36 @@
-import React, { Dispatch, SetStateAction, useEffect, useRef, useState } from 'react'
-import { Dimensions, Image, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
+import React, { Dispatch, SetStateAction, useEffect, useRef, useState } from 'react';
+import { Dimensions, Image, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import styled from 'styled-components/native';
 import Heart from '../../../common/Heart';
 import { Request } from '../../../common/requests';
-import { Coordinate } from '../../../pages/SpotMap';
-import { detailDataProps } from '../SpotDetail';
-import { DataTypes } from '../SpotList';
+import { Coord } from 'react-native-nmap';
+import { detailDataProps, placeDataProps } from '../Map';
+import { DataTypes } from '../Map';
 
-type ItemCardProps = {
-  placeData: DataTypes;
+export interface ItemCardProps {
+  placeData: placeDataProps;
   setSheetMode: Dispatch<SetStateAction<boolean>>;
   setDetailData: Dispatch<SetStateAction<detailDataProps>>;
-  setCenter: Dispatch<SetStateAction<Coordinate>>;
+  setCenter: Dispatch<SetStateAction<Coord>>;
 }
 
-const StyledCard = styled.View`
+const StyledCard = styled.TouchableOpacity`
+  height: 100px;
   display: flex;
   flex-direction: row;
-  border-color: #535351;
-  border-bottom-width: 1px;
+  margin: 10px 0;
 `
 const ImageBox = styled.View`
-  padding: 10px;
+  width: 65%;
+  display: flex;
+  flex-direction: row;
 `
 const TextBox = styled.View`
+  width: 35%;
   padding: 10px;
   display: flex;
-  flex-direction: column;
+  justify-content: space-between;
+  padding-left: 10px;
   flex: 1;
 `
 const TitleBox = styled.View`
@@ -56,51 +60,40 @@ export default function ItemCard({ placeData, setSheetMode, setDetailData, setCe
     else setLike(false);
   }, [placeData]);
   return (
-    <View>
-      <StyledCard>
-        <TouchableOpacity onPress={getDetail}>
-          <ImageBox>
-            <Image source={{ uri: placeData.rep_pic }} style={{ width: 130, height: 130 }} />
-          </ImageBox>
-        </TouchableOpacity>
-        <TextBox>
-          <TitleBox>
-            <View style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between' }}>
-              <TouchableOpacity onPress={getDetail}>
-                <Text style={TextStyle.placeName}>{placeData.place_name}</Text>
-              </TouchableOpacity>
-              <Heart like={like} onPress={toggleLike} />
-            </View>
-            <Text style={TextStyle.category}>{placeData.category}</Text>
-          </TitleBox>
-          <View>
-            <Text style={TextStyle.placeReview}>{placeData.place_review}</Text>
-            <Text style={TextStyle.address}>{placeData.address}</Text>
-            <Text style={TextStyle.openHours}>{placeData.open_hours}</Text>
-          </View>
-        </TextBox>
-      </StyledCard>
-    </View>
+    <StyledCard onPress={getDetail}>
+      <TextBox>
+        <View>
+          <Text style={TextStyle.placeName}>{placeData.place_name}</Text>
+          <Text style={TextStyle.category}>{placeData.category}</Text>
+        </View>
+        <View>
+          <Text style={TextStyle.openHours}>{placeData.open_hours}</Text>
+          <Text style={TextStyle.openHours}>
+            {
+              placeData.distance >=1 ? placeData.distance.toFixed(2) + "km" : Math.floor(placeData.distance * 1000) + "m"
+            }
+          </Text>
+        </View>
+      </TextBox>
+      <ImageBox>
+        <Image source={{ uri: placeData.rep_pic }} style={{ width: '33%', height: '100%' }} />
+        <Image source={{ uri: placeData.extra_pic[0] }} style={{ width: '33%', height: '100%' }} />
+        <Image source={{ uri: placeData.extra_pic[1] }} style={{ width: '33%', height: '100%' }} />
+      </ImageBox>
+    </StyledCard>
   )
 }
 
 const TextStyle = StyleSheet.create({
   placeName: {
-    fontSize: 18
+    fontSize: 14,
+    fontWeight: '800',
   },
   category: {
     fontSize: 14,
   },
-  placeReview: {
-    fontSize: 14,
-    color: '#999999',
-  },
-  address: {
-    fontSize: 14,
-    marginTop: 5,
-    marginBottom: 5
-  },
   openHours: {
-    fontSize: 14,
+    fontSize: 12,
+    color: '#707070'
   }
 })

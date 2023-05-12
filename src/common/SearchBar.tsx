@@ -1,15 +1,14 @@
 import React, { Dispatch, SetStateAction, useState } from 'react';
 import { Text, TextInputProps, TextStyle, TouchableOpacity, View } from 'react-native';
 import styled from 'styled-components/native';
+import Search from "../assets/img/common/Search.svg";
 const SearchWrapper = styled.View`
   display: flex;
   width: 80%;
   margin: 0 auto;
-  height: 40px;
+  height: 35px;
   flex-direction: row;
-  margin-bottom: 10px;
-  box-shadow: 3px 3px 4px rgba(0, 0, 0, 0.1);
-  border-radius: 10px;
+  border-radius: 20px;
 `
 const StyledInput = styled.TextInput`
   width: 85%;
@@ -39,7 +38,7 @@ export default function SearchBar({ style, search, setSearch, setPage, ...rest }
         {...rest}
       />
       <ResetButton onPress={() => setSearch("")}>
-        <Text>X</Text>
+        <Search/>
       </ResetButton>
     </SearchWrapper >
   )

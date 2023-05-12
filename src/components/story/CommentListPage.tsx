@@ -8,8 +8,12 @@ import Arrow from '../../assets/img/common/Arrow.svg';
 
 const CommentListPage = ({ navigation, route }: StoryProps) => {
   const { width } = Dimensions.get('screen');
+  const id = route.params.id;
+  const reRenderScreen = route.params.reRenderScreen;
+  const comment = route.params.comment;
+
   return (
-    <SafeAreaView>
+    <SafeAreaView style={{flex: 1, backgroundColor: 'white'}}>
       <View style={{height: 50, alignItems: 'center', justifyContent: 'center'}}>
         <TouchableOpacity style={{position: 'absolute', left: 10}} onPress={() => {navigation.goBack()}}>
           <Arrow width={20} height={20} transform={[{rotateY: '180deg'}]}/>
@@ -17,12 +21,12 @@ const CommentListPage = ({ navigation, route }: StoryProps) => {
         <Text style={{textAlign: 'center', textAlignVertical: 'center', fontSize: 20, fontWeight: '700'}}>한줄평</Text>
       </View>
       <View style={{borderBottomColor: '#D9D9D9', width: width, borderBottomWidth: 1}} />
-      <WriteComment id = {route.params.id} reRenderScreen = {route.params.reRenderScreen}/>
+      <WriteComment id = {id} reRenderScreen = {reRenderScreen}/>
       <FlatList
-        data = {route.params.comment}
+        data = {comment}
         renderItem = {({item}) => { 
           return (
-            <Comment data = {item} reRenderScreen = {route.params.reRenderScreen}/>
+            <Comment data = {item} reRenderScreen = {reRenderScreen}/>
           )
       }}
       />
