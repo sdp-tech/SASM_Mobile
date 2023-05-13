@@ -3,7 +3,6 @@ import { createNativeStackNavigator, NativeStackScreenProps } from '@react-navig
 import { useNavigation, useRoute, useFocusEffect } from '@react-navigation/native';
 
 import StoryMainPage from '../components/story/StoryMainPage';
-import StoryListPage from '../components/story/StoryListPage';
 import StoryDetailPage from '../components/story/StoryDetailPage';
 import WriteStoryPage from '../components/story/WriteStoryPage';
 import CommentListPage from '../components/story/CommentListPage';
@@ -15,7 +14,6 @@ export interface StoryProps {
 
 export type StoryStackParams = {
   StoryMain: undefined;
-  StoryList: undefined;
   StoryDetail: {
     id: number | undefined;
   }
@@ -42,7 +40,6 @@ const StoryScreen = ({ navigation, route }: StoryProps) => {
       })}
     >
       <Stack.Screen name = "StoryMain" component = {StoryMainPage} />
-      <Stack.Screen name = "StoryList" component = {StoryListPage} />
       <Stack.Screen name = "StoryDetail" component = {StoryDetailPage} />
       <Stack.Screen name = "WriteStory" component={WriteStoryPage} />
       <Stack.Screen name = "CommentList" component={CommentListPage} />
