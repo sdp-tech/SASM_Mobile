@@ -97,7 +97,6 @@ export default function CurationForm({ navigation, route }: StackScreenProps<Hom
   const uploadCuration = async () => {
     const formData = new FormData();
     for (let i of Object.keys(form)) {
-      console.log(i, form[i]);
       formData.append(i, form[i]);
     }
 
@@ -130,11 +129,11 @@ export default function CurationForm({ navigation, route }: StackScreenProps<Hom
     Alert.alert('대표 사진 선택', '', [
       {
         text: '카메라',
-        onPress: () => { launchCamera({ mediaType: 'photo', maxHeight: height / 2, maxWidth: width }, response => setRep_pic(response.assets)) }
+        onPress: () => { launchCamera({ mediaType: 'photo', maxHeight: height / 2, maxWidth: width }, response => response.didCancel != true && setRep_pic(response.assets)) }
       },
       {
         text: '앨범',
-        onPress: () => { launchImageLibrary({ mediaType: 'photo', selectionLimit: 1, maxHeight: height / 2, maxWidth: width }, response => setRep_pic(response.assets)) }
+        onPress: () => { launchImageLibrary({ mediaType: 'photo', selectionLimit: 1, maxHeight: height / 2, maxWidth: width }, response => response.didCancel != true && setRep_pic(response.assets)) }
       }
     ])
   }
@@ -142,10 +141,13 @@ export default function CurationForm({ navigation, route }: StackScreenProps<Hom
   return (
     <ScrollView style={{ backgroundColor: '#FFFFFF' }}>
       <ReppicBox onPress={handleRepPic}>
-        <Image style={{ width: width, height: height / 2 }}
-          source={{ uri: rep_pic[0].uri }}
-          alt='대표 사진'
-          resizeMode='contain' />
+        {
+          rep_pic[0].uri != '' &&
+          <Image style={{ width: width, height: height / 2 }}
+            source={{ uri: rep_pic[0].uri }}
+            alt='대표 사진'
+            resizeMode='contain' />
+        }
         <InputTitle placeholder='제목을 입력해주세요 *' placeholderTextColor={'#000000'} onChangeText={(e) => { setForm({ ...form, title: e }) }} maxLength={45} />
         <Text style={{ position: 'absolute', bottom: 25, right: 10 }}>{form.title.length}/45</Text>
       </ReppicBox>
@@ -188,14 +190,14 @@ const TextStyles = StyleSheet.create({
   rep: {
     position: 'absolute',
     right: 0,
-    color:'#FFFFFF',
+    color: '#FFFFFF',
     fontSize: 10,
-    backgroundColor:'#209DF5',
+    backgroundColor: '#209DF5',
     paddingHorizontal: 5,
-    paddingVertical:2,
-    textAlign:'center',
-    overflow:'hidden',
-    borderRadius:6,
+    paddingVertical: 2,
+    textAlign: 'center',
+    overflow: 'hidden',
+    borderRadius: 6,
     fontWeight: '500'
   }
 })
