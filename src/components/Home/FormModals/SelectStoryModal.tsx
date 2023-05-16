@@ -95,7 +95,7 @@ export default function SelectStoryModal({ setSelectStoryModal, selectedStory, s
         </TouchableOpacity>
         <View style={{ paddingHorizontal: 15, marginVertical:10 }}>
           <Text style={{ ...TextStyles.title, fontSize: 20, marginBottom: 20 }}>장소 검색</Text>
-          <SearchBar style={{ width: '100%', backgroundColor: '#F1F1F1' }} search={search} setSearch={setSearch} setPage={setPage} />
+          <SearchBar style={{ width: '100%', backgroundColor: '#F1F1F1' }} placeholder="장소 검색" search={search} setSearch={setSearch} setPage={setPage} />
           <FilterButton onPress={() => { filterRef.current?.present() }}>
             <Text>필터</Text>
             <Filter />

@@ -1,13 +1,13 @@
-import React, {useState, useEffect} from "react";
+import React, { useState, useEffect } from "react";
 import { StoryDetail } from "../../story/components/StoryDetailBox";
 import { Request } from "../../../common/requests";
-import {View, ActivityIndicator, Text, Dimensions, StyleSheet} from "react-native";
+import { View, ActivityIndicator, Text, Dimensions, StyleSheet } from "react-native";
 import RenderHTML from "react-native-render-html";
-import { BottomSheetScrollView } from "@gorhom/bottom-sheet";
+import { ScrollView } from "react-native-gesture-handler";
 
-const {width, height} = Dimensions.get('window');
+const { width, height } = Dimensions.get('window');
 
-export default function StoryDetailModal({ id }: { id: number }){
+export default function StoryDetailModal({ id }: { id: number }) {
   const [loading, setLoading] = useState<boolean>(true);
   const [detailData, setDetailData] = useState<StoryDetail>({
     id: 0,
@@ -51,30 +51,30 @@ export default function StoryDetailModal({ id }: { id: number }){
         loading ?
           <ActivityIndicator />
           :
-          <BottomSheetScrollView>
+          <ScrollView>
             <Text style={[StoryTextStyles.category, { marginLeft: 20, marginTop: 20 }]}>{detailData.category}</Text>
             <View style={{ flexDirection: 'row', marginHorizontal: 20, marginBottom: 20 }}>
               <View style={{ flex: 6, justifyContent: 'center' }}>
                 <Text style={StoryTextStyles.title}>{detailData.title}</Text>
                 <Text style={StoryTextStyles.semi_title}>{detailData.story_review}</Text>
-                <Text style={StoryTextStyles.date}>2023.4.1 작성</Text>
+                <Text style={StoryTextStyles.date}>{detailData.created.slice(0,10).replace(/-/gi, '.')} 작성</Text>
               </View>
-              <View style={{ flex: 1, alignSelf: 'center' }}>
+              <View style={{display:'flex', alignItems:'center' }}>
                 <View style={{ width: 50, height: 50, borderRadius: 60, backgroundColor: '#CCCCCC' }}></View>
                 <View style={{ position: 'absolute', width: 34, height: 12, backgroundColor: detailData.writer_is_verified ? '#209DF5' : '#89C77F', borderRadius: 10, top: 42, left: 8.5 }}>
                   <Text style={StoryTextStyles.verified}>{detailData!.writer_is_verified ? 'Editor' : 'User'}</Text>
                 </View>
-                <Text style={StoryTextStyles.writer}>사슴</Text>
+                <Text style={StoryTextStyles.writer}>{detailData.nickname}</Text>
               </View>
             </View>
             <View style={{ borderBottomColor: '#D9D9D9', width: width, borderBottomWidth: 1 }} />
-            <RenderHTML
-              contentWidth={width}
-              source={markup}
-              renderersProps={renderersProps}
-            />
-            <View style={{ borderBottomColor: '#D9D9D9', width: width, borderBottomWidth: 1, marginTop: 40 }} />
-          </BottomSheetScrollView>
+            <View style={{ paddingHorizontal: 20 }}>
+              <RenderHTML
+                source={markup}
+                renderersProps={renderersProps}
+              />
+            </View>
+          </ScrollView>
       }
     </>
   )
@@ -121,7 +121,6 @@ const StoryTextStyles = StyleSheet.create({
     fontSize: 8,
     fontWeight: '600',
     marginTop: 8,
-    marginLeft: 17
   },
   subject: {
     fontSize: 14,
