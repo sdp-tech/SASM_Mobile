@@ -63,6 +63,7 @@ const SearchButton = styled.TouchableOpacity`
   align-items: flex-end;
   justify-content: center;
 `
+
 export interface CurationProps {
   title: string;
   id: number;
@@ -252,7 +253,6 @@ export default function CurationHome({ navigation, route }: StackScreenProps<Hom
           <CurationPlusButton />
         </>
       }
-
     </SafeAreaView>
   )
 }
@@ -265,7 +265,6 @@ export const CurationPlusButton = () => {
     </PlusButton>
   )
 }
-
 const TextStyles = StyleSheet.create({
   Title: {
     // fontFamily:"Inter",

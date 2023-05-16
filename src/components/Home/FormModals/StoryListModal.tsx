@@ -43,6 +43,7 @@ export default function StoryListModal({ selectedPlace, setStoryListModal, selec
   const [page, setPage] = useState<number>(1);
   const [loading, setLoading] = useState<boolean>(true);
   const [dropValue, setDropValue] = useState<number>(1);
+  
   const getStoryList = async (set: boolean) => {
     setLoading(true);
     const response_story_list = await request.get('/stories/story_search/', {
