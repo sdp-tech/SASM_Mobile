@@ -312,7 +312,7 @@ const StoryDetailBox = ({navigation, id}: StoryDetailProps) => {
                         )} */}
                     </>}
                 />
-                <TouchableOpacity style={{position: 'absolute', top: 70, left: 10}} onPress={() => {navigation.goBack('StoryMain')}}>
+                <TouchableOpacity style={{position: 'absolute', top: 70, left: 10}} onPress={() => {navigation.goBack()}}>
                     <Arrow width={20} height={20} transform={[{rotateY: '180deg'}]}/>
                 </TouchableOpacity>
                 <View style={{
