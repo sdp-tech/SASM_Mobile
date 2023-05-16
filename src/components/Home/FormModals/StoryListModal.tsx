@@ -43,20 +43,31 @@ export default function StoryListModal({ selectedPlace, setStoryListModal, selec
   const [page, setPage] = useState<number>(1);
   const [loading, setLoading] = useState<boolean>(true);
   const [dropValue, setDropValue] = useState<number>(1);
-  const getStoryList = async () => {
+  const getStoryList = async (set: boolean) => {
     setLoading(true);
     const response_story_list = await request.get('/stories/story_search/', {
       search: selectedPlace.place_name,
-      latest: dropValue==1 ? true: false
+      latest: dropValue == 1 ? true : false
     })
-    setStoryList([...storyList, ...response_story_list.data.data.results]);
+    if (set) {
+      //page가 바뀔 경우, data 추가
+      setStoryList([...storyList, ...response_story_list.data.data.results]);
+    }
+    else {
+      //dropValue가 바뀔 경우, data 설정
+      setStoryList(response_story_list.data.data.results);
+    }
     setTotal(response_story_list.data.data.count);
     setLoading(false);
   }
 
   useEffect(() => {
-    getStoryList();
-  }, [page, dropValue])
+    getStoryList(true);
+  }, [page])
+
+  useEffect(() => {
+    getStoryList(false);
+  }, [dropValue])
 
   const handleSelectedStory = (id: number, rep_pic: string) => {
     if (selectedStory.filter(el => el.id == id).length > 0) {
@@ -67,18 +78,14 @@ export default function StoryListModal({ selectedPlace, setStoryListModal, selec
     }
   }
 
+  //dropValue
   const toggleItems = [
     { label: '최신순', value: 1 },
     { label: '오래된순', value: 2 },
   ]
-
   //BottomSheet 중단점
   const snapPoints = useMemo(() => [500], []);
   const storyRef = useRef<BottomSheetModal>(null);
-
-  const handlePresentModalPress = useCallback(() => {
-    storyRef.current?.present();
-  }, []);
 
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
@@ -86,12 +93,12 @@ export default function StoryListModal({ selectedPlace, setStoryListModal, selec
         <TouchableOpacity onPress={() => { setStoryListModal(false) }}>
           <Arrow width={20} height={20} transform={[{ rotateY: '180deg' }]} />
         </TouchableOpacity>
-        <View style={{ paddingHorizontal: 15, marginTop: 10, zIndex:3000 }}>
+        <View style={{ paddingHorizontal: 15, marginTop: 10, zIndex: 2 }}>
           <Text style={{ ...ListTextStyles.title, fontSize: 20, marginBottom: 20 }}>스토리 선택</Text>
           <Text style={{ ...ListTextStyles.title, fontSize: 20 }}>{selectedPlace.place_name}</Text>
           <Text style={{ ...ListTextStyles.address, fontSize: 12, marginVertical: 5 }}>{selectedPlace.address}</Text>
-          <View style={{width:100, marginVertical: 10}}>
-            <DropDown value={dropValue} setValue={setDropValue} isBorder={true} items={toggleItems}/>
+          <View style={{ width: 100, marginVertical: 10, alignSelf:'flex-end' }}>
+            <DropDown value={dropValue} setValue={setDropValue} isBorder={false} items={toggleItems} />
           </View>
         </View>
         <FlatList
@@ -105,7 +112,7 @@ export default function StoryListModal({ selectedPlace, setStoryListModal, selec
                 <Text style={ListTextStyles.detail}>{item.semi_category}</Text>
                 <Text style={ListTextStyles.detail} numberOfLines={3} ellipsizeMode='tail'>{item.preview}</Text>
                 <TouchableOpacity onPress={() => {
-                  handlePresentModalPress();
+                  storyRef.current?.present();
                   setStoryId(item.id);
                 }}><Text style={ListTextStyles.detail}>더보기</Text></TouchableOpacity>
               </TextBox>
@@ -128,8 +135,9 @@ export default function StoryListModal({ selectedPlace, setStoryListModal, selec
                 {...props}
                 appearsOnIndex={0}
                 disappearsOnIndex={-1}
-                opacity={0.6} enableTouchThrough={true} />}>
-            <StoryDetailModal id={storyId} />
+                opacity={0.6} enableTouchThrough={true} />}
+            >
+            <StoryDetailModal id={storyId}/>
           </BottomSheetModal>
         </BottomSheetModalProvider>
       </SafeAreaView></GestureHandlerRootView>
