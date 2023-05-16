@@ -4,7 +4,7 @@ import { Dimensions, SafeAreaView, ScrollView, Text, TouchableOpacity, View } fr
 import { FlatList } from 'react-native-gesture-handler';
 import { HomeStackParams } from '../../pages/Home';
 import SearchBar from '../../common/SearchBar';
-import ItemCard from './ItemCard';
+import { SearchItemCard } from './ItemCard';
 import styled from 'styled-components/native';
 import Arrow from "../../assets/img/common/Arrow.svg";
 import PlusButton from '../../common/PlusButton';
@@ -49,6 +49,8 @@ export default function CurationList({ navigation, route }: StackScreenProps<Hom
         <Arrow width={20} height={20} transform={[{ rotateY: '180deg' }]} />
       </TouchableOpacity>
       <SearchBar
+        textAlign='center'
+        placeholder='큐레이션 검색'
         search={search}
         setSearch={setSearch}
         setPage={() => { }}
@@ -57,7 +59,7 @@ export default function CurationList({ navigation, route }: StackScreenProps<Hom
       <FlatList
         numColumns={2}
         data={list}
-        renderItem={({ item }) => <ItemCard style={{ width: width / 2 - 10, height: height / 3, margin: 5 }} data={item} />}
+        renderItem={({ item }) => <SearchItemCard style={{ width: width / 2 - 10, height: height / 3, margin: 5 }} data={item} />}
         ListHeaderComponent={<>{list.length == 0 && <View style={{ marginLeft: 15 }}><Text style={{ fontSize: 16, fontWeight: '600' }}>큐레이션이 없습니다.</Text></View>}</>}
       />
       <CurationPlusButton />
