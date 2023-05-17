@@ -68,7 +68,7 @@ export interface CurationProps {
   title: string;
   id: number;
   is_selected: boolean;
-  writer: string;
+  writer_email: string;
   rep_pic: string;
 }
 
@@ -99,12 +99,10 @@ export default function CurationHome({ navigation, route }: StackScreenProps<Hom
     setLoading(true);
     const response_admin = await request.get('/curations/admin_curations/');
     setAdminCuration(response_admin.data.data);
-    console.error('admin : ', response_admin.data.data);
     const response_rep = await request.get('/curations/rep_curations/');
     setRepCuration(response_rep.data.data)
     const response_verifed = await request.get('/curations/verified_user_curations/');
     setVerifiedCuration(response_verifed.data.data)
-    console.error('verifed : ', response_verifed.data.data);
     setLoading(false);
   }
 

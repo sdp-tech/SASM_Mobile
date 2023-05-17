@@ -5,6 +5,7 @@ import { Request } from '../../../common/requests';
 interface CommentProps {
     data: any;
     reRenderScreen: any;
+    email: string;
 }
 
 interface TextButtonProps {
@@ -21,7 +22,7 @@ const TextButton = ({text, onPress}: TextButtonProps) => {
     )
 }
 
-const Comment = ({ data, reRenderScreen }: CommentProps) => {
+const Comment = ({ data, reRenderScreen, email }: CommentProps) => {
     const date = data.created_at.slice(0, 10);
     const [update, setUpdate] = useState<boolean>(false);
     const [updateText, setUpdateText] = useState(data.content);
@@ -61,10 +62,10 @@ const Comment = ({ data, reRenderScreen }: CommentProps) => {
         Alert.alert("댓글이 수정되었습니다.");
         reRenderScreen();
     }
-    // let isWriter = false;
-    // if (data.email == email) {
-    //     isWriter = true;
-    // }
+    let isWriter = false;
+    if (data.email == email) {
+        isWriter = true;
+    }
     return (
         <View>
             <View style = {{ flexDirection: 'row', marginTop: 20, marginLeft: 20}}>
@@ -84,17 +85,21 @@ const Comment = ({ data, reRenderScreen }: CommentProps) => {
                     <View style={{flexDirection: 'row', justifyContent: 'flex-start'}}>
                         <Text style={textStyles.nickname}>{data.nickname}</Text>
                         <Text style={textStyles.date}>{date}</Text>
-                        {/* {update ?
+                        {isWriter ?
                             <>
-                                <TextButton onPress = {updateComment} text = '저장' />
-                                <TextButton onPress = {handleUpdate} text = '취소' />
+                            {update ?
+                                <>
+                                    <TextButton onPress = {updateComment} text = '저장' />
+                                    <TextButton onPress = {handleUpdate} text = '취소' />
+                                </>
+                                :
+                                <>
+                                    <TextButton onPress = {() => {handleUpdate()}} text = '수정' />
+                                    <TextButton onPress = {deleteComment} text = '삭제' />
+                                </>
+                            }
                             </>
-                            :
-                            <>
-                                <TextButton onPress = {() => {handleUpdate()}} text = '수정' />
-                                <TextButton onPress = {deleteComment} text = '삭제' />
-                            </>
-                        } */}
+                        : <></>}
                     </View>
                     <Text style={textStyles.content}>{data.content}</Text>
                 </View>
