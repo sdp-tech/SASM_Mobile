@@ -9,19 +9,20 @@ import DropDown from '../../../common/DropDown';
 interface StorySearch {
   item: any;
   count: number;
-  //orderList: string;
+  order: any;
   checkedList: any;
   setCheckedList: any;
   onEndReached: () => void;
   refreshing: boolean;
   onRefresh: () => void;
+  value: number;
+  setValue: any;
   navigation: any;
 }
 
-const StorySearch = ({ item, count, checkedList, setCheckedList, onEndReached, refreshing, onRefresh, navigation }: StorySearch) => {
+const StorySearch = ({ item, count, order, checkedList, setCheckedList, onEndReached, refreshing, onRefresh, value, setValue, navigation }: StorySearch) => {
   const [cardView, setCardView] = useState<boolean>(true);
   const { width, height } = Dimensions.get('screen');
-  const [value, setValue] = useState<number>(1);
   const toggleView = () => {
     setCardView(!cardView);
   }
@@ -33,11 +34,11 @@ const StorySearch = ({ item, count, checkedList, setCheckedList, onEndReached, r
   ]
 
   return (
-    <View style={{alignItems: 'center', paddingHorizontal: 30, paddingVertical: 20, flex: 1}}>
+    <View style={{alignItems: 'center', paddingHorizontal: 30, paddingTop: 20, flex: 1}}>
       <View style={{flexDirection: 'row', zIndex: 1, alignItems: 'center'}}>
         <Text style={{fontSize: 12, fontWeight: '400', flex: 1}}>전체 검색결과 {count}개</Text>
         <View style={{width: 100, zIndex: 2000}}>
-          <DropDown value={value} setValue={setValue} isBorder={false} items={toggleItems} />
+          <DropDown value={value} setValue={setValue} isBorder={false} items={order} />
         </View>
         <TouchableOpacity onPress={toggleView}>
           {
