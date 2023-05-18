@@ -16,6 +16,12 @@ import PlusWhite from "../../../assets/img/Map/PlusWhite.svg";
 import CardView from '../../../common/CardView';
 import ToggleOpen from "../../../assets/img/Map/ToggleOpen.svg";
 import ArrowTop from "../../../assets/img/common/ArrowTop.svg";
+import { StoryDetail } from '../../story/components/StoryDetailBox';
+import { useNavigation } from '@react-navigation/native';
+import { StackNavigationProp } from '@react-navigation/stack';
+import { TabProps } from '../../../../App';
+
+const { width, height } = Dimensions.get('window');
 
 const TextBox = styled.View`
   position: absolute;
@@ -72,7 +78,11 @@ const GoToTop = styled.TouchableOpacity`
   border: 1px black solid;
   background-color: #FFFFFF;
 `
-
+const StorySection = styled.View`
+  width: ${width - 30}px;
+  margin: 15px;
+  position: relative;
+`
 interface DetailCardProps {
   detailData: detailDataProps;
 }
@@ -89,6 +99,7 @@ export interface reviewDataProps {
 }
 
 export default function DetailCard({ detailData }: DetailCardProps): JSX.Element {
+  const navigationToTab = useNavigation<StackNavigationProp<TabProps, '스토리'>>();
   const detailRef = useRef<ScrollView>(null);
   const [viewHours, setViewHours] = useState<boolean>(false);
   const [tab, setTab] = useState<number>(0);
@@ -96,15 +107,30 @@ export default function DetailCard({ detailData }: DetailCardProps): JSX.Element
   const [reviewModal, setReviewModal] = useState<boolean>(false);
   const request = new Request();
   const [reviewData, setReviewData] = useState<reviewDataProps[]>();
-  const [targetData, setTargetData] = useState<reviewDataProps | null>();
-  const [like, setLike] = useState<boolean>(false);
-  useEffect(() => {
-    setTab(0);
-    //나중에 BE에서 boolean으로 변환 필요
-    if (detailData.place_like == 'ok') {
-      setLike(true);
-    }
-  }, [detailData]);
+  const [storyData, setStoryData] = useState<StoryDetail>({
+    id: 1,
+    title: '',
+    created: '',
+    profile: '',
+    rep_pic: '',
+    extra_pics: [],
+    story_review: '',
+    tag: '',
+    story_like: false,
+    category: '',
+    semi_category: '',
+    place_name: '',
+    views: 1,
+    html_content: '',
+    writer: '',
+    nickname: '',
+    map_image: '',
+    writer_is_verified: '',
+    preview: '',
+  });
+  const [likePlace, setLikePlace] = useState<boolean>(false);
+  const [likeStory, setLikeStory] = useState<boolean>(false);
+  
   const tabs: { index: number, name: string }[] = [
     {
       index: 0,
@@ -119,42 +145,54 @@ export default function DetailCard({ detailData }: DetailCardProps): JSX.Element
       name: '스토리',
     }
   ]
-  const toggleLike = async () => {
+  
+  const handlePlaceLike = async () => {
     const response = await request.post('/places/place_like/', { id: detailData.id });
-    setLike(!like);
+    setLikePlace(!likePlace);
+  }
+  const handleStoryLike = async () => {
+    const response_like = await request.post('/stories/story_like/', { id: detailData.story_id });
+    setLikeStory(!likeStory);
   }
 
   const getReview = async () => {
     const response_review = await request.get(`/places/place_review/`, { id: detailData.id });
+    if (response_review.data.data.place_like == 'ok') {
+      setLikePlace(true);
+    }
     setReviewData(response_review.data.data.results);
   };
+
+  const getStory = async () => {
+    const response_story = await request.get(`/stories/story_detail/${detailData.story_id}/`);
+    setLikeStory(response_story.data.data.story_like);
+    setStoryData(response_story.data.data);
+  }
   const scrollToTop = () => {
     if (detailRef.current) {
       detailRef?.current.scrollTo(0);
     }
   }
+
+  // useEffect(() => {
+  //   if (reviewData) {
+  //     for (let i = 0; i < reviewData.length; i++) {
+  //       if (reviewData[i].id == targetId) {
+  //         setTargetData(reviewData[i]);
+  //         break;
+  //       }
+  //     }
+  //   }
+  // }, [targetId]);
+
   useEffect(() => {
-    if (reviewData) {
-      for (let i = 0; i < reviewData.length; i++) {
-        if (reviewData[i].id == targetId) {
-          setTargetData(reviewData[i]);
-          break;
-        }
-      }
+    if (tab == 1 || tab == 0) getReview();
+    if (tab == 2) {
+      if (detailData.story_id != null) getStory();
+      else return;
     }
-  }, [targetId]);
-  useEffect(() => {
-    getReview();
-    if (detailData.place_like == 'ok') {
-      setLike(true);
-    }
-    else {
-      setLike(false);
-    }
-  }, [])
-  useEffect(() => {
-    if (tab == 1) getReview();
   }, [tab]);
+
   return (
     <View>
       <Modal style={{ position: 'absolute' }} visible={reviewModal}>
@@ -166,9 +204,9 @@ export default function DetailCard({ detailData }: DetailCardProps): JSX.Element
           <TouchableOpacity>
             <SharePlace />
           </TouchableOpacity>
-          <TouchableOpacity onPress={toggleLike}>
+          <TouchableOpacity onPress={handlePlaceLike}>
             {
-              like ?
+              likePlace ?
                 <FilledLikePlace /> :
                 <LikePlace />
             }
@@ -254,7 +292,22 @@ export default function DetailCard({ detailData }: DetailCardProps): JSX.Element
                     ))
                   }
                 </Section>,
-                2: <Section></Section>,
+                2: <Section>
+                  {
+                    detailData.story_id == null ? <Text style={{margin: 15, fontWeight:'700'}}>스토리가 없습니다.</Text> :
+                      <StorySection>
+                        <Image source={{ uri: storyData.rep_pic }} style={{ width: '100%', height: 450 }} />
+                        <View style={{ backgroundColor: 'rgba(0, 0, 0, 0.3)', position: 'absolute', width: '100%', height: '100%', paddingVertical: 35, paddingHorizontal: 20 }}>
+                          <Text style={TextStyles.story_title}>{storyData.title}</Text>
+                          <Text style={TextStyles.story_place_name}>{storyData.place_name}</Text>
+                          <Text style={TextStyles.story_category}>{storyData.category}</Text>
+                          <Text style={TextStyles.story_writer}>{storyData.nickname}님의 이야기</Text>
+                          <Text numberOfLines={3} style={TextStyles.story_preview}>{storyData.preview}...<TouchableOpacity onPress={()=>{navigationToTab.navigate('스토리', {id: detailData.story_id})}} style={{height: 18, paddingTop:3}}><Text style={TextStyles.story_preview}>더보기</Text></TouchableOpacity></Text>
+                        </View>
+                        <View style={{position:'absolute', top:34, right:30}}><Heart white={true} like={likeStory} onPress={handleStoryLike} /></View>
+                      </StorySection>
+                  }
+                </Section>,
               }[tab]
             }
           </View>
@@ -280,5 +333,36 @@ const TextStyles = StyleSheet.create({
     fontWeight: '900',
     color: '#FFFFFF',
     marginBottom: 20
+  },
+  story_title: {
+    color: '#FFFFFF',
+    fontSize: 14,
+  },
+  story_place_name: {
+    color: '#FFFFFF',
+    fontSize: 20,
+    fontWeight: '700',
+    marginVertical: 10
+  },
+  story_category: {
+    fontSize: 10,
+    color: '#FFFFFF',
+    alignSelf: 'flex-start',
+    borderRadius: 6,
+    overflow: 'hidden',
+    backgroundColor: 'rgba(255, 255, 255, 0.5)',
+    paddingHorizontal: 7,
+    paddingVertical: 2
+  },
+  story_writer: {
+    fontSize: 14,
+    color:'#FFFFFF',
+    marginTop: 250,
+    marginBottom: 10
+  },
+  story_preview: {
+    fontSize: 10,
+    color:'#FFFFFF',
+    lineHeight: 18,
   }
 })
