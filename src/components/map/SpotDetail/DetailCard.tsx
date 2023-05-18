@@ -130,7 +130,8 @@ export default function DetailCard({ detailData }: DetailCardProps): JSX.Element
   });
   const [likePlace, setLikePlace] = useState<boolean>(false);
   const [likeStory, setLikeStory] = useState<boolean>(false);
-  
+  const [refresh, setRefresh] = useState<boolean>(false);
+
   const tabs: { index: number, name: string }[] = [
     {
       index: 0,
@@ -145,7 +146,13 @@ export default function DetailCard({ detailData }: DetailCardProps): JSX.Element
       name: '스토리',
     }
   ]
-  
+
+  //화면 재 렌더링
+  const rerenderScreen = () => {
+    setRefresh(true);
+    setRefresh(false);
+  }
+
   const handlePlaceLike = async () => {
     const response = await request.post('/places/place_like/', { id: detailData.id });
     setLikePlace(!likePlace);
@@ -162,28 +169,17 @@ export default function DetailCard({ detailData }: DetailCardProps): JSX.Element
     }
     setReviewData(response_review.data.data.results);
   };
-
   const getStory = async () => {
     const response_story = await request.get(`/stories/story_detail/${detailData.story_id}/`);
     setLikeStory(response_story.data.data.story_like);
     setStoryData(response_story.data.data);
   }
+
   const scrollToTop = () => {
     if (detailRef.current) {
       detailRef?.current.scrollTo(0);
     }
   }
-
-  // useEffect(() => {
-  //   if (reviewData) {
-  //     for (let i = 0; i < reviewData.length; i++) {
-  //       if (reviewData[i].id == targetId) {
-  //         setTargetData(reviewData[i]);
-  //         break;
-  //       }
-  //     }
-  //   }
-  // }, [targetId]);
 
   useEffect(() => {
     if (tab == 1 || tab == 0) getReview();
@@ -191,12 +187,12 @@ export default function DetailCard({ detailData }: DetailCardProps): JSX.Element
       if (detailData.story_id != null) getStory();
       else return;
     }
-  }, [tab]);
+  }, [tab, refresh]);
 
   return (
     <View>
       <Modal style={{ position: 'absolute' }} visible={reviewModal}>
-        <WriteReview id={detailData.id} category={detailData.category} setReviewModal={setReviewModal} setTab={setTab}/>
+        <WriteReview rerender={rerenderScreen} id={detailData.id} category={detailData.category} setReviewModal={setReviewModal} setTab={setTab} />
       </Modal>
       <ScrollView style={{ position: 'relative' }} ref={detailRef}>
         <Image source={{ uri: detailData.rep_pic }} style={{ width: '100%', height: 350 }} />
@@ -282,19 +278,19 @@ export default function DetailCard({ detailData }: DetailCardProps): JSX.Element
                     />
                   </Box>
                   {
-                    reviewData && <UserReviews reviewData={reviewData[0]} />
+                    reviewData && <UserReviews category={detailData.category} rerender={rerenderScreen} reviewData={reviewData[0]} />
                   }
                 </Section>,
                 1: <Section>
                   {
                     reviewData && reviewData.map((data: reviewDataProps) => (
-                      <UserReviews reviewData={data} />
+                      <UserReviews category={detailData.category} rerender={rerenderScreen} reviewData={data} />
                     ))
                   }
                 </Section>,
                 2: <Section>
                   {
-                    detailData.story_id == null ? <Text style={{margin: 15, fontWeight:'700'}}>스토리가 없습니다.</Text> :
+                    detailData.story_id == null ? <Text style={{ margin: 15, fontWeight: '700' }}>스토리가 없습니다.</Text> :
                       <StorySection>
                         <Image source={{ uri: storyData.rep_pic }} style={{ width: '100%', height: 450 }} />
                         <View style={{ backgroundColor: 'rgba(0, 0, 0, 0.3)', position: 'absolute', width: '100%', height: '100%', paddingVertical: 35, paddingHorizontal: 20 }}>
@@ -302,9 +298,9 @@ export default function DetailCard({ detailData }: DetailCardProps): JSX.Element
                           <Text style={TextStyles.story_place_name}>{storyData.place_name}</Text>
                           <Text style={TextStyles.story_category}>{storyData.category}</Text>
                           <Text style={TextStyles.story_writer}>{storyData.nickname}님의 이야기</Text>
-                          <Text numberOfLines={3} style={TextStyles.story_preview}>{storyData.preview}...<TouchableOpacity onPress={()=>{navigationToTab.navigate('스토리', {id: detailData.story_id})}} style={{height: 18, paddingTop:3}}><Text style={TextStyles.story_preview}>더보기</Text></TouchableOpacity></Text>
+                          <Text numberOfLines={3} style={TextStyles.story_preview}>{storyData.preview}...<TouchableOpacity onPress={() => { navigationToTab.navigate('스토리', { id: detailData.story_id }) }} style={{ height: 18, paddingTop: 3 }}><Text style={TextStyles.story_preview}>더보기</Text></TouchableOpacity></Text>
                         </View>
-                        <View style={{position:'absolute', top:34, right:30}}><Heart white={true} like={likeStory} onPress={handleStoryLike} /></View>
+                        <View style={{ position: 'absolute', top: 34, right: 30 }}><Heart white={true} like={likeStory} onPress={handleStoryLike} /></View>
                       </StorySection>
                   }
                 </Section>,
@@ -356,13 +352,13 @@ const TextStyles = StyleSheet.create({
   },
   story_writer: {
     fontSize: 14,
-    color:'#FFFFFF',
+    color: '#FFFFFF',
     marginTop: 250,
     marginBottom: 10
   },
   story_preview: {
     fontSize: 10,
-    color:'#FFFFFF',
+    color: '#FFFFFF',
     lineHeight: 18,
   }
 })
