@@ -240,7 +240,7 @@ const StoryDetailBox = ({navigation, id}: StoryDetailProps) => {
                     }}
                     ListFooterComponent = {
                     <>
-                        <TouchableOpacity style={{alignItems: 'flex-end', marginRight: 30, marginTop: 10}} onPress={() => {navigation.navigate('CommentList', { id: id, comment: comment, reRenderScreen: reRenderScreen })}}>
+                        <TouchableOpacity style={{alignItems: 'flex-end', marginRight: 30, marginTop: 10}} onPress={() => {navigation.navigate('CommentList', { id: id, comment: comment, reRenderScreen: reRenderScreen, email: email })}}>
                             <Text>더보기{'>'}</Text>
                         </TouchableOpacity>
                         <View style={{borderBottomColor: '#D9D9D9', width: width, borderBottomWidth: 1, marginTop: 20}} />
