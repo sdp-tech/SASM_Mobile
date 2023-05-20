@@ -13,7 +13,7 @@ const MyPickScreen = ({ navigation, route }) => {
     return (
       <Stack.Navigator 
         screenOptions = {() => ({
-          headerShown: true,
+          headerShown: false,
         })}
       >
         <Stack.Screen name = "MyPlace" component = {MyPlace} />
