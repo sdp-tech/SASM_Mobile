@@ -106,9 +106,9 @@ export default function ReviewDetail({ reviewData, setDetailModal, rerender, cat
         <Text style={TextStyles.content}>{reviewData.contents}</Text>
         {
           isWriter && 
-          <View style={{display:'flex', flexDirection:'row'}}>
-            <TouchableOpacity onPress={deleteReview}><Text style={TextStyles.button}>삭제</Text></TouchableOpacity>
-            <TouchableOpacity onPress={()=> {setReviewModal(true);}}><Text style={TextStyles.button}>수정</Text></TouchableOpacity>
+          <View style={{display:'flex', flexDirection:'row', alignSelf:'flex-end'}}>
+            <TouchableOpacity onPress={deleteReview}><Text style={TextStyles.button}>삭제하기</Text></TouchableOpacity>
+            <TouchableOpacity onPress={()=> {setReviewModal(true);}}><Text style={TextStyles.button}>수정하기</Text></TouchableOpacity>
           </View>
         }
       </TextBox>
@@ -119,20 +119,21 @@ export default function ReviewDetail({ reviewData, setDetailModal, rerender, cat
 const TextStyles = StyleSheet.create({
   nickname: {
     color: '#FFFFFF',
-    fontSize: 18,
+    fontSize: 16,
   },
   date: {
     color: '#FFFFFF',
-    fontSize: 12,
-    marginVertical: 10,
+    fontSize: 7,
+    marginBottom: 10,
   },
   content: {
     color: '#FFFFFF',
-    fontSize: 16,
+    fontSize: 12,
     marginBottom: 10
   },
   button: {
-    fontSize: 12,
+    fontSize: 16,
+    fontWeight: '700',
     color:'#FFFFFF',
     marginRight: 5,
   }

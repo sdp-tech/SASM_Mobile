@@ -11,7 +11,8 @@ const ReviewBox = styled.View`
   padding-vertical: 15px;
 `
 const TextBox = styled.View`
-  padding-left: 15px;
+  padding-left: 20px;
+  margin-top: 10px;
 `
 
 
@@ -65,11 +66,12 @@ export default function UserReviews({ reviewData, rerender, category }: UserRevi
 
 const TextStyles = StyleSheet.create({
   date: {
-    fontSize: 10,
+    fontSize: 8,
     color: '#9A9A9A',
   },
   common: {
-    fontSize: 14,
+    fontSize: 12,
+    color: '#000000',
     marginVertical: 5
   }
 })

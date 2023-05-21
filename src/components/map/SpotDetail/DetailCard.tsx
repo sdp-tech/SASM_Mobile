@@ -25,8 +25,9 @@ const { width, height } = Dimensions.get('window');
 
 const TextBox = styled.View`
   position: absolute;
-  top: 240px;
-  left: 15px;
+  top: 220px
+  left: 0px;
+  padding-horizontal: 15px;
 `
 const TabsBox = styled.View`
   width:100%;
@@ -63,7 +64,7 @@ const PaddingBox = styled(Box)`
 `
 const TabText = styled.Text<{ selected: boolean }>`
   font-size: 16px;
-  color: ${props => props.selected ? '#000000' : '#CECECE'}
+  color: ${props => props.selected ? '#000000' : '#C0C0C0'}
 `
 const GoToTop = styled.TouchableOpacity`
   display: flex;
@@ -170,9 +171,12 @@ export default function DetailCard({ detailData }: DetailCardProps): JSX.Element
     setReviewData(response_review.data.data.results);
   };
   const getStory = async () => {
-    const response_story = await request.get(`/stories/story_detail/${detailData.story_id}/`);
-    setLikeStory(response_story.data.data.story_like);
-    setStoryData(response_story.data.data);
+    if (detailData.story_id != null) {
+      const response_story = await request.get(`/stories/story_detail/${detailData.story_id}/`);
+      setLikeStory(response_story.data.data.story_like);
+      setStoryData(response_story.data.data);
+    }
+    else return;
   }
 
   const scrollToTop = () => {
@@ -182,23 +186,23 @@ export default function DetailCard({ detailData }: DetailCardProps): JSX.Element
   }
 
   useEffect(() => {
-    if (tab == 1 || tab == 0) getReview();
-    if (tab == 2) {
-      if (detailData.story_id != null) getStory();
-      else return;
-    }
-  }, [tab, refresh]);
+    getReview();
+    getStory();
+  }, [refresh]);
 
   return (
-    <View>
+    <View style={{ borderTopLeftRadius: 10, borderTopRightRadius: 10, overflow: 'hidden' }}>
       <Modal style={{ position: 'absolute' }} visible={reviewModal}>
         <WriteReview rerender={rerenderScreen} id={detailData.id} category={detailData.category} setReviewModal={setReviewModal} setTab={setTab} />
       </Modal>
       <ScrollView style={{ position: 'relative' }} ref={detailRef}>
         <Image source={{ uri: detailData.rep_pic }} style={{ width: '100%', height: 350 }} />
         <ButtonBox>
-          <TouchableOpacity>
-            <SharePlace />
+          <TouchableOpacity onPress={() => {
+            //navigation.navigate('Review', { id: 1, category: 'test' })
+            setReviewModal(true);
+          }}>
+            <PlusWhite />
           </TouchableOpacity>
           <TouchableOpacity onPress={handlePlaceLike}>
             {
@@ -207,16 +211,13 @@ export default function DetailCard({ detailData }: DetailCardProps): JSX.Element
                 <LikePlace />
             }
           </TouchableOpacity>
-          <TouchableOpacity onPress={() => {
-            //navigation.navigate('Review', { id: 1, category: 'test' })
-            setReviewModal(true);
-          }}>
-            <PlusWhite />
+          <TouchableOpacity>
+            <SharePlace />
           </TouchableOpacity>
         </ButtonBox>
         <TextBox>
           <Text style={TextStyles.info}>{detailData.category}</Text>
-          <Text style={TextStyles.place_name}>{detailData.place_name}</Text>
+          <Text style={{ ...TextStyles.info, marginBottom: 20 }}>{detailData.place_name}</Text>
           <Text style={TextStyles.info}>{detailData.place_review}</Text>
         </TextBox>
         <View>
@@ -239,11 +240,13 @@ export default function DetailCard({ detailData }: DetailCardProps): JSX.Element
               {
                 0: <Section>
                   <PaddingBox>
+                    <Text style={TextStyles.commonColor}>{detailData.address}</Text>
                     <TouchableOpacity onPress={() => { Linking.openURL(`tel:${detailData.phone_num}`) }}>
-                      <Text style={TextStyles.common}>
+                      <Text style={TextStyles.commonColor}>
                         {detailData.phone_num}
                       </Text>
                     </TouchableOpacity>
+                    <Text style={TextStyles.common}>영업시간</Text>
                     <TouchableOpacity onPress={() => { setViewHours(!viewHours) }} style={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
                       <Text style={TextStyles.common}>
                         {detailData.open_hours}
@@ -253,18 +256,29 @@ export default function DetailCard({ detailData }: DetailCardProps): JSX.Element
                     {
                       viewHours &&
                       <>
-                        <Text>월 : {detailData.mon_hours}</Text>
-                        <Text>화 : {detailData.tues_hours}</Text>
-                        <Text>수 : {detailData.wed_hours}</Text>
-                        <Text>목 : {detailData.thurs_hours}</Text>
-                        <Text>금 : {detailData.fri_hours}</Text>
-                        <Text>토 : {detailData.sat_hours}</Text>
-                        <Text>일 : {detailData.sun_hours}</Text>
+                        <Text style={{ fontSize: 12, color: '#000000' }}>월 : {detailData.mon_hours}</Text>
+                        <Text style={{ fontSize: 12, color: '#000000' }}>화 : {detailData.tues_hours}</Text>
+                        <Text style={{ fontSize: 12, color: '#000000' }}>수 : {detailData.wed_hours}</Text>
+                        <Text style={{ fontSize: 12, color: '#000000' }}>목 : {detailData.thurs_hours}</Text>
+                        <Text style={{ fontSize: 12, color: '#000000' }}>금 : {detailData.fri_hours}</Text>
+                        <Text style={{ fontSize: 12, color: '#000000' }}>토 : {detailData.sat_hours}</Text>
+                        <Text style={{ fontSize: 12, color: '#000000' }}>일 : {detailData.sun_hours}</Text>
+                      </>
+                    }
+                    {
+                      detailData.etc_hours &&
+                      <>
+                        <Text style={TextStyles.common}>브레이크타임</Text>
+                        <Text style={TextStyles.common}>{detailData.etc_hours}</Text>
                       </>
                     }
                     <Text style={TextStyles.common}>
                       {detailData.short_cur}
                     </Text>
+                    {detailData.pet_category && <Text style={TextStyles.common}>반려동물 출입 가능</Text>}
+                    {detailData.reusable_con_category && <Text style={TextStyles.common}>재사용 용기 사용 가능</Text>}
+                    {detailData.tumblur_category && <Text style={TextStyles.common}>텀블러 할인 가능</Text>}
+                    <Text style={TextStyles.common}>{detailData.vegan_category}</Text>
                   </PaddingBox>
                   <Box>
                     <CardView
@@ -280,6 +294,20 @@ export default function DetailCard({ detailData }: DetailCardProps): JSX.Element
                   {
                     reviewData && <UserReviews category={detailData.category} rerender={rerenderScreen} reviewData={reviewData[0]} />
                   }
+                  {
+                    detailData.story_id != null &&
+                    <StorySection>
+                      <Image source={{ uri: storyData.rep_pic }} style={{ width: '100%', height: 450 }} />
+                      <View style={{ backgroundColor: 'rgba(0, 0, 0, 0.3)', position: 'absolute', width: '100%', height: '100%', paddingVertical: 35, paddingHorizontal: 20 }}>
+                        <Text style={TextStyles.story_title}>{storyData.title}</Text>
+                        <Text style={TextStyles.story_place_name}>{storyData.place_name}</Text>
+                        <Text style={TextStyles.story_category}>{storyData.category}</Text>
+                        <Text style={TextStyles.story_writer}>{storyData.nickname}님의 이야기</Text>
+                        <Text numberOfLines={3} style={TextStyles.story_preview}>{storyData.preview}...<TouchableOpacity onPress={() => { navigationToTab.navigate('스토리', { id: detailData.story_id }) }} style={{ height: 18, paddingTop: 3 }}><Text style={TextStyles.story_preview}>더보기</Text></TouchableOpacity></Text>
+                      </View>
+                      <View style={{ position: 'absolute', top: 34, right: 30 }}><Heart white={true} like={likeStory} onPress={handleStoryLike} /></View>
+                    </StorySection>
+                  }
                 </Section>,
                 1: <Section>
                   {
@@ -290,7 +318,7 @@ export default function DetailCard({ detailData }: DetailCardProps): JSX.Element
                 </Section>,
                 2: <Section>
                   {
-                    detailData.story_id == null ? <Text style={{ margin: 15, fontWeight: '700' }}>스토리가 없습니다.</Text> :
+                    detailData.story_id == null ? <Text style={{ margin: 15, fontWeight: '700', color: '#000000' }}>스토리가 없습니다.</Text> :
                       <StorySection>
                         <Image source={{ uri: storyData.rep_pic }} style={{ width: '100%', height: 450 }} />
                         <View style={{ backgroundColor: 'rgba(0, 0, 0, 0.3)', position: 'absolute', width: '100%', height: '100%', paddingVertical: 35, paddingHorizontal: 20 }}>
@@ -314,21 +342,21 @@ export default function DetailCard({ detailData }: DetailCardProps): JSX.Element
   )
 }
 
-
 const TextStyles = StyleSheet.create({
   info: {
     fontSize: 16,
     color: '#FFFFFF',
   },
   common: {
-    fontSize: 14,
-    marginVertical: 10
+    fontSize: 12,
+    color: '#000000',
+    marginVertical: 5
   },
-  place_name: {
-    fontSize: 18,
-    fontWeight: '900',
-    color: '#FFFFFF',
-    marginBottom: 20
+  commonColor: {
+    fontSize: 12,
+    color: '#848484',
+    lineHeight: 15,
+    marginBottom: 5
   },
   story_title: {
     color: '#FFFFFF',

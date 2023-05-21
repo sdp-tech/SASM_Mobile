@@ -101,7 +101,7 @@ export default function Category({ checkedList, setCheckedList, story }: Categor
 
               }[item.id])
             }
-            <Text style={{ fontSize: story ? 10 : 15, lineHeight: 15, color: story ? '#444444' : (isSelected ? '#FFFFFF' : '#000000'), marginHorizontal: 5 }}>{item.name}</Text>
+            <Text style={{ fontSize: story ? 10 : 14, color: story ? '#444444' : (isSelected ? '#FFFFFF' : '#000000'), marginHorizontal: 5 }}>{item.name}</Text>
           </CategoryWrapper>
         )
       }}

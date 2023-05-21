@@ -1,25 +1,26 @@
 import React, { useEffect, useState, useCallback, Dispatch, SetStateAction } from 'react'
-import { Text, TextInput, TouchableOpacity, View, Image, Alert, SafeAreaView, StyleSheet } from 'react-native'
+import { Text, TextInput, TouchableOpacity, View, Image, Alert, SafeAreaView, StyleSheet, Dimensions } from 'react-native'
 import styled from 'styled-components/native';
 import { Request } from '../../../common/requests';
 import { reviewDataProps } from './DetailCard';
-import PhotoOptions from '../../../common/PhotoOptions';
+import PhotoOptions, { PhotoSelector } from '../../../common/PhotoOptions';
 import Close from "../../../assets/img/common/Close.svg";
 import { ScrollView } from 'react-native-gesture-handler';
 
+const { width, height } = Dimensions.get('window');
+
 const Header = styled.View`
   background-color: #75E59B;
-  height: 100px;
+  height: 12.5%;
   display: flex;
-  flex-flow: row wrap;
+  flex-flow: row;
   align-items: center;
   justify-content: space-between;
-  padding: 10%;
+  padding: 0 20px;
 `
 const Section = styled.View`
-  padding: 40px 20px;
+  padding: 20px;
 `
-
 const KeywordBox = styled.View`
   display: flex;
   flex-flow: row wrap;
@@ -34,7 +35,7 @@ const KeywordButton = styled.TouchableOpacity<{ isSelected: boolean }>`
 `
 const KeywordTitle = styled.Text<{ isSelected: boolean }>`
   padding: 10px;
-  font-size: 14px;
+  font-size: 13px;
   color: ${props => props.isSelected ? '#FFFFFF' : '#000000'};
 `
 const ContentsInput = styled.TextInput`
@@ -42,13 +43,6 @@ const ContentsInput = styled.TextInput`
   height: 35px;
   margin: 10px 0;
   padding: 5px;
-`
-const PhotoBox = styled.View`
-  display: flex;
-  min-height: 110px;
-  margin: 10px 0;
-  flex-flow: row wrap;
-  justify-content: space-around;
 `
 const Submit = styled.TouchableOpacity`
   width: 50%;
@@ -213,19 +207,20 @@ export default function WriteReview({ rerender, id, category, setReviewModal, se
       for (let i = 0; i < targetData?.category.length; i++) {
         tempCategory.push(targetData.category[i].category);
       }
-      setForm({ ...form, contents:targetData?.contents, keywords: tempCategory });
+      setForm({ ...form, contents: targetData?.contents, keywords: tempCategory });
     }
   }, []);
 
   return (
-    <ScrollView>
+    <View>
       <Header>
         <Text style={TextStyles.header}>리뷰하기</Text>
         <TouchableOpacity onPress={() => { setReviewModal(false) }}><Close color={'#FFFFFF'} /></TouchableOpacity>
       </Header>
+      <ScrollView style={{height: '87.5%'}}>
       <Section>
         <Text style={TextStyles.title}>이미지 등록하기</Text>
-        <PhotoBox>
+        <PhotoSelector max={3} width={width-40} height={300} setPhoto={setPhotos}>
           {
             photos.map((data) =>
               <View style={{ position: 'relative' }}>
@@ -245,8 +240,7 @@ export default function WriteReview({ rerender, id, category, setReviewModal, se
               </View>
             )
           }
-        </PhotoBox>
-        <PhotoOptions max={3} setPhoto={setPhotos} />
+        </PhotoSelector>
         <Text style={TextStyles.titleBold}>좋았던 점을 알려주세요!</Text>
         <Text style={TextStyles.title}>한줄평</Text>
         <ContentsInput defaultValue={targetData && targetData.contents} onChangeText={(event) => { setForm({ ...form, contents: event }) }} />
@@ -263,7 +257,8 @@ export default function WriteReview({ rerender, id, category, setReviewModal, se
           <Text style={TextStyles.submit}>리뷰 등록하기</Text>
         </Submit>
       </Section>
-    </ScrollView>
+      </ScrollView>
+    </View>
   )
 }
 
@@ -279,12 +274,14 @@ const TextStyles = StyleSheet.create({
     fontWeight: "700",
   },
   title: {
-    fontSize: 16,
+    fontSize: 15,
     marginVertical: 10,
+    color: '#000000'
   },
   titleBold: {
-    fontSize: 16,
+    fontSize: 15,
     fontWeight: "700",
     marginVertical: 10,
+    color: '#000000'
   }
 })

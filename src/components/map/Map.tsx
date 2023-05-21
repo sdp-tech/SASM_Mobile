@@ -17,6 +17,7 @@ import { TabProps } from "../../../App";
 import { useFocusEffect } from "@react-navigation/native";
 import SearchHere from "../../assets/img/Map/SearchHere.svg";
 
+const { width, height } = Dimensions.get('window');
 
 const SearchHereButton = styled.TouchableOpacity`
   align-self: center;
@@ -40,11 +41,11 @@ const MoveToCenterButton = styled(Circle)`
 	right: -90%;
 `
 const PlusButton = styled.TouchableOpacity`
-  width: 55px;
-  height: 55px;
-  border-radius: 27.5px;
+  width: 45px;
+  height: 45px;
+  border-radius: 22.5px;
   position: absolute;
-  top: 50px;
+  top: 40px;
   right: 20px;
   background-color: #75E59B;
   display: flex;
@@ -149,7 +150,7 @@ const Map = ({ mapView, setSheetMode, placeData, setTempCoor, setDetailData, cen
                 onClick={() => { getDetail(data.id) }}
                 width={20} height={30}
                 caption={{
-                  text: `${data.place_name}`, align: Align.Bottom, textSize: 15, color: "black", haloColor: "white"
+                  text: `${data.place_name}`, align: Align.Bottom, textSize: 15, color: "black"
                 }} />
             )
           })}
@@ -298,7 +299,7 @@ export default function MapContainer({ nowCoor, navigation, route }: MapContaine
       <Animated.View style={buttonAnimatedStyle}>
         {
           (searchHere.latitude.toFixed(8) != tempCoor.latitude.toFixed(8) || searchHere.longitude.toFixed(8) != tempCoor.longitude.toFixed(8)) &&
-          <SearchHereButton onPress={()=>{setSearchHere(tempCoor)}}><SearchHere /></SearchHereButton>
+          <SearchHereButton onPress={() => { setSearchHere(tempCoor) }}><SearchHere /></SearchHereButton>
         }
         <SearchBar
           search={search}
@@ -315,7 +316,7 @@ export default function MapContainer({ nowCoor, navigation, route }: MapContaine
         </MoveToCenterButton>
       </Animated.View>
       <PlusButton onPress={() => { setPlaceformModal(true) }}>
-        <AddColor color={'#FFFFFF'} />
+        <AddColor width={25} height={25} color={'#FFFFFF'} />
       </PlusButton>
       <Modal visible={placeformModal}>
         <PlaceForm setPlaceformModal={setPlaceformModal} />
@@ -323,6 +324,16 @@ export default function MapContainer({ nowCoor, navigation, route }: MapContaine
     </View>
   )
 }
+
+const CustomHandle = ({ mode, idx }: { mode: boolean, idx:RefObject<number> }) => {
+  useEffect(()=>{console.error(idx)}, [idx])
+  return (
+    <View style={{ backgroundColor: mode ? '#FFFFFF' : 'none', position: 'absolute', width: width, height: 15, borderTopEndRadius: 10, borderTopStartRadius: 10, display: 'flex', justifyContent: 'center' }}>
+      <View style={{ width: 60, height: 5, alignSelf: 'center', backgroundColor: '#D9D9D9', borderRadius: 2.5 }}></View>
+    </View>
+  );
+};
+
 
 interface BottomSheetMemoProps {
   sheetMode: boolean;
@@ -340,22 +351,28 @@ interface BottomSheetMemoProps {
 //좌표가 바뀌어서 바텀시트가 올라가는것을 방지
 const BottomSheetMemo = memo(
   ({ sheetMode, setSheetMode, buttonAnimatedPosition, loading, page, setPage, setCenter, setDetailData, placeData, total, detailData }: BottomSheetMemoProps) => {
-  //modal의 ref
-  const modalRef = useRef(null);
-  //BottomSheet 중단점
-  const snapPoints = useMemo(() => [20, 500], []);
+    //modal의 ref
+    const modalRef = useRef(null);
+    const idx = useRef<number>(1);
+    //BottomSheet 중단점
+    const snapPoints = useMemo(() => [15, 500], []);
     return (
       <BottomSheet
         ref={modalRef}
         snapPoints={snapPoints}
         index={1}
+        handleComponent={() => <CustomHandle idx={idx} mode={sheetMode} />}
         onAnimate={(fromIndex, toIndex) => {
           if (fromIndex == 1 && toIndex == 0) {
             if (!sheetMode) setSheetMode(true);
             else buttonAnimatedPosition.value = 45;
+            idx.current = 0;
+            // setIdx(0);
           }
           else {
             buttonAnimatedPosition.value = 520;
+            idx.current = 1;
+            // setIdx(1);
           }
         }}
       >
