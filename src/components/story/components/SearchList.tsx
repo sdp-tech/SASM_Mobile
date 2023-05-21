@@ -17,6 +17,7 @@ const SearchList = ({ info, onEndReached, onRefresh, refreshing, navigation, car
       <SearchCard
         id = {item.id}
         rep_pic = {item.rep_pic}
+        extra_pics = {item.extra_pics}
         place_name = {item.place_name}
         title = {item.title}
         story_like = {item.story_like}
@@ -24,6 +25,7 @@ const SearchList = ({ info, onEndReached, onRefresh, refreshing, navigation, car
         preview = {item.preview}
         writer = {item.writer}
         nickname = {item.nickname}
+        created = {item.created}
         writer_is_verified = {item.writer_is_verified}
         navigation = {navigation}
       />

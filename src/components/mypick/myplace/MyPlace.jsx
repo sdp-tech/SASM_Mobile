@@ -1,7 +1,6 @@
 import { useState, useEffect } from 'react';
 import { SafeAreaView, Text, View, StyleSheet, TouchableOpacity, Image,FlatList, ScrollView, Dimensions, Button } from 'react-native';
 import styled from 'styled-components/native';
-//import { useCookies } from "react-cookie";
 import Loading from "../../../common/Loading";
 import ItemCard from "./ItemCard";
 import nothingIcon from "../../../assets/img/nothing.svg";
@@ -10,99 +9,84 @@ import ChangeMode from "../../../assets/img/Mypick/ChangeMode.svg"
 import Category, { CATEGORY_LIST, MatchCategory } from "../../../common/Category";
 import { useNavigation } from '@react-navigation/native';
 import Pagination from '../../../common/Pagination';
+import { TabView, SceneMap } from "react-native-tab-view";
+
 
 const styles = StyleSheet.create({
   Container:{
-    marginVertical: 0,
-    marginHorizontal: 'auto',
-    marginTop: '3%',
-    width: '100%',
-    //display: flex,
-    flex:5,
-    justifyContent: 'center',
+    height:'100%',
     alignItems: 'center',
-    //backgroundColor:'yellow'
-  },
-  MyplaceSection:{
-    position: 'relative',
-    //display: flex;
-    flex:40,
-    justifyContent: 'center',
-    alignItems: 'center',
-    flexDirection: 'column',
-    marginTop: '5%',
-    //grid-area: story;
-    //backgroundColor:'green'
-  },
-  HeaderSection:{
-    //display: flex;
-    flex:1,
-    width: '100%',
-    position: 'relative',
-    justifyContent: 'space-around',
-    flesDirection:'column',
-    alignItems:'center',
-    justifyContent:'center',
-    //backgroundColor:'blue'
-  },
-  FooterSection:{
-    position:'relative',
-    //display:'flex',
-    flex:1,
-    flexDirection:'column',
-    //grid-area:'story',
-    marginTop:5,
     //backgroundColor:'red'
   },
-  CardSection:{
-    position:'relative',
-    //display:'flex',
-    //flex:1,
-    flexDirection:'column',
-    overflow:'hidden',
-    //girdarea:'story',
-    justifyContent:'center',
-    alignItems:'center',
-    width: 350,
-    height: 300,
-    //backgroundColor:'purple'
-  },
-  NothingSerched:{
-    position:'relative',
-    //display:'flex',
-    //flex:1,
-    flexDirection:'column',
-    justifyContent:'center',
-    alignItems:'center'
-  },
-  ChangeModeButton:{
-    width:'30%',
-    textAlign:'center',
-    fontSize:25,
-    Index:3,
-    //backgroundColor:'brown'
-  },
-  FilterOptions:{
+  Myinfo:{
+    //backgroundColor:'orange',
     width:'100%',
-    //backgroundColor:'gray',
-    //alignItems:'center',
-    //justifyContent:'center'
+    flex:3,
+    borderColor:'lightgray',
+    borderWidth:1
+  },
+  Category:{
+    //backgroundColor:'yellow',
+    width:'100%',
+    flex:1,
+    borderColor:'lightgray',
+    borderWidth:1,
+    flexDirection: 'row'
+  },
+  Listbox:{
+    width:'100%',
+    flex:15,
+    //backgroundColor:'green',
+    borderColor:'lightgray',
+    borderWidth:1
+  },
+  Title:{
+    flex:1,
+    //backgroundColor:'blue',
+    borderColor:'lightgray',
+    borderWidth:1,
+    justifyContent: "center",
+    flexDirection: 'row'
+
+  },
+  Searchbox:{
+    //backgroundColor:'puple',
+    flex:1,
+    borderColor:'lightgray',
+    borderWidth:1,
+    justifyContent: "center",
+    flexDirection: 'row'
+  },
+  Place:{
+    //backgroundColor:'black',
+    flex:12,
+    borderColor:'lightgray',
+    borderWidth:1,
+    alignItems: 'center',
+  },
+  CardSection:{
+    flexDirection:'row',
+    //backgroundColor:'blue',
+    width:'100%',
+    alignItems: 'space-between',
+    justifyContent:'center',
   }
 });
 
+
+
 const Myplace = () => {
   const [info, setInfo] = useState([]);
-  //const [cookies, setCookie, removeCookie] = useCookies(["name"]);
+  // const [tab, setTab] = useState<boolean>(true);
   const [pageCount, setPageCount] = useState(1);
   const [limit, setLimit] = useState(6);
   const [page, setPage] = useState(1);
   const [loading, setLoading] = useState(true);
   const [checkedList, setCheckedList] = useState('');
   const offset = (page - 1) * limit;
-  //console.log("pageInfo", page, offset); 현재 page 번호를 쿼리에 붙여서 api요청하도록 변경하기!
-   //const token = cookies.name; // 쿠키에서 id 를 꺼내기
   
-  //const token = localStorage.getItem("accessTK"); //localStorage에서 accesstoken꺼내기
+  
+  
   const navigation = useNavigation();
   const request = new Request();
   // onChange함수를 사용하여 이벤트 감지, 필요한 값 받아오기
@@ -134,6 +118,8 @@ const Myplace = () => {
     setLoading(false);
   };
 
+
+
   // 초기에 좋아요 목록 불러오기
   useEffect(() => {
     pageMyplace();
@@ -144,26 +130,29 @@ const Myplace = () => {
         <Loading />
       ) : (
         <>
-          <View style={styles.MyplaceSection}>
-            <View style={styles.HeaderSection}>
-              <View style={styles.ChangeModeButton}>
-                <Button onPress={()=>navigation.navigate('MyStory')} title = 'My Story'>
-                  <Image src={ChangeMode} style={{ marginRight: 10 }} />
-                  </Button>
-              </View>
-              {/* <Button style={styles.ChangeModeButton} onPress={()=>navigation.navigate('MyStory')} title = 'My Story'>
-                <Image src={ChangeMode} style={{ marginRight: 10 }} />
-              </Button> */}
-              {/* <span ={{ fontWeight: "500", fontSize: "1.6rem" }}> */}
-                <Text style={{fontSize:25, fontWeight: 600}}>My PlACE</Text>
-              {/* </span> */}
-              <View style={styles.FilterOptions}>
-                <Category checkedList={checkedList} setCheckedList={setCheckedList} />
-              </View>
+        <SafeAreaView>
+          <View style={styles.Container}>
+            <View style={styles.Myinfo}>
+              <Text>Myinfo</Text>
             </View>
-            {/* <main ={{ width: '100%' }}> */}
-              <View style={styles.Container}>
-                {info.length === 0 ? (
+            {/* 탭바 구현이 안되어서 일단 버튼으로 구현해 놓음 */}
+            <View style={styles.Category}>
+             <View style={{flex:1}}><Button onPress={()=>navigation.navigate('MyPlace')} title = '장소' color='black'></Button></View>
+             <View style={{flex:1}}><Button onPress={()=>navigation.navigate('MyStory')} title = '스토리' color='black'></Button></View>
+             <View style={{flex:1}}><Button onPress={()=>navigation.navigate('큐레이션')} title = '큐레이션' color='black'></Button></View>
+             <View style={{flex:1}}><Button onPress={()=>navigation.navigate('정보글')} title = '정보글' color='black'></Button></View>
+            </View>
+            <View style={styles.Listbox}>
+              <View style={styles.Title}>
+                <View style={{flex:2, justifyContent: "center", marginLeft:20}}><Text style={{fontSize:20,fontWeight:'bold'}}>플레이스 리스트</Text></View>
+                <View style={{flex:1}}><Button onPress={()=>navigation.navigate('맵')} title = '전체보기 >' color='black'></Button></View>
+              </View>
+              <View style={styles.Searchbox}>
+                <View style={{flex:2, justifyContent: "center", marginLeft:20}}><Text style={{fontSize:20,fontWeight:'bold'}}>마이 플레이스</Text></View>
+                <View style={{flex:1}}><Button onPress={()=>navigation.navigate('맵')} title = '검색 >'></Button></View>
+              </View>
+              <View style={styles.Place}>
+              {info.length === 0 ? (
                   <View style={styles.NothingSearched}>
                     <Image
                       src={nothingIcon}
@@ -172,36 +161,28 @@ const Myplace = () => {
                     <Text>해당하는 장소가 없습니다</Text>
                   </View>
                 ) : (
+                  
                   <FlatList
+                  //ListHeaderComponent={}
                   data ={info}
                   renderItem ={({item}) => (
-                    <View style={styles.CardSection}>
-                       {/* <Text>----------ItemCard Start.----------</Text> */}
                           <ItemCard
-                            //key={index}
                             place_id={item.id}
                             rep_pic={item.rep_pic}
                             place_name={item.place_name}
                             place_like={item.place_like}
                             category={item.category}
                           />
-                          {/* <Text>---------ItemCard Fin.---------</Text> */}
-                    </View>
                   )}
                   keyExtractor = {(item, index) => index}
+                  numColumns={3}
+                  style={{alignContent:'space-between'}}
                   />
                 )}
               </View>
-            {/* </main> */}
+            </View>
           </View>
-          <View style={styles.FooterSection}>
-            {/* <Pagination
-              total={pageCount}
-              limit={limit}
-              page={page}
-              setPage={setPage}
-            /> */}
-          </View>
+        </SafeAreaView>
         </>
       )}
     </>

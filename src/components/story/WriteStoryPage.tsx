@@ -6,7 +6,7 @@ import { Request } from '../../common/requests';
 import styled from 'styled-components/native';
 import PhotoOptions from '../../common/PhotoOptions';
 import ModalSelector from 'react-native-modal-selector';
-import Check from '../../assets/img/Story/Check.svg';
+import Check from '../../assets/img/common/Check.svg';
 import { StoryProps } from '../../pages/Story';
 
 const { width, height } = Dimensions.get('window');
@@ -157,7 +157,7 @@ export default function WriteStoryPage({ navigation, route }: StoryProps) {
     <SafeAreaView>
       <Modal animationType='slide' visible={modalVisible}>
         <View style={{width: width, height: height, backgroundColor: 'white', alignItems: 'center', justifyContent: 'center'}}>
-          <Check />
+          <Check color={"#75E59B"}/>
           <Text style={{fontSize: 20, fontWeight: '700', marginVertical: 10}}>{ id ? '수정 완료 !' : '작성 완료 !'}</Text>
           <Text>작성한 스토리는</Text>
           <Text>마이페이지 {'>'} 스토리 {'>'} 내가 쓴 스토리</Text>

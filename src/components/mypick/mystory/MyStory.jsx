@@ -1,110 +1,92 @@
-import { useState, useEffect, useCallback } from "react";
-import { SafeAreaView, Text, View, StyleSheet, TouchableOpacity, Image, FlatList, ScrollView, Button} from 'react-native';
-import styled from "styled-components/native";
-import Pagination from "../../../common/Pagination";
-//import { useCookies } from "react-cookie";
+import { useState, useEffect } from 'react';
+import { SafeAreaView, Text, View, StyleSheet, TouchableOpacity, Image,FlatList, ScrollView, Dimensions, Button } from 'react-native';
+import styled from 'styled-components/native';
 import Loading from "../../../common/Loading";
-import ItemCard from "./ItemCard";
+import ItemCard from "../myplace/ItemCard";
 import nothingIcon from "../../../assets/img/nothing.svg";
-import { useNavigation } from '@react-navigation/native';
 import {Request} from "../../../common/requests";
 import ChangeMode from "../../../assets/img/Mypick/ChangeMode.svg"
 import Category, { CATEGORY_LIST, MatchCategory } from "../../../common/Category";
+import { useNavigation } from '@react-navigation/native';
+import Pagination from '../../../common/Pagination';
+import { TabView, SceneMap } from "react-native-tab-view";
+
 
 const styles = StyleSheet.create({
   Container:{
-    marginVertical: 0,
-    marginHorizontal: 'auto',
-    marginTop: '3%',
-    width: '80%',
-    //display: flex,
-    flex:1,
-    justifyContent: 'center',
-    alignItems: 'center'
-  },
-  MyplaceSection:{
-    position: 'relative',
-    //display: flex;
-    flex:1,
-    justifyContent: 'center',
+    height:'100%',
     alignItems: 'center',
-    flexDirection: 'column',
-    marginTop: '5%'
-    //grid-area: story;
+    //backgroundColor:'red'
   },
-  HeaderSection:{
-    //display: flex;
-    flex:1,
-    width: '100%',
-    position: 'relative',
-    justifyContent: 'space-around',
-    flesDirection:'column',
-    alignItems:'center',
-    justifyContent:'center'
-  //   @media screen and (max-width: 768) {
-  //     ≤   flex-direction: column;
-  //     align-items: center;
-  //   justify-content: center;
-  // }
+  Myinfo:{
+    //backgroundColor:'orange',
+    width:'100%',
+    flex:3,
+    borderColor:'lightgray',
+    borderWidth:1
   },
-  FooterSection:{
-    position:'relative',
-    //display:'flex',
+  Category:{
+    //backgroundColor:'yellow',
+    width:'100%',
     flex:1,
-    flexDirection:'column',
-    //grid-area:'story',
-    height:12
+    borderColor:'lightgray',
+    borderWidth:1,
+    flexDirection: 'row'
+  },
+  Listbox:{
+    width:'100%',
+    flex:15,
+    //backgroundColor:'green',
+    borderColor:'lightgray',
+    borderWidth:1
+  },
+  Title:{
+    flex:1,
+    //backgroundColor:'blue',
+    borderColor:'lightgray',
+    borderWidth:1,
+    justifyContent: "center",
+    flexDirection: 'row'
+
+  },
+  Searchbox:{
+    //backgroundColor:'puple',
+    flex:1,
+    borderColor:'lightgray',
+    borderWidth:1,
+    justifyContent: "center",
+    flexDirection: 'row'
+  },
+  Place:{
+    //backgroundColor:'black',
+    flex:12,
+    borderColor:'lightgray',
+    borderWidth:1,
+    alignItems: 'center',
   },
   CardSection:{
-    position:'relative',
-    //display:'flex',
-    flex:1,
-    flexDirection:'column',
-    overflow:'hidden',
-    //girdarea:'story',
+    flexDirection:'row',
+    //backgroundColor:'blue',
+    width:'100%',
+    alignItems: 'space-between',
     justifyContent:'center',
-    alignItems:'center',
-    width:'100%'
-  },
-  NothingSerched:{
-    position:'relative',
-    //display:'flex',
-    flex:1,
-    flexDirection:'column',
-    justifyContent:'center',
-    alignItems:'center'
-  },
-  ChangeModeButton:{
-    width:'30%',
-    textAlign:'center',
-    fontSize:25,
-    zIndex:3
-    // @media screen and (max-width: 768px) {
-    //   position: absolute;
-    //   left: 0;
-    //   top: 0;
-    // }
-  },
-  FilterOptions:{
-    width:'100%'
-    // @media screen and (max-width: 768px) {
-    //   width: 100%;
-    // }
   }
 });
 
 
-const Mystory = () => {
-  const [checkedList, setCheckedList] = useState('');
+
+const Myplace = () => {
   const [info, setInfo] = useState([]);
-  //const [cookies, setCookie, removeCookie] = useCookies(["name"]);
+  // const [tab, setTab] = useState<boolean>(true);
   const [pageCount, setPageCount] = useState(1);
-  const [limit, setLimit] = useState(4);
+  const [limit, setLimit] = useState(6);
   const [page, setPage] = useState(1);
   const [loading, setLoading] = useState(true);
+  const [checkedList, setCheckedList] = useState('');
   const offset = (page - 1) * limit;
-   //const token = cookies.name; // 쿠키에서 id 를 꺼내기
-  //const token = localStorage.getItem("accessTK"); //localStorage에서 accesstoken꺼내기
+  
+  
+  
   const navigation = useNavigation();
   const request = new Request();
   // onChange함수를 사용하여 이벤트 감지, 필요한 값 받아오기
@@ -116,9 +98,9 @@ const Mystory = () => {
       setCheckedList(checkedList.filter((el) => el !== item));
     }
   };
-  const pageMystory = async () => {
+  const pageMyplace = async () => {
     let newPage;
-    if (page === 1) {
+    if (page == 1) {
       newPage = null;
     } else {
       newPage = page;
@@ -130,15 +112,17 @@ const Mystory = () => {
       page: newPage,
       filter: checkedList
     }, null);
-    console.log("my story", response);
+    console.log("my story" , response);
     //setPageCount(response.data.data.count);
     setInfo(response.data.data.results);
     setLoading(false);
   };
 
+
+
   // 초기에 좋아요 목록 불러오기
   useEffect(() => {
-    pageMystory();
+    pageMyplace();
   }, [page, checkedList]);
   return (
     <>
@@ -146,75 +130,63 @@ const Mystory = () => {
         <Loading />
       ) : (
         <>
-          <View style={styles.MyplaceSection}>
-            <View style={styles.HeaderSection}>
-            <Button style={styles.ChangeModeButton} onPress={()=>navigation.navigate('MyPlace')} title = 'My Place'>
-                <Image src={ChangeMode} style={{ marginRight: 10 }} />
-              </Button>
-              {/* <span style={{ fontWeight: "500", fontSize: "1.6rem" }}> */}
-                <Text>MY STORY</Text>
-              {/* </span> */}
-              <View style={styles.FilterOptions}>
-                <Category checkedList={checkedList} setCheckedList={setCheckedList} />
+        <SafeAreaView>
+          <View style={styles.Container}>
+            <View style={styles.Myinfo}>
+              <Text>Myinfo</Text>
+            </View>
+            <View style={styles.Category}>
+             <View style={{flex:1}}><Button onPress={()=>navigation.navigate('MyPlace')} title = '장소' color='black'></Button></View>
+             <View style={{flex:1}}><Button onPress={()=>navigation.navigate('MyStory')} title = '스토리' color='black'></Button></View>
+             <View style={{flex:1}}><Button onPress={()=>navigation.navigate('큐레이션')} title = '큐레이션' color='black'></Button></View>
+             <View style={{flex:1}}><Button onPress={()=>navigation.navigate('정보글')} title = '정보글' color='black'></Button></View>
+            </View>
+            <View style={styles.Listbox}>
+              <View style={styles.Title}>
+                <View style={{flex:2, justifyContent: "center", marginLeft:20}}><Text style={{fontSize:20,fontWeight:'bold'}}>스토리 리스트</Text></View>
+                <View style={{flex:1}}><Button onPress={()=>navigation.navigate('스토리')} title = '전체보기 >' color='black'></Button></View>
+              </View>
+              <View style={styles.Searchbox}>
+                <View style={{flex:2, justifyContent: "center", marginLeft:20}}><Text style={{fontSize:20,fontWeight:'bold'}}>저장한 스토리</Text></View>
+                <View style={{flex:1}}><Button onPress={()=>navigation.navigate('스토리')} title = '검색 >'></Button></View>
+              </View>
+              <View style={styles.Place}>
+              {info.length === 0 ? (
+                  <View style={styles.NothingSearched}>
+                    <Image
+                      src={nothingIcon}
+                      style={{ marginTop: '50%', paddingTop: '50%' }}
+                    />
+                    <Text>해당하는 스토리가 없습니다</Text>
+                  </View>
+                ) : (
+                  
+                  <FlatList
+                  //ListHeaderComponent={}
+                  data ={info}
+                  renderItem ={({item}) => (
+                          <ItemCard
+                            id={item.id}
+                            rep_pic={item.rep_pic}
+                            title={item.title}
+                            place_name={item.place_name}
+                            story_like={item.story_like}
+                            category={item.category}
+                          />
+                  )}
+                  keyExtractor = {(item, index) => index}
+                  numColumns={3}
+                  style={{alignContent:'space-between'}}
+                  />
+                )}
               </View>
             </View>
-            {/* <main style={{ width: '100%' }}> */}
-              <View style={styles.Container}
-                // sx={{
-                //   marginTop: "3%",
-                //   display: "flex",
-                //   flexDirection: "row",
-                //   justifyContent: "center",
-                //   alignItems: "center",
-                //   width: "100%"
-                // }}
-              >
-                <>
-                  {info.length === 0 ? (
-                    <View style={styles.NothingSearched}>
-                      <Image
-                        src={nothingIcon}
-                        style={{ marginTop: '50%', paddingTop: '50%' }}
-                        // alt="no data"
-                      />
-                      <Text>해당하는 스토리가 없습니다</Text>
-                    </View>
-                  ) : (
-                    <FlatList 
-                    data ={info}
-                    renderItem = {({item}) => (
-                      <View style={styles.CardSection}>
-                            <ItemCard
-                              category={item.category}
-                              //key={index}
-                              story_id={item.id}
-                              rep_pic={item.rep_pic}
-                              title={item.title}
-                              place_name={item.place_name}
-                              story_like={item.story_like}
-                              preview={item.preview}
-                            />
-                          </View>
-                    )}
-                    keyExtractor = {(item, index) => index}
-                    />
-                  )}
-                </>
-              </View>
-            {/* </main> */}
           </View>
-          <View style={styles.FooterSection}>
-            <Pagination
-              total={pageCount}
-              limit={limit}
-              page={page}
-              setPage={setPage}
-            />
-          </View>
+        </SafeAreaView>
         </>
       )}
     </>
   );
 };
 
-export default Mystory;
+export default Myplace;

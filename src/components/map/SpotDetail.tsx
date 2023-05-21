@@ -7,12 +7,7 @@ import { Request } from '../../common/requests';
 import DetailCard from './SpotDetail/DetailCard';
 import { detailDataProps } from './Map';
 
-interface DetailProps {
-  detailData: detailDataProps;
-}
-
-export default function SpotDetail({detailData}:DetailProps): JSX.Element {
-  const WindowWidth = Dimensions.get('window').width;
+export default function SpotDetail({ detailData }: { detailData: detailDataProps }): JSX.Element {
 
   return (
     <SafeAreaView style={{ backgroundColor: '#FFFFFF' }}>
