@@ -10,17 +10,10 @@ const Header = styled.View<{ color: string }>`
   background-color: ${props => props.color};
   height: 12.5%;
   display: flex;
-  flex-flow: row wrap;
-  align-items: center;
+  padding: 0 20px;
   justify-content: space-between;
-  padding: 10%;
-`
-
-const CloseButton = styled.TouchableOpacity`
-  position: absolute;
-  top: 50px;
-  right: 20px;
-  z-index: 2;
+  align-items: center;
+  flex-flow: row;
 `
 const Section = styled.View`
   height: 87.5%;
@@ -50,9 +43,9 @@ export default function PlaceForm({ setPlaceformModal }: PlaceFormProps): JSX.El
     <View>
       <Header color={tab==1?'#75E59B':'#FFFFFF'}>
         <Text style={{...TextStyles.Link, fontSize:24}}>장소 제보하기</Text>
-        <CloseButton onPress={() => { setPlaceformModal(false) }}>
+        <TouchableOpacity onPress={() => { setPlaceformModal(false) }}>
           <Close color={tab==1?'#FFFFFF':'#000000'} />
-        </CloseButton>
+        </TouchableOpacity>
       </Header>
       <Section>
         {
@@ -83,12 +76,15 @@ export default function PlaceForm({ setPlaceformModal }: PlaceFormProps): JSX.El
 
 const TextStyles = StyleSheet.create({
   Link: {
-    fontSize: 20,
+    fontSize: 16,
     color: '#FFFFFF',
-    fontWeight: "700"
+    fontWeight: "700",
+    lineHeight: 35
   },
   title: {
     fontSize: 24,
-    fontWeight:'700'
+    fontWeight:'700',
+    lineHeight: 35,
+    color:'#000000',
   }
 })

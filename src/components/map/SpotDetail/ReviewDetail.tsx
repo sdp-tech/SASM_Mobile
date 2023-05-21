@@ -1,9 +1,12 @@
 import React, { Dispatch, SetStateAction, useEffect, useRef, useState } from 'react';
-import { Dimensions, FlatList, Image, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { Dimensions, FlatList, Image, StyleSheet, Text, TouchableOpacity, View, Modal } from 'react-native';
 import { reviewDataProps } from './DetailCard';
 import styled from 'styled-components/native';
 import Close from "../../../assets/img/common/Close.svg";
 import ArrowWhite from "../../../assets/img/common/ArrowWhite.svg";
+import { getNickname } from "../../../common/storage";
+import { Request } from '../../../common/requests';
+import WriteReview from './WriteReview';
 
 const Section = styled.SafeAreaView`
   height: 100%;
@@ -35,33 +38,56 @@ const PageButton = styled.View`
 
 interface ReviewDetailProps {
   reviewData: reviewDataProps;
-  setReviewModal: Dispatch<SetStateAction<boolean>>;
+  setDetailModal: Dispatch<SetStateAction<boolean>>;
+  rerender: ()=>void;
+  category: string;
 }
 
-export default function ReviewDetail({ reviewData, setReviewModal }: ReviewDetailProps): JSX.Element {
+export default function ReviewDetail({ reviewData, setDetailModal, rerender, category}: ReviewDetailProps): JSX.Element {
+  const request = new Request();
   const { width, height } = Dimensions.get('window');
   const flatlistRef = useRef<FlatList>(null);
   const [currentIdx, setCurrentIdx] = useState<number>(0);
+  const [isWriter, setIsWriter] = useState<boolean>(false);
+  const [reviewModal, setReviewModal] = useState<boolean>(false);
+  const checkisWriter = async () => {
+    const nickname = await getNickname();
+    if(reviewData.nickname == nickname) setIsWriter(true);
+  }
 
+  useEffect(() => {
+    checkisWriter();
+  }, [])
+
+  console.error(reviewData);
+
+  const deleteReview = async () => {
+    const response_delete = await request.delete(`/places/place_review/${reviewData.id}/`);
+    setDetailModal(false);
+    rerender();
+  }
 
   return (
     <Section>
-      <CloseButton onPress={() => { setReviewModal(false) }}>
+      <Modal visible={reviewModal}>
+        <WriteReview id={reviewData.place} setReviewModal={setReviewModal} rerender={rerender} category={category} setTab={()=>{}} targetData={reviewData}/>
+      </Modal>
+      <CloseButton onPress={() => { setDetailModal(false) }}>
         <Close color={'#FFFFFF'} />
       </CloseButton>
       <View>
         {
           currentIdx != 0 &&
-          <PageButton style={{left:10}}>
+          <PageButton style={{ left: 10 }}>
             <TouchableOpacity onPress={() => { flatlistRef.current?.scrollToIndex({ animated: true, index: currentIdx - 1 }) }}>
               <ArrowWhite />
             </TouchableOpacity>
           </PageButton>
         }
         {currentIdx != reviewData.photos.length - 1 &&
-          <PageButton style={{right:10}}>
+          <PageButton style={{ right: 10 }}>
             <TouchableOpacity onPress={() => { flatlistRef.current?.scrollToIndex({ animated: true, index: currentIdx + 1 }) }}>
-              <ArrowWhite transform={[{rotate:'180deg'}]}/>
+              <ArrowWhite transform={[{ rotate: '180deg' }]} />
             </TouchableOpacity>
           </PageButton>
         }
@@ -78,8 +104,14 @@ export default function ReviewDetail({ reviewData, setReviewModal }: ReviewDetai
         <Text style={TextStyles.nickname}>{reviewData.nickname}</Text>
         <Text style={TextStyles.date}>{reviewData.created.slice(0, 10).replace(/-/gi, '.')}</Text>
         <Text style={TextStyles.content}>{reviewData.contents}</Text>
+        {
+          isWriter && 
+          <View style={{display:'flex', flexDirection:'row', alignSelf:'flex-end'}}>
+            <TouchableOpacity onPress={deleteReview}><Text style={TextStyles.button}>삭제하기</Text></TouchableOpacity>
+            <TouchableOpacity onPress={()=> {setReviewModal(true);}}><Text style={TextStyles.button}>수정하기</Text></TouchableOpacity>
+          </View>
+        }
       </TextBox>
-
     </Section >
   )
 }
@@ -87,15 +119,22 @@ export default function ReviewDetail({ reviewData, setReviewModal }: ReviewDetai
 const TextStyles = StyleSheet.create({
   nickname: {
     color: '#FFFFFF',
-    fontSize: 18,
+    fontSize: 16,
   },
   date: {
     color: '#FFFFFF',
-    fontSize: 12,
-    marginVertical: 10,
+    fontSize: 7,
+    marginBottom: 10,
   },
   content: {
     color: '#FFFFFF',
+    fontSize: 12,
+    marginBottom: 10
+  },
+  button: {
     fontSize: 16,
+    fontWeight: '700',
+    color:'#FFFFFF',
+    marginRight: 5,
   }
 })

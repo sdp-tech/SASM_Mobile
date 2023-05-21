@@ -38,6 +38,7 @@ export interface StoryDetail {
     nickname: string;
     map_image: string;
     writer_is_verified: string;
+    preview: string;
 }
 
 interface RecommendStory {
