@@ -13,6 +13,9 @@ export default function StoryDetailModal({ id }: { id: number }) {
     id: 0,
     title: '',
     created: '',
+    profile: '',
+    rep_pic: '',
+    extra_pics: [],
     story_review: '',
     tag: '',
     story_like: false,
@@ -22,8 +25,10 @@ export default function StoryDetailModal({ id }: { id: number }) {
     views: 0,
     html_content: '',
     writer: '',
-    writer_is_verified: '',
     nickname: '',
+    map_image: '',
+    writer_is_verified: '',
+    preview: ''
   });
   const request = new Request();
   const markup = {
