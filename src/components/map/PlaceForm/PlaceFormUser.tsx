@@ -11,21 +11,6 @@ import { FinishModal } from './PlaceFormOwner';
 
 const { width, height } = Dimensions.get('window');
 
-const ReppicBox = styled.View`
-  height: ${width - 70};
-  display: flex;
-  justify-content: center;
-  margin-vertical: 10px;
-  background: #DADADA;
-`
-const PhotoBox = styled.View`
-  height: ${(width - 70) / 3};
-  background: #DADADA;
-  margin-vertical: 10px;
-  display: flex;
-  flex-direction: row;
-  justify-content: center;
-`
 const Input = styled.TextInput`
   border: 1px solid #BFBFBF;
   height: 45px;
@@ -67,6 +52,23 @@ const SectionHalf = styled.View`
   height: 100%;
   width: 50%;
   padding-vertical: 40px;
+`
+const ServiceWrapper = styled.View`
+  display: flex;
+  flex-flow: row wrap;
+  align-items: center;
+  justify-content: space-around;
+  margin-vertical: 20px;
+`
+const Service = styled.TouchableOpacity<{ selected: boolean | null }>`
+  width: 45%;
+  height: 50px;
+  display: flex;
+  justify-content: center;
+  border: 1px solid #B7B7B7;
+  margin-vertical: 5px;
+  padding-horizontal: 10px;
+  background-color: ${props => props.selected ? '#75E59B' : '#FFFFFF'};
 `
 interface InputProps extends TextInputProps {
   label: string;
@@ -115,10 +117,10 @@ export interface PlaceFormProps {
   address: string;
   short_cur: string;
   phone_num: string;
-  vegan_category: string | boolean | null;
-  tumblur_category: boolean;
-  reusable_con_category: boolean;
-  pet_category: boolean;
+  vegan_category: string | null;
+  tumblur_category: boolean | null;
+  reusable_con_category: boolean | null;
+  pet_category: boolean | null;
   snsList: string[];
   [index: string]: any;
 }
@@ -146,10 +148,10 @@ export default function PlaceFormUser({ setPlaceformModal }: { setPlaceformModal
     short_cur: '',
     phone_num: '',
     etc_hours: '',
-    vegan_category: false,
-    pet_category: false,
-    reusable_con_category: false,
-    tumblur_category: false,
+    vegan_category: null,
+    pet_category: null,
+    reusable_con_category: null,
+    tumblur_category: null,
     snsList: [],
   });
   const request = new Request();
@@ -183,6 +185,7 @@ export default function PlaceFormUser({ setPlaceformModal }: { setPlaceformModal
   const uploadPlace = async () => {
     const formData = new FormData();
     for (let i of Object.keys(form)) {
+      if(i=='snsList') continue;
       formData.append(`${i}`, `${form[i]}`);
     }
     formData.append(`rep_pic`, {
@@ -197,8 +200,6 @@ export default function PlaceFormUser({ setPlaceformModal }: { setPlaceformModal
         type: 'image/jpeg/png',
       })
     }
-    formData.append('snsList', '1,https://instagram.com/abc/');
-    console.error(formData);
     const response = await request.post("/places/create/", formData, { "Content-Type": "multipart/form-data" });
     setFinishModal(true);
   }
@@ -250,6 +251,50 @@ export default function PlaceFormUser({ setPlaceformModal }: { setPlaceformModal
         onChangeText={(e) => { setForm({ ...form, place_review: e }) }} />
       <InputWithLabel style={{ height: 100 }} label="장소 리뷰"
         onChangeText={(e) => { setForm({ ...form, short_cur: e }) }} />
+      <Text style={TextStyles.labelBold}>제공 서비스</Text>
+          <ServiceWrapper>
+            <Service onPress={() => {
+              Alert.alert('비건 카테고리', '',
+                [
+                  {
+                    text: '비건',
+                    onPress: () => setForm({ ...form, vegan_category: '비건' }),
+                  },
+                  {
+                    text: '락토',
+                    onPress: () => setForm({ ...form, vegan_category: '락토' }),
+                  },
+                  {
+                    text: '오보',
+                    onPress: () => setForm({ ...form, vegan_category: '오보' }),
+                  },
+                  {
+                    text: '페스코',
+                    onPress: () => setForm({ ...form, vegan_category: '페스토' }),
+                  },
+                  {
+                    text: '폴로',
+                    onPress: () => setForm({ ...form, vegan_category: '폴로' }),
+                  },
+                  {
+                    text: '그 외',
+                    onPress: () => setForm({ ...form, vegan_category: '그 외' }),
+                  },
+                  {
+                    text: '없음',
+                    onPress: () => setForm({ ...form, vegan_category: null }),
+                    style: 'cancel'
+                  }
+                ]
+              )
+            }} selected={form.vegan_category != null}><Text style={form.vegan_category != null && TextStyles.serviceSelected}>비건카테고리 : {form.vegan_category != null ? form.vegan_category : '없음'}</Text></Service>
+            <Service onPress={() => { setForm({ ...form, reusable_con_category: !form.reusable_con_category }) }} selected={form.reusable_con_category}><Text style={form.reusable_con_category && TextStyles.serviceSelected}>용기 내</Text></Service>
+            <Service onPress={() => { setForm({ ...form, pet_category: !form.pet_category }) }} selected={form.pet_category}><Text style={form.pet_category && TextStyles.serviceSelected}>반려동물 출입</Text></Service>
+          </ServiceWrapper>
+          <Text style={TextStyles.labelBold}>이벤트</Text>
+          <ServiceWrapper>
+            <Service onPress={() => { setForm({ ...form, tumblur_category: !form.tumblur_category }) }} selected={form.tumblur_category}><Text style={form.tumblur_category && TextStyles.serviceSelected}>텀블러 할인</Text></Service>
+          </ServiceWrapper>
       <Submit onPress={uploadPlace}>
         <Text style={TextStyles.submit}>장소 제보하기</Text>
       </Submit>
@@ -316,6 +361,11 @@ const TextStyles = StyleSheet.create({
     lineHeight: 35,
     color: '#000000'
   },
+  labelBold: {
+    fontSize: 15,
+    marginTop: 5,
+    fontWeight: "700",
+  },
   header: {
     fontSize: 24,
     color: '#FFFFFF',
@@ -327,4 +377,9 @@ const TextStyles = StyleSheet.create({
     color: '#FFFFFF',
     fontWeight: "700",
   },
+  serviceSelected: {
+    color: "#FFFFFF",
+    fontWeight: "700",
+  },
+
 })
