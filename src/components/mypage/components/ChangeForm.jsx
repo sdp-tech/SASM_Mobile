@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useCallback } from 'react';
-import { ImageBackground,Text, ScrollView, View, TouchableOpacity, Alert,StyleSheet,SafeAreaView, localStorage,Image } from "react-native";
+import { Dimensions ,ImageBackground,Text, ScrollView, View, TouchableOpacity, Alert,StyleSheet,SafeAreaView, localStorage,Image, Switch } from "react-native";
 import { useFocusEffect, useNavigation } from '@react-navigation/native';
 import { getNickname, removeNickname, removeAccessToken, getEmail } from '../../../common/storage';
 import { launchImageLibrary } from 'react-native-image-picker';
@@ -8,6 +8,8 @@ import { Request } from '../../../common/requests';
 import { TextInput } from 'react-native-gesture-handler';
 import styled, { css } from 'styled-components/native';
 
+const { width } = Dimensions.get('window');
+const percentUnit = width / 100; 
 
 const request = new Request();
 
@@ -33,6 +35,14 @@ export default function UserInfoBox({ navigation }) {
   const [birthdate,setBirthdate] = useState('');
   const [info,setInfo] = useState('');
   const [newphoto,setNewphoto] = useState('');
+  const [gender,setGender] = useState('');
+  const [followernum, setFollowernum] = useState();
+  const [followingnum, setFollowingnum] = useState();
+  const [text,setText] = useState('');
+
+  const TextChange = (newText) =>{
+    setText(newText)
+  }
 
   const logout = () => {
       removeNickname()
@@ -46,48 +56,71 @@ export default function UserInfoBox({ navigation }) {
     console.log("이메일 : ",response.data.data.email);
     console.log("생년월일 : ", response.data.data.birthdate);
     console.log("프로필 사진 : ", response.data.data.profile_image)
-    
+    console.log("성별", response.data.data.gender)
+
     setChangednick(response.data.data.nickname)
     setEmail(response.data.data.email);
     setBirthdate(response.data.data.birthdate)
     setPhoto(response.data.data.profile_image)
+    setGender(response.data.data.gender)
+    
+    const response0 = await request.get('/mypage/following/', {
+      email: response.data.data.email,
+      source_email: '',
+    })
+    const response1 = await request.get('/mypage/follower/', {
+      email: response.data.data.email,
+      source_email: '',
+    })
+    
+    setFollowingnum(response0.data.data.count);
+    setFollowernum(response1.data.data.count);
+
   }
   const SaveInfo = async () =>{
 
     //변경된 정보 post
     console.log("닉네임 : ",changednick);
     console.log("생년월일 : ", birthdate);
-    console.log("프로필 사진 : " , newphoto[0].uri)
+    //console.log("프로필 사진 : " , newphoto[0].uri)
+    console.log("성별 : ", gender)
       // console.log(file);
-      setPhoto(newphoto[0].uri)
-
-    var changephoto = {
-      uri: newphoto[0].uri,
-      name: newphoto[0].fileName,
-      type: 'image/jpeg/png',
-    }
+      //setPhoto(newphoto[0].uri)
+      
+    // var changephoto = {
+    //   uri: newphoto[0].uri,
+    //   name: newphoto[0].fileName,
+    //   type: 'image/jpeg/png',
+    // }
     formData.append('nickname',changednick)
     formData.append('birthdate', birthdate);
-    formData.append('profile_image',changephoto)
-     
+    //formData.append('profile_image',changephoto)
+    formData.append('gender', gender)
     console.log(formData);
+    /*const response = await request.post('/users/me/',{nickname:changednick,birthdate:birthdate,profile_image:{
+      uri: newphoto[0].uri,
+      name: newphoto[0].fileName,
+      type: 'image/jpeg/png',}});*/
 
-    const response = await request.post('/users/me/',formData, { "Content-Type": "multipart/form-data" });
+    const response = await request.post('/users/me/',{'gender':gender}/*formData, { "Content-Type": "multipart/form-data" }*/);
     console.log(response);
 
     navigation.navigate('mypage');
   }
+  const handleButtonPress = (selectedGender) => {
+    setGender(selectedGender);
+  };
 
-    const handleChoosePhoto = () => {
-      launchImageLibrary({ noData: true }, (response) => {
-        // console.log(response);
-        if (response) {
-          console.log('bbbb',response)
-          setPhoto(response.uri);
-          console.log('aaaaa', photo,'bbbb');
-        }
-      });
-    };
+    // const handleChoosePhoto = () => {
+    //   launchImageLibrary({ noData: true }, (response) => {
+    //     // console.log(response);
+    //     if (response) {
+    //       console.log('bbbb',response)
+    //       setPhoto(response.uri);
+    //       console.log('aaaaa', photo,'bbbb');
+    //     }
+    //   });
+    // };
   
     useFocusEffect(
       useCallback(() => {
@@ -109,124 +142,281 @@ export default function UserInfoBox({ navigation }) {
 //      const response = await request.post("/users/me/",photo );
     };
 
-  useEffect(()=>{console.log('프로필정보',newphoto)}, [newphoto])
+  //useEffect(()=>{console.log('프로필정보',newphoto)}, [newphoto])
   return (
-      <View>
-          {nickname ? (
-              <View>
-                  
-                  
-                <ScrollView>
+    <View style={{flex : 1, backgroundColor :'white'}}>
+    {nickname ? (
+      <ScrollView >
+        <View style={styles.container}>
+          <View style={styles.imageBox}>
+                <Image source={{ uri: photo }} style={styles.imageBackground}  />               
+            </View>
+          <Text style={styles.nicknameText}>  {nickname}님</Text>
+          
+          <View style={styles.userContainer}>
+          <TextInput style={styles.textInput} 
+          placeholder="소개 쓰기" value={text} onChangeText={TextChange}/>
+          </View>
 
-                    
-                  <View>
-                    <ImageBackground source={{uri:photo}} style={styles.circle}/>
-                    </View >    
-
-                    <Text>{nickname}님</Text>
-                    
-                    <PhotoOptions setPhoto={setNewphoto} max={1}/>
-
-                        <SafeAreaView style={{padding:'1%', flexDirection:'row'}}>
-                        <View style={styles.oval}><Text>이메일</Text></View>                        
-                        <View style={styles.rectangle}><Text style={{fontSize:7}}>{email}</Text></View>
-                      
-                      </SafeAreaView>
-
-                      <SafeAreaView style={{padding:'1%', flexDirection:'row'}}>
-                        <View style={styles.oval}><Text>닉네임</Text></View>
-                        <TextInput defaultValue={changednick} 
-                        onChangeText={
-                          (event) => {
-                            setChangednick(event);
-                          }
-                        } />
-                        </SafeAreaView>
-
-                      <SafeAreaView style={{padding:'1%', flexDirection:'row'}}>
-                        <View style={styles.oval}><Text>생년월일</Text></View>
-                         <TextInput 
-                      maxLength={10}
-                      keyboardType='numeric'
-                      defaultValue={birthdate}
-                      onChangeText={(event) => {
-                        setBirthdate(event
-                        );
-                      }}
-/>
-                        </SafeAreaView>
-
-
-                        <TouchableOpacity onPress={async()=>await SaveInfo()}>
-                          <View style={styles.oval0}><Text style={styles.text}>저장하기</Text></View>
-                        </TouchableOpacity>
-
-                    </ScrollView>
-
-                  <TouchableOpacity style={{ position: 'absolute', right: 8 }} onPress={() => logout()}>
-                      <View style={{ backgroundColor: 'gray', padding: 4 }}>
-                          <Text style={{ color: 'white' }}>로그아웃</Text>
-                      </View>
-                  </TouchableOpacity>
+                <View style={styles.followContainer}> 
+                    <TouchableOpacity onPress={() => navigation.navigate('following')}>
+                        <Text style={styles.followText}>팔로잉 </Text>
+                      </TouchableOpacity>
+                      <Text style={styles.followNum}>{followingnum}</Text>
+                      <Text style={styles.followText}> | </Text>
+                      <TouchableOpacity onPress={() => navigation.navigate('follower')}>
+                        <Text style={styles.followText}>팔로워 </Text>
+                      </TouchableOpacity>
+                      <Text style={styles.followNum}>{followernum}</Text>
+                </View>
+              <View style={styles.followContainer}>
+                <Text style={styles.Text}>이름       </Text>
+                <TextInput style={styles.Text} placeholder={nickname} value={changednick}
+                onChangeText={(text)=>{setChangednick(text)}}/>
               </View>
-          ) : (
-
-              <View>
-                  <TouchableOpacity onPress={() => navigation.navigate('login')}>
-                      <Text>로그인이 필요합니다.</Text>
-                  </TouchableOpacity>
+              <View style={styles.followContainer}>
+                <Text style={styles.Text}>성별        </Text>
+                <View style={styles.buttonContainer}>
+                    <TouchableOpacity
+                      onPress={() => handleButtonPress('male')}
+                    >
+                      <Text style={[styles.Text, gender === 'male' 
+                      && styles.selectedButton]}>남</Text>
+                    </TouchableOpacity>
+                    <Text style={styles.Text}> / </Text>
+                    <TouchableOpacity
+                      onPress={() => handleButtonPress('female')}
+                    >
+                      <Text style={[styles.Text, gender === 'female'
+                       && styles.selectedButton]}>여</Text>
+                    </TouchableOpacity>
+                    <Text style={styles.Text}> / </Text>
+                    <TouchableOpacity
+                      onPress={() => handleButtonPress('other')}
+                    >
+                      <Text style={[styles.Text, gender === 'other' 
+                      && styles.selectedButton]}>기타</Text>
+                    </TouchableOpacity>
+                  </View>
               </View>
-          )}
+              <View style={styles.followContainer}>
+                <Text style={styles.Text}>생년월일</Text>
+                <TextInput style={styles.Text} placeholder={birthdate} value={birthdate} 
+                onChangeText={(text)=>{setBirthdate(text)}}/>
+              </View>
+          </View>
 
-      </View>
-  )
+              <View style={styles.OutdotContainer} >
+                <TouchableOpacity style={styles.IndotContainer} onPress={() => navigation.navigate('options')}>
+                  <View style={styles.dot} />
+                  <View style={styles.dot} />
+                  <View style={styles.dot} />
+                </TouchableOpacity>
+              </View>            
+        </ScrollView>
+    ) : (
+
+        <View style={styles.sections}>
+          <View style={styles.mypage}>
+            <TouchableOpacity onPress={() => navigation.navigate('login')}>
+              <Text>로그인이 필요합니다.</Text>
+            </TouchableOpacity>
+            </View>
+        </View>
+    )}
+
+</View>
+)
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: 'white',
-    padding: 10,
-    marginTop:65,
-  },
-  circle: {
-      
-      width: 150,
-      height: 150,
-      borderRadius: (150/2),
-      backgroundColor: "white",
-      margin : '5%',
-    },
-    oval: {
-      width: 40,
-      height: 20,
-      borderRadius: 100,
-      backgroundColor: "#AAEFC2",
-      transform: [{ scaleX: 2 }],
-      margin : '8%',
-      flexDirection : 'row',
-  },
-  oval0: {
-      width: 50,
-      height: 20,
-      borderRadius: 100,
-      backgroundColor: "pink",
-      transform: [{ scaleX: 2 }],
-      margin : '10%',
-      flexDirection : 'row',
-  },
-  rectangle: { 
-      width: 20 * 2,
-      height: 20,
-      backgroundColor: "#d3d3d3",
-      transform: [{ scaleX: 2 }],
-      margin : '8%',
-      flexDirection : 'row',
-    },
-    text:{
-      fontSize :8,
-      fontWeight : "bold"
+imageBackground: {
+flex: 1,
+resizeMode: 'cover',
+},
+textInput: {
+  width: '100%',
+  height: '100%',
+  fontSize: 12,
+  fontFamily: 'Inter',
+  fontWeight: '500',
+  color: '#949494',
 
-    }
+},
+container: {
+flex: 1,
+backgroundColor: 'white',
+padding: 10,
+},
+buttonContainer: {
+  flexDirection: 'row',
+  justifyContent: 'center',
+  alignItems: 'center',
+},
+text:{
+fontSize :8,
+fontWeight : "bold"
+
+},  sections: {
+flexDirection: 'row',
+alignItems: 'center',
+},
+mypage: {
+flex: 1,
+},
+section: {
+flexGrow: 1,
+justifyContent: 'center',
+alignItems: 'center',
+flexDirection: 'column',
+padding: 16,
+},
+labelWrapper: {
+display: 'flex',
+width: '100%',
+justifyContent: 'space-between',
+},
+label: {
+width: percentUnit * 10,
+display: 'flex',
+alignItems: 'center',
+justifyContent: 'center',
+backgroundColor: '#AAEFC2',
+borderWidth: 2,
+borderColor: 'rgba(171, 239, 194, 0.1)',
+borderRadius: 5,
+padding: percentUnit * 2,
+fontSize: percentUnit * 1,
+fontWeight: '400',
+margin: percentUnit * 2,
+},
+nicknameText: {
+
+fontFamily: 'Inter',
+fontStyle: 'normal',
+fontWeight: '500',
+fontSize: 14,
+lineHeight: 17,
+display: 'flex',
+alignItems: 'center',
+color: '#000000',
+marginTop : 20,
+},
+infoContainer: {
+flexDirection: 'row',
+alignItems: 'center',
+marginTop: 8,
+},
+detailContainer: {
+height: '70%',
+display: 'flex',
+flexWrap: 'wrap',
+justifyContent: 'space-around',
+paddingLeft: percentUnit * 5,
+paddingRight: percentUnit * 10,
+},
+imageBox: {
+marginTop: 10,
+marginLeft :10,
+width: 100,
+height: 100,
+borderRadius: 50,
+overflow: 'hidden',
+borderWidth: 1,
+borderColor: 'black',
+},
+userContainer: {
+  position: 'relative',
+  flexDirection: 'row',
+  paddingHorizontal: 3,
+  paddingVertical: 5,
+  borderBottomWidth: 1,
+  borderBottomColor: '#ccc',
+},
+followText: {
+fontFamily: 'Inter',
+fontStyle: 'normal',
+fontWeight: '400',
+fontSize: 10,
+lineHeight: 12,
+display: 'flex',
+alignItems: 'center',
+textAlign: 'center',
+color: '#000000',
+marginRight: 4,
+},
+Text: {
+  fontFamily: 'Inter',
+  fontStyle: 'normal',
+  fontWeight: '400',
+  fontSize: 10,
+  lineHeight: 12,
+  display: 'flex',
+  alignItems: 'center',
+  color: '#000000',
+  marginRight: 4,
+  },
+followContainer: {  
+flexDirection: 'row',
+alignItems: 'center',
+marginTop: 10,
+marginLeft: 3,
+flexDirection: 'row',
+alignItems: 'center',
+},
+followNum: {
+marginLeft: 4, // Adjust the spacing between the text components
+fontFamily: 'Inter',
+fontStyle: 'normal',
+fontWeight: '400',
+fontSize: 10,
+lineHeight: 12,
+display: 'flex',
+alignItems: 'center',
+textAlign: 'right',
+color: '#000000',
+marginRight: 4,
+},
+introText: {
+marginRight: 8,
+fontFamily: 'Inter',
+fontStyle: 'normal',
+fontWeight: '400',
+fontSize: 12,
+lineHeight: 15,
+color: '#000000',
+},    
+IndotContainer: {
+flexDirection: 'row',
+},
+dot: {
+width: 4,
+height: 4,
+borderRadius: 2,
+marginLeft: 4,
+backgroundColor: '#000000',
+},
+OutdotContainer: {
+position: 'absolute',
+top: 16,
+right: 16,
+},
+button: {
+  width: 100,
+  height: 40,
+  backgroundColor: 'lightgray',
+  borderRadius: 20,
+  justifyContent: 'center',
+  alignItems: 'center',
+  marginVertical: 10,
+},
+selectedButton: {
+  backgroundColor: 'red',
+},
+buttonText: {
+  fontSize: 16,
+  color: 'black',
+},
 
 });
+
