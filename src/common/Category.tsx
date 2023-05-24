@@ -2,11 +2,12 @@ import React from 'react';
 import { Image, Text, View, Dimensions, TouchableOpacity } from 'react-native';
 import { FlatList } from 'react-native-gesture-handler';
 import styled from 'styled-components/native';
-import Selector05 from "../assets/img/Category/Selector05.svg";
+import Selector0 from "../assets/img/Category/Selector0.svg";
 import Selector1 from "../assets/img/Category/Selector1.svg";
 import Selector2 from "../assets/img/Category/Selector2.svg";
 import Selector3 from "../assets/img/Category/Selector3.svg";
 import Selector4 from "../assets/img/Category/Selector4.svg";
+import Selector5 from "../assets/img/Category/Selector5.svg";
 
 const CategoryWrapper = styled.TouchableOpacity<{ selected: boolean, color: string, story: boolean }>`
   display: flex;
@@ -29,11 +30,11 @@ interface ListProps {
 }
 
 export const CATEGORY_LIST: ListProps[] = [
-  { id: 0, data: "식당 및 카페", name: "식당·카페", color: '#FF922E' },
-  { id: 1, data: "전시 및 체험공간", name: "전시·체험", color: '#209DF5' },
-  { id: 2, data: "제로웨이스트 샵", name: "제로웨이스트", color: '#C1C1C1' },
+  { id: 0, data: "식당 및 카페", name: "식당·카페", color: '#FF6B00' },
+  { id: 1, data: "전시 및 체험공간", name: "전시·체험", color: '#42A7EE' },
+  { id: 2, data: "제로웨이스트 샵", name: "제로웨이스트", color: '#ED6093' },
   { id: 3, data: "도시 재생 및 친환경 건축물", name: "건축물", color: '#C5F0A3' },
-  { id: 4, data: "복합 문화 공간", name: "복합문화", color: '#E894DF' },
+  { id: 4, data: "복합 문화 공간", name: "복합문화", color: '#B06FE3' },
   { id: 5, data: "녹색 공간", name: "녹색공간", color: '#1DBB6F' },
 ];
 
@@ -81,26 +82,26 @@ export default function Category({ checkedList, setCheckedList, story }: Categor
             {
               story ?
               ({
-                0: <Selector05 color={item.color}/>,
+                0: <Selector0 color={item.color}/>,
                 1: <Selector1 color={item.color}/>,
                 2: <Selector2 color={item.color}/>,
                 3: <Selector3 color={item.color}/>,
                 4: <Selector4 color={item.color}/>,
-                5: <Selector05 color={item.color}/>
+                5: <Selector0 color={item.color}/>
 
               }[item.id])
               :
               ({
-                0: <Selector05 color={isSelected ? '#FFFFFF' : item.color}/>,
+                0: <Selector0 color={isSelected ? '#FFFFFF' : item.color}/>,
                 1: <Selector1 color={isSelected ? '#FFFFFF' : item.color}/>,
                 2: <Selector2 color={isSelected ? '#FFFFFF' : item.color}/>,
                 3: <Selector3 color={isSelected ? '#FFFFFF' : item.color}/>,
                 4: <Selector4 color={isSelected ? '#FFFFFF' : item.color}/>,
-                5: <Selector05 color={isSelected ? '#FFFFFF' : item.color}/>
+                5: <Selector5 color={isSelected ? '#FFFFFF' : item.color}/>
 
               }[item.id])
             }
-            <Text style={{ fontSize: story ? 10 : 15, lineHeight: 15, color: story ? '#444444' : (isSelected ? '#FFFFFF' : '#000000'), marginHorizontal: 5 }}>{item.name}</Text>
+            <Text style={{ fontSize: story ? 10 : 14, color: story ? '#444444' : (isSelected ? '#FFFFFF' : '#000000'), marginHorizontal: 5 }}>{item.name}</Text>
           </CategoryWrapper>
         )
       }}

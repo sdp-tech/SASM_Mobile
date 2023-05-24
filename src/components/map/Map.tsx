@@ -1,5 +1,5 @@
 import BottomSheet from "@gorhom/bottom-sheet";
-import React, { useEffect, useRef, useState, useMemo, SetStateAction, Dispatch, useCallback } from 'react';
+import React, { useEffect, useRef, useState, useMemo, SetStateAction, Dispatch, useCallback, memo, RefObject } from 'react';
 import { Text, TouchableOpacity, View, Button, StyleSheet, SafeAreaView, Dimensions, ActivityIndicator, Modal, } from "react-native";
 import NaverMapView, { Align, Marker } from './NaverMap';
 import styled from "styled-components/native";
@@ -9,32 +9,22 @@ import MapList from './SpotList';
 import SpotDetail from './SpotDetail';
 import { Request } from '../../common/requests';
 import { Coord } from "react-native-nmap";
-import Animated, { useAnimatedStyle, useSharedValue, withTiming } from "react-native-reanimated";
+import Animated, { SharedValue, useAnimatedStyle, useSharedValue, withTiming } from "react-native-reanimated";
 import PlaceForm from "./PlaceForm/PlaceForm";
 import AddColor from "../../assets/img/common/AddColor.svg";
 import { StackScreenProps } from "@react-navigation/stack";
 import { TabProps } from "../../../App";
 import { useFocusEffect } from "@react-navigation/native";
+import SearchHere from "../../assets/img/Map/SearchHere.svg";
 
-const ButtonWrapper = styled.View`
-	width: 100%;
-	display: flex;
-	position: absolute;
-	top: 5%;
-	align-items: center;
-`
+const { width, height } = Dimensions.get('window');
+
 const SearchHereButton = styled.TouchableOpacity`
-	width: 190px;
-	text-align: center;
-	border-radius: 50px;
-	background-color: #01A0FC;
-	box-shadow: 4px 4px 10px rgba(0, 0, 0, 0.25);
-`
-const SearchHereText = styled.Text`
-	padding: 5px;
-	color: #FFFFFF;
-	font-weight: 500;
-	text-align: center;
+  align-self: center;
+  padding: 5px;
+  border-radius: 20px;
+  background-color: #FFFFFF;
+  margin-bottom: 10px;
 `
 const Circle = styled.TouchableOpacity<{ width: number }>`
 	width: ${props => props.width}px;
@@ -51,11 +41,11 @@ const MoveToCenterButton = styled(Circle)`
 	right: -90%;
 `
 const PlusButton = styled.TouchableOpacity`
-  width: 55px;
-  height: 55px;
-  border-radius: 27.5px;
+  width: 45px;
+  height: 45px;
+  border-radius: 22.5px;
   position: absolute;
-  top: 50px;
+  top: 40px;
   right: 20px;
   background-color: #75E59B;
   display: flex;
@@ -112,16 +102,14 @@ interface MapProps {
   mapView: any;
   setSheetMode: Dispatch<SetStateAction<boolean>>;
   placeData: placeDataProps[];
-  nowCoor: Coord;
   setDetailData: Dispatch<SetStateAction<detailDataProps>>;
   center: Coord;
   setCenter: Dispatch<SetStateAction<Coord>>;
+  setTempCoor: Dispatch<SetStateAction<Coord>>;
 }
 
-const Map = ({ mapView, setSheetMode, placeData, nowCoor, setDetailData, center, setCenter }: MapProps) => {
+const Map = ({ mapView, setSheetMode, placeData, setTempCoor, setDetailData, center, setCenter }: MapProps) => {
   const request = new Request();
-  //tempCoor => 지도가 움직이때마다 center의 좌표
-  const [tempCoor, setTempCoor] = useState(nowCoor);
   //지도가 이동할때마다 지도의 중심 좌표를 임시로 저장
   const onChangeCenter = (event: any) => {
     setTempCoor({
@@ -162,7 +150,7 @@ const Map = ({ mapView, setSheetMode, placeData, nowCoor, setDetailData, center,
                 onClick={() => { getDetail(data.id) }}
                 width={20} height={30}
                 caption={{
-                  text: `${data.place_name}`, align: Align.Bottom, textSize: 15, color: "black", haloColor: "white"
+                  text: `${data.place_name}`, align: Align.Bottom, textSize: 15, color: "black"
                 }} />
             )
           })}
@@ -218,6 +206,8 @@ export default function MapContainer({ nowCoor, navigation, route }: MapContaine
   const [placeformModal, setPlaceformModal] = useState<boolean>(false);
   //지도의 중심 좌표
   const [center, setCenter] = useState<Coord>(nowCoor);
+  //tempCoor => 지도가 움직이때마다 center의 좌표
+  const [tempCoor, setTempCoor] = useState(nowCoor);
   //checkedList => 카테고리 체크 복수 체크 가능
   const [checkedList, setCheckedList] = useState<string[]>([]);
   //search => 검색어
@@ -268,10 +258,6 @@ export default function MapContainer({ nowCoor, navigation, route }: MapContaine
   /////////////////////////////////////////////////////// BottomSheet
   //BottomSheet에서 list(true)를 보일지 detail(false)을 보일지
   const [sheetMode, setSheetMode] = useState<boolean>(true);
-  //modal의 ref
-  const modalRef = useRef(null);
-  //BottomSheet 중단점
-  const snapPoints = useMemo(() => [20, 500], []);
   //BottomSheet를 움직일 때마다 버튼들 같이 움직이기
   const buttonAnimatedPosition = useSharedValue(45);
   const buttonAnimatedStyle = useAnimatedStyle(() => {
@@ -291,23 +277,102 @@ export default function MapContainer({ nowCoor, navigation, route }: MapContaine
       <Map
         mapView={mapView}
         placeData={placeData}
-        nowCoor={nowCoor}
         setDetailData={setDetailData}
         center={center}
         setSheetMode={setSheetMode}
         setCenter={setCenter}
+        setTempCoor={setTempCoor}
       />
+      <BottomSheetMemo
+        sheetMode={sheetMode}
+        setSheetMode={setSheetMode}
+        buttonAnimatedPosition={buttonAnimatedPosition}
+        loading={loading}
+        page={page}
+        setPage={setPage}
+        setCenter={setCenter}
+        setDetailData={setDetailData}
+        placeData={placeData}
+        total={total}
+        detailData={detailData}
+      />
+      <Animated.View style={buttonAnimatedStyle}>
+        {
+          (searchHere.latitude.toFixed(8) != tempCoor.latitude.toFixed(8) || searchHere.longitude.toFixed(8) != tempCoor.longitude.toFixed(8)) &&
+          <SearchHereButton onPress={() => { setSearchHere(tempCoor) }}><SearchHere /></SearchHereButton>
+        }
+        <SearchBar
+          search={search}
+          setSearch={setSearch}
+          style={{ backgroundColor: "#FFFFFF", width: '95%' }}
+          placeholder="장소를 검색해주세요"
+          setPage={setPage}
+        />
+        <Category checkedList={checkedList} setCheckedList={setCheckedList} />
+        <MoveToCenterButton width={30}
+          onPress={handleToCenter}>
+          <Circle width={15}
+            onPress={handleToCenter} />
+        </MoveToCenterButton>
+      </Animated.View>
+      <PlusButton onPress={() => { setPlaceformModal(true) }}>
+        <AddColor width={25} height={25} color={'#FFFFFF'} />
+      </PlusButton>
+      <Modal visible={placeformModal}>
+        <PlaceForm setPlaceformModal={setPlaceformModal} />
+      </Modal>
+    </View>
+  )
+}
+
+const CustomHandle = ({ mode, idx }: { mode: boolean, idx:RefObject<number> }) => {
+  useEffect(()=>{console.error(idx)}, [idx])
+  return (
+    <View style={{ backgroundColor: mode ? '#FFFFFF' : 'none', position: 'absolute', width: width, height: 15, borderTopEndRadius: 10, borderTopStartRadius: 10, display: 'flex', justifyContent: 'center' }}>
+      <View style={{ width: 60, height: 5, alignSelf: 'center', backgroundColor: '#D9D9D9', borderRadius: 2.5 }}></View>
+    </View>
+  );
+};
+
+
+interface BottomSheetMemoProps {
+  sheetMode: boolean;
+  setSheetMode: Dispatch<SetStateAction<boolean>>;
+  buttonAnimatedPosition: SharedValue<number>;
+  loading: boolean;
+  page: number;
+  total: number;
+  setPage: Dispatch<SetStateAction<number>>;
+  placeData: placeDataProps[];
+  setDetailData: Dispatch<SetStateAction<detailDataProps>>;
+  setCenter: Dispatch<SetStateAction<Coord>>;
+  detailData: detailDataProps;
+}
+//좌표가 바뀌어서 바텀시트가 올라가는것을 방지
+const BottomSheetMemo = memo(
+  ({ sheetMode, setSheetMode, buttonAnimatedPosition, loading, page, setPage, setCenter, setDetailData, placeData, total, detailData }: BottomSheetMemoProps) => {
+    //modal의 ref
+    const modalRef = useRef(null);
+    const idx = useRef<number>(1);
+    //BottomSheet 중단점
+    const snapPoints = useMemo(() => [15, 500], []);
+    return (
       <BottomSheet
         ref={modalRef}
         snapPoints={snapPoints}
         index={1}
+        handleComponent={() => <CustomHandle idx={idx} mode={sheetMode} />}
         onAnimate={(fromIndex, toIndex) => {
           if (fromIndex == 1 && toIndex == 0) {
             if (!sheetMode) setSheetMode(true);
             else buttonAnimatedPosition.value = 45;
+            idx.current = 0;
+            // setIdx(0);
           }
           else {
             buttonAnimatedPosition.value = 520;
+            idx.current = 1;
+            // setIdx(1);
           }
         }}
       >
@@ -331,32 +396,5 @@ export default function MapContainer({ nowCoor, navigation, route }: MapContaine
               }</>
         }
       </BottomSheet>
-      <Animated.View style={buttonAnimatedStyle}>
-        <SearchBar
-          search={search}
-          setSearch={setSearch}
-          style={{ backgroundColor: "#FFFFFF", width: '95%' }}
-          placeholder="장소를 검색해주세요"
-          setPage={setPage}
-        />
-        <Category checkedList={checkedList} setCheckedList={setCheckedList} />
-        <MoveToCenterButton width={30}
-          onPress={handleToCenter}>
-          <Circle width={15}
-            onPress={handleToCenter} />
-        </MoveToCenterButton>
-      </Animated.View>
-      <PlusButton onPress={() => { setPlaceformModal(true) }}>
-        <AddColor color={'#FFFFFF'} />
-      </PlusButton>
-      {/* <SearchHereButton onPress={() => { setSearchHere(tempCoor); setPage(1); }}>
-					<SearchHereText>
-						지금 지도에서 검색
-					</SearchHereText>
-				</SearchHereButton> */}
-      <Modal visible={placeformModal}>
-        <PlaceForm setPlaceformModal={setPlaceformModal} />
-      </Modal>
-    </View>
-  )
-}
+    );
+  });
