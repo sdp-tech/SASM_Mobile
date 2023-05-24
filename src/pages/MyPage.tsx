@@ -14,6 +14,11 @@ import Following from '../components/mypage/components/Following_List';
 import Follower from '../components/mypage/components/Follower_List';
 import Options from '../components/mypage/components/OptionPage';
 
+export interface MyPageParams {
+    navigation: any;
+    route: any;
+}
+
 export type MyPageProps = {
     'mypage': any;
     'login': any;
