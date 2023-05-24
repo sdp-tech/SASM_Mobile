@@ -11,10 +11,14 @@ const SearchWrapper = styled.View`
   border-radius: 20px;
 `
 const StyledInput = styled.TextInput`
-  width: 85%;
+  width: 100%;
   padding: 0 5%;
 `
 const ResetButton = styled.TouchableOpacity`
+  position: absolute;
+  height: 35px;
+  right: 0;
+  top: 0;
   width: 15%;
   display: flex;
   align-items: center;

@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
-import { View, Text, FlatList, Image } from 'react-native';
+import { View, Text, Image } from 'react-native';
+import { FlatList } from 'react-native-gesture-handler';
 
 interface CardViewProps {
     gap: number;    // 카드 사이 간격은 renderItem에서 marginHorizontal: gap / 2로 설정해주기

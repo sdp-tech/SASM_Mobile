@@ -31,7 +31,7 @@ export default function MapList({ placeData, setSheetMode, setPage, page, total,
     recommends.push(placeData[i]);
   }
   return (
-    <>
+    <View style={{borderTopLeftRadius:10, borderTopRightRadius:10, overflow:'hidden'}}>
       {
         placeData.length != 0 &&
         <FlatList
@@ -56,7 +56,7 @@ export default function MapList({ placeData, setSheetMode, setPage, page, total,
               <Pagination page={page} setPage={setPage} total={total} limit={20}></Pagination>
             </PaginationSection>}
         />}
-    </>
+    </View>
 
   )
 }

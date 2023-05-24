@@ -8,6 +8,7 @@ import { ScrollView } from 'react-native-gesture-handler';
 import { Request } from '../../../common/requests';
 import { PlaceFormProps } from './PlaceFormUser';
 import { PhotoResultProps } from '../../../common/PhotoOptions';
+import Check from "../../../assets/img/common/Check.svg";
 
 const { width, height } = Dimensions.get('window');
 const Header = styled.View`
@@ -15,7 +16,7 @@ const Header = styled.View`
   flex-direction: row;
   justify-content: space-between;
 `
-const HeaderBox = styled.View<{current: boolean}>`
+const HeaderBox = styled.View<{ current: boolean }>`
   width: 33%;
   height: 45px;
   display: flex;
@@ -72,7 +73,7 @@ const Submit = styled.TouchableOpacity`
   align-items: center;
 `
 const Section = styled.View`
-  height: 87.5%;
+  height: 75%;
   display: flex;
   flex-direction: row;
 `
@@ -103,7 +104,7 @@ interface InputProps extends TextInputProps {
   onChangeText: (e: string) => void;
 }
 
-const InputWithLabel = ({ label, onChangeText, placeholder, value, ...rest }: InputProps) => {
+const InputWithLabel = ({ label, onChangeText, placeholder, value, ...rest }: InputProps): JSX.Element => {
   return (
     <View style={{ marginVertical: 5 }}>
       <Text style={TextStyles.label}>{label}</Text>
@@ -112,14 +113,13 @@ const InputWithLabel = ({ label, onChangeText, placeholder, value, ...rest }: In
   )
 }
 
-
 interface InputTouchProps {
   label: string;
   onPress: () => void;
   children?: ReactNode | JSX.Element | ReactElement;
 }
 
-const InputTouchWithLabel = ({ label, onPress, children }: InputTouchProps) => {
+const InputTouchWithLabel = ({ label, onPress, children }: InputTouchProps): JSX.Element => {
   return (
     <View style={{ marginVertical: 5 }}>
       <Text style={TextStyles.label}>{label}</Text>
@@ -130,13 +130,31 @@ const InputTouchWithLabel = ({ label, onPress, children }: InputTouchProps) => {
   )
 }
 
-export default function PlaceFormOwner({setPlaceformModal}:{setPlaceformModal: Dispatch<SetStateAction<boolean>>}): JSX.Element {
+export const FinishModal = ({ setFinishModal, setPlaceformModal }: { setFinishModal: Dispatch<SetStateAction<boolean>>, setPlaceformModal: Dispatch<SetStateAction<boolean>> }): JSX.Element => {
+  useEffect(() => {
+    setTimeout(() => {
+      setFinishModal(false);
+      setPlaceformModal(false);
+    }, 3000)
+  }, [])
+  return (
+    <SafeAreaView style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', flex: 1 }}>
+      <Check color={"#75E59B"} />
+      <Text style={TextStyles.finish_title}>제보 완료 !</Text>
+      <Text style={TextStyles.finish_content}>제보해주신 장소는</Text>
+      <Text style={TextStyles.finish_content}>SASM에서 검토한 후</Text>
+      <Text style={TextStyles.finish_content}>최종 등록됩니다</Text>
+    </SafeAreaView>
+  )
+}
+
+export default function PlaceFormOwner({ setPlaceformModal }: { setPlaceformModal: Dispatch<SetStateAction<boolean>> }): JSX.Element {
   const [tab, setTab] = useState<number>(0);
+  //제보 후 완료 창
+  const [finishModal, setFinishModal] = useState<boolean>(false);
   const request = new Request();
   //주소 입력 Modal
   const [postModal, setPostModal] = useState<boolean>(false);
-  //영업시간 입력 Modal
-  const [hourModal, setHourModal] = useState<boolean>(false);
   //카테고리 선택
   const [checkedList, setCheckedList] = useState<string[]>([]);
   const [form, setForm] = useState<PlaceFormProps>({
@@ -158,9 +176,7 @@ export default function PlaceFormOwner({setPlaceformModal}:{setPlaceformModal: D
     pet_category: false,
     reusable_con_category: false,
     tumblur_category: false,
-    latitude: 0,
-    longitude: 0,
-    snscount: 0,
+    snsList: []
   });
 
   const [rep_pic, setRep_pic] = useState<PhotoResultProps[]>([{
@@ -208,18 +224,21 @@ export default function PlaceFormOwner({setPlaceformModal}:{setPlaceformModal: D
       })
     }
     formData.append('0', ',,')
-    const response = await request.post("/sdp_admin/places/save_place/", formData, { "Content-Type": "multipart/form-data" });
-    setPlaceformModal(false);
+    //const response = await request.post("/sdp_admin/places/save_place/", formData, { "Content-Type": "multipart/form-data" });
+    setFinishModal(true);
   }
 
   return (
     <ScrollView
       showsVerticalScrollIndicator={false}
     >
+      <Modal visible={finishModal}>
+        <FinishModal setPlaceformModal={setPlaceformModal} setFinishModal={setFinishModal} />
+      </Modal>
       <Header>
-        <HeaderBox current={tab==0}><Text style={tab==0 ? TextStyles.headerWhite : TextStyles.header}>기본정보</Text></HeaderBox>
-        <HeaderBox current={tab==1}><Text style={tab==1 ? TextStyles.headerWhite : TextStyles.header}>영업시간</Text></HeaderBox>
-        <HeaderBox current={tab==2}><Text style={tab==2 ? TextStyles.headerWhite : TextStyles.header}>부가정보</Text></HeaderBox>
+        <HeaderBox current={tab == 0}><Text style={tab == 0 ? TextStyles.headerWhite : TextStyles.header}>기본정보</Text></HeaderBox>
+        <HeaderBox current={tab == 1}><Text style={tab == 1 ? TextStyles.headerWhite : TextStyles.header}>영업시간</Text></HeaderBox>
+        <HeaderBox current={tab == 2}><Text style={tab == 2 ? TextStyles.headerWhite : TextStyles.header}>부가정보</Text></HeaderBox>
       </Header>
       {{
         0:
@@ -255,7 +274,7 @@ export default function PlaceFormOwner({setPlaceformModal}:{setPlaceformModal: D
             </PhotoBox>
             <PhotoOptions
               max={3}
-              setPhoto={setPhotos}/>
+              setPhoto={setPhotos} />
             <InputWithLabel label="업체명 *"
               onChangeText={(e) => { setForm({ ...form, place_name: e }) }} />
             <InputTouchWithLabel label='장소 등록 *'
@@ -324,36 +343,36 @@ export default function PlaceFormOwner({setPlaceformModal}:{setPlaceformModal: D
                 [
                   {
                     text: '비건',
-                    onPress: () => setForm({...form, vegan_category:'비건'}),
+                    onPress: () => setForm({ ...form, vegan_category: '비건' }),
                   },
                   {
                     text: '락토',
-                    onPress: () => setForm({...form, vegan_category:'락토'}),
+                    onPress: () => setForm({ ...form, vegan_category: '락토' }),
                   },
                   {
                     text: '오보',
-                    onPress: () => setForm({...form, vegan_category:'오보'}),
+                    onPress: () => setForm({ ...form, vegan_category: '오보' }),
                   },
                   {
                     text: '페스코',
-                    onPress: () => setForm({...form, vegan_category:'페스토'}),
+                    onPress: () => setForm({ ...form, vegan_category: '페스토' }),
                   },
                   {
                     text: '폴로',
-                    onPress: () => setForm({...form, vegan_category:'폴로'}),
+                    onPress: () => setForm({ ...form, vegan_category: '폴로' }),
                   },
                   {
                     text: '그 외',
-                    onPress: () => setForm({...form, vegan_category:'그 외'}),
+                    onPress: () => setForm({ ...form, vegan_category: '그 외' }),
                   },
                   {
                     text: '없음',
-                    onPress: () => setForm({...form, vegan_category:null}),
-                    style:'cancel'
+                    onPress: () => setForm({ ...form, vegan_category: null }),
+                    style: 'cancel'
                   },
                 ]
               )
-            }} selected={form.vegan_category != null}><Text style={form.vegan_category != null && TextStyles.serviceSelected}>비건카테고리 : {form.vegan_category!=null?form.vegan_category:'없음'}</Text></Service>
+            }} selected={form.vegan_category != null}><Text style={form.vegan_category != null && TextStyles.serviceSelected}>비건카테고리 : {form.vegan_category != null ? form.vegan_category : '없음'}</Text></Service>
             <Service onPress={() => { setForm({ ...form, reusable_con_category: !form.reusable_con_category }) }} selected={form.reusable_con_category}><Text style={form.reusable_con_category && TextStyles.serviceSelected}>용기 내</Text></Service>
             <Service onPress={() => { setForm({ ...form, pet_category: !form.pet_category }) }} selected={form.pet_category}><Text style={form.pet_category && TextStyles.serviceSelected}>반려동물 출입</Text></Service>
           </ServiceWrapper>
@@ -374,7 +393,7 @@ const TextStyles = StyleSheet.create({
   headerWhite: {
     fontSize: 16,
     fontWeight: "700",
-    color:'#FFFFFF'
+    color: '#FFFFFF'
   },
   hourtitle: {
     fontWeight: "700",
@@ -386,11 +405,12 @@ const TextStyles = StyleSheet.create({
     textAlign: 'center'
   },
   label: {
-    fontSize: 16,
+    fontSize: 15,
     marginTop: 5,
+    color:'#000000'
   },
   labelBold: {
-    fontSize: 16,
+    fontSize: 15,
     marginTop: 5,
     fontWeight: "700",
   },
@@ -406,5 +426,17 @@ const TextStyles = StyleSheet.create({
   serviceSelected: {
     color: "#FFFFFF",
     fontWeight: "700",
+  },
+  finish_title: {
+    fontSize: 20,
+    fontWeight: '700',
+    marginVertical: 21,
+    color:'#000000'
+  },
+  finish_content: {
+    fontSize: 14,
+    fontWeight: '300',
+    color: '#777777',
+    lineHeight: 20,
   }
 })

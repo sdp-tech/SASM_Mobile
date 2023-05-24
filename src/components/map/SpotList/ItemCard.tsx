@@ -86,14 +86,16 @@ export default function ItemCard({ placeData, setSheetMode, setDetailData, setCe
 
 const TextStyle = StyleSheet.create({
   placeName: {
-    fontSize: 14,
+    fontSize: 12,
     fontWeight: '800',
+    color: '#000000'
   },
   category: {
-    fontSize: 14,
+    fontSize: 12,
+    color: '#000000',
   },
   openHours: {
-    fontSize: 12,
+    fontSize: 10,
     color: '#707070'
   }
 })

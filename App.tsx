@@ -10,7 +10,6 @@ import LoginScreen from './src/components/Auth/Login';
 import MyPageScreen from './src/pages/MyPage';
 import CommunityScreen from './src/pages/Community';
 import StoryScreen from './src/pages/Story';
-import MyPickScreen from './src/pages/MyPick';
 import MenuIcon from "./src/assets/navbar/map.svg";
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import HomeScreen from './src/pages/Home';
@@ -57,7 +56,6 @@ export type TabProps = {
         id: number | undefined;
     };
     '커뮤니티': undefined;
-    '마이 픽': undefined;
     '마이 페이지': undefined;
 }
 
@@ -113,11 +111,6 @@ const HomeScreens = (): JSX.Element => {
             <Tab.Screen
                 name={"커뮤니티"}
                 component={CommunityScreen}
-                options={tabOptions}
-            />
-            <Tab.Screen
-                name={"마이 픽"}
-                component={MyPickScreen}
                 options={tabOptions}
             />
             <Tab.Screen

@@ -1,12 +1,13 @@
 import React, { Dispatch, ReactElement, ReactNode, SetStateAction, useEffect, useState } from 'react';
 import { Alert, Dimensions, Image, Modal, SafeAreaView, StyleSheet, Text, TextInput, TextInputProps, TouchableOpacity, View } from 'react-native';
 import styled from 'styled-components/native';
-import PhotoOptions, { PhotoResultProps } from '../../../common/PhotoOptions';
+import { PhotoResultProps, PhotoSelector } from '../../../common/PhotoOptions';
 import Category from '../../../common/Category';
 import Postcode from '@actbase/react-daum-postcode';
 import Close from "../../../assets/img/common/Close.svg";
 import { ScrollView } from 'react-native-gesture-handler';
 import { Request } from '../../../common/requests';
+import { FinishModal } from './PlaceFormOwner';
 
 const { width, height } = Dimensions.get('window');
 
@@ -40,9 +41,9 @@ const InputTouch = styled.TouchableOpacity`
   justify-content: center;
 `
 const Submit = styled.TouchableOpacity`
-  width: 50%;
+  width: 65%;
   margin: 40px auto;
-  height: 50px;
+  height: 63px;
   background-color: #75E59B;
   display: flex;
   justify-content: center;
@@ -52,17 +53,10 @@ const Header = styled.View<{ color: string }>`
   background-color: ${props => props.color};
   height: 12.5%;
   display: flex;
-  flex-flow: row wrap;
-  align-items: center;
+  padding: 0 20px;
   justify-content: space-between;
-  padding: 10%;
-`
-
-const CloseButton = styled.TouchableOpacity`
-  position: absolute;
-  top: 50px;
-  right: 20px;
-  z-index: 2;
+  align-items: center;
+  flex-flow: row;
 `
 const Section = styled.View`
   height: 87.5%;
@@ -121,19 +115,18 @@ export interface PlaceFormProps {
   address: string;
   short_cur: string;
   phone_num: string;
-  vegan_category: string | null;
-  tumblur_category: boolean ;
-  reusable_con_category: boolean ;
-  pet_category: boolean ;
-  longitude: number;
-  latitude: number;
-  snscount: number;
+  vegan_category: string | boolean | null;
+  tumblur_category: boolean;
+  reusable_con_category: boolean;
+  pet_category: boolean;
+  snsList: string[];
   [index: string]: any;
 }
 
-export default function PlaceFormUser({setPlaceformModal}:{setPlaceformModal: Dispatch<SetStateAction<boolean>>}): JSX.Element {
+export default function PlaceFormUser({ setPlaceformModal }: { setPlaceformModal: Dispatch<SetStateAction<boolean>> }): JSX.Element {
   //주소 입력 Modal
   const [postModal, setPostModal] = useState<boolean>(false);
+  const [finishModal, setFinishModal] = useState<boolean>(false);
   //영업시간 입력 Modal
   const [hourModal, setHourModal] = useState<boolean>(false);
   //카테고리 선택
@@ -153,15 +146,12 @@ export default function PlaceFormUser({setPlaceformModal}:{setPlaceformModal: Di
     short_cur: '',
     phone_num: '',
     etc_hours: '',
-    vegan_category: null,
+    vegan_category: false,
     pet_category: false,
     reusable_con_category: false,
     tumblur_category: false,
-    longitude: 0,
-    latitude: 0,
-    snscount: 0,
+    snsList: [],
   });
-
   const request = new Request();
   const [rep_pic, setRep_pic] = useState<PhotoResultProps[]>([{
     width: 1,
@@ -201,41 +191,39 @@ export default function PlaceFormUser({setPlaceformModal}:{setPlaceformModal: Di
       type: 'image/jpeg/png',
     })
     for (let i = 0; i < photos.length; i++) {
-      formData.append(`placephoto${i + 1}`, {
+      formData.append(`imageList`, {
         uri: photos[i].uri,
         name: photos[i].fileName,
         type: 'image/jpeg/png',
       })
     }
-    formData.append('0', ',,')
-    const response = await request.post("/sdp_admin/places/save_place/", formData, { "Content-Type": "multipart/form-data" });
-    setPlaceformModal(false);
+    formData.append('snsList', '1,https://instagram.com/abc/');
+    console.error(formData);
+    const response = await request.post("/places/create/", formData, { "Content-Type": "multipart/form-data" });
+    setFinishModal(true);
   }
 
   return (
     <ScrollView
       showsVerticalScrollIndicator={false}
     >
-      <Text style={{ ...TextStyles.label, marginTop: 40, marginVertical: 20 }}>이미지 등록하기 *</Text>
+      <Modal visible={finishModal}>
+        <FinishModal setPlaceformModal={setPlaceformModal} setFinishModal={setFinishModal} />
+      </Modal>
+      <Text style={{ ...TextStyles.label, marginTop: 40, marginBottom: 20 }}>이미지 등록하기 *</Text>
       <Text style={TextStyles.label}>대표 사진</Text>
-      <ReppicBox>
-        <Image style={{ width: width - 70, height: ((width - 70) / rep_pic[0].width) * rep_pic[0].height, maxHeight: width - 70 }}
+      <PhotoSelector max={1} setPhoto={setRep_pic} width={width - 70} height={width - 120}>
+        <Image style={{ width: width - 70, height: ((width - 70) / rep_pic[0].width) * rep_pic[0].height, maxHeight: width - 120 }}
           source={{ uri: rep_pic[0].uri }}
           alt='대표 사진'
           resizeMode='contain' />
-      </ReppicBox>
-      <PhotoOptions
-        max={1}
-        setPhoto={setRep_pic} />
+      </PhotoSelector>
       <Text style={TextStyles.label}>장소 사진</Text>
-      <PhotoBox>
+      <PhotoSelector max={3} width={width - 70} height={(width - 70) / 3} setPhoto={setPhotos}>
         {
           photos.map((data, index) => <Image source={{ uri: data.uri }} alt={`장소 사진 ${index}`} style={{ width: (width - 70) / 3, height: (width - 70) / 3 }} resizeMode='contain' />)
         }
-      </PhotoBox>
-      <PhotoOptions
-        max={3}
-        setPhoto={setPhotos} />
+      </PhotoSelector>
       <InputWithLabel label="장소명 *"
         onChangeText={(e) => { setForm({ ...form, place_name: e }) }} />
       <InputTouchWithLabel label='장소 등록 *'
@@ -279,9 +267,9 @@ export default function PlaceFormUser({setPlaceformModal}:{setPlaceformModal: Di
         <View style={{ height: '100%' }}>
           <Header color='#75E59B'>
             <Text style={TextStyles.header}>영업시간</Text>
-            <CloseButton onPress={() => { setHourModal(false) }}>
+            <TouchableOpacity onPress={() => { setHourModal(false) }}>
               <Close color={'#FFFFFF'} />
-            </CloseButton>
+            </TouchableOpacity>
           </Header>
           <Section>
             <SectionHalf>
@@ -291,7 +279,6 @@ export default function PlaceFormUser({setPlaceformModal}:{setPlaceformModal: Di
                   <View style={{ display: "flex", flexDirection: 'row', width: '100%', alignItems: 'center', justifyContent: 'space-between', marginVertical: 10 }}>
                     <Text style={TextStyles.hour}>{data.day}</Text>
                     <TextInput style={{ width: '75%', height: 45, textAlign: 'center' }}
-                      inputMode='numeric'
                       onChangeText={(e) => { setForm({ ...form, [data.name]: e }) }}
                       placeholder='00:00 ~ 00:00' value={form[data.name]}
                     />
@@ -316,7 +303,7 @@ export default function PlaceFormUser({setPlaceformModal}:{setPlaceformModal: Di
 const TextStyles = StyleSheet.create({
   hourtitle: {
     fontWeight: "700",
-    textAlign: 'center'
+    textAlign: 'center',
   },
   hour: {
     fontSize: 16,
@@ -324,8 +311,10 @@ const TextStyles = StyleSheet.create({
     textAlign: 'center'
   },
   label: {
-    fontSize: 16,
+    fontSize: 15,
     marginTop: 5,
+    lineHeight: 35,
+    color: '#000000'
   },
   header: {
     fontSize: 24,
@@ -333,7 +322,8 @@ const TextStyles = StyleSheet.create({
     fontWeight: "700"
   },
   submit: {
-    fontSize: 16,
+    fontSize: 24,
+    lineHeight: 35,
     color: '#FFFFFF',
     fontWeight: "700",
   },
