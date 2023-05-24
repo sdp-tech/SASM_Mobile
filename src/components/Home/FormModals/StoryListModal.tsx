@@ -2,7 +2,7 @@ import React, { Dispatch, SetStateAction, useEffect, useState, useMemo, useRef, 
 import styled from "styled-components/native";
 import { Request } from "../../../common/requests";
 import { StoryListProps } from "../../story/StoryMainPage";
-import { Dimensions, TouchableOpacity, View, Text, FlatList, StyleSheet, SafeAreaView, Image, ActivityIndicator } from "react-native";
+import { Dimensions, TouchableOpacity, View, Text, FlatList, StyleSheet, SafeAreaView, Image, ActivityIndicator, Platform } from "react-native";
 import { BottomSheetModalProvider, BottomSheetModal, BottomSheetBackdrop } from "@gorhom/bottom-sheet";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import Arrow from "../../../assets/img/common/Arrow.svg";
@@ -43,7 +43,7 @@ export default function StoryListModal({ selectedPlace, setStoryListModal, selec
   const [page, setPage] = useState<number>(1);
   const [loading, setLoading] = useState<boolean>(true);
   const [dropValue, setDropValue] = useState<number>(1);
-  
+
   const getStoryList = async (set: boolean) => {
     setLoading(true);
     const response_story_list = await request.get('/stories/story_search/', {
@@ -91,14 +91,14 @@ export default function StoryListModal({ selectedPlace, setStoryListModal, selec
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
       <SafeAreaView style={{ flex: 1 }}>
-        <TouchableOpacity onPress={() => { setStoryListModal(false) }}>
+        <TouchableOpacity onPress={() => { setStoryListModal(false) }} style={{marginTop: Platform.OS == 'android' ? 10 : 0}}>
           <Arrow width={20} height={20} transform={[{ rotateY: '180deg' }]} />
         </TouchableOpacity>
         <View style={{ paddingHorizontal: 15, marginTop: 10, zIndex: 2 }}>
           <Text style={{ ...ListTextStyles.title, fontSize: 20, marginBottom: 20 }}>스토리 선택</Text>
           <Text style={{ ...ListTextStyles.title, fontSize: 20 }}>{selectedPlace.place_name}</Text>
           <Text style={{ ...ListTextStyles.address, fontSize: 12, marginVertical: 5 }}>{selectedPlace.address}</Text>
-          <View style={{ width: 100, marginVertical: 10, alignSelf:'flex-end' }}>
+          <View style={{ width: 100, marginVertical: 10, alignSelf: 'flex-end' }}>
             <DropDown value={dropValue} setValue={setDropValue} isBorder={false} items={toggleItems} />
           </View>
         </View>
@@ -137,8 +137,8 @@ export default function StoryListModal({ selectedPlace, setStoryListModal, selec
                 appearsOnIndex={0}
                 disappearsOnIndex={-1}
                 opacity={0.6} enableTouchThrough={true} />}
-            >
-            <StoryDetailModal id={storyId}/>
+          >
+            <StoryDetailModal id={storyId} />
           </BottomSheetModal>
         </BottomSheetModalProvider>
       </SafeAreaView></GestureHandlerRootView>
@@ -148,7 +148,7 @@ export default function StoryListModal({ selectedPlace, setStoryListModal, selec
 const ListTextStyles = StyleSheet.create({
   place_name: {
     fontSize: 16,
-    fontWeight: '600'
+    fontWeight: '600',
   },
   address: {
     color: '#7B7B7B',
@@ -156,7 +156,7 @@ const ListTextStyles = StyleSheet.create({
   },
   title: {
     fontSize: 10,
-    fontWeight: '600'
+    fontWeight: '600',
   },
   detail: {
     fontSize: 8,

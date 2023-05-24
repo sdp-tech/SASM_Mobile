@@ -152,12 +152,16 @@ export default function CurationDetail({ navigation, route }: StackScreenProps<H
 }
 
 const Storys = ({ navigation, data }: { navigation: StackNavigationProp<TabProps>, data: CuratedStoryProps }) => {
-  const [like, setLike] = useState<boolean>(data.like_story);
+  const [like, setLike] = useState<boolean>(false);
   const request = new Request();
   const handleLike = async () => {
     const response_like = await request.post('/stories/story_like/', { id: data.story_id });
     setLike(!like);
   }
+
+  useEffect(()=>{
+    setLike(data.like_story);
+  }, [])
   return (
     <StorySection>
       <StoryInfoBox>
@@ -214,7 +218,7 @@ const TextStyles = StyleSheet.create({
   },
   writer: {
     fontSize: 12,
-    fontWeight: '600'
+    fontWeight: '600',
   },
   created: {
     color: '#676767',
@@ -233,11 +237,11 @@ const TextStyles = StyleSheet.create({
     fontSize: 24,
     fontWeight: '700',
     marginBottom: 5,
-    alignSelf: 'flex-start'
+    alignSelf: 'flex-start',
   },
   hashtags: {
     fontSize: 12,
-    marginVertical: 20
+    marginVertical: 20,
   },
   category: {
     fontSize: 10,
