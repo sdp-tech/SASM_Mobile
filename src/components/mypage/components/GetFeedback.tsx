@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Platform, Text, TouchableOpacity, View, TextInput, StyleSheet, SafeAreaView } from "react-native";
+import { Platform, Text, TouchableOpacity, View, TextInput, StyleSheet, SafeAreaView,Alert } from "react-native";
 import styled, { css } from 'styled-components/native';
 import { setNickname, setAccessToken, setRefreshToken } from '../../../common/storage';
 import { Request } from '../../../common/requests'
@@ -50,23 +50,18 @@ const LoginInput = styled.TextInput`
     box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
 `;
 
-const Feedback = ({navigation}) =>{
+const Feedback = () =>{
   const [info, setInfo] = useState({});
     const request = new Request();
 
-    const handleInput =(event) => {
-        setInfo(prev=>({
-            ...prev,
-            content : event
-        }))
-    }
-
-    FeedbackPost = async () => {
+    const FeedbackPost = async () => {
         console.log("확인 ",info);
       const response = await request.post('/sdp_admin/voc/',
           info, 
           );
+          
           console.log(response);
+          Alert.alert('알림','발송 완료되었습니다. 의견 감사합니다.',[{text:'확인'}])
 
           //console.log('발송완료');
   }
@@ -86,7 +81,6 @@ const Feedback = ({navigation}) =>{
             <Text
                 style={{
                     fontSize: 24,
-                    fontWeight: 600,
                 }}
             >의견 보내기</Text>
             <View style={{ marginTop: 10 }}>
@@ -97,13 +91,16 @@ const Feedback = ({navigation}) =>{
         <FeedbackBox
                 placeholder="ex> oo식당이 폐업했는데 아직 지도에 남아있습니다.          삭제부탁드립니다."
                 onChangeText={text=>{
-                    handleInput(text);
+                    setInfo(prev=>({
+                        ...prev,
+                        content : text
+                    }))
                 }} />
         </View>
         <View style={{ marginTop: 40 }}>
             <TouchableOpacity onPress={async() => await FeedbackPost()}>
                 <SignUpButton>
-                    <Text style={{ color: '#FFFFFF', fontWeight: 600, fontSize: 16 }}>저장하기</Text>
+                    <Text style={{ color: '#FFFFFF', fontSize: 16 }}>저장하기</Text>
                 </SignUpButton>
             </TouchableOpacity>
         </View>

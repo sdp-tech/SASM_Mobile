@@ -1,9 +1,8 @@
 import React, { useState } from 'react';
-import { Platform, Text, TouchableOpacity, View, TextInput, StyleSheet, SafeAreaView } from "react-native";
+import { Platform, Text, TouchableOpacity, View, TextInput, StyleSheet, SafeAreaView, Alert } from "react-native";
 import styled, { css } from 'styled-components/native';
 
-import { setNickname, setAccessToken, setRefreshToken } from '../../common/storage';
-import { Request } from '../../common/requests'
+import { Request } from '../../../common/requests'
 
 const SignUpButton = styled.View`
     width: 300px;
@@ -37,8 +36,20 @@ const LoginInput = styled.TextInput`
     box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
 `;
 
-const PasswordChange = ({navigation}) =>{
-  
+const request = new Request();
+
+const PasswordChange = () =>{
+    
+  const [password,setPassword] = useState('');
+  const [checkpw, setCheckpw] = useState('');
+  const changePW = async()=>{
+    if(password!=checkpw) Alert.alert('알림','입력한 비밀번호와 비밀번호 확인이 \n불일치합니다.',[{text:'확인'}])
+    else{
+        const response = await request.put(`/users/pw_change/`,{password:password});
+        console.log("비밀번호 변경 결과 : ",response)
+    }
+
+  }
 
   return (
     <SafeAreaView
@@ -55,34 +66,28 @@ const PasswordChange = ({navigation}) =>{
             <Text
                 style={{
                     fontSize: 24,
-                    fontWeight: 600,
                 }}
             >비밀번호 변경</Text>
         </View>
         <View style={{ marginTop: 40 }}>
             <LoginInput
-                autoCapitalize={'none'}
-                placeholder="인증번호"
-                placeholderTextColor={'rgba(0, 0, 0, 0.5)'}
-                onChangeText={value => updateInput('email', value)}
-            />
-            <LoginInput
                 secureTextEntry={true}
                 placeholder="새로운 비밀번호"
                 placeholderTextColor={'rgba(0, 0, 0, 0.5)'}
-                onChangeText={value => updateInput('password', value)}
+                onChangeText={text => setPassword(text)}
+
             />
               <LoginInput
                 secureTextEntry={true}
                 placeholder="새로운 비밀번호 확인"
                 placeholderTextColor={'rgba(0, 0, 0, 0.5)'}
-                onChangeText={value => updateInput('password', value)}
+                onChangeText={text => setCheckpw(text)}
             />
         </View>
         <View style={{ marginTop: 40 }}>
-            <TouchableOpacity onPress={() => navigation.goBack()}>
+            <TouchableOpacity onPress={() => changePW()}>
                 <SignUpButton>
-                    <Text style={{ color: '#FFFFFF', fontWeight: 600, fontSize: 16 }}>완료</Text>
+                    <Text style={{ color: '#FFFFFF', fontSize: 16 }}>완료</Text>
                 </SignUpButton>
             </TouchableOpacity>
         </View>
