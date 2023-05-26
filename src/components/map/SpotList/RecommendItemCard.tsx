@@ -38,7 +38,7 @@ export default function RecommendItemCard({ placeData, setSheetMode, setDetailDa
     <StyledCard onPress={getDetail}>
       <TextBox>
         <Text style={TextStyles.common}>{placeData.category}</Text>
-        <Text style={TextStyles.place_name}>{placeData.place_name}</Text>
+        <Text style={{...TextStyles.common, fontWeight:'700', marginBottom:20}}>{placeData.place_name}</Text>
         <Text style={TextStyles.common}>{placeData.place_review}</Text>
         <Text style={TextStyles.page}>{index+1}/{max}</Text>
       </TextBox>
@@ -48,20 +48,23 @@ export default function RecommendItemCard({ placeData, setSheetMode, setDetailDa
 }
 
 const TextStyles = StyleSheet.create({
+  
   common: {
     fontSize: 16,
+    lineHeight: 19,
     color: '#FFFFFF',
-  },
-  place_name: {
-    fontSize: 18,
-    fontWeight: '900',
-    color: '#FFFFFF',
-    marginBottom: 20
+    textShadowRadius: 4,
+    textShadowOffset: {width: -1, height:1},
+    textShadowColor: 'rgba(0,0,0,0.9)',
   },
   page: {
     marginTop: 5,
     fontSize: 10,
+    lineHeight:12,
     color: '#FFFFFF',
-    textAlign: 'right'
+    alignSelf:"flex-end",
+    textShadowColor:'rgba(0,0,0,0.75)',
+    textShadowOffset:{width:-1, height:1},
+    textShadowRadius: 4,
   }
 })

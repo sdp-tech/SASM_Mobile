@@ -6,6 +6,7 @@ import PlaceFormUser from './PlaceFormUser';
 import PlaceFormOwner from './PlaceFormOwner';
 import PlaceUser from "../../../assets/img/Map/PlaceUser.svg";
 import { Request } from '../../../common/requests';
+import Popup from '../../../common/Popup';
 
 export const HeaderPlaceForm = styled.View<{ color: string }>`
   background-color: ${props => props.color};
@@ -47,6 +48,7 @@ export interface SNSListProps {
 export default function PlaceForm({ setPlaceformModal }: PlaceFormProps): JSX.Element {
   const [tab, setTab] = useState<number>(0);
   const [snsList, setSNSList] = useState<SNSListProps[]>([]);
+  const [closePopup, setClosePopup] = useState<boolean>(false);
   const request = new Request();
 
   const getSNSList = async () => {
@@ -62,7 +64,7 @@ export default function PlaceForm({ setPlaceformModal }: PlaceFormProps): JSX.El
     <View>
       <HeaderPlaceForm color={tab == 1 ? '#75E59B' : '#FFFFFF'}>
         <Text style={{ ...TextStyles.Link, fontSize: 24 }}>장소 제보하기</Text>
-        <TouchableOpacity onPress={() => { setPlaceformModal(false) }}>
+        <TouchableOpacity onPress={() => { tab==0 ? setPlaceformModal(false) : setClosePopup(true)}}>
           <Close color={tab == 1 ? '#FFFFFF' : '#000000'} />
         </TouchableOpacity>
       </HeaderPlaceForm>
@@ -89,6 +91,7 @@ export default function PlaceForm({ setPlaceformModal }: PlaceFormProps): JSX.El
         }
 
       </Section>
+      <Popup visible={closePopup} setVisible={setClosePopup} setModal={setPlaceformModal}/>
     </View >
   )
 }
