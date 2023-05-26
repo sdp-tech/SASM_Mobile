@@ -1,4 +1,4 @@
-import React, { Dispatch, ReactElement, ReactNode, SetStateAction, useEffect, useState } from 'react';
+import React, { Dispatch, ReactElement, ReactNode, SetStateAction, useEffect, useState, useRef, RefObject } from 'react';
 import { Alert, Dimensions, Image, Modal, SafeAreaView, StyleSheet, Text, TextInput, TextInputProps, TouchableOpacity, View } from 'react-native';
 import styled from 'styled-components/native';
 import { PhotoResultProps, PhotoSelector } from '../../../common/PhotoOptions';
@@ -8,6 +8,10 @@ import Close from "../../../assets/img/common/Close.svg";
 import { ScrollView } from 'react-native-gesture-handler';
 import { Request } from '../../../common/requests';
 import { FinishModal } from './PlaceFormOwner';
+import { SNSListProps } from './PlaceForm';
+import ModalSelector from 'react-native-modal-selector';
+import SNSModal from './Modals/SNSModal';
+import HourModal from './Modals/HourModal';
 
 const { width, height } = Dimensions.get('window');
 
@@ -34,24 +38,22 @@ const Submit = styled.TouchableOpacity`
   justify-content: center;
   align-items: center;
 `
-const Header = styled.View<{ color: string }>`
-  background-color: ${props => props.color};
-  height: 12.5%;
+const ServiceWrapper = styled.View`
   display: flex;
-  padding: 0 20px;
-  justify-content: space-between;
+  flex-flow: row wrap;
   align-items: center;
-  flex-flow: row;
+  justify-content: space-around;
+  margin-vertical: 20px;
 `
-const Section = styled.View`
-  height: 87.5%;
+const Service = styled.TouchableOpacity<{ selected: boolean | null }>`
+  width: 45%;
+  height: 50px;
   display: flex;
-  flex-direction: row;
-`
-const SectionHalf = styled.View`
-  height: 100%;
-  width: 50%;
-  padding-vertical: 40px;
+  justify-content: center;
+  border: 1px solid #B7B7B7;
+  margin-vertical: 5px;
+  padding-horizontal: 10px;
+  background-color: ${props => props.selected ? '#75E59B' : '#FFFFFF'};
 `
 const ServiceWrapper = styled.View`
   display: flex;
@@ -102,6 +104,11 @@ const InputTouchWithLabel = ({ label, onPress, children }: InputTouchProps) => {
   )
 }
 
+export interface InputSNSProps {
+  type: string;
+  link: string;
+}
+
 export interface PlaceFormProps {
   place_name: string;
   category: string;
@@ -117,17 +124,29 @@ export interface PlaceFormProps {
   address: string;
   short_cur: string;
   phone_num: string;
-  vegan_category: string | null;
+  vegan_category: string | null | undefined;
   tumblur_category: boolean | null;
   reusable_con_category: boolean | null;
   pet_category: boolean | null;
-  snsList: string[];
   [index: string]: any;
 }
 
-export default function PlaceFormUser({ setPlaceformModal }: { setPlaceformModal: Dispatch<SetStateAction<boolean>> }): JSX.Element {
+//영업시간 리스트
+export const open_hours = [
+  { name: 'mon_hours', day: '월' },
+  { name: 'tues_hours', day: '화' },
+  { name: 'wed_hours', day: '수' },
+  { name: 'thurs_hours', day: '목' },
+  { name: 'fri_hours', day: '금' },
+  { name: 'sat_hours', day: '토' },
+  { name: 'sun_hours', day: '일' },
+]
+
+export default function PlaceFormUser({ setPlaceformModal, snsType }: { setPlaceformModal: Dispatch<SetStateAction<boolean>>, snsType: SNSListProps[] }): JSX.Element {
   //주소 입력 Modal
   const [postModal, setPostModal] = useState<boolean>(false);
+  //SNS 입력 Modal
+  const [snsModal, setSNSModal] = useState<boolean>(false);
   const [finishModal, setFinishModal] = useState<boolean>(false);
   //영업시간 입력 Modal
   const [hourModal, setHourModal] = useState<boolean>(false);
@@ -152,7 +171,6 @@ export default function PlaceFormUser({ setPlaceformModal }: { setPlaceformModal
     pet_category: null,
     reusable_con_category: null,
     tumblur_category: null,
-    snsList: [],
   });
   const request = new Request();
   const [rep_pic, setRep_pic] = useState<PhotoResultProps[]>([{
@@ -162,16 +180,17 @@ export default function PlaceFormUser({ setPlaceformModal }: { setPlaceformModal
     uri: ''
   }])
   const [photos, setPhotos] = useState<PhotoResultProps[]>([]);
-  //영업시간 리스트
-  const open_hours = [
-    { name: 'mon_hours', day: '월' },
-    { name: 'tues_hours', day: '화' },
-    { name: 'wed_hours', day: '수' },
-    { name: 'thurs_hours', day: '목' },
-    { name: 'fri_hours', day: '금' },
-    { name: 'sat_hours', day: '토' },
-    { name: 'sun_hours', day: '일' },
-  ]
+  const [snsList, setSNSList] = useState<InputSNSProps[]>([]);
+
+  const vegan_category = [
+    { type: '비건', key: 0 },
+    { type: '락토', key: 1 },
+    { type: '오보', key: 2 },
+    { type: '페스코', key: 3 },
+    { type: '폴로', key: 4 },
+    { type: '그 외', key: 5 },
+    { type: '없음', key: 6 }
+  ];
   useEffect(() => {
     if (checkedList.length > 1) {
       Alert.alert('카테고리는 최대 1개까지만 선택 가능합니다.');
@@ -200,10 +219,15 @@ export default function PlaceFormUser({ setPlaceformModal }: { setPlaceformModal
         type: 'image/jpeg/png',
       })
     }
+    for (let i =0; i< snsList.length; i++) {
+      formData.append('snsList', `${i+1},${snsList[i].link}`)
+    }
     const response = await request.post("/places/create/", formData, { "Content-Type": "multipart/form-data" });
     setFinishModal(true);
   }
-
+  //ModalSelector
+  const selectorHourRef = useRef<ModalSelector>(null);
+  const selectorSNSRef = useRef<ModalSelector>(null);
   return (
     <ScrollView
       showsVerticalScrollIndicator={false}
@@ -212,14 +236,15 @@ export default function PlaceFormUser({ setPlaceformModal }: { setPlaceformModal
         <FinishModal setPlaceformModal={setPlaceformModal} setFinishModal={setFinishModal} />
       </Modal>
       <Text style={{ ...TextStyles.label, marginTop: 40, marginBottom: 20 }}>이미지 등록하기 *</Text>
-      <Text style={TextStyles.label}>대표 사진</Text>
+      <Text style={TextStyles.label}>대표 사진 *</Text>
       <PhotoSelector max={1} setPhoto={setRep_pic} width={width - 70} height={width - 120}>
         <Image style={{ width: width - 70, height: ((width - 70) / rep_pic[0].width) * rep_pic[0].height, maxHeight: width - 120 }}
           source={{ uri: rep_pic[0].uri }}
           alt='대표 사진'
           resizeMode='contain' />
+
       </PhotoSelector>
-      <Text style={TextStyles.label}>장소 사진</Text>
+      <Text style={TextStyles.label}>장소 사진 *</Text>
       <PhotoSelector max={3} width={width - 70} height={(width - 70) / 3} setPhoto={setPhotos}>
         {
           photos.map((data, index) => <Image source={{ uri: data.uri }} alt={`장소 사진 ${index}`} style={{ width: (width - 70) / 3, height: (width - 70) / 3 }} resizeMode='contain' />)
@@ -233,12 +258,12 @@ export default function PlaceFormUser({ setPlaceformModal }: { setPlaceformModal
           form.address != '' && <Text>{form.address}</Text>
         }
       </InputTouchWithLabel>
-      <Text style={TextStyles.label}>카테고리 선택</Text>
+      <Text style={TextStyles.label}>카테고리 선택 *</Text>
       <Category checkedList={checkedList} setCheckedList={setCheckedList} />
-      <InputWithLabel label="전화번호" placeholder='02-0000-0000'
+      <InputWithLabel label="전화번호 *" placeholder='02-0000-0000'
         onChangeText={(e) => { setForm({ ...form, phone_num: e }) }}
         inputMode='tel' />
-      <InputTouchWithLabel label='영업시간' onPress={() => { setHourModal(true) }}>
+      <InputTouchWithLabel label='영업시간 *' onPress={() => { setHourModal(true) }}>
         <View style={{ display: 'flex', flexDirection: 'row' }}>
           {
             open_hours.map(data => <Text>{data.day} {form[data.name]} / </Text>
@@ -247,54 +272,40 @@ export default function PlaceFormUser({ setPlaceformModal }: { setPlaceformModal
           <Text>브레이크타임 {form.etc_hours}</Text>
         </View>
       </InputTouchWithLabel>
-      <InputWithLabel label="한 줄평"
+      <InputWithLabel label="한 줄평 *"
         onChangeText={(e) => { setForm({ ...form, place_review: e }) }} />
-      <InputWithLabel style={{ height: 100 }} label="장소 리뷰"
+      <InputWithLabel style={{ height: 100 }} label="장소 리뷰 *"
         onChangeText={(e) => { setForm({ ...form, short_cur: e }) }} />
+      <InputTouchWithLabel label='SNS' onPress={() => { setSNSModal(true) }}>
+        {snsList.map(data => <Text>{data.type != undefined ? data.type : '기타'}:{data.link}</Text>)}
+      </InputTouchWithLabel>
       <Text style={TextStyles.labelBold}>제공 서비스</Text>
-          <ServiceWrapper>
-            <Service onPress={() => {
-              Alert.alert('비건 카테고리', '',
-                [
-                  {
-                    text: '비건',
-                    onPress: () => setForm({ ...form, vegan_category: '비건' }),
-                  },
-                  {
-                    text: '락토',
-                    onPress: () => setForm({ ...form, vegan_category: '락토' }),
-                  },
-                  {
-                    text: '오보',
-                    onPress: () => setForm({ ...form, vegan_category: '오보' }),
-                  },
-                  {
-                    text: '페스코',
-                    onPress: () => setForm({ ...form, vegan_category: '페스토' }),
-                  },
-                  {
-                    text: '폴로',
-                    onPress: () => setForm({ ...form, vegan_category: '폴로' }),
-                  },
-                  {
-                    text: '그 외',
-                    onPress: () => setForm({ ...form, vegan_category: '그 외' }),
-                  },
-                  {
-                    text: '없음',
-                    onPress: () => setForm({ ...form, vegan_category: null }),
-                    style: 'cancel'
-                  }
-                ]
-              )
-            }} selected={form.vegan_category != null}><Text style={form.vegan_category != null && TextStyles.serviceSelected}>비건카테고리 : {form.vegan_category != null ? form.vegan_category : '없음'}</Text></Service>
-            <Service onPress={() => { setForm({ ...form, reusable_con_category: !form.reusable_con_category }) }} selected={form.reusable_con_category}><Text style={form.reusable_con_category && TextStyles.serviceSelected}>용기 내</Text></Service>
-            <Service onPress={() => { setForm({ ...form, pet_category: !form.pet_category }) }} selected={form.pet_category}><Text style={form.pet_category && TextStyles.serviceSelected}>반려동물 출입</Text></Service>
-          </ServiceWrapper>
-          <Text style={TextStyles.labelBold}>이벤트</Text>
-          <ServiceWrapper>
-            <Service onPress={() => { setForm({ ...form, tumblur_category: !form.tumblur_category }) }} selected={form.tumblur_category}><Text style={form.tumblur_category && TextStyles.serviceSelected}>텀블러 할인</Text></Service>
-          </ServiceWrapper>
+      <ServiceWrapper>
+        <ModalSelector
+          ref={selectorHourRef}
+          labelExtractor={item => item.type} data={vegan_category}
+          cancelText='취소' cancelTextStyle={{ fontSize: 14 }} cancelContainerStyle={{ width: 300, alignSelf: 'center' }}
+          optionContainerStyle={{ width: 300, alignSelf: 'center' }} optionTextStyle={{ color: "#000000", fontSize: 14 }}
+          selectStyle={{ display: 'none' }}
+          onChange={(option) => { (option.type == '없음' ? setForm({ ...form, vegan_category: null }) : setForm({ ...form, vegan_category: option.type })) }}
+        />
+        <Service selected={form.vegan_category != null}
+          onPress={() => { if (selectorHourRef.current) selectorHourRef.current.open(); }}>
+          <Text style={form.vegan_category != null && TextStyles.serviceSelected}>비건카테고리 : {form.vegan_category != null ? form.vegan_category : '없음'}</Text>
+        </Service>
+        <Service selected={form.reusable_con_category}
+          onPress={() => { setForm({ ...form, reusable_con_category: !form.reusable_con_category }) }}>
+          <Text style={form.reusable_con_category && TextStyles.serviceSelected}>용기 내</Text>
+        </Service>
+        <Service selected={form.pet_category}
+          onPress={() => { setForm({ ...form, pet_category: !form.pet_category }) }}>
+          <Text style={form.pet_category && TextStyles.serviceSelected}>반려동물 출입</Text>
+        </Service>
+      </ServiceWrapper>
+      <Text style={TextStyles.labelBold}>이벤트</Text>
+      <ServiceWrapper>
+        <Service onPress={() => { setForm({ ...form, tumblur_category: !form.tumblur_category }) }} selected={form.tumblur_category}><Text style={form.tumblur_category && TextStyles.serviceSelected}>텀블러 할인</Text></Service>
+      </ServiceWrapper>
       <Submit onPress={uploadPlace}>
         <Text style={TextStyles.submit}>장소 제보하기</Text>
       </Submit>
@@ -309,52 +320,15 @@ export default function PlaceFormUser({ setPlaceformModal }: { setPlaceformModal
         />
       </Modal>
       <Modal visible={hourModal}>
-        <View style={{ height: '100%' }}>
-          <Header color='#75E59B'>
-            <Text style={TextStyles.header}>영업시간</Text>
-            <TouchableOpacity onPress={() => { setHourModal(false) }}>
-              <Close color={'#FFFFFF'} />
-            </TouchableOpacity>
-          </Header>
-          <Section>
-            <SectionHalf>
-              <Text style={TextStyles.hourtitle}>영업시간</Text>
-              {
-                open_hours.map((data) =>
-                  <View style={{ display: "flex", flexDirection: 'row', width: '100%', alignItems: 'center', justifyContent: 'space-between', marginVertical: 10 }}>
-                    <Text style={TextStyles.hour}>{data.day}</Text>
-                    <TextInput style={{ width: '75%', height: 45, textAlign: 'center' }}
-                      onChangeText={(e) => { setForm({ ...form, [data.name]: e }) }}
-                      placeholder='00:00 ~ 00:00' value={form[data.name]}
-                    />
-                  </View>
-                )
-              }
-            </SectionHalf>
-            <SectionHalf>
-              <Text style={TextStyles.hourtitle}>브레이크타임</Text>
-              <TextInput style={{ width: '100%', height: 45, textAlign: 'center', marginVertical: 10 }}
-                onChangeText={(e) => { setForm({ ...form, etc_hours: e }) }}
-                inputMode='numeric'
-                placeholder='00:00 ~ 00:00' />
-            </SectionHalf>
-          </Section>
-        </View>
+        <HourModal form={form} setForm={setForm} setHourModal={setHourModal} />
+      </Modal>
+      <Modal visible={snsModal}>
+        <SNSModal setSNSModal={setSNSModal} setSNSList={setSNSList} snsList={snsList} selectorSNSRef={selectorSNSRef} snsType={snsType} />
       </Modal>
     </ScrollView>
   )
 }
-
 const TextStyles = StyleSheet.create({
-  hourtitle: {
-    fontWeight: "700",
-    textAlign: 'center',
-  },
-  hour: {
-    fontSize: 16,
-    width: '25%',
-    textAlign: 'center'
-  },
   label: {
     fontSize: 15,
     marginTop: 5,
@@ -381,5 +355,4 @@ const TextStyles = StyleSheet.create({
     color: "#FFFFFF",
     fontWeight: "700",
   },
-
 })
