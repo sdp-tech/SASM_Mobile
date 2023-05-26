@@ -55,6 +55,23 @@ const Service = styled.TouchableOpacity<{ selected: boolean | null }>`
   padding-horizontal: 10px;
   background-color: ${props => props.selected ? '#75E59B' : '#FFFFFF'};
 `
+const ServiceWrapper = styled.View`
+  display: flex;
+  flex-flow: row wrap;
+  align-items: center;
+  justify-content: space-around;
+  margin-vertical: 20px;
+`
+const Service = styled.TouchableOpacity<{ selected: boolean | null }>`
+  width: 45%;
+  height: 50px;
+  display: flex;
+  justify-content: center;
+  border: 1px solid #B7B7B7;
+  margin-vertical: 5px;
+  padding-horizontal: 10px;
+  background-color: ${props => props.selected ? '#75E59B' : '#FFFFFF'};
+`
 interface InputProps extends TextInputProps {
   label: string;
   onChangeText: (e: string) => void;
@@ -187,6 +204,7 @@ export default function PlaceFormUser({ setPlaceformModal, snsType }: { setPlace
   const uploadPlace = async () => {
     const formData = new FormData();
     for (let i of Object.keys(form)) {
+      if(i=='snsList') continue;
       formData.append(`${i}`, `${form[i]}`);
     }
     formData.append(`rep_pic`, {
