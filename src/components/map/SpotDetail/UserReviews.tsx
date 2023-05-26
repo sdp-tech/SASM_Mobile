@@ -11,7 +11,7 @@ const ReviewBox = styled.View`
   padding-vertical: 15px;
 `
 const TextBox = styled.View`
-  padding-left: 20px;
+  padding-left: 27px;
   margin-top: 10px;
 `
 
@@ -38,10 +38,10 @@ export default function UserReviews({ reviewData, rerender, category }: UserRevi
             <CardView
               data={reviewData.photos}
               renderItem={({ item }: any) => <Image source={{ uri: item.imgfile }} style={{ height: 150, width: 200, marginHorizontal: 5 }} />}
-              gap={10}
-              offset={10}
-              pageWidth={200}
-              height={150}
+              gap={8}
+              offset={19}
+              pageWidth={194}
+              height={125}
               dot={false}
             />
           }
