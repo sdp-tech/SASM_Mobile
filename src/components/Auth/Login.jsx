@@ -1,9 +1,11 @@
 import React, { useState } from 'react';
 import { Platform, Text, TouchableOpacity, View, TextInput, StyleSheet, SafeAreaView } from "react-native";
 import styled, { css } from 'styled-components/native';
-
+import { NavigationScreenProp } from 'react-navigation';
 import { setNickname, setAccessToken, setRefreshToken } from '../../common/storage';
 import { Request } from '../../common/requests'
+import { useNavigation } from '@react-navigation/native';
+import { MyPageParams } from '../../pages/MyPage';
 
 const SignUpButton = styled.View`
     width: 300px;
@@ -37,7 +39,8 @@ const LoginInput = styled.TextInput`
     box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
 `;
 
-const LoginScreen = ({ navigation }) => {
+const LoginScreen = () => {
+    const naviagation = useNavigation();
     const [form, setForm] = useState({
         email: {
             value: '',
@@ -77,7 +80,7 @@ const LoginScreen = ({ navigation }) => {
             setNickname(nickname)
             setAccessToken(accessToken)
             setRefreshToken(refreshToken)
-            navigation.goBack()
+            naviagation.navigate('mypage');
         } else {
             alert('아이디 또는 비밀번호가 일치하지 않습니다.');
         }
