@@ -5,17 +5,10 @@ import { TabView, TabBar, SceneMap } from "react-native-tab-view";
 import { Request } from '../../common/requests';
 import MyPlace from './components/myplace/MyPlace';
 import MyStory from './components/mystory/MyStory';
+import MyCuration from './components/mycuration/MyCuration';
 import { MyPageParams } from '../../pages/MyPage';
 import Profile from '../../assets/img/MyPage/Profile.svg';
 import Settings from '../../assets/img/MyPage/Settings.svg';
-
-const MyCuration = () => {
-  return (
-    <View>
-      <Text>큐레이션</Text>
-    </View>
-  )
-}
 
 const MyCommunity = () => {
   return (
@@ -25,7 +18,7 @@ const MyCommunity = () => {
   )
 }
 
-const MyPageTabView = ({ navigation, route }: MyPageParams) => {
+const MyPageTabView = ({ navigation }: MyPageParams) => {
   const [nickname, setNickname] = useState<string>("");
   const [intro, setIntro] = useState<string>("");
   const [follow, setFollow] = useState({
@@ -34,7 +27,7 @@ const MyPageTabView = ({ navigation, route }: MyPageParams) => {
   })
   const [img, setImg] = useState<string>("");
   const layout = useWindowDimensions();
-  const [index, setIndex] = useState(0);
+  const [index, setIndex] = useState<number>(0);
   const [routes] = useState([
     { key: "place", title: "장소" },
     { key: "story", title: "스토리" },
@@ -43,12 +36,18 @@ const MyPageTabView = ({ navigation, route }: MyPageParams) => {
   ]);
   const request = new Request();
 
-  const renderScene = SceneMap({
-    place: MyPlace,
-    story: MyStory,
-    curation: MyCuration,
-    community: MyCommunity,
-  })
+  const renderScene = ({ route }: any) => {
+    switch (route.key) {
+      case "place":
+        return <MyPlace />;
+      case "story":
+        return <MyStory navigation={navigation} />;
+      case "curation":
+        return <MyCuration navigation={navigation}/>;
+      case "community":
+        return <MyCommunity />;
+    }
+  }
 
   const getProfile = async () => {
     const response = await request.get(`/users/me/`,{},{});
@@ -67,7 +66,14 @@ const MyPageTabView = ({ navigation, route }: MyPageParams) => {
         <View style={{paddingVertical: 10, marginLeft: 10}}>
           <Text style={{fontWeight: "700", fontSize: 16}}>{nickname}</Text>
           <Text style={{fontWeight: "400", fontSize: 12, marginTop: 10}}>자기소개</Text>
-          <Text style={{fontWeight: "400", fontSize: 10, color: "#848484", marginTop: 10}}>팔로워 {follow.follower} | 팔로잉 {follow.following}</Text>
+          <View style={{flexDirection: "row"}}>
+            <TouchableOpacity onPress={() => {navigation.navigate('follower')}}>
+              <Text style={{fontWeight: "400", fontSize: 10, color: "#848484", marginTop: 10}}>팔로워 {follow.follower}  |  </Text>
+            </TouchableOpacity>
+            <TouchableOpacity onPress={() => {navigation.navigate('following')}}>
+              <Text style={{fontWeight: "400", fontSize: 10, color: "#848484", marginTop: 10}}>팔로잉 {follow.following}</Text>
+            </TouchableOpacity>
+          </View>
         </View>
       </View>
     )
@@ -76,10 +82,10 @@ const MyPageTabView = ({ navigation, route }: MyPageParams) => {
   return (
     <SafeAreaView style={{backgroundColor: 'white', flex: 1}}>
       <View style={{flexDirection: "row", paddingHorizontal: 20, paddingVertical: 10}}>
-        <TouchableOpacity style={{}} onPress={() => {navigation.navigate('user')}}>
+        <TouchableOpacity onPress={() => {navigation.navigate('user')}}>
           <Profile />
         </TouchableOpacity>
-        <TouchableOpacity style={{marginLeft: 300, justifyContent: 'center'}}>
+        <TouchableOpacity style={{marginLeft: 300}} onPress={() => {navigation.navigate('options')}}>
           <Settings />
         </TouchableOpacity>
       </View>
@@ -92,6 +98,10 @@ const MyPageTabView = ({ navigation, route }: MyPageParams) => {
         renderTabBar={props => (
           <TabBar
             {...props}
+            indicatorContainerStyle={{
+              borderBottomColor: "#848484",
+              borderBottomWidth: 0.25
+            }}
             indicatorStyle={{
               backgroundColor: "#67D393",
             }}

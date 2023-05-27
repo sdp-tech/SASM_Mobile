@@ -11,16 +11,13 @@ import Selector4 from "../../../../assets/img/Category/Selector4.svg";
 import Selector5 from "../../../../assets/img/Category/Selector5.svg";
 import Heart from '../../../../common/Heart';
 
-interface ItemCardProps {
+interface ItemCardProps extends MyPageParams {
   props: any;
-  navigation: any;
 }
 
 const ItemCard = ({props, navigation}: ItemCardProps) => {
   const { width, height } = Dimensions.get("window");
   const [like, setLike] = useState(false);
-  //const [cookies, setCookie, removeCookie] = useCookies(["name"]);
-  const [loading, setLoading] = useState(true);
   const request = new Request();
 
   // 좋아요 클릭 이벤트
@@ -49,7 +46,7 @@ const ItemCard = ({props, navigation}: ItemCardProps) => {
         source={{ uri: props.rep_pic }}
         style={{width: 170, height: 220}}
       >
-        <View style={{width: 170, height: 220, backgroundColor: 'rgba(0,0,0,0.2)', padding: 5}}>
+        <View style={{width: 170, height: 220, backgroundColor: 'rgba(0,0,0,0.3)', padding: 10}}>
           <View style={{flex: 1}}>
             <Text style={textStyles.title}>{props.title}</Text>
             <Text style={textStyles.place_name}>{props.place_name}</Text>
@@ -59,8 +56,8 @@ const ItemCard = ({props, navigation}: ItemCardProps) => {
       </ImageBackground>
       <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'flex-end', marginTop: 5}}>
         <Text style={[textStyles.writer, {color: props.verified ? '#209DF5' : '#89C77F'}]}>{props.verified ? ('Editor') : ('User')}</Text>
-        <Text style={textStyles.writer}>{props.nickname} 사슴</Text>
-        <View style={{marginLeft: 100}}>{category()}</View>
+        <Text style={textStyles.writer}> {props.nickname}</Text>
+        <View style={{flex: 1, alignItems: 'flex-end'}}>{category()}</View>
       </View>
     </TouchableOpacity>
   );
