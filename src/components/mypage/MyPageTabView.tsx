@@ -9,6 +9,8 @@ import MyCuration from './components/mycuration/MyCuration';
 import { MyPageParams } from '../../pages/MyPage';
 import Profile from '../../assets/img/MyPage/Profile.svg';
 import Settings from '../../assets/img/MyPage/Settings.svg';
+import { getAccessToken } from '../../common/storage';
+import { useFocusEffect } from '@react-navigation/native';
 
 const MyCommunity = () => {
   return (
@@ -55,9 +57,15 @@ const MyPageTabView = ({ navigation }: MyPageParams) => {
     setImg(response.data.data.profile_image);
   }
 
-  useEffect(() => {
-    getProfile();
-  })
+  const checkIsLogin = async () => {
+    const token = await getAccessToken();
+    if(!token) navigation.navigate('login');
+    else getProfile();
+  }
+
+  useFocusEffect(useCallback(()=>{
+    checkIsLogin();
+  }, []))
 
   const ProfileSection = () => {
     return (
