@@ -58,7 +58,7 @@ const StoryDetailBox = ({navigation, id}: StoryDetailProps) => {
     const request = new Request();
 
     const checkUser = async () => {
-        const response = await request.get(`/users/me/`,{},{});
+        const response = await request.get(`/mypage/me/`,{},{});
         setEmail(response.data.data.email);
         console.log('email', email);
     }
@@ -71,7 +71,7 @@ const StoryDetailBox = ({navigation, id}: StoryDetailProps) => {
     const handlePageGoToMap = async () => {
         const response = await request.get('/stories/go_to_map/', {id: id});
         console.log(response)
-        navigation.navigate('맵', {id: response.data.data.id});
+        navigation.navigate('맵', {coor: {latitude: response.data.data.latitude, longitude: response.data.data.longitude}});
     }
 
     const markup = {
