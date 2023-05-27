@@ -129,6 +129,7 @@ const TextStyles = StyleSheet.create({
   content: {
     color: '#FFFFFF',
     fontSize: 12,
+    lineHeight: 18,
     marginBottom: 10
   },
   button: {

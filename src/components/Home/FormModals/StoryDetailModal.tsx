@@ -13,6 +13,9 @@ export default function StoryDetailModal({ id }: { id: number }) {
     id: 0,
     title: '',
     created: '',
+    profile: '',
+    rep_pic: '',
+    extra_pics: [],
     story_review: '',
     tag: '',
     story_like: false,
@@ -22,8 +25,10 @@ export default function StoryDetailModal({ id }: { id: number }) {
     views: 0,
     html_content: '',
     writer: '',
-    writer_is_verified: '',
     nickname: '',
+    map_image: '',
+    writer_is_verified: '',
+    preview: ''
   });
   const request = new Request();
   const markup = {
@@ -57,9 +62,9 @@ export default function StoryDetailModal({ id }: { id: number }) {
               <View style={{ flex: 6, justifyContent: 'center' }}>
                 <Text style={StoryTextStyles.title}>{detailData.title}</Text>
                 <Text style={StoryTextStyles.semi_title}>{detailData.story_review}</Text>
-                <Text style={StoryTextStyles.date}>{detailData.created.slice(0,10).replace(/-/gi, '.')} 작성</Text>
+                <Text style={StoryTextStyles.date}>{detailData.created.slice(0, 10).replace(/-/gi, '.')} 작성</Text>
               </View>
-              <View style={{display:'flex', alignItems:'center' }}>
+              <View style={{ display: 'flex', alignItems: 'center' }}>
                 <View style={{ width: 50, height: 50, borderRadius: 60, backgroundColor: '#CCCCCC' }}></View>
                 <View style={{ position: 'absolute', width: 34, height: 12, backgroundColor: detailData.writer_is_verified ? '#209DF5' : '#89C77F', borderRadius: 10, top: 42, left: 8.5 }}>
                   <Text style={StoryTextStyles.verified}>{detailData!.writer_is_verified ? 'Editor' : 'User'}</Text>
@@ -84,11 +89,11 @@ const StoryTextStyles = StyleSheet.create({
   title: {
     fontSize: 16,
     fontWeight: '700',
-    marginVertical: 5
+    marginVertical: 5,
   },
   semi_title: {
     fontSize: 12,
-    fontWeight: '400'
+    fontWeight: '400',
   },
   date: {
     fontSize: 10,
@@ -113,9 +118,9 @@ const StoryTextStyles = StyleSheet.create({
   verified: {
     fontSize: 8,
     fontWeight: '600',
-    color: 'white',
+    color: '#FFFFFF',
     alignSelf: 'center',
-    justifyContent: 'center'
+    justifyContent: 'center',
   },
   writer: {
     fontSize: 8,
@@ -125,6 +130,6 @@ const StoryTextStyles = StyleSheet.create({
   subject: {
     fontSize: 14,
     fontWeight: '500',
-    margin: 15
+    margin: 15,
   }
 })

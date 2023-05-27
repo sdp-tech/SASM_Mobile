@@ -24,23 +24,19 @@ const ImageBox = styled.View`
   width: 65%;
   display: flex;
   flex-direction: row;
+  justify-content: space-between;
 `
 const TextBox = styled.View`
   width: 35%;
-  padding: 10px;
+  padding-horizontal: 30px;
+  padding-vertical: 10px;
   display: flex;
   justify-content: space-between;
-  padding-left: 10px;
   flex: 1;
-`
-const TitleBox = styled.View`
-  border-color: #999999;
-  border-bottom-width: 1px;
 `
 
 export default function ItemCard({ placeData, setSheetMode, setDetailData, setCenter }: ItemCardProps): JSX.Element {
   const request = new Request();
-  const [like, setLike] = useState<boolean>(false);
   const getDetail = async () => {
     const response_detail = await request.get('/places/place_detail/', { id: placeData.id });
     setDetailData(response_detail.data.data);
@@ -51,19 +47,11 @@ export default function ItemCard({ placeData, setSheetMode, setDetailData, setCe
     setSheetMode(false);
   }
 
-  const toggleLike = async () => {
-    const response = await request.post('/places/place_like/', { id: placeData.id });
-    setLike(!like);
-  }
-  useEffect(() => {
-    if (placeData.place_like == "ok") setLike(true);
-    else setLike(false);
-  }, [placeData]);
   return (
     <StyledCard onPress={getDetail}>
       <TextBox>
         <View>
-          <Text style={TextStyle.placeName}>{placeData.place_name}</Text>
+          <Text numberOfLines={2} style={TextStyle.placeName}>{placeData.place_name}</Text>
           <Text style={TextStyle.category}>{placeData.category}</Text>
         </View>
         <View>
@@ -76,9 +64,9 @@ export default function ItemCard({ placeData, setSheetMode, setDetailData, setCe
         </View>
       </TextBox>
       <ImageBox>
-        <Image source={{ uri: placeData.rep_pic }} style={{ width: '33%', height: '100%' }} />
-        <Image source={{ uri: placeData.extra_pic[0] }} style={{ width: '33%', height: '100%' }} />
-        <Image source={{ uri: placeData.extra_pic[1] }} style={{ width: '33%', height: '100%' }} />
+        <Image source={{ uri: placeData.rep_pic }} style={{ width: '33.3333%', height: '100%' }} />
+        <Image source={{ uri: placeData.extra_pic[0] }} style={{ width: '33.3333%', height: '100%' }} />
+        <Image source={{ uri: placeData.extra_pic[1] }} style={{ width: '33.3333%', height: '100%' }} />
       </ImageBox>
     </StyledCard>
   )

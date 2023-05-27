@@ -88,7 +88,7 @@ const ServiceWrapper = styled.View`
   justify-content: space-around;
   margin-vertical: 20px;
 `
-const Service = styled.TouchableOpacity<{ selected: boolean }>`
+const Service = styled.TouchableOpacity<{ selected: boolean | null }>`
   width: 45%;
   height: 50px;
   display: flex;

@@ -25,7 +25,6 @@ const InputTitle = styled.TextInput`
   position: absolute;
   bottom: 20px;
   width: 100%;
-  height: 50px;
   color: #000000;
   font-size: 32px;
   padding-horizontal: 15px;
@@ -134,6 +133,10 @@ export default function CurationForm({ navigation, route }: StackScreenProps<Hom
       {
         text: '앨범',
         onPress: () => { launchImageLibrary({ mediaType: 'photo', selectionLimit: 1, maxHeight: height / 2, maxWidth: width }, response => response.didCancel != true && setRep_pic(response.assets)) }
+      },
+      {
+        text: '취소',
+        style: 'destructive'
       }
     ])
   }
@@ -185,7 +188,7 @@ export default function CurationForm({ navigation, route }: StackScreenProps<Hom
 const TextStyles = StyleSheet.create({
   List: {
     fontSize: 16,
-    fontWeight: '600'
+    fontWeight: '600',
   },
   rep: {
     position: 'absolute',

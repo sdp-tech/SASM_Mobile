@@ -1,6 +1,6 @@
 import { StackScreenProps } from '@react-navigation/stack';
 import React, { useCallback, useEffect, useReducer, useRef, useState } from 'react';
-import { Dimensions, SafeAreaView, ScrollView, Text, TouchableOpacity, View } from 'react-native';
+import { Dimensions, Platform, SafeAreaView, ScrollView, StatusBar, Text, TouchableOpacity, View } from 'react-native';
 import { FlatList } from 'react-native-gesture-handler';
 import { HomeStackParams } from '../../pages/Home';
 import SearchBar from '../../common/SearchBar';
@@ -29,7 +29,7 @@ export default function CurationList({ navigation, route }: StackScreenProps<Hom
   const request = new Request();
 
   const searchCuration = async () => {
-    if (search != '' || route.params.data.length==0) {
+    if (search != '' || route.params.data.length == 0) {
       const response_search = await request.get('/curations/curation_search/', { search: search });
       setList(response_search.data.data);
     }
@@ -43,23 +43,27 @@ export default function CurationList({ navigation, route }: StackScreenProps<Hom
   }, []))
 
   useDidMountEffect(searchCuration, [search])
+  
   return (
     <SafeAreaView style={{ backgroundColor: "#FFFFFF", flex: 1 }}>
-      <TouchableOpacity onPress={navigation.goBack} style={{ position: 'absolute', top: 55 }}>
-        <Arrow width={20} height={20} transform={[{ rotateY: '180deg' }]} />
-      </TouchableOpacity>
-      <SearchBar
-        textAlign='center'
-        placeholder='큐레이션 검색'
-        search={search}
-        setSearch={setSearch}
-        setPage={() => { }}
-        style={{ width: '80%', backgroundColor: '#F1F1F1', marginBottom: 20 }}
-      ></SearchBar>
+      <View style={{ display: 'flex', flexDirection: 'row', alignItems: 'center', marginTop: Platform.OS == 'android' ? 10 : 0 }}>
+        <TouchableOpacity onPress={navigation.goBack}>
+          <Arrow width={20} height={20} transform={[{ rotateY: '180deg' }]} />
+        </TouchableOpacity>
+        <SearchBar
+          textAlign='center'
+          placeholder='큐레이션 검색'
+          search={search}
+          setSearch={setSearch}
+          setPage={() => { }}
+          style={{ width: '80%', backgroundColor: '#F1F1F1' }}
+        />
+      </View>
       <FlatList
+        contentContainerStyle={{ padding: 5 }}
         numColumns={2}
         data={list}
-        renderItem={({ item }) => <SearchItemCard style={{ width: width / 2 - 10, height: height / 3, margin: 5 }} data={item} />}
+        renderItem={({ item }) => <SearchItemCard style={{ width: width / 2 - 15, height: height / 3, margin: 5 }} data={item} />}
         ListHeaderComponent={<>{list.length == 0 && <View style={{ marginLeft: 15 }}><Text style={{ fontSize: 16, fontWeight: '600' }}>큐레이션이 없습니다.</Text></View>}</>}
       />
       <CurationPlusButton />

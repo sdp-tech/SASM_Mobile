@@ -9,16 +9,6 @@ import { HomeStackParams } from '../../pages/Home';
 const CardWrapper = styled.TouchableOpacity`
   position: relative;
 `
-const CardTitle = styled.Text`
-  position: absolute;
-  width: 90%;
-  left: 10px;
-  bottom: 10px;
-  color: #FFFFFF;
-  font-weight: 600;
-  font-size: 16px;
-`
-
 interface ItemCardProps {
   style: TextStyle;
   data: CurationProps;
