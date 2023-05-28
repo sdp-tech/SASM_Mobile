@@ -19,6 +19,10 @@ export default function MapScreen({ navigation, route }: MapScreenProps): JSX.El
 	useEffect(() => {
 		requestPermission().then(result => {
 			if (result === "granted") {
+				if (route.params.coor) {
+					setNowCoor({ latitude: route.params.coor.latitude, longitude: route.params.coor.longitude });
+					setLoading(false);
+				} else {
 				Geolocation.getCurrentPosition(
 					pos => {
 						setNowCoor({ latitude: pos.coords.latitude, longitude: pos.coords.longitude });
@@ -33,7 +37,7 @@ export default function MapScreen({ navigation, route }: MapScreenProps): JSX.El
 						timeout: 3600,
 						maximumAge: 3600,
 					},
-				);
+				)}
 			}
 		});
 	}, []);
