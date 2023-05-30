@@ -3,7 +3,7 @@ import DropDownPicker from 'react-native-dropdown-picker';
 
 interface DropDownProps {
   items: any[];
-  isBorder: boolean;
+  isBorder?: boolean;
   value: number;
   setValue: Dispatch<SetStateAction<number>>;
 }
