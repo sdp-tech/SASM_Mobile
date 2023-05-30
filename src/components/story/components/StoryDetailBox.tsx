@@ -58,7 +58,7 @@ const StoryDetailBox = ({navigation, id}: StoryDetailProps) => {
     const request = new Request();
 
     const checkUser = async () => {
-        const response = await request.get(`/users/me/`,{},{});
+        const response = await request.get(`/mypage/me/`,{},{});
         setEmail(response.data.data.email);
         console.log('email', email);
     }
@@ -71,7 +71,7 @@ const StoryDetailBox = ({navigation, id}: StoryDetailProps) => {
     const handlePageGoToMap = async () => {
         const response = await request.get('/stories/go_to_map/', {id: id});
         console.log(response)
-        navigation.navigate('맵', {id: response.data.data.id});
+        navigation.navigate('맵', {coor: {latitude: response.data.data.latitude, longitude: response.data.data.longitude}});
     }
 
     const markup = {
@@ -241,7 +241,7 @@ const StoryDetailBox = ({navigation, id}: StoryDetailProps) => {
                     }}
                     ListFooterComponent = {
                     <>
-                        <TouchableOpacity style={{alignItems: 'flex-end', marginRight: 30, marginTop: 10}} onPress={() => {navigation.navigate('CommentList', { id: id, comment: comment, reRenderScreen: reRenderScreen })}}>
+                        <TouchableOpacity style={{alignItems: 'flex-end', marginRight: 30, marginTop: 10}} onPress={() => {navigation.navigate('CommentList', { id: id, comment: comment, reRenderScreen: reRenderScreen, email: email })}}>
                             <Text>더보기{'>'}</Text>
                         </TouchableOpacity>
                         <View style={{borderBottomColor: '#D9D9D9', width: width, borderBottomWidth: 1, marginTop: 20}} />

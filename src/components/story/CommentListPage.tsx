@@ -11,6 +11,7 @@ const CommentListPage = ({ navigation, route }: StoryProps) => {
   const id = route.params.id;
   const reRenderScreen = route.params.reRenderScreen;
   const comment = route.params.comment;
+  const email = route.params.email;
 
   return (
     <SafeAreaView style={{flex: 1, backgroundColor: 'white'}}>
@@ -26,7 +27,7 @@ const CommentListPage = ({ navigation, route }: StoryProps) => {
         data = {comment}
         renderItem = {({item}) => { 
           return (
-            <Comment data = {item} reRenderScreen = {reRenderScreen}/>
+            <Comment data = {item} reRenderScreen = {reRenderScreen} email={email}/>
           )
       }}
       />
