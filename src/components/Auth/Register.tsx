@@ -1,24 +1,23 @@
 import { StackScreenProps } from '@react-navigation/stack';
-import React, { useState } from 'react';
-import { ScrollView, Text, TextInput, TouchableOpacity, View, Alert } from 'react-native';
+import React, { useEffect, useState } from 'react';
+import { ScrollView, Text, TextInput, TouchableOpacity, View, Alert, SafeAreaView, StyleSheet, Dimensions } from 'react-native';
 import styled from 'styled-components/native';
 import { Request } from '../../common/requests';
 import InputWithMessage from '../mypage/components/InputWithMessage';
 import { MyPageProps } from '../../pages/MyPage';
+import InputWithLabel from '../../common/InputWithLabel';
+import Arrow from "../../assets/img/common/Arrow.svg";
+import DropDown from '../../common/DropDown';
+import DatePicker from '../../common/DatePicker';
 
-const StyledInput = styled.TextInput`
-  height: 30px;
-  width: 200px;
-  border-color: black;
-  border-width: 1px;
-  background-color: #FFFFFF;
-`
+const { width, height } = Dimensions.get('window');
 
 interface FormTypes {
   email: string;
   password: string;
   passwordConfirm: string;
   nickname: string;
+  birthdate: string;
 }
 
 interface CheckTypes {
@@ -32,6 +31,7 @@ export default function RegisterScreen({ navigation, route }: StackScreenProps<M
     password: "",
     passwordConfirm: "",
     nickname: "",
+    birthdate: ''
   })
   const [check, setCheck] = useState<CheckTypes>({
     email: false,
@@ -46,7 +46,7 @@ export default function RegisterScreen({ navigation, route }: StackScreenProps<M
   };
   // 이메일 체크
   let emailCheck: boolean = false;
-  if (isEmail(form.email) || form.email === "") {
+  if (isEmail(form.email) || form.email == "") {
     emailCheck = true;
   }
   // 비밀번호 확인 체크
@@ -70,15 +70,18 @@ export default function RegisterScreen({ navigation, route }: StackScreenProps<M
     Alert.alert(response_check.data.data);
   }
   const tryRegister = async () => {
-    if (form.email.length * form.nickname.length * form.passwordConfirm.length == 0 || !passwordCheck || !check.email || !check.nickname) {
+    if (form.email.length * form.nickname.length * form.passwordConfirm.length == 0 || !passwordCheck || !emailCheck || !check.email || !check.nickname) {
       if (form.email.length * form.nickname.length * form.passwordConfirm.length == 0) {
         Alert.alert('빈 칸을 입력해주세요', '', [{ text: '취소', style: 'destructive' }]);
       }
-      else if (!passwordCheck) {
-        Alert.alert('입력한 비밀번호와 일치하지 않습니다', '', [{ text: '취소', style: 'destructive' }]);
+      else if (!emailCheck) {
+        Alert.alert('이메일 형식이 올바르지 않습니다', '', [{ text: '취소', style: 'destructive' }]);
       }
       else if (!check.email) {
         Alert.alert('이메일 중복확인을 해주세요', '', [{ text: '취소', style: 'destructive' }]);
+      }
+      else if (!passwordCheck) {
+        Alert.alert('입력한 비밀번호와 일치하지 않습니다', '', [{ text: '취소', style: 'destructive' }]);
       }
       else if (!check.nickname) {
         Alert.alert('닉네임 중복확인을 해주세요', '', [{ text: '취소', style: 'destructive' }]);
@@ -90,42 +93,99 @@ export default function RegisterScreen({ navigation, route }: StackScreenProps<M
     }
   }
   return (
-    <View style={{ flex: 1 }}>
-      <ScrollView>
-        <InputWithMessage
-          label='메일 주소'
-          style={emailCheck ? { width: '65%' } : { width: '65%', backgroundColor: "#F9E3E3" }}
-          onPress={() => { checkRepetition("email", form.email) }}
-          placeholder='이메일'
+    <SafeAreaView style={{ backgroundColor: '#FFFFFF', flex: 1 }}>
+      <View style={{ position: 'relative', marginBottom: 30 }}>
+        <Text style={TextStyles.title}>로그인</Text>
+        <TouchableOpacity style={{ left: 10, marginBottom: 30, position: 'absolute' }} onPress={() => { navigation.goBack() }}>
+          <Arrow width={20} height={20} transform={[{ rotateY: '180deg' }]} />
+        </TouchableOpacity>
+      </View>
+      <View style={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
+        <InputWithLabel
+          containerStyle={{ width: '75%', paddingLeft: width * 0.15 / 8 }}
+          label='이메일'
+          placeholder='이메일을 입력해주세요'
           onChangeText={(text) => { setForm({ ...form, email: text }); setCheck({ ...check, email: false }) }}
-          message={emailCheck ? "" : "이메일 형식이 올바르지 않습니다"}
-          buttonText="중복확인"
+          isRequired={true}
+          isAlert={!emailCheck}
+          alertLabel='이메일 형식이 올바르지 않습니다'
+          inputMode='email'
         />
-        <InputWithMessage
-          style={{ width: '100%' }}
-          label='비밀번호'
-          placeholder='비밀번호'
-          onChangeText={(text) => { setForm({ ...form, password: text }) }}
-          secureTextEntry={true}
-        />
-        <InputWithMessage
-          label='비밀번호 확인'
-          style={passwordCheck ? { width: '100%' } : { width: '100%', backgroundColor: "#F9E3E3" }}
-          placeholder='비밀번호'
-          onChangeText={(text) => { setForm({ ...form, passwordConfirm: text }) }}
-          message={passwordCheck ? "" : "입력한 비밀번호와 일치하지 않습니다"}
-          secureTextEntry={true}
-        />
-        <InputWithMessage
-          style={{ width: '65%' }}
+        <TouchableOpacity
+          style={{ width: '20%' }}
+          onPress={() => { checkRepetition("email", form.email) }}>
+          <Text style={TextStyles.button}>중복확인</Text>
+        </TouchableOpacity>
+      </View>
+      <InputWithLabel
+        isRequired={true}
+        label='비밀번호'
+        placeholder='비밀번호를 입력해주세요'
+        onChangeText={(text) => { setForm({ ...form, password: text }) }}
+        secureTextEntry={true}
+      />
+      <InputWithLabel
+        isRequired={true}
+        label='비밀번호 확인'
+        placeholder='비밀번호를 입력해주세요'
+        onChangeText={(text) => { setForm({ ...form, passwordConfirm: text }) }}
+        secureTextEntry={true}
+        isAlert={!passwordCheck}
+        alertLabel='입력한 비밀번호와 일치하지 않습니다'
+      />
+      <View style={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
+        <InputWithLabel
+          containerStyle={{ width: '75%', paddingLeft: width * 0.15 / 8 }}
           label='닉네임'
-          onPress={() => { checkRepetition("nickname", form.nickname) }}
-          placeholder='닉네임'
+          placeholder='닉네임을 입력해주세요'
           onChangeText={(text) => { setForm({ ...form, nickname: text }); setCheck({ ...check, nickname: false }) }}
-          buttonText="중복확인"
         />
-        <TouchableOpacity onPress={tryRegister}><Text>회원가입</Text></TouchableOpacity>
-      </ScrollView>
-    </View>
+        <TouchableOpacity
+          style={{ width: '20%' }}
+          onPress={() => { checkRepetition("nickname", form.nickname) }}>
+          <Text style={TextStyles.button}>중복확인</Text>
+        </TouchableOpacity>
+      </View>
+      <DatePicker
+        containerStyle={{ marginBottom: 200 }}
+        callback={(date) => { setForm({ ...form, birthdate: `${date.year}-${date.month}-${date.date}` }) }}
+        isBorder={true}
+        label={true}
+      />
+      <TouchableOpacity onPress={tryRegister}><Text style={TextStyles.submit}>지속가능한 공간 탐방하기</Text></TouchableOpacity>
+    </SafeAreaView>
   )
 }
+
+const TextStyles = StyleSheet.create({
+  button: {
+    alignSelf: 'center',
+    width: '100%',
+    textAlign: 'center',
+    padding: 10,
+    lineHeight: 14,
+    borderRadius: 17,
+    color: '#FFFFFF',
+    fontWeight: '700',
+    overflow: 'hidden',
+    backgroundColor: '#67D393'
+  },
+  title: {
+    fontSize: 20,
+    lineHeight: 28,
+    letterSpacing: -0.6,
+    fontWeight: '700',
+    alignSelf: 'center'
+  },
+  submit: {
+    alignSelf: 'center',
+    color: '#848484',
+    fontSize: 16,
+    lineHeight: 24,
+    letterSpacing: -0.6,
+    borderRadius: 12,
+    borderColor: '#848484',
+    borderWidth: 1,
+    paddingHorizontal: 10
+  }
+})

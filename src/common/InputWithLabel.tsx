@@ -21,9 +21,9 @@ interface InputProps extends TextInputProps {
 }
 
 
-export default function InputWithLabel({ isAlert, alertLabel, isRequired, containerStyle, label, onChangeText, placeholder, value, ...rest }: InputProps) {
+export default function InputWithLabel({ isAlert, alertLabel, isRequired, containerStyle, label, onChangeText, placeholder, value, ...rest }: InputProps): JSX.Element {
   return (
-    <View style={{ ...containerStyle, height:80, display: 'flex', alignItems: 'center', marginBottom: 30 }}>
+    <View style={{ ...containerStyle, height: 80, display: 'flex', alignItems: 'center' }}>
       <Text style={{ width: '85%', textAlign: 'left', fontSize: 12, lineHeight: 18, letterSpacing: -0.6 }}>
         {label}
         <Text style={{ color: '#FF4D00', lineHeight: 18 }}>{isRequired && '*'}</Text>
@@ -34,8 +34,9 @@ export default function InputWithLabel({ isAlert, alertLabel, isRequired, contai
         value={value}
         placeholder={placeholder}
         autoCapitalize={'none'}
+        spellCheck={false}
         onChangeText={onChangeText} {...rest} />
-      <Text style={{ width: '85%', fontSize:10, lineHeight:18, color:'#FF4D00'}}>{isAlert && alertLabel}</Text>
+      <Text style={{ width: '85%', fontSize: 10, lineHeight: 18, color: '#FF4D00' }}>{isAlert && alertLabel}</Text>
     </View>
   )
 }
