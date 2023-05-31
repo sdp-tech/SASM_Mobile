@@ -56,6 +56,8 @@ const StoryDetailBox = ({navigation, id}: StoryDetailProps) => {
     const [loading, setLoading] = useState<boolean>(true);
     const [refreshing, setRefreshing] = useState<boolean>(false);
     const [email, setEmail] = useState<string>('');
+    const [updateText, setUpdateText] = useState<string>('');
+    const [commentId, setCommentId] = useState<number>(0);
     const request = new Request();
 
     const checkUser = async () => {
@@ -99,6 +101,7 @@ const StoryDetailBox = ({navigation, id}: StoryDetailProps) => {
 
     const reRenderScreen = () => {
         setRefreshing(true);
+        setUpdateText('');
         setRefreshing(false);
     }
 
@@ -153,6 +156,12 @@ const StoryDetailBox = ({navigation, id}: StoryDetailProps) => {
             { cancelable: false }
         );
     }
+
+    const callback = (text: string, id: number) => {
+        setUpdateText(text);
+        setCommentId(id);
+        console.log(updateText);
+      }
 
     useEffect(() => {
         checkUser();
@@ -232,20 +241,19 @@ const StoryDetailBox = ({navigation, id}: StoryDetailProps) => {
                         <View style={{flexDirection: 'row'}}>
                             <Text style={textStyles.subject}>한줄평</Text>
                             <View style={{marginTop: 15}}><CommentIcon /></View>
+                            <TouchableOpacity style={{marginLeft: 260, marginTop: 15}} onPress={() => {navigation.navigate('CommentList', { id: id, email: email })}}>
+                                <Text style={{fontSize: 10}}>더보기{'>'}</Text>
+                            </TouchableOpacity>
                         </View>
-                        <WriteComment id = {id} reRenderScreen = {reRenderScreen}/>
+                        <WriteComment id = {id} reRenderScreen = {reRenderScreen} data={updateText} commentId={commentId} />
                     </>}
                     renderItem = {({item}) => { 
                         return (
-                            <Comment data = {item} reRenderScreen = {reRenderScreen} email={email}/>
+                            <Comment data = {item} reRenderScreen = {reRenderScreen} email={email} callback={callback} />
                         )
                     }}
                     ListFooterComponent = {
                     <>
-                        <TouchableOpacity style={{alignItems: 'flex-end', marginRight: 30, marginTop: 10}} onPress={() => {navigation.navigate('CommentList', { id: id, comment: comment, reRenderScreen: reRenderScreen, email: email })}}>
-                            <Text>더보기{'>'}</Text>
-                        </TouchableOpacity>
-                        <View style={{borderBottomColor: '#D9D9D9', width: width, borderBottomWidth: 1, marginTop: 20}} />
                         <Text style={textStyles.subject}>스토리가 포함된 큐레이션</Text>
                         <CardView 
                             gap={10}
