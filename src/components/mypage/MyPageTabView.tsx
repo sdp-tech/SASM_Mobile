@@ -1,5 +1,6 @@
 import { useState, useEffect, useCallback } from 'react';
-import { View, Text, SafeAreaView, useWindowDimensions, Image } from 'react-native';
+import { View, SafeAreaView, useWindowDimensions, Image } from 'react-native';
+import { TextPretendard as Text } from '../../common/CustomText';
 import { TouchableOpacity } from 'react-native-gesture-handler';
 import { TabView, TabBar, SceneMap } from "react-native-tab-view";
 import { Request } from '../../common/requests';

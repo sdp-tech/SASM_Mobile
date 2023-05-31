@@ -1,5 +1,6 @@
 import { useState, useEffect, useCallback } from "react";
-import { SafeAreaView, Text, View, StyleSheet, TouchableOpacity, Dimensions } from "react-native";
+import { SafeAreaView, View, StyleSheet, TouchableOpacity, Dimensions } from "react-native";
+import { TextPretendard as Text } from '../../common/CustomText';
 import SearchBar from "../../common/SearchBar";
 import { Request } from "../../common/requests";
 import { useFocusEffect } from "@react-navigation/native";

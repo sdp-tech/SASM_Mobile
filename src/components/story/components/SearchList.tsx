@@ -1,4 +1,5 @@
-import { View, Text, FlatList } from 'react-native';
+import { View, FlatList } from 'react-native';
+import { TextPretendard as Text } from '../../../common/CustomText';
 import SearchCard from './SearchCard';
 import ListCard from './ListCard';
 

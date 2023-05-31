@@ -1,4 +1,5 @@
-import { SafeAreaView, View, Text, StyleSheet, TouchableOpacity, Dimensions, ScrollView, FlatList, Image, Share, Alert, ImageBackground } from 'react-native';
+import { SafeAreaView, View, StyleSheet, TouchableOpacity, Dimensions, ScrollView, FlatList, Image, Share, Alert, ImageBackground } from 'react-native';
+import { TextPretendard as Text } from '../../../common/CustomText';
 import { useState, useEffect } from 'react';
 import styled from 'styled-components';
 import Loading from '../../../common/Loading';

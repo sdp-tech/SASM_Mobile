@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Request } from '../../../common/requests';
-import { View, Text, TouchableOpacity, TextInput, StyleSheet, Alert, Dimensions } from 'react-native';
+import { View, TouchableOpacity, TextInput, StyleSheet, Alert, Dimensions } from 'react-native';
+import { TextPretendard as Text } from '../../../common/CustomText';
 
 interface WriteCommentParams {
     id: number;

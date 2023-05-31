@@ -1,5 +1,6 @@
 import { useState, useEffect, useCallback } from 'react';
-import { View, Text, TouchableOpacity, ImageBackground, StyleSheet, Dimensions } from 'react-native';
+import { View, TouchableOpacity, ImageBackground, StyleSheet, Dimensions } from 'react-native';
+import { TextPretendard as Text } from '../../../../common/CustomText';
 import { MyPageParams } from '../../../../pages/MyPage';
 
 interface ItemCardProps extends MyPageParams {

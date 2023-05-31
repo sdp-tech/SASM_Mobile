@@ -1,7 +1,6 @@
 import { useState, useEffect } from "react";
 import {
   SafeAreaView,
-  Text,
   View,
   StyleSheet,
   TouchableOpacity,
@@ -11,6 +10,7 @@ import {
   Dimensions,
   Button,
 } from "react-native";
+import { TextPretendard as Text } from '../../../../common/CustomText';
 import styled from "styled-components/native";
 import Loading from "../../../../common/Loading";
 import ItemCard from "./ItemCard";

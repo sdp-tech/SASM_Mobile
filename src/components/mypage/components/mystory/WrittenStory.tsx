@@ -1,5 +1,6 @@
 import { useEffect, useState, useCallback } from 'react';
-import { SafeAreaView, View, Text, TouchableOpacity, FlatList } from 'react-native';
+import { SafeAreaView, View, TouchableOpacity, FlatList } from 'react-native';
+import { TextPretendard as Text } from '../../../../common/CustomText';
 import ItemCard from './ItemCard';
 import { MyPageParams } from '../../../../pages/MyPage';
 import { Request } from '../../../../common/requests';

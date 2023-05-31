@@ -1,5 +1,6 @@
 import React, { useState } from "react";
-import { TouchableOpacity, StyleSheet, View, Text, ImageBackground, Dimensions } from 'react-native';
+import { TouchableOpacity, StyleSheet, View, ImageBackground, Dimensions } from 'react-native';
+import { TextPretendard as Text } from '../../../../common/CustomText';
 import { Request } from "../../../../common/requests";
 import { MyPageParams } from "../../../../pages/MyPage";
 import { CATEGORY_LIST, MatchCategory } from "../../../../common/Category";

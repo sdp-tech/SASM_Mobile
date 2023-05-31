@@ -1,4 +1,5 @@
-import { View, Text, TouchableOpacity, FlatList } from 'react-native';
+import { View, TouchableOpacity, FlatList } from 'react-native';
+import { TextPretendard as Text } from '../../../common/CustomText';
 import { useNavigation } from '@react-navigation/native';
 
 interface RecommendStory {
