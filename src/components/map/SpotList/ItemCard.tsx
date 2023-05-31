@@ -1,5 +1,6 @@
 import React, { Dispatch, SetStateAction, useEffect, useRef, useState } from 'react';
-import { Dimensions, Image, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { Dimensions, Image, StyleSheet, TouchableOpacity, View } from 'react-native';
+import { TextPretendard as Text } from '../../../common/CustomText';
 import styled from 'styled-components/native';
 import Heart from '../../../common/Heart';
 import { Request } from '../../../common/requests';

@@ -1,5 +1,6 @@
 import React, {Dispatch, SetStateAction, RefObject} from 'react';
-import { Text, View, TouchableOpacity, StyleSheet } from 'react-native';
+import { TextPretendard as Text } from '../../../../common/CustomText';
+import { View, TouchableOpacity, StyleSheet } from 'react-native';
 import { SNSListProps } from '../PlaceForm';
 import { InputSNSProps } from '../PlaceFormUser';
 import ModalSelector from 'react-native-modal-selector';

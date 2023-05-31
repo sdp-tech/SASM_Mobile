@@ -1,5 +1,6 @@
 import React, {  useEffect, useState, useCallback  } from 'react';
-import { Image,ImageBackground,ScrollView,Platform, Text, TouchableOpacity, View, TextInput, StyleSheet, SafeAreaView,Alert } from "react-native";
+import { Image,ImageBackground,ScrollView,Platform, TouchableOpacity, View, TextInput, StyleSheet, SafeAreaView,Alert } from "react-native";
+import { TextPretendard as Text } from '../../../common/CustomText';
 import styled, { css } from 'styled-components/native';
 import { setNickname, setAccessToken, setRefreshToken } from '../../../common/storage';
 import { Request } from '../../../common/requests'

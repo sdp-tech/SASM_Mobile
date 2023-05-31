@@ -1,5 +1,6 @@
 import React, { Dispatch, ReactElement, ReactNode, SetStateAction, useCallback } from 'react';
-import { Alert, Text, TouchableOpacity, View } from "react-native";
+import { Alert, TouchableOpacity, View } from "react-native";
+import { TextPretendard as Text } from './CustomText';
 import * as ImagePicker from "react-native-image-picker";
 import styled from 'styled-components/native';
 import PlaceUser from "../assets/img/Map/PlaceUser.svg";

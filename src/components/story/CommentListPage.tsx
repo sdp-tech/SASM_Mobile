@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
-import { SafeAreaView, View, Text, TouchableOpacity, Dimensions, FlatList } from 'react-native';
+import { SafeAreaView, View, TouchableOpacity, Dimensions, FlatList } from 'react-native';
+import { TextPretendard as Text } from '../../common/CustomText';
 import { Request } from '../../common/requests';
 import { StoryProps } from '../../pages/Story';
 import Comment from './components/Comment';

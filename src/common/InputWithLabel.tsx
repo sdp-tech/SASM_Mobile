@@ -1,5 +1,6 @@
 import React from 'react';
-import { View, TextInputProps, ViewStyle, Text } from 'react-native';
+import { View, TextInputProps, ViewStyle } from 'react-native';
+import { TextPretendard as Text } from './CustomText';
 import styled from 'styled-components/native';
 
 const Input = styled.TextInput<{ isAlert: boolean | undefined }>`

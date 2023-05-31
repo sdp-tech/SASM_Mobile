@@ -1,6 +1,7 @@
 import React, { Dispatch, SetStateAction, useEffect, useState } from 'react';
-import { View, ViewStyle, Text } from 'react-native';
+import { View, ViewStyle } from 'react-native';
 import DropDown from './DropDown';
+import { TextPretendard as Text } from './CustomText';
 
 interface DatePickerProps {
   //callback

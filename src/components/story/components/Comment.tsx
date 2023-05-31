@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
-import { View, Text, TouchableOpacity, Image, TextInput, Alert, StyleSheet, FlatList } from 'react-native';
+import { View, TouchableOpacity, Image, TextInput, Alert, StyleSheet, FlatList } from 'react-native';
+import { TextPretendard as Text } from '../../../common/CustomText';
 import { Request } from '../../../common/requests';
 
 interface CommentProps {

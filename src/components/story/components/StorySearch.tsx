@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
-import { Text, View, TouchableOpacity, Dimensions } from 'react-native';
+import { View, TouchableOpacity, Dimensions } from 'react-native';
+import { TextPretendard as Text } from '../../../common/CustomText';
 import SearchList from './SearchList';
 import Category from '../../../common/Category';
 import ToCardView from '../../../assets/img/Story/ToCardView.svg';

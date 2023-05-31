@@ -17,6 +17,7 @@ const Button = styled.TouchableOpacity`
 const ButtonText = styled.Text`
   font-size: 16px;
   font-weight: bold;
+  font-family: Pretendard Variable;
 `
 
 type PaginationProps = {

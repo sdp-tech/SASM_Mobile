@@ -7,8 +7,8 @@ import {
   StyleSheet,
   Dimensions,
   Button,
-  Text,
 } from "react-native";
+import { TextPretendard as Text } from '../../../../common/CustomText';
 import Heart from "../../../../common/Heart";
 //import { useCookies } from "react-cookie";
 import axios from "axios";

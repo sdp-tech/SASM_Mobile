@@ -1,5 +1,6 @@
 import React, { Dispatch, SetStateAction, useEffect, useState } from 'react';
-import { Alert, Image, Modal, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { Alert, Image, Modal, StyleSheet, TouchableOpacity, View } from 'react-native';
+import { TextPretendard as Text } from '../../../common/CustomText';
 import styled from 'styled-components/native';
 import { reviewDataProps } from './DetailCard';
 import CardView from '../../../common/CardView';

@@ -1,6 +1,7 @@
 import { useFocusEffect } from '@react-navigation/native';
 import React, { useCallback, useEffect, useState } from 'react';
-import { View, Text, TouchableOpacity, Dimensions, Pressable } from 'react-native';
+import { View, TouchableOpacity, Dimensions, Pressable } from 'react-native';
+import { TextPretendard as Text } from './CustomText';
 import styled from 'styled-components/native';
 import Animated, { Easing, useAnimatedStyle, useSharedValue, withTiming } from 'react-native-reanimated';
 

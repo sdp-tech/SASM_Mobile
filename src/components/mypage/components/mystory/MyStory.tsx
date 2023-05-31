@@ -1,5 +1,6 @@
 import { useState, useEffect, useCallback } from 'react';
-import { SafeAreaView, Text, View, StyleSheet, TouchableOpacity, Image,FlatList, ScrollView, Dimensions, Pressable } from 'react-native';
+import { SafeAreaView, View, StyleSheet, TouchableOpacity, Image,FlatList, ScrollView, Dimensions, Pressable } from 'react-native';
+import { TextPretendard as Text } from '../../../../common/CustomText';
 import ItemCard from "./ItemCard";
 import NothingIcon from "../../../../assets/img/nothing.svg";
 import Search from "../../../../assets/img/common/Search.svg";

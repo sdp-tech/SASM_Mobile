@@ -1,5 +1,6 @@
 import React from 'react';
-import { StyleSheet, TextStyle, Image, Text } from 'react-native';
+import { StyleSheet, TextStyle, Image } from 'react-native';
+import { TextPretendard as Text } from '../../common/CustomText';
 import styled from 'styled-components/native';
 import { CurationProps } from './CurationHome';
 import { useNavigation } from '@react-navigation/native';

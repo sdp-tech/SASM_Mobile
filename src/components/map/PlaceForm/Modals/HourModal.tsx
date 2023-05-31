@@ -1,5 +1,6 @@
 import React, { Dispatch, SetStateAction } from 'react';
-import { View, Text, TouchableOpacity, TextInput, StyleSheet } from 'react-native';
+import { View, TouchableOpacity, TextInput, StyleSheet } from 'react-native';
+import { TextPretendard as Text } from '../../../../common/CustomText';
 import styled from 'styled-components/native';
 import { HeaderPlaceForm } from '../PlaceForm';
 import Close from "../../../../assets/img/common/Close.svg";
