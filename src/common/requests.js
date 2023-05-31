@@ -68,7 +68,8 @@ export class Request {
             } else {
                 // 백엔드와 통신 자체는 성공, status code가 정상 값 범위 외
                 console.log(err);
-                throw err;
+                // throw err;
+                return err.response;
 
             }
         }

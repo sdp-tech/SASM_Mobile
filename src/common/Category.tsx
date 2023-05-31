@@ -14,11 +14,10 @@ const CategoryWrapper = styled.TouchableOpacity<{ selected: boolean, color: stri
   flex-direction: row;
   align-items: ${props => props.story ? `flex-start` : `center`}
   background-color: ${props => props.selected ? props.color : '#FFFFFF'};
-  height: ${props => props.story ? `25px` : `30px`}
-  border-radius: ${props => props.story ? `0px` : `10px`}
-  padding: 0 ${props => props.story ? `0px` : `10px`};
+  height: ${props => props.story ? `25px` : `28px`}
+  border-radius: ${props => props.story ? `0px` : `12px`}
+  padding-horizontal: ${props => props.story ? `0px` : `10px`};
   margin: 0 10px;
-  border-color: '#444444';
   border-bottom-width: ${props => props.selected && props.story ? 2 : 0};
 `
 
@@ -30,7 +29,7 @@ interface ListProps {
 }
 
 export const CATEGORY_LIST: ListProps[] = [
-  { id: 0, data: "식당 및 카페", name: "식당·카페", color: '#FF6B00' },
+  { id: 0, data: "식당 및 카페", name: "식당·카페", color: '#FAD656' },
   { id: 1, data: "전시 및 체험공간", name: "전시·체험", color: '#42A7EE' },
   { id: 2, data: "제로웨이스트 샵", name: "제로웨이스트", color: '#ED6093' },
   { id: 3, data: "도시 재생 및 친환경 건축물", name: "건축물", color: '#C5F0A3' },
@@ -92,16 +91,16 @@ export default function Category({ checkedList, setCheckedList, story }: Categor
               }[item.id])
               :
               ({
-                0: <Selector0 color={isSelected ? '#FFFFFF' : item.color}/>,
-                1: <Selector1 color={isSelected ? '#FFFFFF' : item.color}/>,
-                2: <Selector2 color={isSelected ? '#FFFFFF' : item.color}/>,
-                3: <Selector3 color={isSelected ? '#FFFFFF' : item.color}/>,
-                4: <Selector4 color={isSelected ? '#FFFFFF' : item.color}/>,
-                5: <Selector5 color={isSelected ? '#FFFFFF' : item.color}/>
+                0: <Selector0 width={18} height={18} color={isSelected ? '#FFFFFF' : item.color}/>,
+                1: <Selector1 width={18} height={18} color={isSelected ? '#FFFFFF' : item.color}/>,
+                2: <Selector2 width={18} height={18} color={isSelected ? '#FFFFFF' : item.color}/>,
+                3: <Selector3 width={18} height={18} color={isSelected ? '#FFFFFF' : item.color}/>,
+                4: <Selector4 width={18} height={18} color={isSelected ? '#FFFFFF' : item.color}/>,
+                5: <Selector5 width={18} height={18} color={isSelected ? '#FFFFFF' : item.color}/>
 
               }[item.id])
             }
-            <Text style={{ fontSize: story ? 10 : 14, lineHeight: 14, color: story ? '#444444' : (isSelected ? '#FFFFFF' : '#000000'), marginHorizontal: 5 }}>{item.name}</Text>
+            <Text style={{ fontSize: story ? 10 : 14, color: story ? '#444444' : (isSelected ? '#FFFFFF' : '#000000'), marginHorizontal: 5, lineHeight: 14 }}>{item.name}</Text>
           </CategoryWrapper>
         )
       }}

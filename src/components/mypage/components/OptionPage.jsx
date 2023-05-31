@@ -1,7 +1,7 @@
 import React, { useEffect, useState, useCallback } from 'react';
 import { Text, ScrollView, View, TouchableOpacity, Alert,StyleSheet,SafeAreaView, localStorage,Image, ImageBackground, Button, Dimensions } from "react-native";
 import { useFocusEffect, useNavigation } from '@react-navigation/native';
-import { getNickname, removeNickname, removeAccessToken, } from '../../../common/storage';
+import { getNickname, removeNickname, removeAccessToken, removeRefreshToken, } from '../../../common/storage';
 import { onChange } from 'react-native-reanimated';
 import { launchImageLibrary } from 'react-native-image-picker';
 import PhotoOptions from '../../../common/PhotoOptions';
@@ -9,6 +9,15 @@ import ChangeForm from './ChangeForm';
 import { Request } from '../../../common/requests';
 
 export default function Options({ navigation }) {
+    const request = new Request();
+    
+    const logOut = () => {
+        removeAccessToken();
+        removeNickname();
+        removeRefreshToken();
+        navigation.navigate('login');
+    }
+    
     return (
             <ScrollView style={{flex:1, backgroundColor:'white'}}>
             <SafeAreaView style={{ padding: '6%' }}>
@@ -44,7 +53,7 @@ export default function Options({ navigation }) {
                 </TouchableOpacity>
                 </View>
                 <View style={{ marginTop: 10 }}>
-                <TouchableOpacity style={styles.button} onPress={()=>navigation.navigate('logout')}>
+                <TouchableOpacity style={styles.button} onPress={logOut}>
                 <View style={styles.buttonContainer}>
                     <Text style={styles.textStyle}>로그아웃</Text>
                 </View>

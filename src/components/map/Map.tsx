@@ -235,17 +235,6 @@ export default function MapContainer({ nowCoor, navigation, route }: MapContaine
     getPlaces();
   }, [searchHere, page, search, checkedList]);
 
-  // myPlaces는 page가 존재한다 흐음 20개씩 나타낼순 없을가
-  // const getLikePlaces = async () => {
-  // 	setLoading(true);
-  // 	const response_like_places = await request.get('/users/like_place/', {page:1, checkedList:''});
-  // 	console.error(response_like_places.data.data);
-  // 	setLoading(false);
-  // }
-  // useEffect(()=>{
-  // 	getLikePlaces();
-  // }, [])
-
   useFocusEffect(useCallback(() => {
     if (route.params.coor) {
       mapView?.current.animateToCoordinate(route.params.coor)
@@ -271,6 +260,10 @@ export default function MapContainer({ nowCoor, navigation, route }: MapContaine
   const handleToCenter = (): void => {
     mapView?.current.animateToCoordinate(nowCoor);
   }
+
+  useFocusEffect(useCallback(()=>{
+    setSheetMode(true);
+  }, []))
 
   return (
     <View>
@@ -301,17 +294,17 @@ export default function MapContainer({ nowCoor, navigation, route }: MapContaine
           (searchHere.latitude.toFixed(8) != tempCoor.latitude.toFixed(8) || searchHere.longitude.toFixed(8) != tempCoor.longitude.toFixed(8)) &&
           <SearchHereButton onPress={() => { setSearchHere(tempCoor) }}><SearchHere /></SearchHereButton>
         }
+        <Category checkedList={checkedList} setCheckedList={setCheckedList} />
         <SearchBar
           search={search}
           setSearch={setSearch}
-          style={{ backgroundColor: "#FFFFFF", width: '95%' }}
+          style={{ backgroundColor: "#FFFFFF", width: '95%', marginBottom:10 }}
           placeholder="장소를 검색해주세요"
           setPage={setPage}
         />
-        <Category checkedList={checkedList} setCheckedList={setCheckedList} />
-        <MoveToCenterButton width={30}
+        <MoveToCenterButton width={29}
           onPress={handleToCenter}>
-          <Circle width={15}
+          <Circle width={9}
             onPress={handleToCenter} />
         </MoveToCenterButton>
       </Animated.View>
@@ -325,8 +318,8 @@ export default function MapContainer({ nowCoor, navigation, route }: MapContaine
   )
 }
 
-const CustomHandle = ({ mode, idx }: { mode: boolean, idx:RefObject<number> }) => {
-  useEffect(()=>{console.error(idx)}, [idx])
+const CustomHandle = ({ mode }: { mode: boolean }) => {
+
   return (
     <View style={{ backgroundColor: mode ? '#FFFFFF' : 'none', position: 'absolute', width: width, height: 15, borderTopEndRadius: 10, borderTopStartRadius: 10, display: 'flex', justifyContent: 'center' }}>
       <View style={{ width: 60, height: 5, alignSelf: 'center', backgroundColor: '#D9D9D9', borderRadius: 2.5 }}></View>
@@ -361,7 +354,7 @@ const BottomSheetMemo = memo(
         ref={modalRef}
         snapPoints={snapPoints}
         index={1}
-        handleComponent={() => <CustomHandle idx={idx} mode={sheetMode} />}
+        handleComponent={() => <CustomHandle mode={sheetMode} />}
         onAnimate={(fromIndex, toIndex) => {
           if (fromIndex == 1 && toIndex == 0) {
             if (!sheetMode) setSheetMode(true);
