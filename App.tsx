@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Text, TouchableOpacity, View } from "react-native";
 import { NavigationContainer } from '@react-navigation/native';
 import { BottomTabBarProps, createBottomTabNavigator } from "@react-navigation/bottom-tabs";
@@ -16,6 +16,7 @@ import Navbar4 from "./src/assets/navbar/Navbar4.svg";
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import HomeScreen from './src/pages/Home';
 import { Coord } from 'react-native-nmap';
+import SplashScreen from 'react-native-splash-screen';
 
 export type AppProps = {
   'Home': any;
@@ -26,6 +27,13 @@ const Stack = createNativeStackNavigator();
 
 
 const App = (): JSX.Element => {
+
+  useEffect(() => {
+    setTimeout(() => {
+      SplashScreen.hide();
+    }, 3000);
+  });
+
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
       <NavigationContainer>
@@ -57,7 +65,7 @@ export type TabProps = {
 
 const CustomTab = ({ state, descriptors, navigation }: BottomTabBarProps) => {
   return (
-    <View style={{ height: 75, display: 'flex', flexDirection: 'row', justifyContent: 'space-around', backgroundColor: '#FFFFFF', borderColor: '#E3E3E3', borderTopWidth: 1,paddingHorizontal:10 }}>
+    <View style={{ height: 75, display: 'flex', flexDirection: 'row', justifyContent: 'space-around', backgroundColor: '#FFFFFF', borderColor: '#E3E3E3', borderTopWidth: 1, paddingHorizontal: 10 }}>
       {
         state.routes.map((route, index) => {
           const isFocused = state.index == index;
@@ -76,7 +84,7 @@ const CustomTab = ({ state, descriptors, navigation }: BottomTabBarProps) => {
             }
           }
           return (
-            <TouchableOpacity onPress={onPress} style={{ width: '20%',display: 'flex', alignItems: 'center', justifyContent:'center' }}>
+            <TouchableOpacity onPress={onPress} style={{ width: '20%', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
               {
                 {
                   0: <Navbar0 color={isFocused ? '#67D393' : '#202020'} />,
@@ -88,7 +96,7 @@ const CustomTab = ({ state, descriptors, navigation }: BottomTabBarProps) => {
                 }[index]
               }
 
-              <Text style={{ color: isFocused ? '#67D393' : '#202020', marginVertical:5, fontSize:12 }}>{route.name}</Text>
+              <Text style={{ color: isFocused ? '#67D393' : '#202020', marginVertical: 5, fontSize: 12 }}>{route.name}</Text>
             </TouchableOpacity>
           )
         }
