@@ -1,5 +1,6 @@
 import React, { Dispatch, SetStateAction, useEffect, useMemo, useState, useRef, useCallback } from 'react';
-import { Dimensions, Text, TextInput, TouchableOpacity, Image, Modal, View, ActivityIndicator, ImageBackground, StyleSheet, Alert } from 'react-native';
+import { Dimensions, TextInput, TouchableOpacity, Image, Modal, View, ActivityIndicator, ImageBackground, StyleSheet, Alert } from 'react-native';
+import { TextPretendard as Text } from '../../common/CustomText';
 import { ScrollView } from 'react-native-gesture-handler';
 import PhotoOptions, { PhotoResultProps } from '../../common/PhotoOptions';
 import styled from 'styled-components/native';

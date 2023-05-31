@@ -1,5 +1,6 @@
 import React, { Dispatch, ReactElement, ReactNode, SetStateAction, useEffect, useState } from 'react';
-import { Button, SafeAreaView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { Button, SafeAreaView, StyleSheet, TouchableOpacity, View } from 'react-native';
+import { TextPretendard as Text } from '../../../common/CustomText';
 import Close from "../../../assets/img/common/Close.svg";
 import styled from 'styled-components/native';
 import PlaceFormUser from './PlaceFormUser';

@@ -1,5 +1,6 @@
 import React, { Dispatch, SetStateAction, useEffect, useRef, useState } from 'react';
-import { Dimensions, FlatList, Image, StyleSheet, Text, TouchableOpacity, View, Modal } from 'react-native';
+import { Dimensions, FlatList, Image, StyleSheet, TouchableOpacity, View, Modal } from 'react-native';
+import { TextPretendard as Text } from '../../../common/CustomText';
 import { reviewDataProps } from './DetailCard';
 import styled from 'styled-components/native';
 import Close from "../../../assets/img/common/Close.svg";

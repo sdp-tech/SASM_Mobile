@@ -1,5 +1,6 @@
 import React, { Dispatch, ReactElement, ReactNode, SetStateAction, useEffect, useState } from 'react';
-import { Alert, Dimensions, Image, Modal, SafeAreaView, StyleSheet, Text, TextInput, TextInputProps, TouchableOpacity, View } from 'react-native';
+import { Alert, Dimensions, Image, Modal, SafeAreaView, StyleSheet, TextInput, TextInputProps, TouchableOpacity, View } from 'react-native';
+import { TextPretendard as Text } from '../../../common/CustomText';
 import styled from 'styled-components/native';
 import PhotoOptions from '../../../common/PhotoOptions';
 import Category from '../../../common/Category';

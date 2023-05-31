@@ -1,5 +1,6 @@
 import React, { useEffect, useState, useCallback, useRef } from 'react';
-import { Dimensions, Image, View, Text, TouchableOpacity, StyleSheet, Button, Linking, Modal, SafeAreaView } from 'react-native';
+import { Dimensions, Image, View, TouchableOpacity, StyleSheet, Button, Linking, Modal, SafeAreaView } from 'react-native';
+import { TextPretendard as Text } from '../../../common/CustomText';
 import { ScrollView } from 'react-native-gesture-handler';
 import styled from 'styled-components/native';
 import { detailDataProps } from '../Map';

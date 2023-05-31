@@ -1,5 +1,6 @@
 import React, { Dispatch, SetStateAction } from 'react';
-import { Dimensions, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { Dimensions, StyleSheet, TouchableOpacity, View } from 'react-native';
+import { TextPretendard as Text } from './CustomText';
 
 const { width, height } = Dimensions.get('window')
 

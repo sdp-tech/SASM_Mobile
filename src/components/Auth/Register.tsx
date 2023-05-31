@@ -1,6 +1,7 @@
 import { StackScreenProps } from '@react-navigation/stack';
 import React, { useEffect, useState } from 'react';
-import { ScrollView, Text, TextInput, TouchableOpacity, View, Alert, SafeAreaView, StyleSheet, Dimensions } from 'react-native';
+import { ScrollView, TextInput, TouchableOpacity, View, Alert, SafeAreaView, StyleSheet, Dimensions } from 'react-native';
+import { TextPretendard as Text } from '../../common/CustomText';
 import styled from 'styled-components/native';
 import { Request } from '../../common/requests';
 import InputWithMessage from '../mypage/components/InputWithMessage';

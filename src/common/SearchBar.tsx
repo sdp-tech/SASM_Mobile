@@ -13,6 +13,7 @@ const SearchWrapper = styled.View`
 const StyledInput = styled.TextInput`
   width: 100%;
   padding: 0 5%;
+  font-family: Pretendard Variable;
 `
 const ResetButton = styled.TouchableOpacity`
   position: absolute;

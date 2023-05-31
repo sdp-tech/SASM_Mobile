@@ -1,6 +1,6 @@
 import BottomSheet from "@gorhom/bottom-sheet";
 import React, { useEffect, useRef, useState, useMemo, SetStateAction, Dispatch, useCallback, memo, RefObject } from 'react';
-import { Text, TouchableOpacity, View, Button, StyleSheet, SafeAreaView, Dimensions, ActivityIndicator, Modal, } from "react-native";
+import { TouchableOpacity, View, Button, StyleSheet, SafeAreaView, Dimensions, ActivityIndicator, Modal, } from "react-native";
 import NaverMapView, { Align, Marker } from './NaverMap';
 import styled from "styled-components/native";
 import SearchBar from '../../common/SearchBar';

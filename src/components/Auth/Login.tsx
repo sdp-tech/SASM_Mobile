@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
-import { Platform, Text, TouchableOpacity, View, TextInput, StyleSheet, SafeAreaView, Alert } from "react-native";
+import { Platform, TouchableOpacity, View, TextInput, StyleSheet, SafeAreaView, Alert } from "react-native";
+import { TextPretendard as Text } from '../../common/CustomText';
 import styled, { css } from 'styled-components/native';
 import { NavigationScreenProp } from 'react-navigation';
 import { setNickname, setAccessToken, setRefreshToken } from '../../common/storage';

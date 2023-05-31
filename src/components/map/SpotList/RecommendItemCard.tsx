@@ -1,5 +1,6 @@
 import React from 'react';
-import { Dimensions, Image, ImageBackground, StyleSheet, Text, View } from 'react-native';
+import { Dimensions, Image, ImageBackground, StyleSheet, View } from 'react-native';
+import { TextPretendard as Text } from '../../../common/CustomText';
 import { ItemCardProps } from './ItemCard';
 import styled from 'styled-components/native';
 import { Request } from '../../../common/requests';

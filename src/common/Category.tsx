@@ -1,5 +1,6 @@
 import React from 'react';
-import { Image, Text, View, Dimensions, TouchableOpacity } from 'react-native';
+import { Image, View, Dimensions, TouchableOpacity } from 'react-native';
+import { TextPretendard as Text } from './CustomText';
 import { FlatList } from 'react-native-gesture-handler';
 import styled from 'styled-components/native';
 import Selector0 from "../assets/img/Category/Selector0.svg";

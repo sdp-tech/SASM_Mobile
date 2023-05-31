@@ -2,7 +2,8 @@ import React, { Dispatch, SetStateAction, useEffect, useState, useMemo, useRef, 
 import styled from "styled-components/native";
 import { Request } from "../../../common/requests";
 import { StoryListProps } from "../../story/StoryMainPage";
-import { Dimensions, TouchableOpacity, View, Text, FlatList, StyleSheet, SafeAreaView, Image, ActivityIndicator, Platform } from "react-native";
+import { Dimensions, TouchableOpacity, View, FlatList, StyleSheet, SafeAreaView, Image, ActivityIndicator, Platform } from "react-native";
+import { TextPretendard as Text } from "../../../common/CustomText";
 import { BottomSheetModalProvider, BottomSheetModal, BottomSheetBackdrop } from "@gorhom/bottom-sheet";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import Arrow from "../../../assets/img/common/Arrow.svg";
