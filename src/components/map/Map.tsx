@@ -37,8 +37,10 @@ const MoveToCenterButton = styled(Circle)`
 	display: flex;
 	align-items: center;
 	justify-content: center;
-	position: relative;
-	right: -90%;
+	position: absolute;
+  z-index: 0;
+  top: ${height / 2};
+  right: 15;
 `
 const PlusButton = styled.TouchableOpacity`
   width: 45px;
@@ -137,7 +139,7 @@ const Map = ({ mapView, setSheetMode, placeData, setTempCoor, setDetailData, cen
         center={{ ...center, zoom: 13 }}
         onCameraChange={e => onChangeCenter(e)}
         scaleBar={false}
-        zoomControl={true}
+        zoomControl={false}
         zoomGesturesEnabled={true}
       >
         <Marker
@@ -305,6 +307,12 @@ export default function MapContainer({ nowCoor, navigation, route }: MapContaine
         setTempCoor={setTempCoor}
         nowCoor={nowCoor}
       />
+
+      <MoveToCenterButton width={29}
+        onPress={handleToCenter}>
+        <Circle width={9}
+          onPress={handleToCenter} />
+      </MoveToCenterButton>
       <BottomSheetMemo
         sheetMode={sheetMode}
         setSheetMode={setSheetMode}
@@ -318,6 +326,7 @@ export default function MapContainer({ nowCoor, navigation, route }: MapContaine
         total={total}
         detailData={detailData}
       />
+
       <Animated.View style={buttonAnimatedStyle}>
         {
           (searchHere.latitude.toFixed(8) != tempCoor.latitude.toFixed(8) || searchHere.longitude.toFixed(8) != tempCoor.longitude.toFixed(8)) &&
@@ -331,11 +340,6 @@ export default function MapContainer({ nowCoor, navigation, route }: MapContaine
           placeholder="장소를 검색해주세요"
           setPage={setPage}
         />
-        <MoveToCenterButton width={29}
-          onPress={handleToCenter}>
-          <Circle width={9}
-            onPress={handleToCenter} />
-        </MoveToCenterButton>
       </Animated.View>
       <PlusButton onPress={() => { setPlaceformModal(true) }}>
         <AddColor width={25} height={25} color={'#FFFFFF'} />
