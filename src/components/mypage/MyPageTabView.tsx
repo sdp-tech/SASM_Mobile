@@ -42,7 +42,7 @@ const MyPageTabView = ({ navigation }: MyPageParams) => {
   const renderScene = ({ route }: any) => {
     switch (route.key) {
       case "place":
-        return <MyPlace />;
+        return <MyPlace navigation={navigation}/>;
       case "story":
         return <MyStory navigation={navigation} />;
       case "curation":
@@ -53,7 +53,7 @@ const MyPageTabView = ({ navigation }: MyPageParams) => {
   }
 
   const getProfile = async () => {
-    const response = await request.get(`/users/me/`,{},{});
+    const response = await request.get(`/mypage/me/`,{},{});
     setNickname(response.data.data.nickname);
     setImg(response.data.data.profile_image);
   }
