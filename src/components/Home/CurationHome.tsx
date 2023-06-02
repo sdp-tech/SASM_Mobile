@@ -1,10 +1,11 @@
-import React, { useState, useEffect } from "react";
-import { SafeAreaView, View, TouchableOpacity, Text, Dimensions, ActivityIndicator, StyleSheet, ImageBackground } from "react-native";
+import React, { useState, useEffect, useCallback } from "react";
+import { SafeAreaView, View, TouchableOpacity, Dimensions, ActivityIndicator, StyleSheet, ImageBackground } from "react-native";
+import { TextPretendard as Text } from "../../common/CustomText";
 import { ScrollView } from "react-native-gesture-handler";
-import ItemCard from "./ItemCard";
+import ItemCard, {SearchItemCard} from "./ItemCard";
 import { Request } from "../../common/requests";
 import { StackScreenProps, StackNavigationProp } from "@react-navigation/stack";
-import { useNavigation } from '@react-navigation/native';
+import { useFocusEffect, useNavigation } from '@react-navigation/native';
 import { HomeStackParams } from "../../pages/Home";
 import { TabProps } from "../../../App";
 import styled from "styled-components/native";
@@ -20,7 +21,7 @@ const Section = styled.View`
 `
 const SectionCuration = styled(Section)`
   width: 100%;
-  margin-top: 50px;
+  margin-top: 20px;
 `
 const RecommendPlace = styled.TouchableOpacity`
   width: ${width / 5};
@@ -37,7 +38,7 @@ const TextBox = styled.View`
   flex-flow: row wrap;
   justify-content: space-between;
   align-items: center;
-  margin: 0 8px;
+  margin: 0 15px;
   margin-bottom: 10px;
 `
 const PlusButton = styled.TouchableOpacity`
@@ -56,8 +57,7 @@ const SearchButton = styled.TouchableOpacity`
   width: 80%;
   background-color: #F1F1F1;
   height: 35px;
-  margin: 0 auto;
-  margin-bottom: 20px;
+  margin: 20px auto;
   border-radius: 20px;
   display: flex;
   align-items: flex-end;
@@ -68,7 +68,7 @@ export interface CurationProps {
   title: string;
   id: number;
   is_selected: boolean;
-  writer: string;
+  writer_email: string;
   rep_pic: string;
 }
 
@@ -78,10 +78,7 @@ export default function CurationHome({ navigation, route }: StackScreenProps<Hom
   const [repCuration, setRepCuration] = useState<CurationProps[]>([]);
   const [verifedCuration, setVerifiedCuration] = useState<CurationProps[]>([]);
   const navigationToTab = useNavigation<StackNavigationProp<TabProps>>();
-  // 큐레이션 검색어
-  const [search, setSearch] = useState<string>("");
-  // 큐레이션 페이지
-  const [page, setPage] = useState<number>(1);
+  const [refresh, setRefresh] = useState<boolean>(false);
   // 연관 스토리 검색
   const [storyData, setStoryData] = useState([]);
   const request = new Request();
@@ -99,12 +96,10 @@ export default function CurationHome({ navigation, route }: StackScreenProps<Hom
     setLoading(true);
     const response_admin = await request.get('/curations/admin_curations/');
     setAdminCuration(response_admin.data.data);
-    console.error('admin : ', response_admin.data.data);
     const response_rep = await request.get('/curations/rep_curations/');
     setRepCuration(response_rep.data.data)
     const response_verifed = await request.get('/curations/verified_user_curations/');
     setVerifiedCuration(response_verifed.data.data)
-    console.error('verifed : ', response_verifed.data.data);
     setLoading(false);
   }
 
@@ -113,10 +108,10 @@ export default function CurationHome({ navigation, route }: StackScreenProps<Hom
     verifedList.push(verifedCuration[i]);
   }
 
-  useEffect(() => {
+  useFocusEffect(useCallback(()=>{
     getStory();
     getCurration();
-  }, [])
+  }, []))
 
   return (
     <SafeAreaView style={{ backgroundColor: '#FFFFFF' }}>
@@ -134,11 +129,11 @@ export default function CurationHome({ navigation, route }: StackScreenProps<Hom
               height={height * 0.45}
               data={repCuration}
               pageWidth={width}
-              dot={true}
+              dot={false}
               renderItem={({ item }: any) => (
                 <ItemCard
                   data={item}
-                  style={{ width: width - 16, height: height * 0.4, margin: 8 }}
+                  style={{ width: width, height: height * 0.4 }}
                 />
               )}
             />
@@ -148,15 +143,15 @@ export default function CurationHome({ navigation, route }: StackScreenProps<Hom
                 <TouchableOpacity onPress={() => { navigation.navigate('List', { data: adminCuration }) }}><Text style={TextStyles.SubBlack}>모두보기 <Arrow /></Text></TouchableOpacity>
               </TextBox>
               <CardView
-                gap={16}
-                offset={24}
+                gap={15}
+                offset={0}
                 data={adminCuration}
                 pageWidth={width * 0.6}
                 height={height * 0.4}
                 dot={false}
                 renderItem={({ item }: any) => (
                   <ItemCard
-                    style={{ width: width * 0.6, height: height * 0.4, marginHorizontal: 8 }}
+                    style={{ width: width * 0.6, height: height * 0.4, marginHorizontal: 7.5 }}
                     data={item}
                   />
                 )}
@@ -172,7 +167,7 @@ export default function CurationHome({ navigation, route }: StackScreenProps<Hom
                 verifedList.map((data, index) =>
                   <ItemCard
                     data={verifedCuration[index]}
-                    style={{ width: width - 16, height: height * 0.25, margin: 8 }}
+                    style={{ width: width - 30, height: height * 0.2, marginHorizontal: 15, marginVertical: 7.5 }}
                   />)
               }
             </SectionCuration>
@@ -243,7 +238,7 @@ export default function CurationHome({ navigation, route }: StackScreenProps<Hom
                 height={height * 0.25}
                 dot={false}
                 renderItem={({ item }: any) => (
-                  <ItemCard
+                  <SearchItemCard
                     style={{ width: width * 0.4, height: height * 0.25, marginHorizontal: 5 }}
                     data={item}
                     onPress={() => { navigationToTab.navigate('스토리', { id: item.id }) }}
@@ -273,7 +268,7 @@ const TextStyles = StyleSheet.create({
     fontWeight: "600",
     fontSize: 16,
     lineHeight: 19,
-    widht: '70%'
+    widht: '70%',
   },
   Sub: {
     fontWeight: "400",

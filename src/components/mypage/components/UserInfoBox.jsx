@@ -1,5 +1,10 @@
 import React, { useEffect, useState, useCallback } from 'react';
+<<<<<<< HEAD
 import { Text, ScrollView, View, TouchableOpacity, Alert,StyleSheet,SafeAreaView, localStorage,Image, ImageBackground, Button, Dimensions } from "react-native";
+=======
+import { ScrollView, View, TouchableOpacity, Alert,StyleSheet,SafeAreaView, localStorage,Image, ImageBackground, Button, Dimensions } from "react-native";
+import { TextPretendard as Text } from '../../../common/CustomText';
+>>>>>>> 9807780408373cc7443e8dfc2ee53a323dbdb4b1
 import { useFocusEffect, useNavigation } from '@react-navigation/native';
 import { getNickname, removeNickname, removeAccessToken, } from '../../../common/storage';
 import { onChange } from 'react-native-reanimated';

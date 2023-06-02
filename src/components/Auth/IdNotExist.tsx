@@ -1,6 +1,7 @@
 import { StackNavigationProp, StackScreenProps } from '@react-navigation/stack';
 import React from 'react';
-import { Text, View } from 'react-native';
+import { View } from 'react-native';
+import { TextPretendard as Text } from '../../common/CustomText';
 import { findScreenProps } from './FindIDPW';
 import styled from 'styled-components/native';
 import { useNavigation } from '@react-navigation/native';

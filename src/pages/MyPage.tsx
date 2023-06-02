@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Text, View, SafeAreaView } from "react-native";
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import MyPageTabView from '../components/mypage/MyPageTabView';
 import UserInfoBox from '../components/mypage/components/UserInfoBox';
 import LoginScreen from '../components/Auth/Login';
 import RegisterScreen from '../components/Auth/Register';
@@ -12,11 +13,22 @@ import { StackNavigationProp } from '@react-navigation/stack';
 import Following from '../components/mypage/components/Following_List';
 import Follower from '../components/mypage/components/Follower_List';
 import Options from '../components/mypage/components/OptionPage';
+<<<<<<< HEAD
+=======
+import WrittenStory from '../components/mypage/components/mystory/WrittenStory';
+
+export interface MyPageParams {
+    navigation: any;
+    route?: any;
+}
+>>>>>>> 9807780408373cc7443e8dfc2ee53a323dbdb4b1
 
 export type MyPageProps = {
     'mypage': any;
+    'written_story': any;
     'login': any;
     'register': any;
+    'user': any;
     'change': any;
     'changepw': any;
     'feedback': any;
@@ -31,9 +43,11 @@ const MyPageScreen = () => {
     return (
         <MyPageStack.Navigator
             screenOptions={() => ({
-                headerShown: true,
+                headerShown: false,
             })} >
-            <MyPageStack.Screen name="mypage" component={UserInfoBox} />
+            <MyPageStack.Screen name="mypage" component={MyPageTabView} />
+            <MyPageStack.Screen name="written_story" component={WrittenStory} />
+            <MyPageStack.Screen name="user" component={UserInfoBox} />
             <MyPageStack.Screen name="login" component={LoginScreen} />
             <MyPageStack.Screen name="register" component={RegisterScreen} />
             <MyPageStack.Screen name='change' component={ChangeForm} />

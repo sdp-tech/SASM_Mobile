@@ -1,5 +1,6 @@
 import { useState, useRef } from 'react';
-import { SafeAreaView, View, TouchableOpacity, Image, Text, StyleSheet, Dimensions, ImageBackground, Pressable } from 'react-native';
+import { SafeAreaView, View, TouchableOpacity, Image, StyleSheet, Dimensions, ImageBackground, Pressable } from 'react-native';
+import { TextPretendard as Text } from '../../../common/CustomText';
 import { Request } from '../../../common/requests';
 import Heart from '../../../common/Heart';
 
@@ -13,12 +14,13 @@ export interface MainCardProps {
   preview: string;
   writer: string;
   nickname: string;
+  profile: string;
   writer_is_verified: boolean;
   navigation: any;
   width: any;
 }
 
-const MainCard = ({id, place_name, title, rep_pic, story_like, category, preview, writer, nickname, writer_is_verified, width, navigation}: MainCardProps) => {
+const MainCard = ({id, place_name, title, rep_pic, story_like, category, preview, writer, nickname, profile, writer_is_verified, width, navigation}: MainCardProps) => {
   //const { width, height } = Dimensions.get('screen');
   const [verified, setVerified] = useState<boolean>(writer_is_verified);
   const [like, setLike] = useState<boolean>(false);
@@ -67,9 +69,9 @@ const MainCard = ({id, place_name, title, rep_pic, story_like, category, preview
           <Text style={[textStyles.writer, {color: verified ? '#209DF5' : '#89C77F'}]}>{verified ? ('Editor') : ('User')}</Text>
           <Text style={textStyles.writer}>{nickname}</Text>
         </View>
-        <Text numberOfLines={4} ellipsizeMode={'tail'} style={textStyles.preview}>{preview}</Text>
+          <Text numberOfLines={4} ellipsizeMode={'tail'} style={textStyles.preview}>{preview}</Text>
         </View>
-      <View style={{position:'absolute', backgroundColor:'#D9D9D9', borderRadius:60, width:50, height:50, top: width*0.76, marginLeft: 250}} />
+      <Image source={{uri: profile}} style={{position:'absolute', borderRadius:60, backgroundColor: 'white', width:50, height:50, top: width*0.76, marginLeft: 250}} />
     </Pressable>
     </View>
   )

@@ -1,5 +1,10 @@
 import React, {  useEffect, useState, useCallback  } from 'react';
+<<<<<<< HEAD
 import { Image,ImageBackground,ScrollView,Platform, Text, TouchableOpacity, View, TextInput, StyleSheet, SafeAreaView,Alert } from "react-native";
+=======
+import { Image,ImageBackground,ScrollView,Platform, TouchableOpacity, View, TextInput, StyleSheet, SafeAreaView,Alert } from "react-native";
+import { TextPretendard as Text } from '../../../common/CustomText';
+>>>>>>> 9807780408373cc7443e8dfc2ee53a323dbdb4b1
 import styled, { css } from 'styled-components/native';
 import { setNickname, setAccessToken, setRefreshToken } from '../../../common/storage';
 import { Request } from '../../../common/requests'

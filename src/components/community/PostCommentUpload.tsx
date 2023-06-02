@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { View, StyleSheet, Text, ActivityIndicator, TouchableOpacity, Button, TextInput, Alert, Image } from 'react-native';
+import { View, StyleSheet, ActivityIndicator, TouchableOpacity, Button, TextInput, Alert, Image } from 'react-native';
+import { TextPretendard as Text } from '../../common/CustomText';
 import type { NativeStackScreenProps } from '@react-navigation/native-stack';
 
 import styled from 'styled-components/native';

@@ -6,15 +6,20 @@ const SearchWrapper = styled.View`
   display: flex;
   width: 80%;
   margin: 0 auto;
-  height: 35px;
+  height: 36px;
   flex-direction: row;
-  border-radius: 20px;
+  border-radius: 12px;
 `
 const StyledInput = styled.TextInput`
-  width: 85%;
+  width: 100%;
   padding: 0 5%;
+  font-family: Pretendard Variable;
 `
 const ResetButton = styled.TouchableOpacity`
+  position: absolute;
+  height: 100%;
+  right: 0;
+  top: 0;
   width: 15%;
   display: flex;
   align-items: center;

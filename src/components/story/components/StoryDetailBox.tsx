@@ -1,9 +1,9 @@
-import { SafeAreaView, View, Text, StyleSheet, TouchableOpacity, Dimensions, ScrollView, FlatList, Image, Share, Alert, ImageBackground } from 'react-native';
-import { useState, useEffect, useMemo } from 'react';
+import { SafeAreaView, View, StyleSheet, TouchableOpacity, Dimensions, ScrollView, FlatList, Image, Share, Alert, ImageBackground } from 'react-native';
+import { TextPretendard as Text } from '../../../common/CustomText';
+import { useState, useEffect } from 'react';
 import styled from 'styled-components';
 import Loading from '../../../common/Loading';
 import { Request } from '../../../common/requests';
-import { useNavigation } from '@react-navigation/native';
 import Heart from '../../../common/Heart';
 import RenderHTML from 'react-native-render-html';
 import Comment from './Comment';
@@ -12,12 +12,8 @@ import StoryRecommend from './StoryRecommend';
 import Place from '../../../assets/img/Story/Place.svg';
 import Arrow from '../../../assets/img/common/Arrow.svg';
 import CardView from '../../../common/CardView';
-import SearchCard from './SearchCard';
 import ShareIcon from '../../../assets/img/Story/ShareIcon.svg';
-import WhiteLike from '../../../assets/img/common/WhiteLike.svg';
-import FilledLike from '../../../assets/img/common/FilledLike.svg';
 import CommentIcon from '../../../assets/img/Story/Comment.svg';
-import NaverMapView, { Align, Marker } from '../../map/NaverMap';
 
 interface StoryDetailProps {
     id: number;
@@ -28,6 +24,9 @@ export interface StoryDetail {
     id: number;
     title: string;
     created: string;
+    profile: string;
+    rep_pic: string;
+    extra_pics: string[];
     story_review: string;
     tag: string;
     story_like: boolean;
@@ -38,7 +37,9 @@ export interface StoryDetail {
     html_content: string;
     writer: string;
     nickname: string;
+    map_image: string;
     writer_is_verified: string;
+    preview: string;
 }
 
 interface RecommendStory {
@@ -46,36 +47,24 @@ interface RecommendStory {
     results: Array<object>;
 }
 
-interface HeartButton {
-    like: boolean;
-    onHeart: () => void;
-    onShare: () => void;
-}
-
-const FloatingButton = ({ like, onHeart, onShare }: HeartButton) => (
-    <>
-    <TouchableOpacity style={{backgroundColor: '#75E59B', width: 34, height: 34, borderRadius:60, alignItems: 'center', justifyContent: 'center'}} onPress={onHeart}>
-        {like ? (
-            <FilledLike width={17} height={17} />
-        ) : (
-            <WhiteLike width={17} height={17} />
-        )}
-    </TouchableOpacity>
-    <TouchableOpacity style={{backgroundColor: '#75E59B', width: 34, height: 34, borderRadius:60, alignItems: 'center', justifyContent: 'center', marginTop: 12}} onPress={onShare}>
-        <ShareIcon />
-    </TouchableOpacity>
-    </>
-)
-
 const StoryDetailBox = ({navigation, id}: StoryDetailProps) => {
     const { width, height } = Dimensions.get('screen');
     const [data, setData] = useState<StoryDetail>();
     const [comment, setComment] = useState([] as any);
-    const [recommend, setRecommend] = useState<RecommendStory>();
+    //const [recommend, setRecommend] = useState<RecommendStory>();
     const [like, setLike] = useState<boolean>(false);
     const [loading, setLoading] = useState<boolean>(true);
     const [refreshing, setRefreshing] = useState<boolean>(false);
+    const [email, setEmail] = useState<string>('');
+    const [updateText, setUpdateText] = useState<string>('');
+    const [commentId, setCommentId] = useState<number>(0);
     const request = new Request();
+
+    const checkUser = async () => {
+        const response = await request.get(`/mypage/me/`,{},{});
+        setEmail(response.data.data.email);
+        console.log('email', email);
+    }
 
     const toggleLike = async () => {
         const response = await request.post('/stories/story_like/', { id: id });
@@ -85,7 +74,7 @@ const StoryDetailBox = ({navigation, id}: StoryDetailProps) => {
     const handlePageGoToMap = async () => {
         const response = await request.get('/stories/go_to_map/', {id: id});
         console.log(response)
-        navigation.navigate('맵', {id: response.data.data.id});
+        navigation.navigate('맵', {coor: {latitude: response.data.data.latitude, longitude: response.data.data.longitude}});
     }
 
     const markup = {
@@ -102,15 +91,17 @@ const StoryDetailBox = ({navigation, id}: StoryDetailProps) => {
         setLoading(true);
         const response_detail = await request.get(`/stories/story_detail/${id}/`);
         const response_comment = await request.get("/stories/comments/", { story: id }, null);
-        const recommend_story = await request.get("/stories/recommend_story/", { id: id }, null);
+        //const recommend_story = await request.get("/stories/recommend_story/", { id: id }, null);
         setData(response_detail.data.data);
         setComment(response_comment.data.data.results);
-        setRecommend(recommend_story.data.data);
+        //setRecommend(recommend_story.data.data);
         setLoading(false);
+        console.log(data);
     };
 
     const reRenderScreen = () => {
         setRefreshing(true);
+        setUpdateText('');
         setRefreshing(false);
     }
 
@@ -140,11 +131,42 @@ const StoryDetailBox = ({navigation, id}: StoryDetailProps) => {
         } catch (error: any) {
           Alert.alert(error.message);
         }
-      };
+    };
+
+    const deleteStory = async () => {
+        const _delete = async () => {
+            await request.delete(`/stories/${id}/delete/`, {});
+            navigation.goBack();
+        }
+        Alert.alert(
+            "게시글 삭제 확인",
+            "정말로 삭제하시겠습니까?",
+            [
+                {
+                    text: "삭제",
+                    onPress: () => _delete(),
+
+                },
+                {
+                    text: "취소",
+                    onPress: () => { },
+                    style: "cancel"
+                },
+            ],
+            { cancelable: false }
+        );
+    }
+
+    const callback = (text: string, id: number) => {
+        setUpdateText(text);
+        setCommentId(id);
+        console.log(updateText);
+      }
 
     useEffect(() => {
+        checkUser();
         loadItem();
-        getStories()
+        getStories();
     }, [refreshing]);
 
     const [item,setItem] = useState([])
@@ -170,21 +192,25 @@ const StoryDetailBox = ({navigation, id}: StoryDetailProps) => {
                     disableVirtualization = {false}
                     ListHeaderComponent={
                     <>
-                        <CardView 
-                            gap={0}
-                            offset={0}
-                            data={item}
-                            pageWidth={width}
-                            height={330}
-                            dot={false}
-                            renderItem={({item}: any) => (
-                                <ImageBackground
-                                    style={{width: 280, height: 330, marginRight: 15}}
-                                    source={{uri: item.rep_pic}}
-                                    resizeMode='cover'
-                                />
-                            )}
-                        />
+                        {data!.extra_pics.length > 0 ? (
+                            <CardView 
+                                gap={0}
+                                offset={0}
+                                data={data!.extra_pics}
+                                pageWidth={width}
+                                height={330}
+                                dot={false}
+                                renderItem={({item}: any) => (
+                                    <ImageBackground
+                                        style={{width: 280, height: 330, marginRight: 15}}
+                                        source={{uri: item}}
+                                        resizeMode='cover'
+                                    />
+                                )}
+                            />
+                        ) : (
+                            <ImageBackground style={{width: width, height: 330}} source={{uri: data!.rep_pic}} />
+                        )}
                         <Text style={[textStyles.category, {marginLeft: 20, marginTop: 20}]}>{data!.category}</Text>
                         <View style = {{ flexDirection: 'row', marginHorizontal: 20, marginBottom: 20 }}>
                             <View style={{flex: 6, justifyContent: 'center'}}>
@@ -193,8 +219,7 @@ const StoryDetailBox = ({navigation, id}: StoryDetailProps) => {
                                 <Text style={textStyles.date}>{data!.created.slice(0, 10)} 작성</Text>
                             </View>
                             <View style = {{flex: 1, alignSelf: 'center'}}>
-                                {/* <Image></Image> */}
-                                <View style={{width:50,height:50,borderRadius:60,backgroundColor:'#CCCCCC'}}></View>
+                                <Image source={{uri: data!.profile}} style={{width: 50, height: 50, borderRadius: 60}} />
                                 <View style={{position: 'absolute', width: 34, height: 12, backgroundColor: data!.writer_is_verified ? '#209DF5' : '#89C77F', borderRadius: 10, top: 42, left: 8.5}}>
                                     <Text style={textStyles.verified}>{data!.writer_is_verified ? 'Editor' : 'User'}</Text>
                                 </View>
@@ -211,32 +236,31 @@ const StoryDetailBox = ({navigation, id}: StoryDetailProps) => {
                             source = {markup}
                             renderersProps = {renderersProps} 
                             />
-                        <NaverMapView style={{ width: width, height: 200}}/>
+                        <Image source={{uri: data!.map_image}} style={{width: width, height: 120}} />
                         <View style={{borderBottomColor: '#D9D9D9', width: width, borderBottomWidth: 1, marginTop: 40}} />
                         <View style={{flexDirection: 'row'}}>
                             <Text style={textStyles.subject}>한줄평</Text>
                             <View style={{marginTop: 15}}><CommentIcon /></View>
+                            <TouchableOpacity style={{marginLeft: 260, marginTop: 15}} onPress={() => {navigation.navigate('CommentList', { id: id, email: email })}}>
+                                <Text style={{fontSize: 10}}>더보기{'>'}</Text>
+                            </TouchableOpacity>
                         </View>
-                        <WriteComment id = {id} reRenderScreen = {reRenderScreen}/>
+                        <WriteComment id = {id} reRenderScreen = {reRenderScreen} data={updateText} commentId={commentId} />
                     </>}
                     renderItem = {({item}) => { 
                         return (
-                            <Comment data = {item} reRenderScreen = {reRenderScreen}/>
+                            <Comment data = {item} reRenderScreen = {reRenderScreen} email={email} callback={callback} />
                         )
                     }}
                     ListFooterComponent = {
                     <>
-                        <TouchableOpacity style={{alignItems: 'flex-end', marginRight: 30, marginTop: 10}} onPress={() => {navigation.navigate('CommentList', { id: id, comment: comment, reRenderScreen: reRenderScreen })}}>
-                            <Text>더보기{'>'}</Text>
-                        </TouchableOpacity>
-                        <View style={{borderBottomColor: '#D9D9D9', width: width, borderBottomWidth: 1, marginTop: 20}} />
                         <Text style={textStyles.subject}>스토리가 포함된 큐레이션</Text>
                         <CardView 
                             gap={10}
                             offset={12}
                             data={item}
                             pageWidth={width*0.6}
-                            height={width*0.55}
+                            height={width*0.5}
                             dot={false}
                             renderItem={({item}: any) => (
                                 <TouchableOpacity style={{marginHorizontal: 8}}>
@@ -260,17 +284,17 @@ const StoryDetailBox = ({navigation, id}: StoryDetailProps) => {
                             offset={12}
                             data={item}
                             pageWidth={width*0.6}
-                            height={width*0.55}
+                            height={width*0.3}
                             dot={false}
                             renderItem={({item}: any) => (
                                 <TouchableOpacity style={{marginHorizontal: 8}}>
                                     <ImageBackground
-                                        style={{width: width*0.5, height: width*0.5}}
+                                        style={{width: width*0.5, height: width*0.25}}
                                         source={{uri: item.rep_pic}}
                                         imageStyle={{borderRadius: 5}}
                                         resizeMode='cover'
                                     >
-                                        <View style={{width: width*0.5, height: width*0.5, borderRadius: 5, backgroundColor: 'rgba(0, 0, 0, 0.3)', justifyContent: 'flex-end'}}>
+                                        <View style={{width: width*0.5, height: width*0.25, borderRadius: 5, backgroundColor: 'rgba(0, 0, 0, 0.3)', justifyContent: 'flex-end'}}>
                                         <Text style={{fontSize: 15, fontWeight: '700', marginBottom: 10, marginLeft: 10, color: 'white'}}>서울 어쩌구 저쩌구{"\n"}비건 카페 5곳</Text>
                                         </View>
                                     </ImageBackground>
@@ -278,6 +302,18 @@ const StoryDetailBox = ({navigation, id}: StoryDetailProps) => {
                                 
                             )}
                         />
+                        { data!.writer == email ? (
+                            <>
+                            <TouchableOpacity onPress={deleteStory}>
+                                <Text>삭제</Text>
+                            </TouchableOpacity>
+                            <TouchableOpacity onPress={() => navigation.navigate('WriteStory', { id: data!.id })}>
+                                <Text>수정</Text>
+                            </TouchableOpacity>
+                            </>
+                        ) : (
+                            <></>
+                        )}
                         {/* <Text>{data!.category} 카테고리의 다른 글을 확인하세요</Text>
                         {recommend!.count != 0 ? (
                             <StoryRecommend data={recommend!.results} navigation = {navigation} />
@@ -294,11 +330,16 @@ const StoryDetailBox = ({navigation, id}: StoryDetailProps) => {
                     marginTop: height*0.8,
                     marginLeft: width*0.85
                 }}>
-                    {data!.story_like ? (
-                        <FloatingButton like={!like} onHeart={toggleLike} onShare={onShare}/>
-                    ): (
-                        <FloatingButton like={like} onHeart={toggleLike} onShare={onShare}/>
-                    )}
+                    <View style={buttonStyles.floating}>
+                        {data!.story_like ? (
+                            <Heart like={!like} onPress={toggleLike} white={true} />
+                        ) : (
+                            <Heart like={like} onPress={toggleLike} white={true} />
+                        )}
+                    </View>
+                    <TouchableOpacity style={[buttonStyles.floating, { marginTop: 12 }]} onPress={onShare}>
+                        <ShareIcon />
+                    </TouchableOpacity>
                 </View>
                 </SafeAreaView>
             )}
@@ -353,6 +394,17 @@ const textStyles = StyleSheet.create({
         fontSize: 14,
         fontWeight: '500',
         margin: 15
+    }
+})
+
+const buttonStyles = StyleSheet.create({
+    floating: {
+        backgroundColor: '#75E59B', 
+        width: 34, 
+        height: 34, 
+        borderRadius:60, 
+        alignItems: 'center', 
+        justifyContent: 'center'
     }
 })
 

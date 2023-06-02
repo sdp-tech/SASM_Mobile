@@ -1,22 +1,15 @@
-import { useState, useCallback } from "react";
-import {
-  SafeAreaView,
-  Text,
-  View,
-  StyleSheet,
-  TouchableOpacity,
-  Dimensions,
-} from "react-native";
+import { useState, useEffect, useCallback } from "react";
+import { SafeAreaView, View, StyleSheet, TouchableOpacity, Dimensions } from "react-native";
+import { TextPretendard as Text } from '../../common/CustomText';
 import SearchBar from "../../common/SearchBar";
 import { Request } from "../../common/requests";
-import { useIsFocused, useFocusEffect } from "@react-navigation/native";
+import { useFocusEffect } from "@react-navigation/native";
 import { StoryProps } from "../../pages/Story";
 import CardView from "../../common/CardView";
 import Add from "../../assets/img/Story/Add.svg";
 import StorySearch from "./components/StorySearch";
 import Category from "../../common/Category";
 import MainCard from "./components/MainCard";
-import DropDown from "../../common/DropDown";
 import Arrow from "../../assets/img/common/Arrow.svg";
 
 export interface StoryListProps {
@@ -33,23 +26,33 @@ export interface StoryListProps {
 }
 
 const StoryMainPage = ({ navigation, route }: StoryProps) => {
+  const toggleItems = [
+    { label: '조회수 순', value: 0, title: '에디터의 추천 스토리', subtitle: '에디터가 직접 선정한 알찬 스토리를 둘러보세요.', order: 'oldest' },
+    { label: '최신 순', value: 1, title: '방금 올라온 스토리', subtitle: '가장 생생한 장소의 이야기가 궁금하다면?', order: 'latest' },
+    { label: '인기 순', value: 2, title: '이번 달 인기 스토리', subtitle: '5월, 가장 많은 사람들의 관심을 받은 이야기를 둘러보세요.', order: 'hot' },
+  ]
   const [item, setItem] = useState([] as any);
-  //const [orderList, setOrderList] = useState<boolean>(true);
+  const [orderList, setOrderList] = useState(0);
+  const [order, setOrder] = useState<string>(toggleItems[orderList].order);
   const [page, setPage] = useState<number>(1);
   const [nextPage, setNextPage] = useState<any>(null);
   const [search, setSearch] = useState<string>('');
   const [refreshing, setRefreshing] = useState<boolean>(false);
-  const [checkedList, setCheckedList] = useState([] as any);
+  const [checkedList, setCheckedList] = useState<string[]>([]);
   const [count, setCount] = useState<number>(0);
   const { width, height } = Dimensions.get("screen");
 
   const request = new Request();
 
+  useEffect(() => {
+    onChangeOrder();
+  }, [orderList]);
+
   useFocusEffect(
     useCallback(() => {
       handleSearchToggle();
       getStories();
-    }, [page, search])
+    }, [page, search, checkedList, order])
   );
 
   const handleSearchToggle = async () => {
@@ -60,10 +63,18 @@ const StoryMainPage = ({ navigation, route }: StoryProps) => {
   };
 
   const getStories = async () => {
+    let category;
+    if (checkedList.length > 0){
+      category = checkedList.toString()
+    } else {
+      category = null
+    }
+
     const response = await request.get("/stories/story_search/", {
       page: page,
       search: search,
-      latest: true
+      order: order,
+      filter: category
     }, null);
 
     if (page === 1) {
@@ -73,6 +84,8 @@ const StoryMainPage = ({ navigation, route }: StoryProps) => {
     }
     setCount(response.data.data.count);
     setNextPage(response.data.data.next);
+    console.log(orderList, order);
+    console.log(item);
   };
   
   const onRefresh = async () => {
@@ -92,12 +105,9 @@ const StoryMainPage = ({ navigation, route }: StoryProps) => {
     }
   };
 
-  const [orderList, setOrderList] = useState(0);
-  const toggleItems = [
-    { label: '에디터의 추천 스토리', title: '에디터가 직접 선정한 알찬 스토리를 둘러보세요.', value: 0 },
-    { label: '방금 올라온 스토리', title: '가장 생생한 장소의 이야기가 궁금하다면?', value: 1 },
-    { label: '이번 달 인기 스토리', title: '5월, 가장 많은 사람들의 관심을 받은 이야기를 둘러보세요.', value: 2 },
-  ]
+  const onChangeOrder = async () => {
+    setOrder(toggleItems[orderList].order);
+  }
 
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: "white", }}>
@@ -112,21 +122,23 @@ const StoryMainPage = ({ navigation, route }: StoryProps) => {
       {search.length > 0 ? (
         <StorySearch
           item={item}
-          //orderList={""}
+          order={toggleItems}
           count={count}
           navigation={navigation}
           checkedList={checkedList}
           setCheckedList={setCheckedList}
           onEndReached={onEndReached}
           refreshing={refreshing}
+          value={orderList}
+          setValue={setOrderList}
           onRefresh={onRefresh}
         />
       ) : (
         <View>
           <View style={{ flexDirection: "row", paddingHorizontal: 30, paddingTop: 20, paddingBottom: 10 }}>
             <View style={{flex: 1}}>
-              <Text style={textStyles.title}>{toggleItems[orderList].label}</Text>
-              <Text style={textStyles.subtitle}>{toggleItems[orderList].title}</Text>
+              <Text style={textStyles.title}>{toggleItems[orderList].title}</Text>
+              <Text style={textStyles.subtitle}>{toggleItems[orderList].subtitle}</Text>
             </View>
             <TouchableOpacity onPress={() => setOrderList((orderList+1)%3)} style={{marginTop: 10}}>
               <Arrow transform={[{rotate: '90deg'}]}/>
@@ -153,6 +165,7 @@ const StoryMainPage = ({ navigation, route }: StoryProps) => {
                     preview={item.preview}
                     writer={item.writer}
                     nickname={item.nickname}
+                    profile={item.profile}
                     writer_is_verified={item.writer_is_verified}
                     navigation={navigation}
                     width={width}

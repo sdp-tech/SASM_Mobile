@@ -1,11 +1,10 @@
-import React, { Dispatch, SetStateAction, useEffect, useState } from 'react'
-import { Alert, Image, Modal, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
-import styled from 'styled-components/native'
-import { Request } from '../../../common/requests'
-import { getNickname } from '../../../common/storage'
-import { reviewDataProps } from './DetailCard'
-import CardView from '../../../common/CardView'
-import ReviewDetail from './ReviewDetail'
+import React, { Dispatch, SetStateAction, useEffect, useState } from 'react';
+import { Alert, Image, Modal, StyleSheet, TouchableOpacity, View } from 'react-native';
+import { TextPretendard as Text } from '../../../common/CustomText';
+import styled from 'styled-components/native';
+import { reviewDataProps } from './DetailCard';
+import CardView from '../../../common/CardView';
+import ReviewDetail from './ReviewDetail';
 
 const ReviewBox = styled.View`
   border-color: #DDDDDD;
@@ -13,66 +12,54 @@ const ReviewBox = styled.View`
   padding-vertical: 15px;
 `
 const TextBox = styled.View`
-  padding-left: 15px;
+  padding-left: 27px;
+  margin-top: 10px;
 `
 
 
 interface UserReviewsProps {
   reviewData: reviewDataProps;
+  rerender: () => void;
+  category: string;
 }
 
-export default function UserReviews({ reviewData }: UserReviewsProps): JSX.Element {
-  const [reviewModal, setReviewModal] = useState<boolean>(false);
-  const [nickname, setNickname] = useState<string>('');
-  const request = new Request();
-  useEffect(() => {
-    const _getNickname = async () => {
-      const _temp = await getNickname();
-      if (_temp) {
-        setNickname(_temp);
-      }
-    }
-    _getNickname();
-  }, []);
-  const deleteReview = async () => {
-    const response = await request.delete(`/places/place_review/${reviewData.id}/`);
-    // setTab(!tab);
-  }
+export default function UserReviews({ reviewData, rerender, category }: UserReviewsProps): JSX.Element {
+  const [detailModal, setDetailModal] = useState<boolean>(false);
+
   return (
     <ReviewBox>
-      <Modal visible={reviewModal}>
-        <ReviewDetail setReviewModal={setReviewModal} reviewData={reviewData} />
+      <Modal visible={detailModal}>
+        <ReviewDetail category={category} setDetailModal={setDetailModal} reviewData={reviewData} rerender={rerender} />
       </Modal>
       {
         reviewData &&
         <>
-
           {
             reviewData.photos.length != 0 &&
             <CardView
               data={reviewData.photos}
               renderItem={({ item }: any) => <Image source={{ uri: item.imgfile }} style={{ height: 150, width: 200, marginHorizontal: 5 }} />}
-              gap={10}
-              offset={10}
-              pageWidth={200}
-              height={150}
+              gap={8}
+              offset={19}
+              pageWidth={194}
+              height={125}
               dot={false}
             />
           }
-          <TouchableOpacity onPress={() => { setReviewModal(true) }}>
-          <TextBox>
-            <Text style={TextStyles.common}>
-              {reviewData.nickname}
-            </Text>
-            <Text style={TextStyles.common}>
-              {reviewData.contents}
-            </Text>
-            <Text style={TextStyles.date}>
-              {reviewData.created.slice(0, 10).replace(/-/gi, '.')}
-            </Text>
-          </TextBox>
-        </TouchableOpacity>
-    </>
+          <TouchableOpacity onPress={() => { setDetailModal(true) }}>
+            <TextBox>
+              <Text style={TextStyles.common}>
+                {reviewData.nickname}
+              </Text>
+              <Text style={TextStyles.common}>
+                {reviewData.contents}
+              </Text>
+              <Text style={TextStyles.date}>
+                {reviewData.created.slice(0, 10).replace(/-/gi, '.')}
+              </Text>
+            </TextBox>
+          </TouchableOpacity>
+        </>
       }
     </ReviewBox >
   )
@@ -80,11 +67,12 @@ export default function UserReviews({ reviewData }: UserReviewsProps): JSX.Eleme
 
 const TextStyles = StyleSheet.create({
   date: {
-    fontSize: 10,
+    fontSize: 8,
     color: '#9A9A9A',
   },
   common: {
-    fontSize: 14,
+    fontSize: 12,
+    color: '#000000',
     marginVertical: 5
   }
 })

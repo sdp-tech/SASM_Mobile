@@ -1,16 +1,17 @@
-import { StackScreenProps, StackNavigationProp } from '@react-navigation/stack'
-import React, { useCallback, useEffect, useState } from 'react'
-import { HomeStackParams } from '../../pages/Home'
-import { Dimensions, Image, SafeAreaView, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
-import { Request } from '../../common/requests'
+import { StackScreenProps, StackNavigationProp } from '@react-navigation/stack';
+import React, { useCallback, useEffect, useState } from 'react';
+import { HomeStackParams } from '../../pages/Home';
+import { Dimensions, Image, SafeAreaView, StyleSheet, TouchableOpacity, View } from 'react-native';
+import { TextPretendard as Text } from '../../common/CustomText';
+import { Request } from '../../common/requests';
 import Arrow from "../../assets/img/common/Arrow.svg";
-import { ScrollView } from 'react-native-gesture-handler'
-import styled from 'styled-components/native'
-import { useFocusEffect, useNavigation } from '@react-navigation/native'
-import { AppProps, TabProps } from '../../../App'
-import CardView from '../../common/CardView'
-import { CurationPlusButton } from './CurationHome'
-import Heart from '../../common/Heart'
+import { ScrollView } from 'react-native-gesture-handler';
+import styled from 'styled-components/native';
+import { useFocusEffect, useNavigation } from '@react-navigation/native';
+import { AppProps, TabProps } from '../../../App';
+import CardView from '../../common/CardView';
+import { CurationPlusButton } from './CurationHome';
+import Heart from '../../common/Heart';
 
 const { width, height } = Dimensions.get('window');
 
@@ -46,17 +47,18 @@ const GotoStory = styled.TouchableOpacity`
 `
 const StoryContentBox = styled.View`
   padding-horizontal: 25px;
-  margin-top: 50px;
-  amrgin-bottom: 20px;
+  margin-vertical: 20px;
 `
 interface CurationDetailProps {
   contents: string;
   created: string;
   like_curation: boolean;
+  nickname: string;
+  profile_image: string;
   map_image: string;
   rep_pic: string;
   title: string;
-  writer: string;
+  writer_email: string;
   writer_is_verified: boolean;
 }
 
@@ -73,7 +75,7 @@ interface CuratedStoryProps {
   rep_photos: string[];
   story_id: number;
   story_review: string;
-  writer: string;
+  writer_email: string;
 }
 
 
@@ -88,7 +90,9 @@ export default function CurationDetail({ navigation, route }: StackScreenProps<H
     map_image: '',
     rep_pic: '',
     title: '',
-    writer: '',
+    nickname: '',
+    profile_image: '',
+    writer_email: '',
     writer_is_verified: false,
   });
   const [reppicSize, setReppicSize] = useState<{ width: number; height: number; }>({
@@ -100,7 +104,6 @@ export default function CurationDetail({ navigation, route }: StackScreenProps<H
   const getCurationDetail = async () => {
     const response_detail = await request.get(`/curations/curation_detail/${route.params.id}/`);
     setCurationDetail(response_detail.data.data[0]);
-    console.error(response_detail.data.data);
     Image.getSize(response_detail.data.data[0].rep_pic, (width, height) => { setReppicSize({ width: width, height: height }) });
     Image.getSize(response_detail.data.data[0].map_image, (width, height) => { setMapImageSize({ width: width, height: height }) })
   }
@@ -125,9 +128,9 @@ export default function CurationDetail({ navigation, route }: StackScreenProps<H
           <Text style={TextStyles.title} numberOfLines={4}>{curationDetail.title}</Text>
         </View>
         <InfoBox>
-          <View style={{ width: 50, height: 50, backgroundColor: '#CCCCCC', borderRadius: 25, marginRight: 20 }}></View>
+          <Image source={{ uri: curationDetail.profile_image }} style={{ width: 50, height: 50, borderRadius: 25, marginRight: 20 }} />
           <View>
-            <Text style={TextStyles.writer}>{curationDetail.writer}</Text>
+            <Text style={TextStyles.writer}>{curationDetail.nickname}</Text>
             <Text style={TextStyles.created}>{curationDetail.created.slice(0, 10).replace(/-/gi, '.')}작성</Text>
           </View>
         </InfoBox>
@@ -135,7 +138,7 @@ export default function CurationDetail({ navigation, route }: StackScreenProps<H
           <Text style={TextStyles.content}>{curationDetail.contents}</Text>
         </ContentBox>
         <Image source={{ uri: curationDetail.map_image }} style={{ width: width, height: width * (mapImageSize.height / mapImageSize.width) }} />
-        <GotoMap onPress={() => { navigationTab.navigate('맵', {})}}>
+        <GotoMap onPress={() => { navigationTab.navigate('맵', {}) }}>
           <Text style={TextStyles.gotomap}>맵페이지로 이동</Text>
         </GotoMap>
         {
@@ -150,12 +153,16 @@ export default function CurationDetail({ navigation, route }: StackScreenProps<H
 }
 
 const Storys = ({ navigation, data }: { navigation: StackNavigationProp<TabProps>, data: CuratedStoryProps }) => {
-  const [like, setLike] = useState<boolean>(data.like_story);
+  const [like, setLike] = useState<boolean>(false);
   const request = new Request();
   const handleLike = async () => {
     const response_like = await request.post('/stories/story_like/', { id: data.story_id });
     setLike(!like);
   }
+
+  useEffect(()=>{
+    setLike(data.like_story);
+  }, [])
   return (
     <StorySection>
       <StoryInfoBox>
@@ -172,10 +179,21 @@ const Storys = ({ navigation, data }: { navigation: StackNavigationProp<TabProps
           <Text style={TextStyles.created}>{data.created.slice(0, 10).replace(/-/gi, '.')}작성</Text>
         </View>
       </InfoBox>
+      {
+        data.rep_photos != null &&
+        <CardView
+          height={300}
+          pageWidth={250}
+          data={data.rep_photos}
+          renderItem={({ item }: any) => <Image source={{ uri: item }} style={{ width: 250, height: 300, marginHorizontal: 5 }} />}
+          gap={10}
+          offset={15}
+          dot={false} />
+      }
       <StoryContentBox>
         <Text style={TextStyles.category}>{data.place_category}</Text>
-        <Text style={{ fontSize: 16, marginBottom: 20 }}>{data.story_review}</Text>
-        <Text style={{ fontSize: 12 }}>{data.preview}...</Text>
+        <Text style={TextStyles.story_review}>{data.story_review}</Text>
+        <Text>{data.preview}</Text>
         <Text style={TextStyles.hashtags}>{data.hashtags}</Text>
       </StoryContentBox>
       <GotoStory onPress={() => { navigation.navigate('스토리', { id: data.story_id }) }}>
@@ -192,6 +210,7 @@ const TextStyles = StyleSheet.create({
     position: 'absolute',
     paddingHorizontal: 20,
     bottom: 20,
+    color:'#FFFFFF',
     width: '100%',
   },
   content: {
@@ -200,7 +219,7 @@ const TextStyles = StyleSheet.create({
   },
   writer: {
     fontSize: 12,
-    fontWeight: '600'
+    fontWeight: '600',
   },
   created: {
     color: '#676767',
@@ -210,15 +229,20 @@ const TextStyles = StyleSheet.create({
     fontSize: 12,
     color: '#545454'
   },
+  story_review: {
+    fontSize: 16,
+    marginBottom: 20,
+    fontWeight:'700',
+  },
   place_name: {
     fontSize: 24,
     fontWeight: '700',
     marginBottom: 5,
-    alignSelf: 'flex-start'
+    alignSelf: 'flex-start',
   },
   hashtags: {
-    fontSize: 10,
-    marginVertical: 20
+    fontSize: 12,
+    marginVertical: 20,
   },
   category: {
     fontSize: 10,

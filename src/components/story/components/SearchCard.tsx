@@ -1,25 +1,27 @@
 import { useState, useEffect } from 'react';
-import { SafeAreaView, View, Text, TouchableOpacity, Image, ImageBackground, StyleSheet, Dimensions } from 'react-native';
+import { SafeAreaView, View, TouchableOpacity, Image, ImageBackground, StyleSheet, Dimensions } from 'react-native';
+import { TextPretendard as Text } from '../../../common/CustomText';
 import styled from 'styled-components';
 import { Request } from '../../../common/requests';
-import Loading from '../../../common/Loading';
 import Heart from '../../../common/Heart';
 
 interface SearchCardProps {
   id: number;
   place_name: string;
   rep_pic: string;
+  extra_pics: any;
   story_like: boolean;
   title: string;
   category: string;
   preview: string;
   writer: string;
   nickname: string;
+  created: string;
   writer_is_verified: boolean;
   navigation: any;
 }
 
-const SearchCard = ({id, place_name, title, rep_pic, story_like, category, preview, writer, nickname, writer_is_verified, navigation} : SearchCardProps) => {
+const SearchCard = ({id, place_name, title, rep_pic, extra_pics, story_like, category, preview, writer, nickname, created, writer_is_verified, navigation} : SearchCardProps) => {
   const { width, height } = Dimensions.get('screen');
   const [like, setLike] = useState<boolean>(false);
   const [verified, setVerified] = useState<boolean>(writer_is_verified);
@@ -37,12 +39,12 @@ const SearchCard = ({id, place_name, title, rep_pic, story_like, category, previ
   return (
     <View>
       <View style={{flexDirection: 'row', alignItems: 'center'}}>
-        <View style={{flexDirection: 'row', flex: 4}}>
+        <View style={{flexDirection: 'row', flex: 3}}>
           <Text style={textStyles.writer}>{verified ? ('Editor') : ('User')} {nickname} 님의 이야기</Text>
           <View style={{backgroundColor: verified ? '#209DF5' : '#89C77F', width: 14, height: 14, borderRadius: 60, marginTop: 1, marginLeft: 5}}/>
         </View>
         <View style={{flex: 1}}>
-          <Text style={textStyles.date}>2023.4.5 작성</Text>
+          <Text style={textStyles.date}>{created.slice(0, 10)} 작성</Text>
         </View>
       </View>
       <TouchableOpacity style={{marginTop: 10, marginBottom: 20}} onPress={onPress}>
@@ -70,14 +72,27 @@ const SearchCard = ({id, place_name, title, rep_pic, story_like, category, previ
             </View>
           </ImageBackground>
           <View style={{marginLeft: 7}}>
-            <Image 
-              source={{uri: rep_pic}}
-              style={{width: width*0.27, height: width*0.29, borderRadius: 5, marginBottom: 7}}
-            />
-            <Image 
-              source={{uri: rep_pic}}
-              style={{width: width*0.275, height: width*0.29, borderRadius: 5}}
-            />
+            { extra_pics != null ? (
+              <>
+              <Image 
+                source={{uri: extra_pics[0]}}
+                style={{width: width*0.27, height: width*0.29, borderRadius: 5, marginBottom: 7}}
+              />
+              <Image 
+                source={{uri: extra_pics[1]}}
+                style={{width: width*0.275, height: width*0.29, borderRadius: 5}}
+              />
+              </>
+            ) : (
+              <>
+              <View style={{width: width*0.27, height: width*0.29, borderRadius: 5, marginBottom: 7, backgroundColor: '#D9D9D9', alignItems: 'center', justifyContent: 'center'}}>
+                <Text>사진 없음</Text>
+              </View>
+              <View style={{width: width*0.27, height: width*0.29, borderRadius: 5, marginBottom: 7, backgroundColor: '#D9D9D9', alignItems: 'center', justifyContent: 'center'}}>
+                <Text>사진 없음</Text>
+              </View>
+              </>
+            )}
           </View>
         </View>
       </TouchableOpacity>

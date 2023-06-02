@@ -1,7 +1,8 @@
 import React, { SetStateAction, Dispatch, useEffect, useState, useRef, useMemo, RefObject } from "react";
 import styled from "styled-components/native";
 import { Request } from "../../../common/requests";
-import { Dimensions, FlatList, TouchableOpacity, View, Text, SafeAreaView, Image, Modal, StyleSheet, ActivityIndicator } from "react-native";
+import { Dimensions, FlatList, TouchableOpacity, View, SafeAreaView, Image, Modal, StyleSheet, ActivityIndicator, Platform } from "react-native";
+import { TextPretendard as Text } from "../../../common/CustomText";
 import { placeDataProps } from "../../map/Map";
 import SearchBar from "../../../common/SearchBar";
 import Arrow from "../../../assets/img/common/Arrow.svg";
@@ -90,12 +91,12 @@ export default function SelectStoryModal({ setSelectStoryModal, selectedStory, s
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
       <SafeAreaView style={{ flex: 1 }}>
-        <TouchableOpacity onPress={() => { setSelectStoryModal(false) }}>
+        <TouchableOpacity onPress={() => { setSelectStoryModal(false) }} style={{marginTop:Platform.OS == 'android' ? 10 : 0}}>
           <Arrow width={20} height={20} transform={[{ rotateY: '180deg' }]} />
         </TouchableOpacity>
-        <View style={{ paddingHorizontal: 15, marginVertical:10 }}>
+        <View style={{ paddingHorizontal: 15, marginVertical: 10 }}>
           <Text style={{ ...TextStyles.title, fontSize: 20, marginBottom: 20 }}>장소 검색</Text>
-          <SearchBar style={{ width: '100%', backgroundColor: '#F1F1F1' }} search={search} setSearch={setSearch} setPage={setPage} />
+          <SearchBar style={{ width: '100%', backgroundColor: '#F1F1F1' }} placeholder="장소 검색" search={search} setSearch={setSearch} setPage={setPage} />
           <FilterButton onPress={() => { filterRef.current?.present() }}>
             <Text>필터</Text>
             <Filter />
@@ -193,7 +194,7 @@ const FilterScreen = ({ close, checkedList, setCheckedList, setPage }: FilterPro
   }
   return (
     <FilterSection>
-      <Text style={{...TextStyles.place_name, marginBottom: 20}}>필터</Text>
+      <Text style={{ ...TextStyles.place_name, marginBottom: 20 }}>필터</Text>
       <SubSection>
         <Text>카테고리</Text>
         <CenterSection>
@@ -218,7 +219,7 @@ const FilterScreen = ({ close, checkedList, setCheckedList, setPage }: FilterPro
 const TextStyles = StyleSheet.create({
   place_name: {
     fontSize: 16,
-    fontWeight: '600'
+    fontWeight: '600',
   },
   address: {
     color: '#7B7B7B',
@@ -226,7 +227,7 @@ const TextStyles = StyleSheet.create({
   },
   title: {
     fontSize: 10,
-    fontWeight: '600'
+    fontWeight: '600',
   },
   detail: {
     fontSize: 8,

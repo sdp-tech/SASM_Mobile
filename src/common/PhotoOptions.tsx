@@ -1,7 +1,11 @@
-import React, { Dispatch, SetStateAction, useCallback } from 'react';
-import { Text } from "react-native";
+import React, { Dispatch, ReactElement, ReactNode, SetStateAction, useCallback } from 'react';
+import { Alert, TouchableOpacity, View } from "react-native";
+import { TextPretendard as Text } from './CustomText';
 import * as ImagePicker from "react-native-image-picker";
 import styled from 'styled-components/native';
+import PlaceUser from "../assets/img/Map/PlaceUser.svg";
+import { CameraOptions } from 'react-native-image-picker';
+import { ImageLibraryOptions } from 'react-native-image-picker';
 
 const PhotosInput = styled.View`
   display: flex; 
@@ -19,7 +23,7 @@ interface Action {
   options: ImagePicker.CameraOptions | ImagePicker.ImageLibraryOptions;
 }
 
-interface PhotoProps { 
+interface PhotoProps {
   setPhoto: Dispatch<SetStateAction<any>>;
   max: number;
 }
@@ -31,8 +35,8 @@ export interface PhotoResultProps {
   uri: string;
 }
 
-export default function PhotoOptions({setPhoto, max}:PhotoProps): JSX.Element {
-  
+export default function PhotoOptions({ setPhoto, max }: PhotoProps): JSX.Element {
+
   const CameraActions: Action[] = [
     //카메라 & 갤러리 세팅
     {
@@ -80,5 +84,59 @@ export default function PhotoOptions({setPhoto, max}:PhotoProps): JSX.Element {
         })
       }
     </PhotosInput>
+  )
+}
+
+const Container = styled.View<{ width: number, height: number }>`
+  background: #DADADA;
+  width: ${props => props.width}px;
+  height: ${props => props.height}px;
+  position: relative;
+  display: flex;
+  flex-flow: row;
+  align-items: center;
+`
+const SelectButton = styled.TouchableOpacity`
+  position: absolute;
+  right: 5px;
+  bottom: 5px;
+  z-index: 2;
+`
+interface PhotoSelectorProps extends PhotoProps {
+  width: number;
+  height: number;
+  children?: ReactNode | JSX.Element | ReactElement;
+}
+export const PhotoSelector = ({ width, height, children, max, setPhoto }: PhotoSelectorProps): JSX.Element => {
+  const options: CameraOptions[] | ImageLibraryOptions[] = [
+    //카메라 & 갤러리 세팅
+    {
+      mediaType: 'photo',
+      includeBase64: false,
+      maxHeight: 300,
+      maxWidth: 300,
+    },
+    {
+      selectionLimit: max,
+      mediaType: 'photo',
+      includeBase64: false,
+      maxHeight: 300,
+      maxWidth: 300,
+    }
+  ];
+  return (
+    <Container width={width} height={height}>
+      <SelectButton onPress={() => {
+        Alert.alert('사진 선택', '',
+          [
+            { text: '카메라', onPress: () => { ImagePicker.launchCamera(options[0], response => (!response.didCancel && setPhoto(response.assets))) } },
+            { text: '앨범', onPress: () => { ImagePicker.launchImageLibrary(options[1], response => (!response.didCancel && setPhoto(response.assets))) } },
+            { text: '취소', style: 'destructive' }
+          ])
+      }}>
+        <PlaceUser />
+      </SelectButton>
+      {children}
+    </Container>
   )
 }

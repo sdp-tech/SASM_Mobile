@@ -1,13 +1,16 @@
 import { useState, useEffect } from 'react';
 import { Request } from '../../../common/requests';
-import { View, Text, TouchableOpacity, TextInput, StyleSheet, Alert, Dimensions } from 'react-native';
+import { View, TouchableOpacity, TextInput, StyleSheet, Alert, Dimensions } from 'react-native';
+import { TextPretendard as Text } from '../../../common/CustomText';
 
 interface WriteCommentParams {
     id: number;
     reRenderScreen: any;
+    data?: string;
+    commentId?: number;
 }
 
-const WriteComment = ({ id, reRenderScreen }: WriteCommentParams) => {
+const WriteComment = ({ id, reRenderScreen, data, commentId }: WriteCommentParams) => {
     const { width, height } = Dimensions.get('screen');
     const [comment, setComment] = useState<string>('');
     const request = new Request();
@@ -17,14 +20,28 @@ const WriteComment = ({ id, reRenderScreen }: WriteCommentParams) => {
             Alert.alert("댓글을 입력해주세요.");
         }
         else {
-            const response = await request.post("/stories/comments/create/", {
-                story: id,
-                content: comment,
-            }, null);
-            Alert.alert("댓글이 등록되었습니다.");
-            reRenderScreen();
+            if (data) {
+                const response = await request.put(`/stories/comments/update/${commentId}/`, {
+                    content: comment,
+                });
+                Alert.alert("댓글이 수정되었습니다.");
+                reRenderScreen();
+            } else {
+                const response = await request.post("/stories/comments/create/", {
+                    story: id,
+                    content: comment,
+                }, null);
+                Alert.alert("댓글이 등록되었습니다.");
+                reRenderScreen();
+            }
         }
     }
+
+    useEffect(()=>{
+        if(data){
+            setComment(data);
+        }
+    }, [data])
 
     return (
         <View style={{backgroundColor: 'rgba(217, 217, 217, 0.2)', width: width, height: 100, padding: 10}}>

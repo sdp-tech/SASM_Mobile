@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { View, FlatList, StyleSheet, Text, SafeAreaView, ActivityIndicator, TouchableOpacity, Image, Alert } from 'react-native';
+import { View, FlatList, StyleSheet, SafeAreaView, ActivityIndicator, TouchableOpacity, Image, Alert } from 'react-native';
+import { TextPretendard as Text } from '../../common/CustomText';
 import type { NativeStackScreenProps } from '@react-navigation/native-stack';
 import styled from 'styled-components/native';
 import Heart from '../../common/Heart';

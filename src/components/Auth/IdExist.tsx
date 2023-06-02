@@ -1,7 +1,8 @@
 import { NavigationContext, NavigationProp, useNavigation } from '@react-navigation/native';
 import { StackNavigationProp, StackScreenProps } from '@react-navigation/stack';
 import React, { useContext } from 'react';
-import { Text, TouchableOpacity, View } from 'react-native';
+import { TouchableOpacity, View } from 'react-native';
+import { TextPretendard as Text } from '../../common/CustomText';
 import styled from 'styled-components/native';
 import { MyPageProps } from '../../pages/MyPage';
 import { findScreenProps } from './FindIDPW';

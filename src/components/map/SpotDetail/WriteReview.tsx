@@ -1,24 +1,27 @@
-import React, { useEffect, useState, useCallback, Dispatch, SetStateAction } from 'react'
-import { Text, TextInput, TouchableOpacity, View, Image, Alert, SafeAreaView, StyleSheet } from 'react-native'
+import React, { useEffect, useState, useCallback, Dispatch, SetStateAction } from 'react';
+import { TextInput, TouchableOpacity, View, Image, Alert, SafeAreaView, StyleSheet, Dimensions } from 'react-native';
+import { TextPretendard as Text } from '../../../common/CustomText';
 import styled from 'styled-components/native';
 import { Request } from '../../../common/requests';
 import { reviewDataProps } from './DetailCard';
-import PhotoOptions from '../../../common/PhotoOptions';
+import PhotoOptions, { PhotoSelector } from '../../../common/PhotoOptions';
 import Close from "../../../assets/img/common/Close.svg";
+import { ScrollView } from 'react-native-gesture-handler';
+
+const { width, height } = Dimensions.get('window');
 
 const Header = styled.View`
   background-color: #75E59B;
-  height: 100px;
+  height: 12.5%;
   display: flex;
-  flex-flow: row wrap;
+  flex-flow: row;
   align-items: center;
   justify-content: space-between;
-  padding: 10%;
+  padding: 0 20px;
 `
 const Section = styled.View`
-  padding: 40px 20px;
+  padding: 20px;
 `
-
 const KeywordBox = styled.View`
   display: flex;
   flex-flow: row wrap;
@@ -33,7 +36,7 @@ const KeywordButton = styled.TouchableOpacity<{ isSelected: boolean }>`
 `
 const KeywordTitle = styled.Text<{ isSelected: boolean }>`
   padding: 10px;
-  font-size: 14px;
+  font-size: 13px;
   color: ${props => props.isSelected ? '#FFFFFF' : '#000000'};
 `
 const ContentsInput = styled.TextInput`
@@ -41,13 +44,6 @@ const ContentsInput = styled.TextInput`
   height: 35px;
   margin: 10px 0;
   padding: 5px;
-`
-const PhotoBox = styled.View`
-  display: flex;
-  min-height: 110px;
-  margin: 10px 0;
-  flex-flow: row wrap;
-  justify-content: space-around;
 `
 const Submit = styled.TouchableOpacity`
   width: 50%;
@@ -68,14 +64,13 @@ interface WriteReviewProps {
   id: number;
   category: string;
   setReviewModal: Dispatch<SetStateAction<boolean>>;
+  setDetailModal?: Dispatch<SetStateAction<boolean>>;
   setTab: Dispatch<SetStateAction<number>>;
+  rerender: () => void;
+  targetData?: reviewDataProps;
 }
 
-interface SubmitProps {
-  onSubmit: (form: FormProps) => void;
-}
-
-export default function WriteReview({ id, category, setReviewModal, setTab }: WriteReviewProps) {
+export default function WriteReview({ rerender, id, category, setReviewModal, setDetailModal, setTab, targetData }: WriteReviewProps) {
   //업로드할 사진 목록
   const [photos, setPhotos] = useState<any[]>([]);
   //수정할 사진 목록
@@ -138,13 +133,6 @@ export default function WriteReview({ id, category, setReviewModal, setTab }: Wr
       }
     }
   }
-  const onChangeText = (props: string) => (value: string) => {
-    //텍스트 입력
-    setForm({
-      ...form,
-      [props]: value,
-    });
-  };
   const deletePhoto = (data: any, state: any[], setState: Dispatch<SetStateAction<any[]>>) => {
     //각각의 photoList와 photos를 위해 state를 props로 전달
     setState(state.filter((el) => el !== data));
@@ -169,12 +157,8 @@ export default function WriteReview({ id, category, setReviewModal, setTab }: Wr
         formData.append('photoList', photoList[i].imgfile);
       }
     }
-
-    for(let item of formData.getParts()){
-      console.log(item);
-    }
-    if (photoList.length + photos.length > 3 || form.contents.length==0) {
-      if(form.contents.length==0) {
+    if (photoList.length + photos.length > 3 || form.contents.length == 0 || form.keywords.length == 0) {
+      if (form.contents.length == 0) {
         Alert.alert(
           '댓글을 작성해주세요',
           '',
@@ -183,9 +167,18 @@ export default function WriteReview({ id, category, setReviewModal, setTab }: Wr
           }]
         )
       }
-      if(photoList.length + photos.length > 3) {
+      if (form.keywords.length == 0) {
         Alert.alert(
-          '사진은 최대 3장까지 업로드',
+          '키워드를 선택해주세요',
+          '',
+          [{
+            text: '확인'
+          }]
+        )
+      }
+      if (photoList.length + photos.length > 3) {
+        Alert.alert(
+          '사진은 최대 3장까지 업로드 가능합니다.',
           '',
           [{
             text: '확인'
@@ -194,56 +187,78 @@ export default function WriteReview({ id, category, setReviewModal, setTab }: Wr
       }
     }
     else {
-      // if (targetData) {
-      //   const response_update = await request.put(`/places/place_review/${targetData.id}/update`, formData, { "Content-Type": "multipart/form-data" });
-      // }
-      // else {
+      if (targetData) {
+        const response_update = await request.put(`/places/place_review/${targetData.id}/update`, formData, { "Content-Type": "multipart/form-data" });
+      }
+      else {
         const response_upload = await request.post('/places/place_review/create/', formData, { "Content-Type": "multipart/form-data" });
-      // }
+      }
       setReviewModal(false);
+      if (setDetailModal) {
+        setDetailModal(false);
+      }
       setTab(0);
+      rerender();
     }
   }
-  // useEffect(() => {
-  //   let tempCategory = [];
-  //   if (targetData) {
-  //     setPhotoList(targetData.photos);
-  //     for (let i = 0; i < targetData?.category.length; i++) {
-  //       tempCategory.push(targetData.category[i].category);
-  //     }
-  //   }
-  //   setForm({ ...form, keywords: tempCategory });
-  // }, [targetData]);
+  useEffect(() => {
+    let tempCategory = [];
+    if (targetData) {
+      setPhotoList(targetData.photos);
+      for (let i = 0; i < targetData?.category.length; i++) {
+        tempCategory.push(targetData.category[i].category);
+      }
+      setForm({ ...form, contents: targetData?.contents, keywords: tempCategory });
+    }
+  }, []);
+
   return (
     <View>
       <Header>
         <Text style={TextStyles.header}>리뷰하기</Text>
-        <TouchableOpacity onPress={() => { setReviewModal(false) }}><Close color={'#FFFFFF'}/></TouchableOpacity>
+        <TouchableOpacity onPress={() => { setReviewModal(false) }}><Close color={'#FFFFFF'} /></TouchableOpacity>
       </Header>
+      <ScrollView style={{height: '87.5%'}}>
       <Section>
         <Text style={TextStyles.title}>이미지 등록하기</Text>
-        <PhotoBox>
+        <PhotoSelector max={3} width={width-40} height={300} setPhoto={setPhotos}>
           {
-            photos.map((data) => <Image source={{ uri: data.uri }} style={{ width: 100, height: 100 }} />)
+            photos.map((data) =>
+              <View style={{ position: 'relative' }}>
+                <TouchableOpacity style={{ position: 'absolute', top: 5, right: 5, zIndex: 2 }} onPress={() => { deletePhoto(data, photos, setPhotos) }}>
+                  <Close color={'#FFFFFF'} width={20} height={20} />
+                </TouchableOpacity>
+                <Image source={{ uri: data.uri }} style={{ width: 100, height: 100, marginBottom: 10 }} />
+              </View>)
           }
-        </PhotoBox>
-        <PhotoOptions max={3} setPhoto={setPhotos} />
+          {
+            photoList.map((data) =>
+              <View style={{ position: 'relative' }}>
+                <TouchableOpacity style={{ position: 'absolute', top: 5, right: 5, zIndex: 2 }} onPress={() => { deletePhoto(data, photoList, setPhotoList) }}>
+                  <Close color={'#FFFFFF'} width={20} height={20} />
+                </TouchableOpacity>
+                <Image source={{ uri: data.imgfile }} style={{ width: 100, height: 100, marginBottom: 10 }} />
+              </View>
+            )
+          }
+        </PhotoSelector>
         <Text style={TextStyles.titleBold}>좋았던 점을 알려주세요!</Text>
         <Text style={TextStyles.title}>한줄평</Text>
-        <ContentsInput onChangeText={(event)=>{setForm({...form, contents:event})}}/>
+        <ContentsInput defaultValue={targetData && targetData.contents} onChangeText={(event) => { setForm({ ...form, contents: event }) }} />
         <KeywordBox>
           {keywordList.map(data => {
             const isSelected = form.keywords.includes(data[1]);
             return (
-            <KeywordButton isSelected={isSelected} onPress={() => onChangeKeyword(data[1])} key={data[1]}>
-              <KeywordTitle isSelected={isSelected}>{data[0]}</KeywordTitle>
-            </KeywordButton>)
+              <KeywordButton isSelected={isSelected} onPress={() => onChangeKeyword(data[1])} key={data[1]}>
+                <KeywordTitle isSelected={isSelected}>{data[0]}</KeywordTitle>
+              </KeywordButton>)
           })}
         </KeywordBox>
         <Submit onPress={uploadReview}>
           <Text style={TextStyles.submit}>리뷰 등록하기</Text>
         </Submit>
       </Section>
+      </ScrollView>
     </View>
   )
 }
@@ -260,12 +275,14 @@ const TextStyles = StyleSheet.create({
     fontWeight: "700",
   },
   title: {
-    fontSize: 16,
+    fontSize: 15,
     marginVertical: 10,
+    color: '#000000'
   },
   titleBold: {
-    fontSize: 16,
+    fontSize: 15,
     fontWeight: "700",
     marginVertical: 10,
+    color: '#000000'
   }
 })
