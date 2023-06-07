@@ -1,10 +1,6 @@
 import React, { useEffect, useState, useCallback } from 'react';
-<<<<<<< HEAD
-import { Dimensions ,ImageBackground,Text, ScrollView, View, TouchableOpacity, Alert,StyleSheet,SafeAreaView, localStorage,Image, Switch } from "react-native";
-=======
 import { Dimensions ,ImageBackground, ScrollView, View, TouchableOpacity, Alert,StyleSheet,SafeAreaView, localStorage,Image, Switch } from "react-native";
 import { TextPretendard as Text } from '../../../common/CustomText';
->>>>>>> 9807780408373cc7443e8dfc2ee53a323dbdb4b1
 import { useFocusEffect, useNavigation } from '@react-navigation/native';
 import { getNickname, removeNickname, removeAccessToken, getEmail } from '../../../common/storage';
 import { launchImageLibrary } from 'react-native-image-picker';
@@ -56,7 +52,7 @@ export default function UserInfoBox({ navigation }) {
       setEmail('')
   }
   const getUserinfo = async () => {
-    const response = await request.get(`/users/me/`,{},{});
+    const response = await request.get(`mypage/me/`,{},{});
     console.log("응답 : ",response);
     console.log("이메일 : ",response.data.data.email);
     console.log("생년월일 : ", response.data.data.birthdate);
@@ -69,13 +65,13 @@ export default function UserInfoBox({ navigation }) {
     setPhoto(response.data.data.profile_image)
     setGender(response.data.data.gender)
     
-    const response0 = await request.get('/mypage/following/', {
+    const response0 = await request.get('mypage/following/', {
       email: response.data.data.email,
-      source_email: '',
+      search_email: '',
     })
-    const response1 = await request.get('/mypage/follower/', {
+    const response1 = await request.get('mypage/follower/', {
       email: response.data.data.email,
-      source_email: '',
+      search_email: '',
     })
     
     setFollowingnum(response0.data.data.count);
@@ -97,23 +93,37 @@ export default function UserInfoBox({ navigation }) {
     //   name: newphoto[0].fileName,
     //   type: 'image/jpeg/png',
     // }
-    formData.append('nickname',changednick)
-    formData.append('birthdate', birthdate);
+    //formData.append('nickname',changednick)
+    //formData.append('birthdate', birthdate);
     //formData.append('profile_image',changephoto)
-    formData.append('gender', gender)
+    //formData.append('gender', gender)
     console.log(formData);
     /*const response = await request.post('/users/me/',{nickname:changednick,birthdate:birthdate,profile_image:{
       uri: newphoto[0].uri,
       name: newphoto[0].fileName,
       type: 'image/jpeg/png',}});*/
 
-    const response = await request.post('/users/me/',{'gender':gender}/*formData, { "Content-Type": "multipart/form-data" }*/);
-    console.log(response);
+  }
+
+  const handleButtonPress = async (selectedGender) => {
+    setGender(selectedGender);
+    formData.append('gender', gender);
+    formData.append('nickname', nickname);
+    formData.append('birthdate', birthdate);
+    formData.append('email', email);
+    formData.append('address', '주소');
+    formData.append('profile_image',  
+    {
+       uri: photo,
+       name: photo,
+       type: "image/jpeg/png",
+     }
+    )
+    const response = await request.patch('mypage/me/update/',formData, {"Content-Type": "multipart/form-data"} );
+    console.log("변경됨 ",response);
 
     navigation.navigate('mypage');
-  }
-  const handleButtonPress = (selectedGender) => {
-    setGender(selectedGender);
+  
   };
 
     // const handleChoosePhoto = () => {

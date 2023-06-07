@@ -53,10 +53,24 @@ const MyPageTabView = ({ navigation }: MyPageParams) => {
   }
 
   const getProfile = async () => {
-    const response = await request.get(`/users/me/`,{},{});
+    const response = await request.get(`mypage/me/`,{},{});
     setNickname(response.data.data.nickname);
     setImg(response.data.data.profile_image);
+
+    const response0 = await request.get('mypage/following/', {
+      email: response.data.data.email,
+      search_email: '',
+    })
+    const response1 = await request.get('mypage/follower/', {
+      email: response.data.data.email,
+      search_email: '',
+    })
+    console.log(response0)
+    setFollow({
+      following : response0.data.data.count, 
+      follower : response1.data.data.count});
   }
+
 
   const checkIsLogin = async () => {
     const token = await getAccessToken();

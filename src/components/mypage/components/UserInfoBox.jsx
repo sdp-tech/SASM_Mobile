@@ -1,10 +1,6 @@
 import React, { useEffect, useState, useCallback } from 'react';
-<<<<<<< HEAD
-import { Text, ScrollView, View, TouchableOpacity, Alert,StyleSheet,SafeAreaView, localStorage,Image, ImageBackground, Button, Dimensions } from "react-native";
-=======
 import { ScrollView, View, TouchableOpacity, Alert,StyleSheet,SafeAreaView, localStorage,Image, ImageBackground, Button, Dimensions } from "react-native";
 import { TextPretendard as Text } from '../../../common/CustomText';
->>>>>>> 9807780408373cc7443e8dfc2ee53a323dbdb4b1
 import { useFocusEffect, useNavigation } from '@react-navigation/native';
 import { getNickname, removeNickname, removeAccessToken, } from '../../../common/storage';
 import { onChange } from 'react-native-reanimated';
@@ -42,7 +38,7 @@ export default function UserInfoBox({ navigation }) {
 
     
     const getUserinfo = async () => {
-      const response = await request.get(`/users/me/`,{},{});
+      const response = await request.get(`/mypage/me/`,{},{});
       console.log("응답 : ",response);
       console.log("이메일 : ",response.data.data.email);
       console.log("생년월일 : ", response.data.data.birthdate);

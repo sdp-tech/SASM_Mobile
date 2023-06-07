@@ -1,10 +1,6 @@
 import React, {  useEffect, useState, useCallback  } from 'react';
-<<<<<<< HEAD
-import { Image,ImageBackground,ScrollView,Platform, Text, TouchableOpacity, View, TextInput, StyleSheet, SafeAreaView,Alert } from "react-native";
-=======
 import { Image,ImageBackground,ScrollView,Platform, TouchableOpacity, View, TextInput, StyleSheet, SafeAreaView,Alert } from "react-native";
 import { TextPretendard as Text } from '../../../common/CustomText';
->>>>>>> 9807780408373cc7443e8dfc2ee53a323dbdb4b1
 import styled, { css } from 'styled-components/native';
 import { setNickname, setAccessToken, setRefreshToken } from '../../../common/storage';
 import { Request } from '../../../common/requests'
@@ -35,17 +31,18 @@ const Following = () =>{
     const Search = async (text: any) => {
       setSearchQuery(text);
     
-      const response = await request.get('/mypage/following/', {
+      const response = await request.get('mypage/following/', {
         email: email,
-        source_email: text,
+        search_email: text,
       });
       
+      console.log(response.data.data)
       
       setFollowingList(response.data.data.results);
     };
     
       const GetFollowing = async () => {
-          const response0 = await request.get(`/users/me/`,{},{});
+          const response0 = await request.get(`mypage/me/`,{},{});
 
           console.log("이메일 : ",response0.data.data.email);
           console.log("생년월일 : ", response0.data.data.birthdate);
@@ -54,9 +51,9 @@ const Following = () =>{
           setBirthdate(response0.data.data.birthdate);
           setPhoto(response0.data.data.profile_image);
         
-        const response = await request.get('/mypage/following/',{
+        const response = await request.get('mypage/following/',{
             email: response0.data.data.email,
-            source_email : "",
+            search_email : "",
           });
           console.log("팔로잉 리스트 : ",response.data.data.results);
          setFollowingList(response.data.data.results)

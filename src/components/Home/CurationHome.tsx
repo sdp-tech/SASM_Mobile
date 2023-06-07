@@ -13,6 +13,7 @@ import AddColor from "../../assets/img/common/AddColor.svg";
 import CardView from "../../common/CardView";
 import Arrow from "../../assets/img/common/Arrow.svg";
 import Search from "../../assets/img/common/Search.svg";
+import { print } from "@gorhom/bottom-sheet/lib/typescript/utilities/logger";
 
 const { width, height } = Dimensions.get('screen');
 
@@ -103,11 +104,10 @@ export default function CurationHome({ navigation, route }: StackScreenProps<Hom
     setLoading(false);
   }
 
-  let verifedList = [];
-  for (let i = 0; i < Math.min(3, verifedCuration.length); i++) {
-    verifedList.push(verifedCuration[i]);
-  }
-
+  // let verifedList = [];
+  // for (let i = 0; i < Math.min(3, verifedCuration.length); i++) {
+  //   verifedList.push(verifedCuration[i]);
+  // }
   useFocusEffect(useCallback(()=>{
     getStory();
     getCurration();
@@ -163,13 +163,13 @@ export default function CurationHome({ navigation, route }: StackScreenProps<Hom
                 <TouchableOpacity onPress={() => { navigation.navigate('List', { data: verifedCuration }) }}><Text style={TextStyles.SubBlack}>모두보기 <Arrow /></Text></TouchableOpacity>
                 <Text style={TextStyles.Sub}>유저가 직접 작성한 큐레이션</Text>
               </TextBox>
-              {
+              {/* {
                 verifedList.map((data, index) =>
                   <ItemCard
                     data={verifedCuration[index]}
                     style={{ width: width - 30, height: height * 0.2, marginHorizontal: 15, marginVertical: 7.5 }}
                   />)
-              }
+              } */}
             </SectionCuration>
             <SectionCuration>
               <TextBox>

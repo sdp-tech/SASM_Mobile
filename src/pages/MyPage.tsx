@@ -13,15 +13,12 @@ import { StackNavigationProp } from '@react-navigation/stack';
 import Following from '../components/mypage/components/Following_List';
 import Follower from '../components/mypage/components/Follower_List';
 import Options from '../components/mypage/components/OptionPage';
-<<<<<<< HEAD
-=======
 import WrittenStory from '../components/mypage/components/mystory/WrittenStory';
 
 export interface MyPageParams {
     navigation: any;
     route?: any;
 }
->>>>>>> 9807780408373cc7443e8dfc2ee53a323dbdb4b1
 
 export type MyPageProps = {
     'mypage': any;

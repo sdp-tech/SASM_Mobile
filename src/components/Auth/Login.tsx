@@ -41,7 +41,7 @@ const LoginScreen = () => {
 
   const login = async () => {
 
-    const response = await request.post('/users/login/', {
+    const response = await request.post('users/login/', {
       email: form.email,
       password: form.password,
     });

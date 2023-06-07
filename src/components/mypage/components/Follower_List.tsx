@@ -1,10 +1,5 @@
 import React, {  useEffect, useState, useCallback  } from 'react';
-<<<<<<< HEAD
 import { Image,ImageBackground,ScrollView,Platform, Text, TouchableOpacity, View, TextInput, StyleSheet, SafeAreaView,Alert } from "react-native";
-=======
-import { Image,ImageBackground,ScrollView,Platform, TouchableOpacity, View, TextInput, StyleSheet, SafeAreaView,Alert } from "react-native";
-import { TextPretendard as Text } from '../../../common/CustomText';
->>>>>>> 9807780408373cc7443e8dfc2ee53a323dbdb4b1
 import styled, { css } from 'styled-components/native';
 import { setNickname, setAccessToken, setRefreshToken } from '../../../common/storage';
 import { Request } from '../../../common/requests'
@@ -35,9 +30,9 @@ const Follower = () =>{
     const Search = async (text: any) => {
       setSearchQuery(text);
     
-      const response = await request.get('/mypage/follower/', {
+      const response = await request.get('mypage/follower/', {
         email: email,
-        source_email: text,
+        search_email: text,
       });
       
       
@@ -45,7 +40,7 @@ const Follower = () =>{
     };
     
       const GetFollower = async () => {
-          const response0 = await request.get(`/users/me/`,{},{});
+          const response0 = await request.get(`mypage/me/`,{},{});
 
           console.log("이메일 : ",response0.data.data.email);
           console.log("생년월일 : ", response0.data.data.birthdate);
@@ -54,9 +49,9 @@ const Follower = () =>{
           setBirthdate(response0.data.data.birthdate);
           setPhoto(response0.data.data.profile_image);
         
-        const response = await request.get('/mypage/follower/',{
+        const response = await request.get('mypage/follower/',{
             email: response0.data.data.email,
-            source_email : "",
+            search_email : "",
           });
           console.log("팔로잉 리스트 : ",response.data.data.results);
          setFollowerList(response.data.data.results)
@@ -92,6 +87,9 @@ const Follower = () =>{
                     <View style={styles.userInfo}>
                       <Text style={styles.username}>{user.nickname}</Text>
                       <Text style={styles.username}>{user.email}</Text>
+                      {/* <TouchableOpacity onPress={() => }>
+                      </TouchableOpacity> */}
+                      
                     </View>
                   </View>
                 ))}
@@ -117,8 +115,6 @@ const styles = StyleSheet.create({
         flexGrow: 1,
         paddingVertical: 20,
         paddingHorizontal: 10,
-        borderBottomWidth: 1,
-        borderBottomColor: '#CCC',
       },
       userContainer: {
         position: 'relative',
