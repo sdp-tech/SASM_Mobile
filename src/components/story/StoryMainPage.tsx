@@ -6,7 +6,7 @@ import { Request } from "../../common/requests";
 import { useFocusEffect } from "@react-navigation/native";
 import { StoryProps } from "../../pages/Story";
 import CardView from "../../common/CardView";
-import Add from "../../assets/img/Story/Add.svg";
+import Add from "../../assets/img/common/Add.svg";
 import StorySearch from "./components/StorySearch";
 import Category from "../../common/Category";
 import MainCard from "./components/MainCard";
