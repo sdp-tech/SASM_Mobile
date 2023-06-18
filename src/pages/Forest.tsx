@@ -12,6 +12,7 @@ import BoardDetailScreen from '../components/Forest/BoardDetail';
 import PostListScreen from '../components/Forest/PostList';
 import PostSearchScreen from '../components/Forest/PostSearch';
 import PostDetailScreen from '../components/Forest/PostDetail';
+import PostCommentsScreen from '../components/Forest/PostComments';
 import PhotoPreviewScreen from '../components/Forest/PhotoPreview';
 
 export interface BoardFormat {
@@ -71,6 +72,10 @@ export type ForestStackParams = {
     board_name: string;
     boardFormat: BoardFormat;
   };
+  PostComments: {
+    id: number;
+    email: string;
+  }
   PostUpload: any;
   PhotoPreview: {
     photoUri: any;
@@ -92,6 +97,7 @@ const Forest = () => {
       <Stack.Screen name="PostList" component={PostListScreen} />
       <Stack.Screen name="PostSearch" component={PostSearchScreen} />
       <Stack.Screen name="PostDetail" component={PostDetailScreen} />
+      <Stack.Screen name="PostComments" component={PostCommentsScreen} />
       <Stack.Screen name="PostUpload" component={PostUploadScreen} />
       <Stack.Screen name="PhotoPreview" component={PhotoPreviewScreen} />
     </Stack.Navigator>

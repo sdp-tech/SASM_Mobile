@@ -14,6 +14,11 @@ import {
 import type { NativeStackScreenProps } from "@react-navigation/native-stack";
 import styled from "styled-components/native";
 import Heart from "../../common/Heart";
+import Arrow from "../../assets/img/common/Arrow.svg";
+import Report from '../../assets/img/Forest/Report.svg';
+import WriteComment from "./components/WriteComment";
+import Comment from "./components/Comment";
+import CommentIcon from '../../assets/img/Story/Comment.svg';
 
 import { BoardFormat, ForestStackParams } from "../../pages/Forest";
 import PostCommentUploadSection from "./PostCommentUpload";
@@ -27,31 +32,15 @@ interface Post {
   subtitle: string;
   content: string;
   rep_pic: string;
-  nickname: string;
+  writer_nickname: string;
   email: string;
   created: string;
   likeCount: number;
   viewCount: number;
   likes: boolean;
   photoList: Array<string>;
-  hashtagList: Array<string>;
-}
-
-const HashtagBox = ({ name }: Hashtag) => (
-  <View
-    style={{
-      backgroundColor: "white",
-      padding: 10,
-      borderRadius: 20,
-      margin: 1,
-    }}
-  >
-    <Text style={{ fontSize: 12, lineHeight: 14 }}>{name}</Text>
-  </View>
-);
-
-interface Hashtag {
-  name: string;
+  hashtags: Array<string>;
+  semi_categories: Array<string>;
 }
 
 interface PostCommentItemSectionProps {
@@ -390,17 +379,6 @@ const PostDetailSection = ({
   // deletePost,
   navToPhotoPreview,
 }: PostDetailSectionProps) => {
-  const [like, setLike] = useState<boolean>(false);
-  const request = new Request();
-
-  const toggleLike = async () => {
-    const response = await request.post(`/forest/${post.id}/like/`);
-    setLike(!like);
-  };
-  useEffect(() => {
-    setLike(post.likes);
-  }, [post]);
-
   return (
     <View>
       <ImageBackground
@@ -417,53 +395,48 @@ const PostDetailSection = ({
             flex: 1,
           }}
         >
+          <TouchableOpacity>
+            <Arrow transform={[{ rotate: '180deg'}]}/>
+          </TouchableOpacity>
           <Text
             style={{
-              fontSize: 26,
+              fontSize: 20,
               fontWeight: "700",
               marginBottom: 15,
               textAlign: "center",
+              flex: 1
             }}
           >
             {boardname}
           </Text>
         </View>
-        <View style={{ flex: 1, padding: 20 }}>
+        <View style={{ flex: 1, padding: 20, justifyContent: 'flex-end' }}>
           <Text
             style={{
-              fontSize: 22,
-              fontWeight: "600",
-              marginBottom: 10,
+              fontSize: 20,
+              fontWeight: "700",
+              marginBottom: 15,
               color: "white",
             }}
+            numberOfLines={2}
           >
             {post.title}
           </Text>
           <Text
             style={{
-              fontSize: 12,
-              fontWeight: "200",
-              color: "white",
-              marginBottom: 10,
+              fontSize: 14,
+              fontWeight: "400",
+              color: "#F4F4F4",
+              marginBottom: 15,
               opacity: 0.8,
             }}
+            numberOfLines={2}
           >
             {post.subtitle}
           </Text>
-          {/* <Text style={{ fontSize: 14, marginBottom: 20 }}>좋아요: {post.likeCount}</Text> */}
-          <View
-            style={{
-              backgroundColor: "#209DF5",
-              width: 30,
-              height: 30,
-              borderRadius: 60,
-              alignItems: "center",
-              justifyContent: "center",
-              alignSelf: "flex-end",
-              margin: 10,
-            }}
-          >
-            <Text style={{ color: "white" }}>인증</Text>
+          <View style={{flexDirection: "row"}}>
+            <Text style={{flex: 1, color: '#F4F4F4', fontSize: 12, fontWeight: '400'}}>작성: {post.created.slice(0, 10)}</Text>
+            <Text style={{color: '#67D393', fontSize: 14, fontWeight: '400'}}>{post.writer_nickname}</Text>
           </View>
         </View>
       </ImageBackground>
@@ -471,57 +444,36 @@ const PostDetailSection = ({
         <Text
           style={{
             fontSize: 16,
-            fontWeight: "200",
+            fontWeight: "300",
             lineHeight: 24,
-            padding: 30,
+            padding: 15,
+            color: '#202020'
           }}
         >
           {post.content}
         </Text>
-        {/* {boardFormat.supportsHashtags && post.hashtagList ? (
-          <HashtagBoxView>
-            {post.hashtagList.map((name, index) => {
-              return <HashtagBox key={index} name={name} />;
-            })}
-          </HashtagBoxView>
-        ) : (
-          <></>
-        )}
-        {boardFormat.supportsPostPhotos && post.photoList ? (
-          <PhotoBox>
-            {post.photoList.map((uri, index) => {
+        <View style={{flexDirection: 'row', padding: 15}}>
+          <View style={{flexDirection: 'row', flex: 1}}>
+          {post.hashtags && (
+            post.hashtags.map((name, index) => {
               return (
-                <TouchableOpacity onPress={() => navToPhotoPreview(uri)}>
-                  <Image
-                    key={index}
-                    source={{ uri: uri }}
-                    style={{ width: 100, height: 100, margin: 5 }}
-                  />
-                </TouchableOpacity>
-              );
-            })}
-          </PhotoBox>
-        ) : (
-          <></>
-        )} */}
-        <View style={{ flexDirection: "row" }}>
-          {/* <TouchableOpacity style={{ marginRight: 10 }} onPress={() => navToPostUpload()}>
-                    <View style={{ backgroundColor: '#D3D3D3', borderWidth: 0.5, borderRadius: 10, width: 50, height: 25, alignItems: 'center', justifyContent: 'center' }}>
-                        <Text style={{ fontSize: 15, fontWeight: '600' }}>수정</Text>
-                    </View>
-                </TouchableOpacity>
-                <TouchableOpacity style={{ marginRight: 10 }} onPress={() => deletePost()}>
-                    <View style={{ backgroundColor: '#D3D3D3', borderWidth: 0.5, borderRadius: 10, width: 50, height: 25, alignItems: 'center', justifyContent: 'center' }}>
-                        <Text style={{ fontSize: 15, fontWeight: '600' }}>삭제</Text>
-                    </View>
-                </TouchableOpacity> */}
-          <Heart like={like} onPress={toggleLike}></Heart>
+                <Text style={{color: '#848484', fontSize: 14}} key={index}>#{name} </Text>
+              )
+            })
+          )}
+          </View>
           <TouchableOpacity>
-            <Text style={{ color: "white" }}>공유</Text>
+            <Report />
           </TouchableOpacity>
-          <TouchableOpacity>
-            <Text style={{ color: "white" }}>저장</Text>
-          </TouchableOpacity>
+        </View>
+        <View style={{alignItems: 'flex-start', padding: 15 }}>
+        <CardView data={post.semi_categories} offset={0} gap={0} pageWidth={100} dot={false} height={30} renderItem={({item}: any) => {
+          return (
+            <View style={{borderRadius: 16, backgroundColor: '#67D393', paddingVertical: 4, paddingHorizontal: 16, marginRight: 8, justifyContent: 'center'}}>
+              <Text style={{color: 'white', fontSize: 14, fontWeight: '600'}}>{item}</Text>
+            </View>
+          )
+        }} />
         </View>
       </View>
     </View>
@@ -615,6 +567,44 @@ const PostRecommendSection = ({ data }: PostRecommendSectionProps) => {
   );
 };
 
+interface BottomBarSectionProps {
+  post: Post;
+}
+
+const BottomBarSection = ({post}: BottomBarSectionProps) => {
+  const [like, setLike] = useState<boolean>(false);
+  const request = new Request();
+
+  const toggleLike = async () => {
+    const response = await request.post(`/forest/${post.id}/like/`);
+    setLike(!like);
+  };
+  useEffect(() => {
+    setLike(post.likes);
+  }, [post]);
+  return (
+    <View style={{ flexDirection: "row" }}>
+          {/* <TouchableOpacity style={{ marginRight: 10 }} onPress={() => navToPostUpload()}>
+                    <View style={{ backgroundColor: '#D3D3D3', borderWidth: 0.5, borderRadius: 10, width: 50, height: 25, alignItems: 'center', justifyContent: 'center' }}>
+                        <Text style={{ fontSize: 15, fontWeight: '600' }}>수정</Text>
+                    </View>
+                </TouchableOpacity>
+                <TouchableOpacity style={{ marginRight: 10 }} onPress={() => deletePost()}>
+                    <View style={{ backgroundColor: '#D3D3D3', borderWidth: 0.5, borderRadius: 10, width: 50, height: 25, alignItems: 'center', justifyContent: 'center' }}>
+                        <Text style={{ fontSize: 15, fontWeight: '600' }}>삭제</Text>
+                    </View>
+                </TouchableOpacity> */}
+          <Heart like={like} onPress={toggleLike}></Heart>
+          <TouchableOpacity>
+            <Text style={{}}>공유</Text>
+          </TouchableOpacity>
+          <TouchableOpacity>
+            <Text style={{}}>저장</Text>
+          </TouchableOpacity>
+        </View>
+  )
+}
+
 const PostDetailScreen = ({
   navigation,
   route,
@@ -622,7 +612,10 @@ const PostDetailScreen = ({
   const [loading, setLoading] = useState(false);
   const [refreshing, setRefreshing] = useState(false);
   const [post, setPost] = useState<Post>();
-  const [postComments, setPostComments] = useState([]);
+  const [comment, setComment] = useState([] as any);
+  const [commentId, setCommentId] = useState<number>(0);
+  const [email, setEmail] = useState<string>('');
+  const [updateText, setUpdateText] = useState<string>('');
 
   const request = new Request();
 
@@ -631,43 +624,36 @@ const PostDetailScreen = ({
   const board_name = route.params.board_name;
   const boardFormat = route.params.boardFormat;
 
-  const getPost = async () => {
-    const response = await request.get(`/forest/${post_id}/`, {}, {});
-    console.log(response.data.data.results[0])
-    setPost(response.data.data.results[0])
+  const checkUser = async () => {
+    const response = await request.get(`/mypage/me/`,{},{});
+    setEmail(response.data.data.email);
+  }
+  const loadItem = async () => {
+    setLoading(true);
+    const response_detail = await request.get(`/forest/${post_id}/`, {}, {});
+    const response_comment = await request.get(`/forest/${post_id}/comments/`, {}, {});
+    setPost(response_detail.data.data);
+    setComment(response_comment.data.data.results);
+    setLoading(false);
   };
-
-  // const getPostComments = async () => {
-  //   setLoading(true);
-  //   const response = await request.get(`/community/post_comments/`, {
-  //     post: post_id,
-  //   });
-  //   setLoading(false);
-
-  //   return response.data.data.results;
-  // };
-
-  
 
   const reRenderScreen = () => {
     setRefreshing(true);
+    setUpdateText('');
     setRefreshing(false);
   };
 
-  // const onRefresh = async () => {
-  //   if (!refreshing) {
-  //     // setPage(1);
-  //     setRefreshing(true);
-  //     setPost(await getPost());
-  //     if (boardFormat.supportsPostComments)
-  //       setPostComments(await getPostComments());
-  //     setRefreshing(false);
-  //   }
-  // };
+  const onRefresh = async () => {
+    if(!refreshing){
+        setRefreshing(true);
+        await loadItem();
+        setRefreshing(false);
+    }
+}
 
   const deletePost = async () => {
     const _delete = async () => {
-      await request.delete(`/community/posts/${post_id}/delete/`);
+      await request.delete(`/forest/${post_id}/delete/`);
       navigation.navigate("PostList", {
         board_id: board_id,
         board_name: board_name,
@@ -714,6 +700,12 @@ const PostDetailScreen = ({
     );
   };
 
+  const callback = (text: string, id: number) => {
+    setUpdateText(text);
+    setCommentId(id);
+    console.log(updateText);
+  }
+
   const array = ["1", "2", "3"];
   const data = [
     { uri: "https://reactnative.dev/img/tiny_logo.png", title: "사슴" },
@@ -736,7 +728,8 @@ const PostDetailScreen = ({
     //   }
     // }
     // _getData();
-    getPost();
+    checkUser();
+    loadItem();
   }, [refreshing]);
 
   return (
@@ -746,10 +739,10 @@ const PostDetailScreen = ({
       ) : (
         <>
           <FlatList
-            data={postComments}
+            data={comment}
             // keyExtractor={(_) => _.name}
             style={styles.container}
-            // onRefresh={onRefresh}
+            onRefresh={onRefresh}
             refreshing={refreshing}
             // onEndReached={onEndReached}
             // onEndReachedThreshold={0.6}
@@ -771,72 +764,88 @@ const PostDetailScreen = ({
                   image=""
                   preview=""
                 />
-                <PostCommentUploadSection
+                {/* <PostCommentUploadSection
                   post_id={post_id}
                   board_id={board_id}
                   boardFormat={boardFormat}
                   isParent={true}
                   navigation={navigation}
                   reRenderScreen={reRenderScreen}
-                />
+                /> */}
+                        <View style={{flexDirection: 'row'}}>
+                            <Text style={{fontSize: 14,
+        fontWeight: '500',
+        margin: 15}}>한줄평</Text>
+                            <View style={{marginTop: 15}}><CommentIcon /></View>
+                            <TouchableOpacity style={{marginLeft: 260, marginTop: 15}} onPress={() => {navigation.navigate('PostComments', { id: post_id, email: email })}}>
+                                <Text style={{fontSize: 10}}>더보기{'>'}</Text>
+                            </TouchableOpacity>
+                        </View>
+                <WriteComment id = {post_id} reRenderScreen = {reRenderScreen} data={updateText} commentId={commentId} />
               </>
             }
             ListFooterComponent={<PostRecommendSection data={data} />}
-            renderItem={({ item }) => {
-              const {
-                id,
-                content,
-                isParent,
-                group,
-                email,
-                nickname,
-                created,
-                updated,
-                photoList,
-              } = item;
+            // renderItem={({ item }) => {
+            //   const {
+            //     id,
+            //     content,
+            //     isParent,
+            //     group,
+            //     email,
+            //     nickname,
+            //     created,
+            //     updated,
+            //     photoList,
+            //   } = item;
+            //   return (
+            //     <PostCommentItemSection
+            //       {...{
+            //         id,
+            //         content,
+            //         isParent,
+            //         group,
+            //         email,
+            //         nickname,
+            //         created,
+            //         updated,
+            //         photoList,
+            //       }}
+            //       boardFormat={boardFormat}
+            //       navigation={navigation}
+            //       deleteComment={deleteComment}
+            //       editComponent={
+            //         <PostCommentUploadSection
+            //           comment_id={id}
+            //           post_id={post_id}
+            //           board_id={board_id}
+            //           boardFormat={boardFormat}
+            //           isParent={true}
+            //           navigation={navigation}
+            //           reRenderScreen={reRenderScreen}
+            //           prevComment={{ content: content, photoList: photoList }}
+            //         />
+            //       }
+            //       replyComponent={
+            //         <PostCommentUploadSection
+            //           post_id={post_id}
+            //           board_id={board_id}
+            //           boardFormat={boardFormat}
+            //           isParent={false}
+            //           parentId={id}
+            //           navigation={navigation}
+            //           reRenderScreen={reRenderScreen}
+            //         />
+            //       }
+            //     />
+            //   );
+            // }}
+            renderItem = {({item}) => { 
               return (
-                <PostCommentItemSection
-                  {...{
-                    id,
-                    content,
-                    isParent,
-                    group,
-                    email,
-                    nickname,
-                    created,
-                    updated,
-                    photoList,
-                  }}
-                  boardFormat={boardFormat}
-                  navigation={navigation}
-                  deleteComment={deleteComment}
-                  editComponent={
-                    <PostCommentUploadSection
-                      comment_id={id}
-                      post_id={post_id}
-                      board_id={board_id}
-                      boardFormat={boardFormat}
-                      isParent={true}
-                      navigation={navigation}
-                      reRenderScreen={reRenderScreen}
-                      prevComment={{ content: content, photoList: photoList }}
-                    />
-                  }
-                  replyComponent={
-                    <PostCommentUploadSection
-                      post_id={post_id}
-                      board_id={board_id}
-                      boardFormat={boardFormat}
-                      isParent={false}
-                      parentId={id}
-                      navigation={navigation}
-                      reRenderScreen={reRenderScreen}
-                    />
-                  }
-                />
-              );
-            }}
+                  <Comment data = {item} reRenderScreen = {reRenderScreen} post_id={post_id} email={email} callback={callback} />
+              )
+          }}
           />
+          <BottomBarSection post={post} />
         </>
       )}
     </View>
@@ -849,13 +858,6 @@ const styles = StyleSheet.create({
     backgroundColor: "white",
   },
 });
-
-const HashtagBoxView = styled.View`
-  display: flex;
-  flex-flow: row wrap;
-  width: 80%;
-  margin: 12px;
-`;
 
 const PhotoBox = styled.View`
   display: flex;
