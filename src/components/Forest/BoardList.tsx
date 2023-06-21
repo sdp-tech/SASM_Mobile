@@ -36,7 +36,9 @@ const BoardListScreen = ({
   const [searchType, setSearchType] = useState("default");
   const [searchEnabled, setSearchEnabled] = useState(true);
   const [boardLists, setBoardLists] = useState([] as any);
-  const [posts, setPosts] = useState([]); // id, title, preview, nickname, email, likeCount, created, commentCount
+  const [posts, setPosts] = useState([] as any);
+  const [hotPosts, setHotPosts] = useState([] as any);
+  const [newPosts, setNewPosts] = useState([] as any);
 
   const request = new Request();
 
@@ -93,20 +95,17 @@ const BoardListScreen = ({
   }, [page]);
 
   const getPosts = async () => {
-    const response = await request.get(
-      "/forest/",
-      {
-        
-      },
-      null
-    );
+    const response = await request.get('/forest/', {}, null);
+    const response_hot = await request.get('/forest/', {order: 'hot'}, null);
+    const response_new = await request.get('/forest/', {order: 'latest'}, null);
     setPosts(response.data.data.results);
-    console.log(response.data.data.results);
+    setHotPosts(response_hot.data.data.results);
+    setNewPosts(response_new.data.data.results);
+    console.log(posts)
   };
 
   return (
     <SafeAreaView style={styles.container}>
-      
           <CustomHeader
             onSearch={() => {
               navigation.navigate("PostSearch");
@@ -205,7 +204,6 @@ const BoardListScreen = ({
               <TouchableOpacity
                 onPress={() => {
                   navigation.navigate("PostList", {
-                    board_id: 1,
                     board_name: "사슴의 추천글",
                   });
                 }}
@@ -220,14 +218,16 @@ const BoardListScreen = ({
                   사슴의 추천글
                 </Text>
               </TouchableOpacity>
+              {/* <CategoriesList /> */}
               <CardView
                 gap={0}
                 offset={0}
-                data={posts}
+                data={posts.slice(0,3)}
                 pageWidth={width}
                 dot={true}
                 height={420}
                 renderItem={({ item }: any) => {
+                  // const data = posts.slice((item.id-1)*3, item.id*3)
                   const {
                     id,
                     title,
@@ -238,15 +238,13 @@ const BoardListScreen = ({
                     commentCount,
                     likeCount,
                   } = item;
-                  // const data = posts.slice(0, posts.length%3);
-                  // console.log('이거', data)
                   return (
                     <FlatList
-                      data={posts.slice(0,3)}
+                      data={posts}
                       scrollEnabled={false}
                       renderItem={(item) => (
                         <PostItem
-                          key={id}
+                          // key={id}
                           board_id={1}
                           post_id={id}
                           board_name={"시사"}
@@ -272,18 +270,19 @@ const BoardListScreen = ({
                 borderBottomWidth: 1,
                 borderTopColor: "#E3E3E3",
                 borderBottomColor: "#E3E3E3",
+                padding: 20
               }}
             >
-              <Text>사슴님 이 정보들은 어떠신가요?</Text>
+              <Text style={{color: '#3C3C3C', fontWeight: '700', fontSize: 16, lineHeight: 22}}>{nickname}님 이 정보들은 어떠신가요?</Text>
               <FlatList
-                data={posts}
+                data={posts.slice(0,3)}
                 scrollEnabled={false}
                 renderItem={({ item }: any) => (
-                  <TouchableOpacity style={{ flexDirection: "row" }}>
-                    <View>
-                      <Text>#ESG</Text>
+                  <TouchableOpacity style={{ flexDirection: "row", marginTop: 10}}>
+                    <View style={{borderColor: '#67D393', borderWidth: 1, borderRadius: 8, paddingVertical: 2, paddingHorizontal: 4}}>
+                      <Text style={{color: '#67D393', fontSize: 10, fontWeight: '600'}}>#ESG</Text>
                     </View>
-                    <Text>{item.title}</Text>
+                    <Text style={{color: '#3C3C3C', fontSize: 12, lineHeight: 18, marginLeft: 5}} numberOfLines={1}>{item.title}</Text>
                   </TouchableOpacity>
                 )}
               />
@@ -299,7 +298,9 @@ const BoardListScreen = ({
             >
               <TouchableOpacity
                 onPress={() => {
-                  console.log("인기글");
+                  navigation.navigate("PostList", {
+                    board_name: "사슴의 인기글",
+                  });
                 }}
               >
                 <Text
@@ -316,7 +317,7 @@ const BoardListScreen = ({
               <CardView
                 gap={0}
                 offset={0}
-                data={posts}
+                data={hotPosts.slice(0,3)}
                 pageWidth={width}
                 dot={true}
                 height={340}
@@ -333,11 +334,11 @@ const BoardListScreen = ({
                   } = item;
                   return (
                     <FlatList
-                      data={posts}
+                      data={hotPosts.slice(0,3)}
                       scrollEnabled={false}
                       renderItem={(item) => (
                         <HotPostItem
-                          key={id}
+                          // key={id}
                           board_id={1}
                           post_id={id}
                           board_name={"시사"}
@@ -365,7 +366,9 @@ const BoardListScreen = ({
             >
               <TouchableOpacity
                 onPress={() => {
-                  console.log("최신글");
+                  navigation.navigate("PostList", {
+                    board_name: "사슴의 최신글",
+                  });
                 }}
               >
                 <Text
@@ -380,7 +383,7 @@ const BoardListScreen = ({
                 </Text>
               </TouchableOpacity>
               <FlatList
-                data={posts}
+                data={newPosts}
                 scrollEnabled={false}
                 renderItem={({ item }: any) => {
                   const {
@@ -395,7 +398,7 @@ const BoardListScreen = ({
                   } = item;
                   return (
                     <PostItem
-                      key={id}
+                      // key={id}
                       board_id={1}
                       post_id={id}
                       board_name={"시사"}
@@ -413,8 +416,8 @@ const BoardListScreen = ({
               />
             </View>
           </ScrollView>
-          <TouchableOpacity onPress={() => {navigation.navigate('PostUpload', { screen: 'CategoryForm', params: { categories: categories }});}}
-            style={{position: "absolute", top: height * 0.7, left: width * 0.85, shadowColor: 'black', shadowOffset: { width: 0, height: 5 }, shadowOpacity: 0.3}}
+          <TouchableOpacity onPress={() => {navigation.navigate('CategoryForm',{ categories: categories })}}
+            style={{position: "absolute", top: height * 0.85, left: width * 0.85, shadowColor: 'black', shadowOffset: { width: 0, height: 5 }, shadowOpacity: 0.3}}
           >
             <Add />
           </TouchableOpacity>

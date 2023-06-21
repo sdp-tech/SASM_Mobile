@@ -14,6 +14,8 @@ import {
 } from "react-native";
 import type { NativeStackScreenProps } from "@react-navigation/native-stack";
 import styled from "styled-components/native";
+import ListHeader from "./components/ListHeader";
+import PostItem, { HotPostItem } from "./components/PostItem";
 
 import { ForestStackParams, BoardFormat } from "../../pages/Forest";
 import { Request } from "../../common/requests";
@@ -63,34 +65,7 @@ interface PostSearchSectionProps {
   doHashtagSearch: any;
 }
 
-const BoardListHeaderSection = ({
-  board_name,
-  navigation,
-}: BoardListHeaderSectionProps) => (
-  <ImageBackground
-    style={{ height: 130, alignItems: "center", justifyContent: "center" }}
-    source={{
-      uri: "https://reactnative.dev/img/tiny_logo.png",
-    }}
-  >
-    <Header>
-      <Text style={{ fontSize: 20, fontWeight: "600" }}>{board_name}</Text>
-      <TouchableOpacity
-        style={{
-          backgroundColor: "white",
-          borderRadius: 13,
-          width: 40,
-          height: 25,
-          alignItems: "center",
-          justifyContent: "center",
-        }}
-        onPress={() => navigation.navigate("PostSearch")}
-      >
-        <Text style={{ fontSize: 12 }}>검색</Text>
-      </TouchableOpacity>
-    </Header>
-  </ImageBackground>
-);
+
 
 const SearchBarSection = ({
   searchQuery,
@@ -365,6 +340,8 @@ const PostHashtagSearchSection = ({
   );
 };
 
+const { width, height } = Dimensions.get("window");
+
 const BoardDetailScreen = ({
   navigation,
   route,
@@ -376,8 +353,10 @@ const BoardDetailScreen = ({
   const [searchQuery, setSearchQuery] = useState("");
   const [searchType, setSearchType] = useState("default");
   const [searchEnabled, setSearchEnabled] = useState(true);
-  const [posts, setPosts] = useState([]); // id, title, preview, nickname, email, likeCount, created, commentCount
-
+  const [nickname, setNickname] = useState('');
+  const [posts, setPosts] = useState([] as any);
+  const [hotPosts, setHotPosts] = useState([] as any);
+  const [newPosts, setNewPosts] = useState([] as any);
   const request = new Request();
 
   const board_id = route.params.board_id;
@@ -395,76 +374,53 @@ const BoardDetailScreen = ({
     return response.data;
   };
 
-  const getPosts = async (
-    searchQuery: string,
-    searchType: string,
-    page: number
-  ) => {
-    const response = await request.get(
-      "/community/posts/",
-      {
-        board: board_id,
-        query: searchQuery,
-        query_type: searchType,
-        page: page,
-        latest: true,
-      },
-      null
-    );
-    return response.data.data.results;
-  };
-  const getPostsBySearch = async () => {
-    const response = await request.get(
-      "/community/posts/",
-      {
-        board: board_id,
-        query: searchQuery,
-        query_type: searchType,
-        page: page,
-        latest: true,
-      },
-      null
-    );
+  const getUserInfo = async () => {
+    const response = await request.get('/mypage/me/', {}, {});
+    setNickname(response.data.data.nickname);
+  }
+
+  const getPosts = async () => {
+    const response = await request.get('/forest/', {
+      category_filter: board_id
+    }, null);
+    const response_hot = await request.get('/forest/', {
+      category_filter: board_id,
+      order: 'hot'
+    }, null);
+    const response_new = await request.get('/forest/', {
+      category_filter: board_id,
+      order: 'latest'
+    }, null);
     setPosts(response.data.data.results);
-  };
-  const onRefresh = async () => {
-    if (!refreshing) {
-      setPage(1);
-      setRefreshing(true);
-      setPosts(await getPosts(searchQuery, "default", 1));
-      setRefreshing(false);
-    }
-  };
-
-  const onEndReached = async () => {
-    if (!loading) {
-      const newPosts = await getPosts(searchQuery, searchType, page + 1);
-      setPosts([...posts, ...(newPosts as never)]);
-      setPage(page + 1);
-    }
-  };
-
-  const hashtagSearching = () => {
-    return searchQuery.length > 0 && searchQuery[0] == "#";
-  };
+    setHotPosts(response_hot.data.data.results);
+    setNewPosts(response_new.data.data.results);
+  }
 
   useEffect(() => {
-    async function _getData() {
-      try {
-        setLoading(true);
-        setBoardFormat(await getBoardFormat());
-        setPosts(await getPosts(searchQuery, "default", 1));
-        setLoading(false);
-      } catch (err) {
-        console.warn(err);
-      }
-    }
-    _getData();
-  }, [route]);
+    getUserInfo();
+    getPosts();
+  }, [board_id])
 
-  useEffect(() => {
-    getPostsBySearch();
-  }, [searchQuery]);
+  // const onRefresh = async () => {
+  //   if (!refreshing) {
+  //     setPage(1);
+  //     setRefreshing(true);
+  //     setPosts(await getPosts(searchQuery, "default", 1));
+  //     setRefreshing(false);
+  //   }
+  // };
+
+  // const onEndReached = async () => {
+  //   if (!loading) {
+  //     const newPosts = await getPosts(searchQuery, searchType, page + 1);
+  //     setPosts([...posts, ...(newPosts as never)]);
+  //     setPage(page + 1);
+  //   }
+  // };
+
+  // const hashtagSearching = () => {
+  //   return searchQuery.length > 0 && searchQuery[0] == "#";
+  // };
 
   const hashtags = [
     { name: "비건" },
@@ -475,207 +431,246 @@ const BoardDetailScreen = ({
   ];
 
   return (
-    <ScrollView style={styles.container}>
-      <BoardListHeaderSection board_name={board_name} navigation={navigation} />
-      {loading || boardFormat == undefined ? (
+    <SafeAreaView style={styles.container}>
+    <ScrollView>
+      <ListHeader board_name={board_name} navigation={navigation} />
+      {loading ? (
         <ActivityIndicator />
       ) : (
         <>
-          <PostFilterSection filters={filters} />
-          {!hashtagSearching() ? (
-            <>
-              <View>
-                <FlatList
-                  data={hashtags}
-                  renderItem={({ item }: any) => (
-                    <PostHashtagSection
-                      name={item.name}
-                      doHashtagSearch={hashtagSearching}
+          <View style={{padding: 15, backgroundColor: '#F1FCF5', borderTopColor: '#EDF8F2', borderBottomColor: '#EDF8F2', borderTopWidth: 1, borderBottomWidth: 1}}>
+            <CardView gap={0} offset={0} pageWidth={windowWidth} dot={false} height={30} data={hashtags} renderItem={({item}: any) => {
+              return (
+              <TouchableOpacity
+                style={{height:30, borderRadius: 16, borderColor: '#67D393', borderWidth: 1, backgroundColor: 'white', paddingVertical: 4, paddingHorizontal: 16, marginHorizontal: 8}}>
+                <Text style={{color: '#202020', fontSize: 14, lineHeight: 20}}>{item.name}</Text>
+              </TouchableOpacity>
+              )}}
+            />
+          </View>
+          <View
+              style={{
+                borderTopWidth: 2,
+                borderBottomWidth: 1,
+                borderTopColor: "#E3E3E3",
+                borderBottomColor: "#E3E3E3",
+                paddingVertical: 15,
+              }}
+            >
+              <TouchableOpacity
+                onPress={() => {
+                  navigation.navigate("PostList", {
+                    board_name: "사슴의 추천글",
+                  });
+                }}
+              >
+                <Text
+                  style={{
+                    fontSize: 20,
+                    fontWeight: "600",
+                    paddingHorizontal: 15,
+                  }}
+                >
+                  사슴의 추천글
+                </Text>
+              </TouchableOpacity>
+              {/* <CategoriesList /> */}
+              <CardView
+                gap={0}
+                offset={0}
+                data={posts.slice(0,3)}
+                pageWidth={width}
+                dot={true}
+                height={420}
+                renderItem={({ item }: any) => {
+                  // const data = posts.slice((item.id-1)*3, item.id*3)
+                  const {
+                    id,
+                    title,
+                    preview,
+                    writer_nickname,
+                    rep_pic,
+                    created,
+                    commentCount,
+                    likeCount,
+                  } = item;
+                  return (
+                    <FlatList
+                      data={posts}
+                      scrollEnabled={false}
+                      renderItem={(item) => (
+                        <PostItem
+                          // key={id}
+                          board_id={1}
+                          post_id={id}
+                          board_name={"시사"}
+                          title={title}
+                          preview={preview}
+                          nickname={writer_nickname}
+                          rep_pic={rep_pic}
+                          created={created}
+                          commentCount={commentCount}
+                          likeCount={likeCount}
+                          navigation={navigation}
+                        />
+                      )}
                     />
-                  )}
-                  //keyExtractor={(item) => item.id.toString()}
-                  columnWrapperStyle={{
-                    justifyContent: "space-between",
-                    margin: 10,
-                  }}
-                  numColumns={5}
-                  scrollEnabled={false}
-                />
-              </View>
-              <View>
-                <TouchableOpacity
-                  onPress={() => {
-                    navigation.navigate("PostList", {
-                      board_id: 1,
-                      board_name: board_name,
-                      board_category: "최신글",
-                    });
-                  }}
-                >
-                  <Text
-                    style={{ fontSize: 20, fontWeight: "600", padding: 15 }}
-                  >
-                    최신글
-                  </Text>
-                </TouchableOpacity>
-                <CardView
-                  gap={0}
-                  offset={0}
-                  data={posts}
-                  pageWidth={windowWidth}
-                  dot={false}
-                  height={300}
-                  renderItem={({ item }: any) => {
-                    const {
-                      id,
-                      title,
-                      preview,
-                      nickname,
-                      created,
-                      commentCount,
-                      likeCount,
-                    } = item;
-                    return (
-                      <FlatList
-                        data={posts}
-                        scrollEnabled={false}
-                        renderItem={(item) => (
-                          <PostItemSection
-                            key={id}
-                            board_id={1}
-                            post_id={id}
-                            board_name={"시사"}
-                            boardFormat={boardFormat}
-                            title={title}
-                            preview={preview}
-                            nickname={nickname}
-                            created={created}
-                            commentCount={commentCount}
-                            likeCount={likeCount}
-                            navigation={navigation}
-                          />
-                        )}
-                      />
-                    );
-                  }}
-                />
-              </View>
-              <View>
-                <TouchableOpacity
-                  onPress={() => {
-                    navigation.navigate("PostList", {
-                      board_id: 1,
-                      board_name: board_name,
-                      board_category: "인기글",
-                    });
+                  );
+                }}
+              />
+            </View>
+            <View
+              style={{
+                backgroundColor: "#F1FCF5",
+                borderTopWidth: 1,
+                borderBottomWidth: 1,
+                borderTopColor: "#E3E3E3",
+                borderBottomColor: "#E3E3E3",
+                padding: 20
+              }}
+            >
+              <Text style={{color: '#3C3C3C', fontWeight: '700', fontSize: 16, lineHeight: 22}}>{nickname}님 이 정보들은 어떠신가요?</Text>
+              <FlatList
+                data={posts}
+                scrollEnabled={false}
+                renderItem={({ item }: any) => (
+                  <TouchableOpacity style={{ flexDirection: "row", marginTop: 10}}>
+                    <View style={{borderColor: '#67D393', borderWidth: 1, borderRadius: 8, paddingVertical: 2, paddingHorizontal: 4}}>
+                      <Text style={{color: '#67D393', fontSize: 10, fontWeight: '600'}}>#ESG</Text>
+                    </View>
+                    <Text style={{color: '#3C3C3C', fontSize: 12, lineHeight: 18, marginLeft: 5}} numberOfLines={1}>{item.title}</Text>
+                  </TouchableOpacity>
+                )}
+              />
+            </View>
+            <View
+              style={{
+                borderTopWidth: 1,
+                borderBottomWidth: 1,
+                borderTopColor: "#E3E3E3",
+                borderBottomColor: "#E3E3E3",
+                paddingVertical: 15,
+              }}
+            >
+              <TouchableOpacity
+                onPress={() => {
+                  navigation.navigate("PostList", {
+                    board_name: "사슴의 인기글",
+                  });
+                }}
+              >
+                <Text
+                  style={{
+                    fontSize: 20,
+                    fontWeight: "600",
+                    paddingHorizontal: 15,
+                    paddingBottom: 15,
                   }}
                 >
-                  <Text
-                    style={{ fontSize: 20, fontWeight: "600", padding: 15 }}
-                  >
-                    인기글
-                  </Text>
-                </TouchableOpacity>
-                <CardView
-                  gap={0}
-                  offset={0}
-                  data={posts}
-                  pageWidth={windowWidth}
-                  dot={false}
-                  height={300}
-                  renderItem={({ item }: any) => {
-                    const {
-                      id,
-                      title,
-                      preview,
-                      nickname,
-                      created,
-                      commentCount,
-                      likeCount,
-                    } = item;
-                    return (
-                      <FlatList
-                        data={posts}
-                        scrollEnabled={false}
-                        renderItem={(item) => (
-                          <PostItemSection
-                            key={id}
-                            board_id={1}
-                            post_id={id}
-                            board_name={"시사"}
-                            boardFormat={boardFormat}
-                            title={title}
-                            preview={preview}
-                            nickname={nickname}
-                            created={created}
-                            commentCount={commentCount}
-                            likeCount={likeCount}
-                            navigation={navigation}
-                          />
-                        )}
-                      />
-                    );
-                  }}
-                />
-              </View>
-              <View>
-                <TouchableOpacity
-                  onPress={() => {
-                    navigation.navigate("PostList", {
-                      board_id: 1,
-                      board_name: board_name,
-                      board_category: "추천글",
-                    });
+                  사슴의 인기글
+                </Text>
+              </TouchableOpacity>
+              <CardView
+                gap={0}
+                offset={0}
+                data={hotPosts.slice(0,3)}
+                pageWidth={width}
+                dot={true}
+                height={340}
+                renderItem={({ item }: any) => {
+                  const {
+                    id,
+                    title,
+                    preview,
+                    nickname,
+                    rep_pic,
+                    created,
+                    commentCount,
+                    likeCount,
+                  } = item;
+                  return (
+                    <FlatList
+                      data={hotPosts.slice(0,3)}
+                      scrollEnabled={false}
+                      renderItem={(item) => (
+                        <HotPostItem
+                          // key={id}
+                          board_id={1}
+                          post_id={id}
+                          board_name={"시사"}
+                          title={title}
+                          preview={preview}
+                          nickname={nickname}
+                          rep_pic={rep_pic}
+                          created={created}
+                          commentCount={commentCount}
+                          likeCount={likeCount}
+                          navigation={navigation}
+                        />
+                      )}
+                    />
+                  );
+                }}
+              />
+            </View>
+            <View
+              style={{
+                borderTopWidth: 2,
+                borderTopColor: "#E3E3E3",
+                paddingVertical: 15,
+              }}
+            >
+              <TouchableOpacity
+                onPress={() => {
+                  navigation.navigate("PostList", {
+                    board_name: "사슴의 최신글",
+                  });
+                }}
+              >
+                <Text
+                  style={{
+                    fontSize: 20,
+                    fontWeight: "600",
+                    paddingHorizontal: 15,
+                    paddingBottom: 15,
                   }}
                 >
-                  <Text
-                    style={{ fontSize: 20, fontWeight: "600", padding: 15 }}
-                  >
-                    추천글
-                  </Text>
-                </TouchableOpacity>
-                <CardView
-                  gap={0}
-                  offset={0}
-                  data={posts}
-                  pageWidth={windowWidth}
-                  dot={false}
-                  height={300}
-                  renderItem={({ item }: any) => {
-                    const {
-                      id,
-                      title,
-                      preview,
-                      nickname,
-                      created,
-                      commentCount,
-                      likeCount,
-                    } = item;
-                    return (
-                      <FlatList
-                        data={posts}
-                        scrollEnabled={false}
-                        renderItem={(item) => (
-                          <PostItemSection
-                            key={id}
-                            board_id={1}
-                            post_id={id}
-                            board_name={"시사"}
-                            boardFormat={boardFormat}
-                            title={title}
-                            preview={preview}
-                            nickname={nickname}
-                            created={created}
-                            commentCount={commentCount}
-                            likeCount={likeCount}
-                            navigation={navigation}
-                          />
-                        )}
-                      />
-                    );
-                  }}
-                />
-              </View>
+                  사슴의 최신글
+                </Text>
+              </TouchableOpacity>
+              <FlatList
+                data={newPosts}
+                scrollEnabled={false}
+                renderItem={({ item }: any) => {
+                  const {
+                    id,
+                    title,
+                    preview,
+                    nickname,
+                    rep_pic,
+                    created,
+                    commentCount,
+                    likeCount,
+                  } = item;
+                  return (
+                    <PostItem
+                      // key={id}
+                      board_id={1}
+                      post_id={id}
+                      board_name={"시사"}
+                      title={title}
+                      preview={preview}
+                      nickname={nickname}
+                      rep_pic={rep_pic}
+                      created={created}
+                      commentCount={commentCount}
+                      likeCount={likeCount}
+                      navigation={navigation}
+                    />
+                  );
+                }}
+              />
+            </View>
               {/* <FlatList
                                 data={posts}
                                 // keyExtractor={(_) => _.title}
@@ -706,24 +701,10 @@ const BoardDetailScreen = ({
                                     )
                                 }}
                             /> */}
-            </>
-          ) : (
-            <>
-              <PostHashtagSearchSection
-                boardId={board_id}
-                searchQuery={searchQuery}
-                doHashtagSearch={async (searchQuery: string) => {
-                  setSearchQuery("해시태그 '" + searchQuery + "' 검색 결과");
-                  setSearchEnabled(false);
-                  setSearchType("hashtag");
-                  setPosts(await getPosts(searchQuery, "hashtag", 1));
-                }}
-              />
-            </>
-          )}
         </>
       )}
     </ScrollView>
+    </SafeAreaView>
   );
 };
 

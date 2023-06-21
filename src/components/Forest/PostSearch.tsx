@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { TextPretendard as Text } from "../../common/CustomText";
+// import { TextPretendard as Text } from "../../common/CustomText";
 import {
   View,
   TouchableOpacity,
@@ -8,6 +8,7 @@ import {
   StyleSheet,
   ImageBackground,
   Dimensions,
+  Text
 } from "react-native";
 import type { NativeStackScreenProps } from "@react-navigation/native-stack";
 
@@ -38,7 +39,8 @@ const PostSearchListSection = ({
           id,
           title,
           preview,
-          nickname,
+          writer_nickname,
+          rep_pic,
           created,
           commentCount,
           likeCount,
@@ -49,10 +51,10 @@ const PostSearchListSection = ({
             board_id={1}
             post_id={id}
             board_name={"시사"}
-            //boardFormat={boardFormat}
+            rep_pic={rep_pic}
             title={title}
             preview={preview}
-            nickname={nickname}
+            nickname={writer_nickname}
             created={created}
             commentCount={commentCount}
             likeCount={likeCount}
@@ -67,14 +69,20 @@ const PostSearchListSection = ({
 const PostSearchScreen = ({
   navigation,
 }: NativeStackScreenProps<ForestStackParams, "PostSearch">) => {
+  const toggleItems = [
+    { label: '최신순', value: 0, order: 'latest' },
+    { label: '인기순', value: 1, order: 'hot' },
+  ]
   const [loading, setLoading] = useState(false);
   const [refreshing, setRefreshing] = useState(false);
   const [boardFormat, setBoardFormat] = useState<BoardFormat>();
   const [page, setPage] = useState(1);
-  const [searchQuery, setSearchQuery] = useState("");
-  const [searchType, setSearchType] = useState("default");
+  const [search, setSearch] = useState("");
+  const [category, setCategory] = useState<string>("");
   const [searchEnabled, setSearchEnabled] = useState(true);
   const [orderList, setOrderList] = useState(0);
+  const [order, setOrder] = useState<string>(toggleItems[orderList].order);
+  const [count, setCount] = useState(0);
   const [posts, setPosts] = useState([]); // id, title, preview, nickname, email, likeCount, created, commentCount
 
   const request = new Request();
@@ -88,47 +96,42 @@ const PostSearchScreen = ({
     { id: 6, name: "액티비티" },
   ];
 
-  const getBoardFormat = async () => {
-    const response = await request.get(`/community/boards/${1}/`);
-    setBoardFormat(response.data);
-    //console.log(response.data)
-  };
+  // const getBoardFormat = async () => {
+  //   const response = await request.get(`/community/boards/${1}/`);
+  //   setBoardFormat(response.data);
+  //   //console.log(response.data)
+  // };
 
   useEffect(() => {
-    getBoardFormat();
+    // getBoardFormat();
     getPosts();
-  }, [searchQuery]);
+  }, [order, search, category]);
 
   const getPosts = async () => {
     const response = await request.get(
-      "/community/posts",
+      "/forest/",
       {
-        board: 1,
-        query: searchQuery,
-        query_type: searchType,
-        page: page,
-        latest: true,
+       order: order,
+       search: search,
+       category_filter: category
       },
       null
     );
     setPosts(response.data.data.results);
+    setCount(response.data.data.count);
     //console.log(response.data.data.results);
   };
 
-  const toggleItems = [
-    { label: "최신순", value: 1 },
-    { label: "조회수 순", value: 2 },
-  ];
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: "white" }}>
       <SearchBar
-        search={searchQuery}
-        setSearch={setSearchQuery}
+        search={search}
+        setSearch={setSearch}
         setPage={setPage}
-        style={{ backgroundColor: "#F4F4F4" }}
+        style={{ backgroundColor: "#F4F4F4", width: 350 }}
         placeholder={"무엇을 검색하시겠습니까"}
       />
-      {searchQuery.length > 0 ? (
+      {search.length > 0 ? (
         <>
           <View
             style={{
@@ -154,6 +157,7 @@ const PostSearchScreen = ({
                     width: 90,
                     justifyContent: "center",
                   }}
+                  onPress={()=>setCategory(item.id)}
                 >
                   <Text style={{ fontSize: 14, fontWeight: "200" }}>
                     {item.name}
@@ -161,25 +165,10 @@ const PostSearchScreen = ({
                 </TouchableOpacity>
               )}
             />
-            <View style={{ flexDirection: "row", padding: 10 }}>
-              <TouchableOpacity
-                style={{
-                  backgroundColor: "white",
-                  borderRadius: 13,
-                  width: 40,
-                  height: 25,
-                  alignItems: "center",
-                  justifyContent: "center",
-                }}
-              >
-                <Text style={{ fontSize: 12 }}>필터</Text>
-              </TouchableOpacity>
-              <View style={{ marginLeft: 200 }}>
-                <DropDown
-                  items={toggleItems}
-                  value={orderList}
-                  setValue={setOrderList}
-                />
+            <View style={{flexDirection: 'row', zIndex: 1, alignItems: 'center', padding: 15, backgroundColor: '#F1FCF5'}}>
+              <Text style={{fontSize: 12, fontWeight: '400', flex: 1}}>전체 검색결과 {count}개</Text>
+              <View style={{width: 100, zIndex: 2000}}>
+                <DropDown value={orderList} setValue={setOrderList} isBorder={false} items={toggleItems} />
               </View>
             </View>
           </View>
@@ -196,77 +185,44 @@ const PostSearchScreen = ({
               );
             }}
           />
-          {/* <FlatList data={posts} renderItem={({item}: any) => {
-            const { id, title, preview, nickname, created, commentCount, likeCount } = item;
-            return (
-              <PostItemSection
-                key={id}
-                board_id={1}
-                post_id={id}
-                board_name={'시사'}
-                //boardFormat={boardFormat}
-                title={title}
-                preview={preview}
-                nickname={nickname}
-                created={created}
-                commentCount={commentCount}
-                likeCount={likeCount}
-                navigation={navigation}
-              />
-            )
-          }} /> */}
         </>
       ) : (
         <>
           <View
             style={{
+              flex: 1,
               borderColor: "#E3E3E3",
-              borderBottomWidth: 1,
               borderTopWidth: 1,
               marginTop: 10,
+              padding: 15
             }}
           >
-            <Text>추천 검색어</Text>
-            <FlatList
-              data={boardLists}
-              renderItem={({ item }: any) => (
-                <TouchableOpacity
-                  style={{
-                    width: 100,
-                    borderRadius: 13,
-                    height: 25,
-                    alignItems: "center",
-                    justifyContent: "center",
-                  }}
-                >
-                  <Text>맞춤 키워드</Text>
+            <Text style={{color: '#3C3C3C', fontSize: 16, fontWeight: '700', marginBottom: 15}}>추천 검색어</Text>
+            <View style={{flex: 1, flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'space-between'}}>
+              {boardLists.map((item) => (
+                <TouchableOpacity onPress={()=>{setSearch(item.name)}}
+                  style={{height: 30, borderRadius: 16, backgroundColor: '#67D393', paddingVertical: 4, paddingHorizontal: 16, marginRight: 8, marginBottom: 8}}>
+                  <Text style={{color: 'white', fontSize: 14, lineHeight: 20}}>{item.name}</Text>
                 </TouchableOpacity>
-              )}
-              keyExtractor={(item) => item.id.toString()}
-              columnWrapperStyle={{
-                //justifyContent: 'space-between',
-                margin: 10,
-              }}
-              numColumns={3}
-              scrollEnabled={false}
-            />
+              ))}
+            </View>
           </View>
-          <View>
-            <View style={{ flexDirection: "row", padding: 20 }}>
-              <Text>최근 검색어</Text>
+          <View style={{flex: 4, padding: 20}}>
+            <View style={{ flexDirection: "row" }}>
+              <Text style={{flex: 1, color: '#3C3C3C', fontSize: 16, fontWeight: '700', marginBottom: 15, lineHeight: 20}}>최근 검색어</Text>
               <TouchableOpacity>
-                <Text>전체삭제</Text>
+                <Text style={{color: '#848484', fontSize: 14, fontWeight: '500', lineHeight: 20}}>전체삭제</Text>
               </TouchableOpacity>
             </View>
             <FlatList
               data={[{ title: "비건 레시피" }, { title: "맛있는" }]}
               renderItem={({ item }: any) => (
-                <View style={{ flexDirection: "row" }}>
-                  <TouchableOpacity>
-                    <Text>{item.title}</Text>
+                <View style={{ flexDirection: "row", borderBottomColor: '#A8A8A8', borderBottomWidth: 1, width: windowWidth-40, paddingVertical: 5 }}>
+                  <TouchableOpacity style={{flex: 1}}>
+                    <Text style={{color: '#373737', lineHeight: 20}}>{item.title}</Text>
                   </TouchableOpacity>
                   <TouchableOpacity>
-                    <Text>X</Text>
+                    <Text style={{color: '#A8A8A8'}}>X</Text>
                   </TouchableOpacity>
                 </View>
               )}
