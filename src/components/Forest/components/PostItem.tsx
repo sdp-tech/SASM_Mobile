@@ -1,9 +1,10 @@
 import { useState } from 'react';
-import { TextPretendard as Text } from "../../../common/CustomText";
-import { View, ImageBackground, TouchableOpacity, Dimensions } from 'react-native';
+// import { TextPretendard as Text } from "../../../common/CustomText";
+import { View, ImageBackground, TouchableOpacity, Dimensions, Text } from 'react-native';
 import Scrap from "../../../assets/img/Forest/Scrap.svg";
 import Arrow from "../../../assets/img/common/Arrow.svg";
 import Heart from '../../../common/Heart';
+import { Request } from '../../../common/requests';
 
 interface PostItemProps {
   board_id: number;
@@ -161,6 +162,14 @@ export const HotPostItem = ({
   likeCount,
   navigation,
 }: PostItemProps) => {
+  const [like, setLike] = useState<boolean>(false);
+  const request = new Request();
+
+  const toggleLike = async () => {
+    const response = await request.post(`/forest/${post_id}/like/`);
+    setLike(!like);
+  };
+
   return (
     <View style={{width: width}}>
       <TouchableOpacity style={{ marginBottom: 8, marginLeft: 20 }} 
@@ -179,7 +188,7 @@ export const HotPostItem = ({
           </View>
           <View style={{flexDirection: "row", padding: 10}}>
             <View style={{flexDirection: "row", alignSelf: "flex-start", flex: 1}}>
-              <Heart white={true}/>
+              <Heart like={like} onPress={toggleLike} white={true}/>
               <Text style={{ color: "white", lineHeight: 18 }}>{likeCount}</Text>
             </View>
             <View style={{flexDirection: "row", alignSelf: "flex-end"}}>

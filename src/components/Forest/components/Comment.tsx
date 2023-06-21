@@ -3,6 +3,7 @@ import { useEffect, useState } from 'react';
 import { View, TouchableOpacity, Image, Text, Alert, StyleSheet, FlatList, Dimensions, Modal, Pressable } from 'react-native';
 import { Request } from '../../../common/requests';
 import Edit from '../../../assets/img/Story/Edit.svg';
+import Heart from '../../../common/Heart';
 
 interface CommentProps {
     data: any;
@@ -16,11 +17,14 @@ const Comment = ({ data, reRenderScreen, post_id, email, callback }: CommentProp
     const date = data.created.slice(0, 10);
     const { width, height } = Dimensions.get('screen');
     const [modalVisible, setModalVisible] = useState<boolean>(false);
+    const [like, setLike] = useState<boolean>(false);
     const request = new Request();
 
-    useEffect(() => {
-      console.log(modalVisible)
-    })
+    const toggleLike = async () => {
+        const response = await request.post(`/forest/${post_id}/comments/${data.id}/like/`, {}, {});
+        console.log(response)
+        setLike(!like);
+    };
 
     const deleteComment = async () => {
         const _delete = async () => {
@@ -67,6 +71,8 @@ const Comment = ({ data, reRenderScreen, post_id, email, callback }: CommentProp
                                 <Edit width={10} height={10} />
                             </TouchableOpacity>
                         : <></>}
+                        <Heart like={like} onPress={toggleLike} />
+                        <Text style={{fontSize: 10, color: '#676767', marginRight: 10}}>{data!.like_cnt}</Text>
                     </View>
                     <Text style={textStyles.content}>{data.content}</Text>
                 </View>
