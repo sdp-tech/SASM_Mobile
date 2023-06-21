@@ -8,18 +8,18 @@ import Check from '../../../assets/img/common/Check.svg';
 import Camera from '../../../assets/img/Forest/Camera.svg';
 
 import { Request } from '../../../common/requests';
-import { PostUploadStackParams } from '../../../pages/Forest';
+import { ForestStackParams } from '../../../pages/Forest';
 import type { NativeStackScreenProps } from "@react-navigation/native-stack";
 
-const ForestForm = ({ navigation, route }: NativeStackScreenProps<PostUploadStackParams, "ForestForm">) => {
-  const category = route.params.category;
-  const semi_categories = route.params.semi_categories;
+const ForestForm = ({ navigation, route }: NativeStackScreenProps<ForestStackParams, "ForestForm">) => {
+  const post_category = route.params.category;
+  const post_semi_categories = route.params.semi_categories;
   const id = route.params?.id;
   const editor = useRef<RichEditor>(null);
   const scrollRef = useRef<ScrollView>(null);
   const { width, height } = Dimensions.get('window');
   const [nickname, setNickname] = useState<string>('');
-  const [forest, setForest] = useState({ title: "", subtitle: "", content: "", category: category.id, semi_categories: [], hashtags: "", photos: [] });
+  const [forest, setForest] = useState({ title: "", subtitle: "", content: "", category: post_category.id, semi_categories: [], hashtags: "", photos: [] });
   const [photoList, setPhotoList] = useState([] as any);
   const [modalVisible, setModalVisible] = useState(false);
   const request = new Request();
@@ -27,6 +27,19 @@ const ForestForm = ({ navigation, route }: NativeStackScreenProps<PostUploadStac
   const loadInfo = async () => {
     const response = await request.get('/mypage/me/', {}, {});
     setNickname(response.data.data.nickname);
+    if (!id) return;
+    else {
+      const response_forest = await request.get(`/forest/${id}/`);
+      console.log(response_forest.data.data)
+      const { title, subtitle, content, category, semi_categories, hashtags, photos} = response_forest.data.data;
+      const _hashtags = '#'+hashtags.join('#');
+      setForest({
+        ...forest,
+        title: title, subtitle: subtitle, content: content, category: post_category.id, semi_categories: post_semi_categories, hashtags: _hashtags, photos: photos
+      })
+      
+    }
+    console.log(forest);
   }
 
   useEffect(() => {
@@ -61,7 +74,7 @@ const ForestForm = ({ navigation, route }: NativeStackScreenProps<PostUploadStac
     for (const photo of photoList){
       formData.append('photos', "add,"+photo);
     }
-    for (const semi_category of semi_categories){
+    for (const semi_category of post_semi_categories){
       formData.append('semi_categories', "add,"+semi_category.id.toString());
     }
     for (let [key, value] of Object.entries(forest)) {
@@ -89,35 +102,50 @@ const ForestForm = ({ navigation, route }: NativeStackScreenProps<PostUploadStac
     }
     console.log(formData);
     const response = await request.post("/forest/create/", formData, { "Content-Type": "multipart/form-data" });
-    showModal();
+    showModal(response.data.data.id);
   }
 
-  // const updateForest = async () => {
-  //   const formData = new FormData();
-  //   for (const photo of photoList){
-  //     formData.append('photoList', photo);
-  //   }
-  //   for (let [key, value] of Object.entries(forest)) {
-  //     // if (key === "rep_pic") {
-  //     //   formData.append(`${key}`, {
-  //     //     uri: repPic.uri,
-  //     //     name: repPic.fileName,
-  //     //     type: 'image/jpeg/png',
-  //     //   });
-  //     // } else {
-  //     //   //문자열의 경우 변환
-  //     //   formData.append(`${key}`, `${value}`);
-  //     // }
-  //   }
-  //   const response = await request.patch(`/forest/${id}/update/`, formData, { "Content-Type": "multipart/form-data" });
-  //   showModal(response.data.data.id);
-  // }
+  const updateForest = async () => {
+    const formData = new FormData();
+    for (const photo of photoList){
+      formData.append('photos', "add,"+photo);
+    }
+    for (const semi_category of post_semi_categories){
+      formData.append('semi_categories', "add,"+semi_category.id.toString());
+    }
+    for (let [key, value] of Object.entries(forest)) {
+      // if (key === "rep_pic") {
+      //   formData.append(`${key}`, {
+      //     uri: repPic.uri,
+      //     name: repPic.fileName,
+      //     type: 'image/jpeg/png',
+      //   });
+      // } else {
+      //   //문자열의 경우 변환
+      //   formData.append(`${key}`, `${value}`);
+      // }
+      if (key === 'hashtags') {
+        let hashtags = value.split('#');
+        hashtags = hashtags.splice(1);
+        for (const hashtag of hashtags){
+          formData.append('hashtags', "add,"+hashtag.trim());
+        }
+      } else if (key === 'photos' || key === 'semi_categories') {
+        continue;
+      } else {
+        formData.append(`${key}`, `${value}`);
+      }
+    }
+    console.log(formData);
+    const response = await request.patch(`/forest/${id}/update/`, formData, { "Content-Type": "multipart/form-data" });
+    showModal(response.data.data.id);
+  }
 
-  const showModal = () => {
+  const showModal = (id: number) => {
     setModalVisible(true);
     setTimeout(() => {
       setModalVisible(false);
-      // navigation.replace('Forest', {id: id})
+      navigation.replace('PostDetail', {board_id: post_category.id, post_id: id, board_name: post_category.name})
     }, 3000)
   }
 
@@ -137,15 +165,15 @@ const ForestForm = ({ navigation, route }: NativeStackScreenProps<PostUploadStac
           <Text>에서 확인할 수 있어요</Text>
         </View>
       </Modal>
-      <FormHeader title='포레스트 작성' onLeft={() => navigation.goBack()} onRight={saveForest} />
+      <FormHeader title='포레스트 작성' onLeft={() => navigation.goBack()} onRight={id ? updateForest : saveForest} />
       <ImageBackground source={{ uri: "https://reactnative.dev/img/logo-og.png" }} style={{width: width, height: width}}>
-        <Text style={{fontSize: 20, fontWeight: '700', marginLeft: 10, marginTop: 10}}>{category.name}</Text>
-        <FlatList data={semi_categories} renderItem={({item}: any) => { return (
+        <Text style={{fontSize: 20, fontWeight: '700', marginLeft: 10, marginTop: 10}}>{post_category.name}</Text>
+        <FlatList data={post_semi_categories} renderItem={({item}: any) => { return (
             <View style={{borderRadius: 16, backgroundColor: '#67D393', paddingVertical: 4, paddingHorizontal: 16, marginHorizontal: 8}}>
               <Text style={{color: 'white', fontSize: 14}}># {item.name}</Text>
             </View>
           )}}
-          keyExtractor={(item) => item.id.toString()}
+          keyExtractor={(item) => item.name}
           columnWrapperStyle={{
             justifyContent: "flex-start",
             margin: 10,

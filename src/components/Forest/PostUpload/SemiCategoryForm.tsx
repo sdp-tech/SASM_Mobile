@@ -5,9 +5,9 @@ import FormHeader from '../../../common/FormHeader';
 import type { NativeStackScreenProps } from "@react-navigation/native-stack";
 
 import { Request } from '../../../common/requests';
-import { PostUploadStackParams } from '../../../pages/Forest';
+import { ForestStackParams } from '../../../pages/Forest';
 
-const SemiCategoryForm = ({ navigation, route }: NativeStackScreenProps<PostUploadStackParams, "SemiCategoryForm">) => {
+const SemiCategoryForm = ({ navigation, route }: NativeStackScreenProps<ForestStackParams, "SemiCategoryForm">) => {
   const category = route.params.category;
   const [semiCategories, setSemiCategories] = useState([] as any);
   const { width, height } = Dimensions.get('window');

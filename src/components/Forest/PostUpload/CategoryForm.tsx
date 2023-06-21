@@ -6,9 +6,9 @@ import BoardItem from '../components/BoardItem';
 import type { NativeStackScreenProps } from "@react-navigation/native-stack";
 
 import { Request } from '../../../common/requests';
-import { PostUploadStackParams } from '../../../pages/Forest';
+import { ForestStackParams } from '../../../pages/Forest';
 
-const CategoryForm = ({ navigation, route }: NativeStackScreenProps<PostUploadStackParams, "CategoryForm">) => {
+const CategoryForm = ({ navigation, route }: NativeStackScreenProps<ForestStackParams, "CategoryForm">) => {
   const categories = route.params.categories;
   const [category, setCategory] = useState({id: 0, name: ''});
   const { width, height } = Dimensions.get('window')

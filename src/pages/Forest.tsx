@@ -24,7 +24,31 @@ export interface BoardFormat {
   postContentStyle: string;
 }
 
-export type PostUploadStackParams = {
+export type ForestStackParams = {
+  BoardList: any;
+  BoardDetail: {
+    board_id: number;
+    board_name: string;
+  }
+  PostList: {
+    board_id?: number;
+    board_name: string;
+    board_category?: string;
+  };
+  PostSearch: any;
+  PostDetail: {
+    board_id: number;
+    post_id: number;
+    board_name: string;
+  };
+  PostComments: {
+    id: number;
+    email: string;
+  }
+  PostUpload: any;
+  PhotoPreview: {
+    photoUri: any;
+  }
   CategoryForm: {
     categories: any;
   };
@@ -35,50 +59,6 @@ export type PostUploadStackParams = {
     category: any;
     semi_categories: any;
     id?: number;
-  }
-}
-
-const PostUploadStack = createNativeStackNavigator<PostUploadStackParams>();
-
-const PostUploadScreen = () => {
-  return (
-    <PostUploadStack.Navigator
-      screenOptions={() => ({
-        headerShown: false,
-      })}
-    >
-      <PostUploadStack.Screen name='CategoryForm' component={CategoryForm} />
-      <PostUploadStack.Screen name='SemiCategoryForm' component={SemiCategoryForm} />
-      <PostUploadStack.Screen name='ForestForm' component={ForestForm} />
-    </PostUploadStack.Navigator>
-  )
-}
-
-export type ForestStackParams = {
-  BoardList: any;
-  BoardDetail: {
-    board_id: number;
-    board_name: string;
-  }
-  PostList: {
-    board_id: number;
-    board_name: string;
-    board_category?: string;
-  };
-  PostSearch: any;
-  PostDetail: {
-    board_id: number;
-    post_id: number;
-    board_name: string;
-    boardFormat: BoardFormat;
-  };
-  PostComments: {
-    id: number;
-    email: string;
-  }
-  PostUpload: any;
-  PhotoPreview: {
-    photoUri: any;
   }
 };
 
@@ -98,8 +78,10 @@ const Forest = () => {
       <Stack.Screen name="PostSearch" component={PostSearchScreen} />
       <Stack.Screen name="PostDetail" component={PostDetailScreen} />
       <Stack.Screen name="PostComments" component={PostCommentsScreen} />
-      <Stack.Screen name="PostUpload" component={PostUploadScreen} />
       <Stack.Screen name="PhotoPreview" component={PhotoPreviewScreen} />
+      <Stack.Screen name='CategoryForm' component={CategoryForm} />
+      <Stack.Screen name='SemiCategoryForm' component={SemiCategoryForm} />
+      <Stack.Screen name='ForestForm' component={ForestForm} />
     </Stack.Navigator>
   );
 };
