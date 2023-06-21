@@ -1,5 +1,6 @@
 import React, { useEffect, useState, useCallback, useRef } from 'react';
-import { Dimensions, Image, View, Text, TouchableOpacity, StyleSheet, Button, Linking, Modal, SafeAreaView } from 'react-native';
+import { Dimensions, Image, View, TouchableOpacity, StyleSheet, Button, Linking, Modal, SafeAreaView } from 'react-native';
+import { TextPretendard as Text } from '../../../common/CustomText';
 import { ScrollView } from 'react-native-gesture-handler';
 import styled from 'styled-components/native';
 import { detailDataProps } from '../Map';
@@ -27,7 +28,7 @@ const TextBox = styled.View`
   position: absolute;
   top: 220px
   left: 0px;
-  padding-horizontal: 15px;
+  padding-horizontal: 27px;
 `
 const TabsBox = styled.View`
   width:100%;
@@ -57,10 +58,10 @@ const Section = styled.View`
 const Box = styled.View`
   border-color: #DDDDDD;
   border-bottom-width: 1px;
-  padding-vertical: 20px;
+  padding-vertical: 27px;
 `
 const PaddingBox = styled(Box)`
-  padding-horizontal: 20px;
+  padding-horizontal: 27px;
 `
 const TabText = styled.Text<{ selected: boolean }>`
   font-size: 16px;
@@ -80,8 +81,8 @@ const GoToTop = styled.TouchableOpacity`
   background-color: #FFFFFF;
 `
 const StorySection = styled.View`
-  width: ${width - 30}px;
-  margin: 15px;
+  width: ${width - 54}px;
+  margin: 27px;
   position: relative;
 `
 interface DetailCardProps {
@@ -199,7 +200,6 @@ export default function DetailCard({ detailData }: DetailCardProps): JSX.Element
         <Image source={{ uri: detailData.rep_pic }} style={{ width: '100%', height: 350 }} />
         <ButtonBox>
           <TouchableOpacity onPress={() => {
-            //navigation.navigate('Review', { id: 1, category: 'test' })
             setReviewModal(true);
           }}>
             <PlusWhite />
@@ -217,7 +217,7 @@ export default function DetailCard({ detailData }: DetailCardProps): JSX.Element
         </ButtonBox>
         <TextBox>
           <Text style={TextStyles.info}>{detailData.category}</Text>
-          <Text style={{ ...TextStyles.info, marginBottom: 20 }}>{detailData.place_name}</Text>
+          <Text style={{ ...TextStyles.info, marginBottom: 20, fontWeight:'700' }}>{detailData.place_name}</Text>
           <Text style={TextStyles.info}>{detailData.place_review}</Text>
         </TextBox>
         <View>
@@ -278,17 +278,17 @@ export default function DetailCard({ detailData }: DetailCardProps): JSX.Element
                     {detailData.pet_category && <Text style={TextStyles.common}>반려동물 출입 가능</Text>}
                     {detailData.reusable_con_category && <Text style={TextStyles.common}>재사용 용기 사용 가능</Text>}
                     {detailData.tumblur_category && <Text style={TextStyles.common}>텀블러 할인 가능</Text>}
-                    <Text style={TextStyles.common}>{detailData.vegan_category}</Text>
+                    {detailData.vegan_category && <Text style={TextStyles.common}>비건 카테고리 : {detailData.vegan_category}</Text>}
                   </PaddingBox>
                   <Box>
                     <CardView
-                      height={200}
-                      pageWidth={200}
-                      offset={10}
-                      gap={10}
+                      height={210}
+                      pageWidth={210}
+                      offset={19}
+                      gap={8}
                       dot={false}
                       data={detailData.photos}
-                      renderItem={({ item }: any) => <Image source={{ uri: item.image }} style={{ width: 200, height: 200, marginHorizontal: 5 }} />}
+                      renderItem={({ item }: any) => <Image source={{ uri: item.image }} style={{ width: 219, height: 219, marginHorizontal: 4 }} />}
                     />
                   </Box>
                   {
@@ -345,11 +345,15 @@ export default function DetailCard({ detailData }: DetailCardProps): JSX.Element
 const TextStyles = StyleSheet.create({
   info: {
     fontSize: 16,
+    lineHeight: 19,
     color: '#FFFFFF',
+    textShadowRadius: 4,
+    textShadowOffset: {width: -1, height:1},
+    textShadowColor: 'rgba(0,0,0,0.9)',
   },
   common: {
     fontSize: 12,
-    color: '#000000',
+    lineHeight: 15,
     marginVertical: 5
   },
   commonColor: {

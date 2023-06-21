@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useCallback } from "react";
-import { SafeAreaView, View, TouchableOpacity, Text, Dimensions, ActivityIndicator, StyleSheet, ImageBackground } from "react-native";
+import { SafeAreaView, View, TouchableOpacity, Dimensions, ActivityIndicator, StyleSheet, ImageBackground } from "react-native";
+import { TextPretendard as Text } from "../../common/CustomText";
 import { ScrollView } from "react-native-gesture-handler";
 import ItemCard, {SearchItemCard} from "./ItemCard";
 import { Request } from "../../common/requests";

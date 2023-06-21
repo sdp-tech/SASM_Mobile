@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from "react";
 import { StoryDetail } from "../../story/components/StoryDetailBox";
 import { Request } from "../../../common/requests";
-import { View, ActivityIndicator, Text, Dimensions, StyleSheet } from "react-native";
+import { View, ActivityIndicator, Dimensions, StyleSheet } from "react-native";
+import { TextPretendard as Text } from "../../../common/CustomText";
 import RenderHTML from "react-native-render-html";
 import { ScrollView } from "react-native-gesture-handler";
 
@@ -57,7 +58,7 @@ export default function StoryDetailModal({ id }: { id: number }) {
           <ActivityIndicator />
           :
           <ScrollView>
-            <Text style={[StoryTextStyles.category, { marginLeft: 20, marginTop: 20 }]}>{detailData.category}</Text>
+            <Text style={{...StoryTextStyles.category, marginLeft: 20, marginTop: 20 }}>{detailData.category}</Text>
             <View style={{ flexDirection: 'row', marginHorizontal: 20, marginBottom: 20 }}>
               <View style={{ flex: 6, justifyContent: 'center' }}>
                 <Text style={StoryTextStyles.title}>{detailData.title}</Text>

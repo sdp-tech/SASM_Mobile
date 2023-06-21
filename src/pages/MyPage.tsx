@@ -9,14 +9,22 @@ import ChangeForm from '../components/mypage/components/ChangeForm';
 import PasswordChange from '../components/mypage/components/ChangePassword';
 import Feedback from '../components/mypage/components/GetFeedback';
 import FindIDPWScreen from '../components/Auth/FindIDPW';
+import { StackNavigationProp } from '@react-navigation/stack';
+import Following from '../components/mypage/components/Following_List';
+import Follower from '../components/mypage/components/Follower_List';
+import Options from '../components/mypage/components/OptionPage';
+import WrittenStory from '../components/mypage/components/mystory/WrittenStory';
+import PlaceList from '../components/mypage/components/myplace/PlaceList';
 
 export interface MyPageParams {
     navigation: any;
-    route: any;
+    route?: any;
 }
 
 export type MyPageProps = {
     'mypage': any;
+    'written_story': any;
+    'place_list': any;
     'login': any;
     'register': any;
     'user': any;
@@ -24,6 +32,9 @@ export type MyPageProps = {
     'changepw': any;
     'feedback': any;
     'findidpw': any;
+    'following': any;
+    'follower':any;
+    'options' : any;
 }
 const MyPageStack = createNativeStackNavigator<MyPageProps>();
 
@@ -34,6 +45,8 @@ const MyPageScreen = () => {
                 headerShown: false,
             })} >
             <MyPageStack.Screen name="mypage" component={MyPageTabView} />
+            <MyPageStack.Screen name="written_story" component={WrittenStory} />
+            <MyPageStack.Screen name="place_list" component={PlaceList} />
             <MyPageStack.Screen name="user" component={UserInfoBox} />
             <MyPageStack.Screen name="login" component={LoginScreen} />
             <MyPageStack.Screen name="register" component={RegisterScreen} />
@@ -41,6 +54,9 @@ const MyPageScreen = () => {
             <MyPageStack.Screen name='changepw' component={PasswordChange} />
             <MyPageStack.Screen name='feedback' component={Feedback} />
             <MyPageStack.Screen name="findidpw" component={FindIDPWScreen} />
+            <MyPageStack.Screen name="following" component={Following} />
+            <MyPageStack.Screen name="follower" component={Follower}/>
+            <MyPageStack.Screen name="options" component={Options}/>
         </MyPageStack.Navigator>
     )
 }

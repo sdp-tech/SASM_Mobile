@@ -1,5 +1,6 @@
 import React, { Dispatch, ReactElement, ReactNode, SetStateAction, useEffect, useState } from 'react';
-import { Alert, Dimensions, Image, Modal, SafeAreaView, StyleSheet, Text, TextInput, TextInputProps, TouchableOpacity, View } from 'react-native';
+import { Alert, Dimensions, Image, Modal, SafeAreaView, StyleSheet, TextInput, TextInputProps, TouchableOpacity, View } from 'react-native';
+import { TextPretendard as Text } from '../../../common/CustomText';
 import styled from 'styled-components/native';
 import PhotoOptions from '../../../common/PhotoOptions';
 import Category from '../../../common/Category';
@@ -88,7 +89,7 @@ const ServiceWrapper = styled.View`
   justify-content: space-around;
   margin-vertical: 20px;
 `
-const Service = styled.TouchableOpacity<{ selected: boolean }>`
+const Service = styled.TouchableOpacity<{ selected: boolean | null }>`
   width: 45%;
   height: 50px;
   display: flex;

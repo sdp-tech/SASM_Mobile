@@ -1,5 +1,6 @@
-import React, { Dispatch, SetStateAction } from 'react'
-import { StyleProp, StyleSheet, Text, TextInput, TextInputProps, TextStyle, TouchableOpacity, View } from 'react-native'
+import React, { Dispatch, SetStateAction } from 'react';
+import { StyleProp, StyleSheet, TextInput, TextInputProps, TextStyle, TouchableOpacity, View } from 'react-native';
+import { TextPretendard as Text } from '../../../common/CustomText';
 import styled from 'styled-components/native';
 
 const InputWrapper = styled.View`

@@ -1,16 +1,17 @@
-import { StackScreenProps, StackNavigationProp } from '@react-navigation/stack'
-import React, { useCallback, useEffect, useState } from 'react'
-import { HomeStackParams } from '../../pages/Home'
-import { Dimensions, Image, SafeAreaView, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
-import { Request } from '../../common/requests'
+import { StackScreenProps, StackNavigationProp } from '@react-navigation/stack';
+import React, { useCallback, useEffect, useState } from 'react';
+import { HomeStackParams } from '../../pages/Home';
+import { Dimensions, Image, SafeAreaView, StyleSheet, TouchableOpacity, View } from 'react-native';
+import { TextPretendard as Text } from '../../common/CustomText';
+import { Request } from '../../common/requests';
 import Arrow from "../../assets/img/common/Arrow.svg";
-import { ScrollView } from 'react-native-gesture-handler'
-import styled from 'styled-components/native'
-import { useFocusEffect, useNavigation } from '@react-navigation/native'
-import { AppProps, TabProps } from '../../../App'
-import CardView from '../../common/CardView'
-import { CurationPlusButton } from './CurationHome'
-import Heart from '../../common/Heart'
+import { ScrollView } from 'react-native-gesture-handler';
+import styled from 'styled-components/native';
+import { useFocusEffect, useNavigation } from '@react-navigation/native';
+import { AppProps, TabProps } from '../../../App';
+import CardView from '../../common/CardView';
+import { CurationPlusButton } from './CurationHome';
+import Heart from '../../common/Heart';
 
 const { width, height } = Dimensions.get('window');
 

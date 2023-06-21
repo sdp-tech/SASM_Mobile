@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
-import { SafeAreaView, View, Text, TouchableOpacity, Image, ImageBackground, StyleSheet, Dimensions } from 'react-native';
+import { SafeAreaView, View, TouchableOpacity, Image, ImageBackground, StyleSheet, Dimensions } from 'react-native';
+import { TextPretendard as Text } from '../../../common/CustomText';
 import styled from 'styled-components';
 import { Request } from '../../../common/requests';
 import Heart from '../../../common/Heart';

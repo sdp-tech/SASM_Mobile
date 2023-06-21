@@ -1,7 +1,8 @@
 import React, { SetStateAction, Dispatch, useEffect, useState, useRef, useMemo, RefObject } from "react";
 import styled from "styled-components/native";
 import { Request } from "../../../common/requests";
-import { Dimensions, FlatList, TouchableOpacity, View, Text, SafeAreaView, Image, Modal, StyleSheet, ActivityIndicator, Platform } from "react-native";
+import { Dimensions, FlatList, TouchableOpacity, View, SafeAreaView, Image, Modal, StyleSheet, ActivityIndicator, Platform } from "react-native";
+import { TextPretendard as Text } from "../../../common/CustomText";
 import { placeDataProps } from "../../map/Map";
 import SearchBar from "../../../common/SearchBar";
 import Arrow from "../../../assets/img/common/Arrow.svg";

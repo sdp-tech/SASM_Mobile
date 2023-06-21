@@ -1,6 +1,7 @@
 import { StackScreenProps } from '@react-navigation/stack';
 import React, { useCallback, useEffect, useReducer, useRef, useState } from 'react';
-import { Dimensions, Platform, SafeAreaView, ScrollView, StatusBar, Text, TouchableOpacity, View } from 'react-native';
+import { Dimensions, Platform, SafeAreaView, ScrollView, StatusBar, TouchableOpacity, View } from 'react-native';
+import { TextPretendard as Text } from '../../common/CustomText';
 import { FlatList } from 'react-native-gesture-handler';
 import { HomeStackParams } from '../../pages/Home';
 import SearchBar from '../../common/SearchBar';

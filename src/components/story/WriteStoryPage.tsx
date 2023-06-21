@@ -1,5 +1,6 @@
 import React, { useEffect, useRef, useState, useCallback } from 'react';
-import { SafeAreaView, ScrollView, Text, TextInput, TouchableOpacity, View, Modal, Dimensions, Alert, Image } from 'react-native';
+import { SafeAreaView, ScrollView, TextInput, TouchableOpacity, View, Modal, Dimensions, Alert, Image } from 'react-native';
+import { TextPretendard as Text } from '../../common/CustomText';
 import { RichEditor, RichToolbar, actions } from 'react-native-pell-rich-editor';
 import { ImageLibraryOptions, launchCamera, launchImageLibrary } from 'react-native-image-picker';
 import { Request } from '../../common/requests';

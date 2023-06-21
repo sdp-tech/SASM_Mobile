@@ -1,5 +1,6 @@
-import React, { useEffect, useState, useCallback, Dispatch, SetStateAction } from 'react'
-import { Text, TextInput, TouchableOpacity, View, Image, Alert, SafeAreaView, StyleSheet, Dimensions } from 'react-native'
+import React, { useEffect, useState, useCallback, Dispatch, SetStateAction } from 'react';
+import { TextInput, TouchableOpacity, View, Image, Alert, SafeAreaView, StyleSheet, Dimensions } from 'react-native';
+import { TextPretendard as Text } from '../../../common/CustomText';
 import styled from 'styled-components/native';
 import { Request } from '../../../common/requests';
 import { reviewDataProps } from './DetailCard';

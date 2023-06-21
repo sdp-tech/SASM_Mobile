@@ -1,17 +1,21 @@
 import React, { useEffect, useState, useCallback } from 'react';
-import { Text, ScrollView, View, TouchableOpacity, Alert,StyleSheet,SafeAreaView, localStorage,Image, ImageBackground } from "react-native";
+import { ScrollView, View, TouchableOpacity, Alert,StyleSheet,SafeAreaView, localStorage,Image, ImageBackground, Button, Dimensions } from "react-native";
+import { TextPretendard as Text } from '../../../common/CustomText';
 import { useFocusEffect, useNavigation } from '@react-navigation/native';
-import { getNickname, removeNickname, removeAccessToken, getEmail } from '../../../common/storage';
+import { getNickname, removeNickname, removeAccessToken, } from '../../../common/storage';
 import { onChange } from 'react-native-reanimated';
 import { launchImageLibrary } from 'react-native-image-picker';
 import PhotoOptions from '../../../common/PhotoOptions';
 import ChangeForm from './ChangeForm';
 import { Request } from '../../../common/requests';
 
-
 const request = new Request();
 
   //export default ViewStyleProps;   
+
+ 
+const { width } = Dimensions.get('window');
+const percentUnit = width / 100; 
 
 export default function UserInfoBox({ navigation }) {
 
@@ -19,7 +23,12 @@ export default function UserInfoBox({ navigation }) {
     const [photo, setPhoto] = useState('');
     const [email,setEmail] = useState('');
     const [birthdate,setBirthdate] = useState('');
+    const [gender,setGender] = useState('');
+    const [introduction,setIntroduction] = useState('');
+    const [followernum, setFollowernum] = useState();
+    const [followingnum, setFollowingnum] = useState();
  
+
     const logout = () => {
         removeNickname()
         removeAccessToken()
@@ -37,7 +46,37 @@ export default function UserInfoBox({ navigation }) {
       setEmail(response.data.data.email);
       setBirthdate(response.data.data.birthdate);
       setPhoto(response.data.data.profile_image);
+      setGender(response.data.data.gender);
+      setIntroduction(response.data.data.introduction);
+
+      const response0 = await request.get('/mypage/following/', {
+        email: response.data.data.email,
+        source_email: '',
+      })
+      const response1 = await request.get('/mypage/follower/', {
+        email: response.data.data.email,
+        source_email: '',
+      })
+      
+      setFollowingnum(response0.data.data.count);
+      setFollowernum(response1.data.data.count);
+
     }
+
+    
+    const Follow_Do_Undo = async () => {
+      const response = await request.post('/mypage/follow/',{"targetEmail" : email});
+      console.log("팔로우 언팔로우 : ",response)
+      if(response.data.data.follows==true)
+      {
+        Alert.alert('알림','유저를 팔로우하였습니다.',[{text:'확인'}])
+      }
+      else if(response.data.data.follows==false)
+      {
+        Alert.alert('알림','유저를 언팔로우하였습니다.',[{text:'확인'}])
+      }
+    }
+
 
   /*
     useFocusEffect(useCallback(()=>{
@@ -72,62 +111,49 @@ export default function UserInfoBox({ navigation }) {
 
 
   return (
-      <View>
+      <View style={{flex : 1, backgroundColor :'white'}}>
           {nickname ? (
-              <View>
+            <ScrollView >
+              <View style={styles.sections}>
+                <View style={styles.imageBox}>
+                      <Image source={{ uri: photo }} style={styles.imageBackground}  />
+                  </View>
+                
+                <View>
+                  <Text style={styles.nicknameText}>    {nickname}님</Text>
+                  <View style={{  flexDirection: 'row', alignItems: 'center',  marginTop: 8,}}>
+                  <Text style={{fontFamily: 'inter',fontSize : 12, fontWeight : 400, fontStyle: 'normal', color:'#000000'}}>     자기소개</Text>
+                  </View>
+                  <View style={styles.followContainer}> 
+                    <TouchableOpacity onPress={() => navigation.navigate('following')}>
+                        <Text style={styles.followText}>팔로잉 </Text>
+                      </TouchableOpacity>
+                      <Text style={styles.followNum}>{followingnum}</Text>
+                      <Text style={styles.followText}> | </Text>
+                      <TouchableOpacity onPress={() => navigation.navigate('follower')}>
+                        <Text style={styles.followText}>팔로워 </Text>
+                      </TouchableOpacity>
+                      <Text style={styles.followNum}>{followernum}</Text>
+                    </View>
+                </View>    
+                    <View style={styles.OutdotContainer} >
+                      <TouchableOpacity style={styles.IndotContainer} onPress={() => navigation.navigate('options')}>
+                        <View style={styles.dot} />
+                        <View style={styles.dot} />
+                        <View style={styles.dot} />
+                      </TouchableOpacity>
+                    </View>
                   
-                  
-                <ScrollView>
-
-                  <View >
-                      <ImageBackground source={{uri: photo}} style = {styles.circle}/>
-                    </View >    
-
-                        <Text>{nickname}님</Text>
-                        <SafeAreaView style={{padding:'1%', flexDirection:'row'}}>
-                        <View style={styles.oval}><Text>이메일</Text></View>                        
-                        <View style={styles.rectangle}><Text style={{fontSize:7}}>{email}</Text></View>
-                      </SafeAreaView>
-
-                      <SafeAreaView style={{padding:'1%', flexDirection:'row'}}>
-                        <View style={styles.oval}><Text>닉네임</Text></View>
-                        <View style={styles.rectangle}><Text>{nickname}</Text></View>
-                      </SafeAreaView>
-
-                      <SafeAreaView style={{padding:'1%', flexDirection:'row'}}>
-                        <View style={styles.oval}><Text>생년월일</Text></View>
-                        <View style={styles.rectangle}><Text style={{fontSize:7}}>{birthdate}</Text></View>
-                        </SafeAreaView>
-
-                        <SafeAreaView style={{padding:'5%', flexDirection:'row'}}>
-                        <TouchableOpacity onPress={()=>navigation.navigate('change')}>
-                        <View style={styles.oval0}><Text style={styles.text} >프로필 편집</Text></View>
-                        </TouchableOpacity>
-
-
-                        <TouchableOpacity style={{ }} onPress={() => navigation.navigate('changepw')}>
-                        <View style={styles.oval0}>
-                          <Text style={styles.text} >비밀번호 변경</Text>
-                          </View>
-                        </TouchableOpacity>             
-                        <TouchableOpacity style={{ }} onPress={() => navigation.navigate('feedback')}>
-                        <View style={styles.oval0}><Text style={styles.text} >의견 보내기</Text></View>
-                        </TouchableOpacity></SafeAreaView>
-
-                    </ScrollView>
-
-                  <TouchableOpacity style={{ position: 'absolute', right: 8 }} onPress={() => logout()}>
-                      <View style={{ backgroundColor: 'gray', padding: 4 }}>
-                          <Text style={{ color: 'white' }}>로그아웃</Text>
-                      </View>
-                  </TouchableOpacity>
               </View>
+              </ScrollView>
           ) : (
 
-              <View>
+              <View style={styles.sections}>
+                <View style={styles.mypage}>
                   <TouchableOpacity onPress={() => navigation.navigate('login')}>
-                      <Text>로그인이 필요합니다.</Text>
+                    <Text>로그인이 필요합니다.</Text>
                   </TouchableOpacity>
+                  </View>
               </View>
           )}
 
@@ -136,50 +162,148 @@ export default function UserInfoBox({ navigation }) {
 }
 
 const styles = StyleSheet.create({
+  imageBackground: {
+    flex: 1,
+    resizeMode: 'cover',
+  },
   container: {
     flex: 1,
     backgroundColor: 'white',
     padding: 10,
     marginTop:65,
+    
   },
-  circle: {
-      
-      width: 150,
-      height: 150,
-      borderRadius: (150/2),
-      backgroundColor: "white",
-      margin : '5%',
-    },
-    oval: {
-      width: 40,
-      height: 20,
-      borderRadius: 100,
-      backgroundColor: "#AAEFC2",
-      transform: [{ scaleX: 2 }],
-      margin : '8%',
-      flexDirection : 'row',
-  },
-  oval0: {
-      width: 50,
-      height: 20,
-      borderRadius: 100,
-      backgroundColor: "pink",
-      transform: [{ scaleX: 2 }],
-      margin : '10%',
-      flexDirection : 'row',
-  },
-  rectangle: { 
-      width: 20 * 2,
-      height: 20,
-      backgroundColor: "#d3d3d3",
-      transform: [{ scaleX: 2 }],
-      margin : '8%',
-      flexDirection : 'row',
-    },
-    text:{
+  text:{
       fontSize :8,
       fontWeight : "bold"
 
-    }
-
+    },  sections: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      borderBottomWidth: 1,
+      borderBottomColor: '#CCC',
+      
+    },
+    mypage: {
+      flex: 1,
+    },
+    section: {
+      flexGrow: 1,
+      justifyContent: 'center',
+      alignItems: 'center',
+      flexDirection: 'column',
+      padding: 16,
+    },
+    labelWrapper: {
+      display: 'flex',
+      width: '100%',
+      justifyContent: 'space-between',
+    },
+    label: {
+      width: percentUnit * 10,
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'center',
+      backgroundColor: '#AAEFC2',
+      borderWidth: 2,
+      borderColor: 'rgba(171, 239, 194, 0.1)',
+      borderRadius: 5,
+      padding: percentUnit * 2,
+      fontSize: percentUnit * 1,
+      fontWeight: '400',
+      margin: percentUnit * 2,
+    },
+    nicknameText: {
+      
+      fontFamily: 'Inter',
+      fontStyle: 'normal',
+      fontWeight: '500',
+      fontSize: 14,
+      lineHeight: 17,
+      display: 'flex',
+      alignItems: 'center',
+      color: '#000000',
+  },
+    infoContainer: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      marginTop: 8,
+    },
+    detailContainer: {
+      height: '70%',
+      display: 'flex',
+      flexWrap: 'wrap',
+      justifyContent: 'space-around',
+      paddingLeft: percentUnit * 5,
+      paddingRight: percentUnit * 10,
+    },
+    imageBox: {
+      marginTop: 15,
+      marginLeft :8,
+      marginBottom:20,
+      width: 80,
+      height: 80,
+      borderRadius: 40,
+      overflow: 'hidden',
+      borderWidth: 1,
+      borderColor: 'black',
+    },
+    followText: {
+      fontFamily: 'Inter',
+      fontStyle: 'normal',
+      fontWeight: '400',
+      fontSize: 10,
+      lineHeight: 12,
+      display: 'flex',
+      alignItems: 'center',
+      textAlign: 'center',
+      color: '#000000',
+      marginRight: 4,
+    },
+    followContainer: {  
+      flexDirection: 'row',
+      alignItems: 'center',
+      marginTop: 8,
+      marginLeft: 16,
+      flexDirection: 'row',
+      alignItems: 'center',
+    },
+    followNum: {
+      marginLeft: 4, // Adjust the spacing between the text components
+      fontFamily: 'Inter',
+      fontStyle: 'normal',
+      fontWeight: '400',
+      fontSize: 10,
+      lineHeight: 12,
+      display: 'flex',
+      alignItems: 'center',
+      textAlign: 'right',
+      color: '#000000',
+      marginRight: 4,
+    },
+    introText: {
+      marginRight: 8,
+      fontFamily: 'Inter',
+      fontStyle: 'normal',
+      fontWeight: '400',
+      fontSize: 12,
+      lineHeight: 15,
+      color: '#000000',
+    },    
+    IndotContainer: {
+      flexDirection: 'row',
+    },
+    dot: {
+      width: 4,
+      height: 4,
+      borderRadius: 2,
+      marginLeft: 4,
+      backgroundColor: '#000000',
+      },
+    OutdotContainer: {
+      position: 'absolute',
+      top: 16,
+      right: 16,
+      },
 });
+
