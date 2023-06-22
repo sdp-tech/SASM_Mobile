@@ -20,37 +20,10 @@ import { Request } from "../../common/requests";
 import DropDown from "../../common/DropDown";
 import PostItem from "./components/PostItem";
 
-interface PostItemSectionProps {
-  board_id: number;
-  post_id: number;
-  board_name: string;
-  boardFormat: BoardFormat;
-  title: string;
-  preview: string;
-  nickname: string;
-  created: string;
-  commentCount: number;
-  likeCount: number;
-  navigation: any;
-}
-
 interface PostSectionProps {
   name: string;
   postCount: number;
   doHashtagSearch: any;
-}
-
-interface BoardListHeaderSectionProps {
-  board_name: string;
-  board_category?: string;
-  navigation: any;
-}
-
-interface SearchBarSectionProps {
-  searchQuery: string;
-  onChange: any;
-  clearSearchQuery: any;
-  searchEnabled: boolean;
 }
 
 interface PostSearchSectionProps {
@@ -61,99 +34,6 @@ interface PostSearchSectionProps {
 
 const windowWidth = Dimensions.get("window").width;
 const windowHeight = Dimensions.get("window").height;
-
-const PostHashtagSection = ({
-  name,
-  postCount,
-  doHashtagSearch,
-}: PostSectionProps) => {
-  return (
-    <TouchableOpacity onPress={async () => await doHashtagSearch(name)}>
-      <View style={{ padding: 10, borderBottomWidth: 1, borderColor: "gray" }}>
-        <Text style={{ fontSize: 17, fontWeight: "600", marginBottom: 5 }}>
-          #{name}
-        </Text>
-        <Text style={{ fontSize: 14, marginBottom: 5 }}>
-          게시글: {postCount}개
-        </Text>
-      </View>
-    </TouchableOpacity>
-  );
-};
-
-const PostHashtagSearchSection = ({
-  boardId,
-  searchQuery,
-  doHashtagSearch,
-}: PostSearchSectionProps) => {
-  const [loading, setLoading] = useState(false);
-  const [refreshing, setRefreshing] = useState(false);
-  const [hashtags, setHashtags] = useState([]);
-
-  const request = new Request();
-
-  const getHashtags = async () => {
-    const hashtagName = searchQuery.slice(1);
-    const response = await request.get("/community/post_hashtags/", {
-      board: boardId,
-      query: hashtagName,
-    });
-    return response.data.data.results;
-  };
-
-  const onRefresh = async () => {
-    if (!refreshing) {
-      setRefreshing(true);
-      setHashtags(await getHashtags());
-      setRefreshing(false);
-    }
-  };
-
-  useEffect(() => {
-    async function _getData() {
-      try {
-        setLoading(true);
-        setHashtags(await getHashtags());
-        setLoading(false);
-      } catch (err) {
-        console.warn(err);
-      }
-    }
-    _getData();
-  }, [searchQuery]);
-
-  return (
-    <>
-      {loading ? (
-        <ActivityIndicator />
-      ) : (
-        <>
-          <FlatList
-            data={hashtags}
-            // keyExtractor={(_) => _.title}
-            style={styles.container}
-            // ListHeaderComponent={<StorySection />}
-            onRefresh={onRefresh}
-            refreshing={refreshing}
-            // onEndReached={onEndReached}
-            // onEndReachedThreshold={0}
-            // ListFooterComponent={loading && <ActivityIndicator />}
-            renderItem={({ item }) => {
-              const { name, postCount } = item;
-              return (
-                <PostHashtagSection
-                  name={name}
-                  postCount={postCount}
-                  doHashtagSearch={doHashtagSearch}
-                />
-              );
-            }}
-          />
-        </>
-      )}
-    </>
-  );
-};
 
 const PostListScreen = ({
   navigation,
@@ -300,11 +180,11 @@ const PostListScreen = ({
                     id,
                     title,
                     preview,
-                    writer_nickname,
-                    rep_pic,
+                    writer,
+                    photos,
                     created,
                     commentCount,
-                    likeCount,
+                    like_cnt,
                   } = item;
                   return (
                     <PostItem
@@ -314,11 +194,11 @@ const PostListScreen = ({
                           board_name={"시사"}
                           title={title}
                           preview={preview}
-                          nickname={writer_nickname}
-                          rep_pic={rep_pic}
+                          writer={writer}
+                          photos={photos}
                           created={created}
                           commentCount={commentCount}
-                          likeCount={likeCount}
+                          like_cnt={like_cnt}
                           navigation={navigation}
                         />
                   );

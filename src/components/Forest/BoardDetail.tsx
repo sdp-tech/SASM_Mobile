@@ -19,326 +19,10 @@ import PostItem, { HotPostItem } from "./components/PostItem";
 
 import { ForestStackParams, BoardFormat } from "../../pages/Forest";
 import { Request } from "../../common/requests";
-import SearchBar from "../../common/SearchBar";
-import Scrap from "../../assets/img/Forest/Scrap.svg";
 import CardView from "../../common/CardView";
-
-interface PostItemSectionProps {
-  board_id: number;
-  post_id: number;
-  board_name: string;
-  boardFormat: BoardFormat;
-  title: string;
-  preview: string;
-  nickname: string;
-  created: string;
-  commentCount: number;
-  likeCount: number;
-  navigation: any;
-}
-
-interface PostFilterSectionProps {
-  filters: any;
-}
-
-interface PostSectionProps {
-  name: string;
-  postCount?: number;
-  doHashtagSearch: any;
-}
-
-interface BoardListHeaderSectionProps {
-  board_name: string;
-  navigation: any;
-}
-
-interface SearchBarSectionProps {
-  searchQuery: string;
-  onChange: any;
-  clearSearchQuery: any;
-  searchEnabled: boolean;
-}
-
-interface PostSearchSectionProps {
-  boardId: number;
-  searchQuery: string;
-  doHashtagSearch: any;
-}
-
-
-
-const SearchBarSection = ({
-  searchQuery,
-  onChange,
-  clearSearchQuery,
-  searchEnabled,
-}: SearchBarSectionProps) => {
-  return (
-    <View
-      style={{
-        flexDirection: "row",
-        justifyContent: "center",
-        alignItems: "center",
-      }}
-    >
-      <SearchBarInput
-        placeholder="검색어를 입력해주세요."
-        multiline={false}
-        onChangeText={async (value) => await onChange(value)}
-        value={searchQuery}
-        editable={searchEnabled}
-        selectTextOnFocus={searchEnabled}
-        style={{ backgroundColor: searchEnabled ? "#FFF" : "gray" }}
-      />
-      <TouchableOpacity
-        style={{ marginRight: 10 }}
-        onPress={async () => clearSearchQuery()}
-      >
-        <View
-          style={{
-            backgroundColor: "#D3D3D3",
-            borderWidth: 0.5,
-            borderRadius: 10,
-            width: 30,
-            height: 25,
-            alignItems: "center",
-            justifyContent: "center",
-          }}
-        >
-          <Text style={{ fontSize: 15, fontWeight: "600" }}>X</Text>
-        </View>
-      </TouchableOpacity>
-    </View>
-  );
-};
-
-const PostFilterSection = ({ filters }: PostFilterSectionProps) => {
-  return (
-    <View
-      style={{
-        height: 40,
-        backgroundColor: "white",
-        shadowOffset: { width: 0, height: 2 },
-        shadowOpacity: 0.25,
-        shadowColor: "rgba(0, 0, 0, 0.25)",
-      }}
-    >
-      <FlatList
-        data={filters}
-        renderItem={({ item }): any => (
-          <TouchableOpacity
-            style={{
-              alignItems: "center",
-              justifyContent: "center",
-              borderBottomColor: "#209DF5",
-              borderBottomWidth: 0,
-              width: windowWidth / 4,
-              height: 30,
-            }}
-          >
-            <Text>{item.name}</Text>
-          </TouchableOpacity>
-        )}
-        keyExtractor={(item) => item.id.toString()}
-        columnWrapperStyle={{
-          justifyContent: "space-between",
-          margin: 10,
-        }}
-        numColumns={4}
-        scrollEnabled={false}
-      />
-    </View>
-  );
-};
 
 const windowWidth = Dimensions.get("window").width;
 const windowHeight = Dimensions.get("window").height;
-
-const PostItemSection = ({
-  board_id,
-  post_id,
-  board_name,
-  boardFormat,
-  title,
-  preview,
-  nickname,
-  created,
-  commentCount,
-  likeCount,
-  navigation,
-}: PostItemSectionProps) => {
-  return (
-    <TouchableOpacity
-      onPress={() => {
-        navigation.navigate("PostDetail", {
-          board_id: board_id,
-          post_id: post_id,
-          board_name: board_name,
-          boardFormat: boardFormat,
-        });
-      }}
-    >
-      <View
-        style={{
-          width: windowWidth,
-          padding: 10,
-          borderTopWidth: 1,
-          borderColor: "white",
-          backgroundColor: "#424242",
-          flexDirection: "row",
-        }}
-      >
-        <View style={{ flex: 1, padding: 10 }}>
-          <Text
-            style={{
-              fontSize: 16,
-              fontWeight: "600",
-              color: "white",
-              marginBottom: 5,
-            }}
-          >
-            {title}
-          </Text>
-          <Text
-            style={{
-              fontSize: 12,
-              fontWeight: "200",
-              color: "white",
-              opacity: 0.6,
-              marginBottom: 5,
-            }}
-          >
-            {preview}
-          </Text>
-          <Text
-            style={{
-              fontSize: 8,
-              fontWeight: "200",
-              color: "white",
-              opacity: 0.6,
-            }}
-          >
-            {nickname}
-          </Text>
-        </View>
-        <ImageBackground
-          style={{
-            width: 80,
-            height: 80,
-            alignItems: "flex-end",
-            justifyContent: "flex-end",
-            padding: 5,
-          }}
-          source={{ uri: "https://reactnative.dev/img/tiny_logo.png" }}
-        >
-          <TouchableOpacity onPress={() => console.log("저장")}>
-            <Scrap />
-          </TouchableOpacity>
-        </ImageBackground>
-      </View>
-    </TouchableOpacity>
-  );
-};
-
-const PostHashtagSection = ({
-  name,
-  postCount,
-  doHashtagSearch,
-}: PostSectionProps) => {
-  return (
-    <TouchableOpacity onPress={async () => await doHashtagSearch(name)}>
-      <View
-        style={{
-          borderWidth: 1,
-          borderColor: "black",
-          borderRadius: 13,
-          alignItems: "center",
-          justifyContent: "center",
-          minWidth: 60,
-        }}
-      >
-        <Text style={{ fontSize: 12, fontWeight: "400", padding: 5 }}>
-          #{name}
-        </Text>
-        {/* <Text style={{ fontSize: 14, marginBottom: 5 }}>게시글: {postCount}개</Text> */}
-      </View>
-    </TouchableOpacity>
-  );
-};
-
-const PostHashtagSearchSection = ({
-  boardId,
-  searchQuery,
-  doHashtagSearch,
-}: PostSearchSectionProps) => {
-  const [loading, setLoading] = useState(false);
-  const [refreshing, setRefreshing] = useState(false);
-  const [hashtags, setHashtags] = useState([]);
-
-  const request = new Request();
-
-  const getHashtags = async () => {
-    const hashtagName = searchQuery.slice(1);
-    const response = await request.get("/community/post_hashtags/", {
-      board: boardId,
-      query: hashtagName,
-    });
-    return response.data.data.results;
-  };
-
-  const onRefresh = async () => {
-    if (!refreshing) {
-      setRefreshing(true);
-      setHashtags(await getHashtags());
-      setRefreshing(false);
-    }
-  };
-
-  useEffect(() => {
-    async function _getData() {
-      try {
-        setLoading(true);
-        setHashtags(await getHashtags());
-        setLoading(false);
-      } catch (err) {
-        console.warn(err);
-      }
-    }
-    _getData();
-  }, [searchQuery]);
-
-  return (
-    <>
-      {loading ? (
-        <ActivityIndicator />
-      ) : (
-        <>
-          <FlatList
-            data={hashtags}
-            // keyExtractor={(_) => _.title}
-            style={styles.container}
-            // ListHeaderComponent={<StorySection />}
-            onRefresh={onRefresh}
-            refreshing={refreshing}
-            // onEndReached={onEndReached}
-            // onEndReachedThreshold={0}
-            // ListFooterComponent={loading && <ActivityIndicator />}
-            renderItem={({ item }) => {
-              const { name, postCount } = item;
-              return (
-                <PostHashtagSection
-                  name={name}
-                  postCount={postCount}
-                  doHashtagSearch={doHashtagSearch}
-                />
-              );
-            }}
-          />
-        </>
-      )}
-    </>
-  );
-};
 
 const { width, height } = Dimensions.get("window");
 
@@ -395,6 +79,16 @@ const BoardDetailScreen = ({
     setHotPosts(response_hot.data.data.results);
     setNewPosts(response_new.data.data.results);
   }
+
+  const chunkArray = (array: any, size: number) => {
+    const chunkedArray = [];
+    let index = 0;
+    while (index < array.length) {
+      chunkedArray.push(array.slice(index, index + size));
+      index += size;
+    }
+    return chunkedArray;
+  };
 
   useEffect(() => {
     getUserInfo();
@@ -478,42 +172,42 @@ const BoardDetailScreen = ({
               <CardView
                 gap={0}
                 offset={0}
-                data={posts.slice(0,3)}
+                data={chunkArray(posts, 3)}
                 pageWidth={width}
-                dot={true}
                 height={420}
+                dot={true}
                 renderItem={({ item }: any) => {
-                  // const data = posts.slice((item.id-1)*3, item.id*3)
-                  const {
-                    id,
-                    title,
-                    preview,
-                    writer_nickname,
-                    rep_pic,
-                    created,
-                    commentCount,
-                    likeCount,
-                  } = item;
                   return (
                     <FlatList
-                      data={posts}
+                      data={item}
                       scrollEnabled={false}
-                      renderItem={(item) => (
-                        <PostItem
-                          // key={id}
-                          board_id={1}
-                          post_id={id}
-                          board_name={"시사"}
-                          title={title}
-                          preview={preview}
-                          nickname={writer_nickname}
-                          rep_pic={rep_pic}
-                          created={created}
-                          commentCount={commentCount}
-                          likeCount={likeCount}
-                          navigation={navigation}
-                        />
-                      )}
+                      renderItem={({item}: any) => {
+                        const {
+                          id,
+                          title,
+                          preview,
+                          writer,
+                          photos,
+                          created,
+                          commentCount,
+                          like_cnt,
+                        } = item;
+                        return (
+                          <PostItem
+                            key={id}
+                            board_id={1}
+                            post_id={id}
+                            board_name={"시사"}
+                            title={title}
+                            preview={preview}
+                            writer={writer}
+                            photos={photos}
+                            created={created}
+                            commentCount={commentCount}
+                            like_cnt={like_cnt}
+                            navigation={navigation}
+                          />
+                      )}}
                     />
                   );
                 }}
@@ -531,10 +225,10 @@ const BoardDetailScreen = ({
             >
               <Text style={{color: '#3C3C3C', fontWeight: '700', fontSize: 16, lineHeight: 22}}>{nickname}님 이 정보들은 어떠신가요?</Text>
               <FlatList
-                data={posts}
+                data={posts.slice(0,3)}
                 scrollEnabled={false}
                 renderItem={({ item }: any) => (
-                  <TouchableOpacity style={{ flexDirection: "row", marginTop: 10}}>
+                  <TouchableOpacity style={{ flexDirection: "row", marginTop: 10}} onPress={() => {navigation.navigate('PostDetail', {post_id: item.id, board_id: 1, board_name: '시사'})}}>
                     <View style={{borderColor: '#67D393', borderWidth: 1, borderRadius: 8, paddingVertical: 2, paddingHorizontal: 4}}>
                       <Text style={{color: '#67D393', fontSize: 10, fontWeight: '600'}}>#ESG</Text>
                     </View>
@@ -573,41 +267,42 @@ const BoardDetailScreen = ({
               <CardView
                 gap={0}
                 offset={0}
-                data={hotPosts.slice(0,3)}
+                data={chunkArray(hotPosts, 3)}
                 pageWidth={width}
                 dot={true}
                 height={340}
                 renderItem={({ item }: any) => {
-                  const {
-                    id,
-                    title,
-                    preview,
-                    nickname,
-                    rep_pic,
-                    created,
-                    commentCount,
-                    likeCount,
-                  } = item;
                   return (
                     <FlatList
-                      data={hotPosts.slice(0,3)}
+                      data={item}
                       scrollEnabled={false}
-                      renderItem={(item) => (
-                        <HotPostItem
-                          // key={id}
-                          board_id={1}
-                          post_id={id}
-                          board_name={"시사"}
-                          title={title}
-                          preview={preview}
-                          nickname={nickname}
-                          rep_pic={rep_pic}
-                          created={created}
-                          commentCount={commentCount}
-                          likeCount={likeCount}
-                          navigation={navigation}
-                        />
-                      )}
+                      renderItem={({item}: any) => {
+                        const {
+                          id,
+                          title,
+                          preview,
+                          writer,
+                          photos,
+                          created,
+                          commentCount,
+                          like_cnt
+                        } = item;
+                        return(
+                          <HotPostItem
+                            // key={id}
+                            board_id={1}
+                            post_id={id}
+                            board_name={"시사"}
+                            title={title}
+                            preview={preview}
+                            writer={writer}
+                            photos={photos}
+                            created={created}
+                            commentCount={commentCount}
+                            like_cnt={like_cnt}
+                            navigation={navigation}
+                          />
+                      )}}
                     />
                   );
                 }}
@@ -646,11 +341,11 @@ const BoardDetailScreen = ({
                     id,
                     title,
                     preview,
-                    nickname,
-                    rep_pic,
+                    writer,
+                    photos,
                     created,
                     commentCount,
-                    likeCount,
+                    like_cnt,
                   } = item;
                   return (
                     <PostItem
@@ -660,47 +355,17 @@ const BoardDetailScreen = ({
                       board_name={"시사"}
                       title={title}
                       preview={preview}
-                      nickname={nickname}
-                      rep_pic={rep_pic}
+                      writer={writer}
+                      photos={photos}
                       created={created}
                       commentCount={commentCount}
-                      likeCount={likeCount}
+                      like_cnt={like_cnt}
                       navigation={navigation}
                     />
                   );
                 }}
               />
             </View>
-              {/* <FlatList
-                                data={posts}
-                                // keyExtractor={(_) => _.title}
-                                style={{ flexGrow: 1 }}
-                                // ListHeaderComponent={<StorySection />}
-                                onRefresh={onRefresh}
-                                refreshing={refreshing}
-                                onEndReached={onEndReached}
-                                onEndReachedThreshold={0}
-                                ListFooterComponent={loading ? <ActivityIndicator /> : <></>}
-                                renderItem={({ item }) => {
-                                    const { id, title, preview, nickname, created, commentCount, likeCount } = item;
-                                    return (
-                                        <PostItemSection
-                                            key={id}
-                                            board_id={board_id}
-                                            post_id={id}
-                                            board_name={board_name}
-                                            boardFormat={boardFormat}
-                                            title={title}
-                                            preview={preview}
-                                            nickname={nickname}
-                                            created={created}
-                                            commentCount={commentCount}
-                                            likeCount={likeCount}
-                                            navigation={navigation}
-                                        />
-                                    )
-                                }}
-                            /> */}
         </>
       )}
     </ScrollView>

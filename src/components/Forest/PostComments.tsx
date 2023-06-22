@@ -31,7 +31,7 @@ const PostCommentsScreen = ({ navigation, route }: NativeStackScreenProps<Forest
   const loadComment = async () => {
     setLoading(true);
     const response= await request.get(`/forest/${id}/comments/`, {}, {});
-    setComment(response.data.data.results);
+    setComment(response.data.data);
     setLoading(false);
   }
 

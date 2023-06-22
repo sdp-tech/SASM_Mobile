@@ -58,15 +58,17 @@ const BoardListScreen = ({
 
   const getBoardItems = async () => {
     const response = await request.get('/forest/categories/');
-    console.log(response.data.data.results);
     setBoardLists(response.data.data.results);
   }
 
-  // const getBoardFormat = async () => {
-  //   const response = await request.get(`/community/boards/${1}/`);
-  //   setBoardFormat(response.data);
-  //   //console.log(response.data)
-  // };
+  const getPosts = async () => {
+    const response = await request.get('/forest/', {}, null);
+    const response_hot = await request.get('/forest/', {order: 'hot'}, null);
+    const response_new = await request.get('/forest/', {order: 'latest'}, null);
+    setPosts(response.data.data.results);
+    setHotPosts(response_hot.data.data.results);
+    setNewPosts(response_new.data.data.results);
+  };
 
   // const getRefreshData = async () => {
   //     setRefreshing(true);
@@ -88,21 +90,21 @@ const BoardListScreen = ({
   //     }
   // }
 
+  const chunkArray = (array: any, size: number) => {
+    const chunkedArray = [];
+    let index = 0;
+    while (index < array.length) {
+      chunkedArray.push(array.slice(index, index + size));
+      index += size;
+    }
+    return chunkedArray;
+  };
+
   useEffect(() => {
     getUserInfo();
     getBoardItems();
     getPosts();
   }, [page]);
-
-  const getPosts = async () => {
-    const response = await request.get('/forest/', {}, null);
-    const response_hot = await request.get('/forest/', {order: 'hot'}, null);
-    const response_new = await request.get('/forest/', {order: 'latest'}, null);
-    setPosts(response.data.data.results);
-    setHotPosts(response_hot.data.data.results);
-    setNewPosts(response_new.data.data.results);
-    console.log(posts)
-  };
 
   return (
     <SafeAreaView style={styles.container}>
@@ -118,7 +120,7 @@ const BoardListScreen = ({
               >
                 <Text style={{color: '#3C3C3C', fontWeight: '700', fontSize: 16}}>{nickname}님 이 정보들은 어떠신가요?</Text>
                 <Text>
-                  신재생에너지 종류 "풍력에너지 개념/특징/국내외 현황"
+                  {posts[0]?.title}
                 </Text>
               </View>
               <View
@@ -222,42 +224,42 @@ const BoardListScreen = ({
               <CardView
                 gap={0}
                 offset={0}
-                data={posts.slice(0,3)}
+                data={chunkArray(posts, 3)}
                 pageWidth={width}
-                dot={true}
                 height={420}
+                dot={true}
                 renderItem={({ item }: any) => {
-                  // const data = posts.slice((item.id-1)*3, item.id*3)
-                  const {
-                    id,
-                    title,
-                    preview,
-                    writer_nickname,
-                    rep_pic,
-                    created,
-                    commentCount,
-                    likeCount,
-                  } = item;
                   return (
                     <FlatList
-                      data={posts}
+                      data={item}
                       scrollEnabled={false}
-                      renderItem={(item) => (
-                        <PostItem
-                          // key={id}
-                          board_id={1}
-                          post_id={id}
-                          board_name={"시사"}
-                          title={title}
-                          preview={preview}
-                          nickname={writer_nickname}
-                          rep_pic={rep_pic}
-                          created={created}
-                          commentCount={commentCount}
-                          likeCount={likeCount}
-                          navigation={navigation}
-                        />
-                      )}
+                      renderItem={({item}: any) => {
+                        const {
+                          id,
+                          title,
+                          preview,
+                          writer,
+                          photos,
+                          created,
+                          commentCount,
+                          like_cnt,
+                        } = item;
+                        return (
+                          <PostItem
+                            key={id}
+                            board_id={1}
+                            post_id={id}
+                            board_name={"시사"}
+                            title={title}
+                            preview={preview}
+                            writer={writer}
+                            photos={photos}
+                            created={created}
+                            commentCount={commentCount}
+                            like_cnt={like_cnt}
+                            navigation={navigation}
+                          />
+                      )}}
                     />
                   );
                 }}
@@ -278,7 +280,7 @@ const BoardListScreen = ({
                 data={posts.slice(0,3)}
                 scrollEnabled={false}
                 renderItem={({ item }: any) => (
-                  <TouchableOpacity style={{ flexDirection: "row", marginTop: 10}}>
+                  <TouchableOpacity style={{ flexDirection: "row", marginTop: 10}} onPress={() => {navigation.navigate('PostDetail', {post_id: item.id, board_id: 1, board_name: '시사'})}}>
                     <View style={{borderColor: '#67D393', borderWidth: 1, borderRadius: 8, paddingVertical: 2, paddingHorizontal: 4}}>
                       <Text style={{color: '#67D393', fontSize: 10, fontWeight: '600'}}>#ESG</Text>
                     </View>
@@ -317,41 +319,42 @@ const BoardListScreen = ({
               <CardView
                 gap={0}
                 offset={0}
-                data={hotPosts.slice(0,3)}
+                data={chunkArray(hotPosts, 3)}
                 pageWidth={width}
                 dot={true}
                 height={340}
                 renderItem={({ item }: any) => {
-                  const {
-                    id,
-                    title,
-                    preview,
-                    nickname,
-                    rep_pic,
-                    created,
-                    commentCount,
-                    likeCount,
-                  } = item;
                   return (
                     <FlatList
-                      data={hotPosts.slice(0,3)}
+                      data={item}
                       scrollEnabled={false}
-                      renderItem={(item) => (
-                        <HotPostItem
-                          // key={id}
-                          board_id={1}
-                          post_id={id}
-                          board_name={"시사"}
-                          title={title}
-                          preview={preview}
-                          nickname={nickname}
-                          rep_pic={rep_pic}
-                          created={created}
-                          commentCount={commentCount}
-                          likeCount={likeCount}
-                          navigation={navigation}
-                        />
-                      )}
+                      renderItem={({item}: any) => {
+                        const {
+                          id,
+                          title,
+                          preview,
+                          writer,
+                          photos,
+                          created,
+                          commentCount,
+                          like_cnt
+                        } = item;
+                        return(
+                          <HotPostItem
+                            // key={id}
+                            board_id={1}
+                            post_id={id}
+                            board_name={"시사"}
+                            title={title}
+                            preview={preview}
+                            writer={writer}
+                            photos={photos}
+                            created={created}
+                            commentCount={commentCount}
+                            like_cnt={like_cnt}
+                            navigation={navigation}
+                          />
+                      )}}
                     />
                   );
                 }}
@@ -390,11 +393,11 @@ const BoardListScreen = ({
                     id,
                     title,
                     preview,
-                    nickname,
-                    rep_pic,
+                    writer,
+                    photos,
                     created,
                     commentCount,
-                    likeCount,
+                    like_cnt,
                   } = item;
                   return (
                     <PostItem
@@ -404,11 +407,11 @@ const BoardListScreen = ({
                       board_name={"시사"}
                       title={title}
                       preview={preview}
-                      nickname={nickname}
-                      rep_pic={rep_pic}
+                      writer={writer}
+                      photos={photos}
                       created={created}
                       commentCount={commentCount}
-                      likeCount={likeCount}
+                      like_cnt={like_cnt}
                       navigation={navigation}
                     />
                   );

@@ -39,11 +39,11 @@ const PostSearchListSection = ({
           id,
           title,
           preview,
-          writer_nickname,
-          rep_pic,
+          writer,
+          photos,
           created,
           commentCount,
-          likeCount,
+          like_cnt,
         } = item;
         return (
           <PostItem
@@ -51,13 +51,13 @@ const PostSearchListSection = ({
             board_id={1}
             post_id={id}
             board_name={"시사"}
-            rep_pic={rep_pic}
             title={title}
             preview={preview}
-            nickname={writer_nickname}
+            writer={writer}
+            photos={photos}
             created={created}
             commentCount={commentCount}
-            likeCount={likeCount}
+            like_cnt={like_cnt}
             navigation={navigation}
           />
         );

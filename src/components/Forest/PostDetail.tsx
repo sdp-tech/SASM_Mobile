@@ -35,14 +35,14 @@ interface Post {
   subtitle: string;
   category: string;
   content: string;
-  rep_pic: string;
-  writer_nickname: string;
+  writer: any;
   email: string;
   created: string;
+  updated: string;
   like_cnt: number;
   viewCount: number;
   likes: boolean;
-  photoList: Array<string>;
+  photos: Array<string>;
   hashtags: Array<string>;
   semi_categories: Array<string>;
 }
@@ -87,7 +87,7 @@ const PostDetailSection = ({
       <ImageBackground
         style={{ height: 400 }}
         source={{
-          uri: post.rep_pic,
+          uri: post.photos[0],
         }}
       >
         <View
@@ -138,8 +138,9 @@ const PostDetailSection = ({
             {post.subtitle}
           </Text>
           <View style={{flexDirection: "row"}}>
-            <Text style={{flex: 1, color: '#F4F4F4', fontSize: 12, fontWeight: '400'}}>작성: {post.created.slice(0, 10)}</Text>
-            <Text style={{color: '#67D393', fontSize: 14, fontWeight: '400'}}>{post.writer_nickname}</Text>
+            <Text style={{color: '#F4F4F4', fontSize: 12, fontWeight: '400'}}>작성: {post.created.slice(0, 10)}</Text>
+            <Text style={{color: '#F4F4F4', fontSize: 12, fontWeight: '400'}}> / 마지막 수정: {post.updated.slice(0, 10)}</Text>
+            <Text style={{flex: 1, textAlign: 'right',color: '#67D393', fontSize: 14, fontWeight: '400'}}>{post.writer.nickname}</Text>
           </View>
         </View>
       </ImageBackground>
@@ -167,7 +168,7 @@ const PostDetailSection = ({
         <CardView data={post.semi_categories} offset={0} gap={0} pageWidth={100} dot={false} height={30} renderItem={({item}: any) => {
           return (
             <View style={{borderRadius: 16, backgroundColor: '#67D393', paddingVertical: 4, paddingHorizontal: 16, marginRight: 8, justifyContent: 'center'}}>
-              <Text style={{color: 'white', fontSize: 14, fontWeight: '600'}}>{item}</Text>
+              <Text style={{color: 'white', fontSize: 14, fontWeight: '600'}}>{item.name}</Text>
             </View>
           )
         }} />
@@ -194,7 +195,7 @@ const UserInfoSection = ({
       <Image
         style={{ width: 50, height: 50, borderRadius: 60 }}
         source={{
-          uri: user.profile_image,
+          uri: user.profile,
         }}
       />
       <View style={{ flex: 1, padding: 5 }}>
@@ -260,8 +261,12 @@ interface BottomBarSectionProps {
 const BottomBarSection = ({post, onUpdate, onDelete, like, toggleLike}: BottomBarSectionProps) => {
   return (
     <View style={{ flexDirection: "row", padding: 10 }}>
-      <Heart like={like} onPress={toggleLike}></Heart>
-      <Text>{post.like_cnt}</Text>
+      <View style={{flexDirection: 'row', flex: 1}}>
+        <Heart like={like} onPress={toggleLike}></Heart>
+        <Text>{post.like_cnt}</Text>
+        <CommentIcon />
+        <Text>30</Text>
+      </View>
       <TouchableOpacity>
         <Scrap fill={'black'}/>
       </TouchableOpacity>
@@ -290,9 +295,9 @@ const PostDetailScreen = ({
   const [user, setUser] = useState([] as any);
   const [updateText, setUpdateText] = useState<string>('');
   const [follow, setFollow] = useState<boolean>(false);
-  const [category, setCategory] = useState({id: 0, name: ''});
+  // const [category, setCategory] = useState({id: 0, name: ''});
   const [like, setLike] = useState<boolean>(false);
-  const [semiCategories, setSemiCategories] = useState([] as any);
+  // const [semiCategories, setSemiCategories] = useState([] as any);
 
   const request = new Request();
 
@@ -316,7 +321,7 @@ const PostDetailScreen = ({
     const response_detail = await request.get(`/forest/${post_id}/`, {}, {});
     const response_comment = await request.get(`/forest/${post_id}/comments/`, {}, {});
     setPost(response_detail.data.data);
-    setComment(response_comment.data.data.results);
+    setComment(response_comment.data.data);
     setLoading(false);
   };
 
@@ -371,7 +376,6 @@ const PostDetailScreen = ({
     console.log(updateText);
   }
 
-  const array = ["1", "2", "3"];
   const data = [
     { uri: "https://reactnative.dev/img/tiny_logo.png", title: "사슴" },
     { uri: "https://reactnative.dev/img/tiny_logo.png", title: "사슴" },
@@ -380,33 +384,33 @@ const PostDetailScreen = ({
     { uri: "https://reactnative.dev/img/tiny_logo.png", title: "사슴" },
   ];
 
-  const matchCategory = async () => {
-    let post_category = {id: 0, name: ''};
-    const categories = [
-      { id: 1, name: "시사" },
-      { id: 2, name: "문화" },
-      { id: 3, name: "라이프스타일" },
-      { id: 4, name: "뷰티" },
-      { id: 5, name: "푸드" },
-      { id: 6, name: "액티비티" },
-    ];
-    for (let _category of categories) {
-      if (_category.id.toString() == post?.category){
-        post_category.id = _category.id;
-        post_category.name = _category.name;
-      }
-    }
-    setCategory(post_category);
-    let semi_category = [];
-    const response = await request.get(`/forest/semi_categories/`, {category: post_category.id}, {});
-    let semi_categories = response.data.data.results;
-    for (let i = 0; i < semi_categories.length; i++) {
-      if (post?.semi_categories.includes(semi_categories[i].name)) {
-        semi_category.push(semi_categories[i]);
-      }
-    }
-    setSemiCategories(semi_category);
-  }
+  // const matchCategory = async () => {
+  //   let post_category = {id: 0, name: ''};
+  //   const categories = [
+  //     { id: 1, name: "시사" },
+  //     { id: 2, name: "문화" },
+  //     { id: 3, name: "라이프스타일" },
+  //     { id: 4, name: "뷰티" },
+  //     { id: 5, name: "푸드" },
+  //     { id: 6, name: "액티비티" },
+  //   ];
+  //   for (let _category of categories) {
+  //     if (_category.id.toString() == post?.category){
+  //       post_category.id = _category.id;
+  //       post_category.name = _category.name;
+  //     }
+  //   }
+  //   setCategory(post_category);
+  //   let semi_category = [];
+  //   const response = await request.get(`/forest/semi_categories/`, {category: post_category.id}, {});
+  //   let semi_categories = response.data.data.results;
+  //   for (let i = 0; i < semi_categories.length; i++) {
+  //     if (post?.semi_categories.includes(semi_categories[i].name)) {
+  //       semi_category.push(semi_categories[i]);
+  //     }
+  //   }
+  //   setSemiCategories(semi_category);
+  // }
 
   useEffect(() => {
     checkUser();
@@ -438,7 +442,7 @@ const PostDetailScreen = ({
                     navigation.navigate("PhotoPreview", { photoUri: photoUri })
                   }
                 />
-                <UserInfoSection user={user} onFollow={onFollow} />
+                <UserInfoSection user={post.writer} onFollow={onFollow} />
                 <View style={{flexDirection: 'row'}}>
                   <Text style={{fontSize: 14, fontWeight: '500', margin: 15}}>한줄평</Text>
                   <View style={{marginTop: 15}}><CommentIcon /></View>
@@ -466,7 +470,7 @@ const PostDetailScreen = ({
               )
           }}
           />
-          <BottomBarSection post={post} like={like} toggleLike={toggleLike} onDelete={deletePost} onUpdate={() => {matchCategory; navigation.navigate('ForestForm', {category: category, semi_categories: semiCategories, id: post.id})}} />
+          <BottomBarSection post={post} like={like} toggleLike={toggleLike} onDelete={deletePost} onUpdate={() => {navigation.navigate('ForestForm', {category: post.category, semi_categories: post.semi_categories, id: post.id})}} />
         </>
       )}
     </View>
