@@ -126,7 +126,6 @@ export default function CurationHome({ navigation, route }: StackScreenProps<Hom
             <CardView
               gap={0}
               offset={0}
-              height={height * 0.45}
               data={repCuration}
               pageWidth={width}
               dot={false}
@@ -147,7 +146,6 @@ export default function CurationHome({ navigation, route }: StackScreenProps<Hom
                 offset={0}
                 data={adminCuration}
                 pageWidth={width * 0.6}
-                height={height * 0.4}
                 dot={false}
                 renderItem={({ item }: any) => (
                   <ItemCard
@@ -235,7 +233,6 @@ export default function CurationHome({ navigation, route }: StackScreenProps<Hom
                 data={storyData}
                 offset={10}
                 pageWidth={width * 0.4}
-                height={height * 0.25}
                 dot={false}
                 renderItem={({ item }: any) => (
                   <SearchItemCard

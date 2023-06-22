@@ -282,7 +282,6 @@ export default function DetailCard({ detailData }: DetailCardProps): JSX.Element
                   </PaddingBox>
                   <Box>
                     <CardView
-                      height={210}
                       pageWidth={210}
                       offset={19}
                       gap={8}
