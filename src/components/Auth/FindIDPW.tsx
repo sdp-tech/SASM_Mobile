@@ -1,19 +1,19 @@
 import { createStackNavigator, StackScreenProps } from '@react-navigation/stack';
 import React, { useState } from 'react';
-import { Alert, Text, TouchableOpacity, View } from 'react-native';
+import { Alert, SafeAreaView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import styled from 'styled-components/native';
 import { Request } from '../../common/requests';
 import FindId from './function/FindId';
 import IdExist from './IdExist';
 import IdNotExist from './IdNotExist';
-import InputWithMessage from '../mypage/components/InputWithMessage';
 import FindPw from './function/FindPw';
 import SetNewPassword from './SetNewPassword';
+import InputWithLabel from '../../common/InputWithLabel';
+import Arrow from '../../assets/img/common/Arrow.svg';
 
 const TabsBox = styled.View`
   display: flex;
   flex-flow: row wrap;
-  margin-bottom: 20px;
   width: 80%;
   margin: 30px auto;
 `
@@ -22,7 +22,7 @@ const TabButton = styled.TouchableOpacity<{ selected: boolean }>`
   height: 40px;
   display: flex;
   justify-content: center;
-  border-color: #44ADF7;
+  border-color: #67D393;
   border-bottom-width: ${props => (props.selected ? '3px' : '0px')};;
 `
 const TabText = styled.Text<{ selected: boolean }>`
@@ -31,7 +31,6 @@ const TabText = styled.Text<{ selected: boolean }>`
   font-size: 16px;
   text-align: center;
 `
-
 export type findScreenProps = {
   'home': any;
   'idExist': {
@@ -102,38 +101,71 @@ const FindIDPW = ({ navigation, route }: StackScreenProps<findScreenProps, 'home
   }
 
   return (
-    <View>
+    <SafeAreaView style={{ backgroundColor: 'white', flex: 1 }}>
+      <View style={{ position: 'relative'}}>
+        <Text style={TextStyles.title}>아이디 / 비밀번호 찾기</Text>
+        <TouchableOpacity style={{ left: 10, marginBottom: 30, position: 'absolute' }} onPress={() => { navigation.goBack() }}>
+          <Arrow width={20} height={20} transform={[{ rotateY: '180deg' }]} />
+        </TouchableOpacity>
+      </View>
       <TabsBox>
         <TabButton selected={tab} onPress={() => { setTab(true) }}><TabText selected={tab}>아이디 찾기</TabText></TabButton>
         <TabButton selected={!tab} onPress={() => { setTab(false) }}><TabText selected={!tab}>비밀번호 찾기</TabText></TabButton>
       </TabsBox>
       {
         tab ?
-          <View>
-            <InputWithMessage
-              label='아이디'
-              placeholder="이메일"
-              onPress={getEmailExist}
-              onChangeText={(text) => { setEmail(text) }}
-              message={emailCheck ? "" : "이메일 형식이 올바르지 않습니다"}
-              style={emailCheck ? { width: '100%' } : { width: '100%', backgroundColor: "#F9E3E3" }}
-              textContentType='emailAddress'
-              buttonText='확인'
+          <View style={{display:'flex', justifyContent:'center', flex:1}}>
+            <InputWithLabel
+              label='이메일'
+              isAlert={!emailCheck}
+              alertLabel='올바른 이메일을 입력해주세요'
+              placeholder='이메일을 입력해주세요'
+              onChangeText={text => setEmail(text)}
             />
-          </View> :
-          <View>
-            <InputWithMessage
-              label='아이디'
-              placeholder="이메일"
-              onPress={postPassWordCode}
-              onChangeText={(text) => { setEmail(text) }}
-              message={emailCheck ? "" : "이메일 형식이 올바르지 않습니다"}
-              style={emailCheck ? { width: '100%' } : { width: '100%', backgroundColor: "#F9E3E3" }}
-              textContentType='emailAddress'
-              buttonText='링크 발송하기'
+            <TouchableOpacity style={{alignSelf:'center', marginTop: 80}}
+              onPress={getEmailExist}>
+                <Text style={TextStyles.button}>이메일 찾기</Text>
+            </TouchableOpacity>
+          </View> 
+          :
+          <View style={{display:'flex', justifyContent:'center', flex:1}}>
+            <InputWithLabel
+              label='이메일'
+              isAlert={!emailCheck}
+              alertLabel='올바른 이메일을 입력해주세요'
+              placeholder='이메일을 입력해주세요'
+              onChangeText={text => setEmail(text)}
             />
+            <TouchableOpacity style={{alignSelf:'center', marginTop: 80}}
+              onPress={postPassWordCode}>
+                <Text style={TextStyles.button}>다음</Text>
+            </TouchableOpacity>
           </View>
       }
-    </View>
+    </SafeAreaView>
   )
 }
+
+const TextStyles = StyleSheet.create({
+  button: {
+    overflow: 'hidden',
+    width: 175,
+    height: 45,
+    borderRadius: 22.5,
+    backgroundColor: '#67D393',
+    textAlign: 'center',
+    lineHeight: 45,
+    fontSize: 16,
+    letterSpacing: -0.6,
+    fontWeight: '700',
+    color: '#FFFFFF',
+    marginBottom: 15,
+  },
+  title: {
+    fontSize: 20,
+    lineHeight: 28,
+    letterSpacing: -0.6,
+    fontWeight: '700',
+    alignSelf: 'center'
+  },
+})
