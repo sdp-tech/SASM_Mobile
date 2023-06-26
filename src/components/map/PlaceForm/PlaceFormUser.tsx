@@ -8,11 +8,12 @@ import Postcode from '@actbase/react-daum-postcode';
 import Close from "../../../assets/img/common/Close.svg";
 import { ScrollView } from 'react-native-gesture-handler';
 import { Request } from '../../../common/requests';
-import { FinishModal } from './PlaceFormOwner';
+// import { FinishModal } from './PlaceFormOwner';
 import { SNSListProps } from './PlaceForm';
 import ModalSelector from 'react-native-modal-selector';
 import SNSModal from './Modals/SNSModal';
 import HourModal from './Modals/HourModal';
+import FinishModal from '../../../common/FinishModal';
 
 const { width, height } = Dimensions.get('window');
 
@@ -217,7 +218,12 @@ export default function PlaceFormUser({ setPlaceformModal, snsType }: { setPlace
       showsVerticalScrollIndicator={false}
     >
       <Modal visible={finishModal}>
-        <FinishModal setPlaceformModal={setPlaceformModal} setFinishModal={setFinishModal} />
+        <FinishModal
+          setModal={setFinishModal}
+          timeout={()=>{setPlaceformModal(false)}}
+          title='제보 완료 !'
+          subtitle={['제보해주신 장소는', 'SASM에서 검토한 후', '최종 등록됩니다']}
+        />
       </Modal>
       <Text style={{ ...TextStyles.label, marginTop: 40, marginBottom: 20 }}>이미지 등록하기 *</Text>
       <Text style={TextStyles.label}>대표 사진 *</Text>

@@ -9,7 +9,7 @@ import { ScrollView } from 'react-native-gesture-handler';
 import { Request } from '../../../common/requests';
 import { PlaceFormProps } from './PlaceFormUser';
 import { PhotoResultProps } from '../../../common/PhotoOptions';
-import Check from "../../../assets/img/common/Check.svg";
+import FinishModal from '../../../common/FinishModal';
 
 const { width, height } = Dimensions.get('window');
 const Header = styled.View`
@@ -131,24 +131,6 @@ const InputTouchWithLabel = ({ label, onPress, children }: InputTouchProps): JSX
   )
 }
 
-export const FinishModal = ({ setFinishModal, setPlaceformModal }: { setFinishModal: Dispatch<SetStateAction<boolean>>, setPlaceformModal: Dispatch<SetStateAction<boolean>> }): JSX.Element => {
-  useEffect(() => {
-    setTimeout(() => {
-      setFinishModal(false);
-      setPlaceformModal(false);
-    }, 3000)
-  }, [])
-  return (
-    <SafeAreaView style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', flex: 1 }}>
-      <Check color={"#75E59B"} />
-      <Text style={TextStyles.finish_title}>제보 완료 !</Text>
-      <Text style={TextStyles.finish_content}>제보해주신 장소는</Text>
-      <Text style={TextStyles.finish_content}>SASM에서 검토한 후</Text>
-      <Text style={TextStyles.finish_content}>최종 등록됩니다</Text>
-    </SafeAreaView>
-  )
-}
-
 export default function PlaceFormOwner({ setPlaceformModal }: { setPlaceformModal: Dispatch<SetStateAction<boolean>> }): JSX.Element {
   const [tab, setTab] = useState<number>(0);
   //제보 후 완료 창
@@ -234,7 +216,12 @@ export default function PlaceFormOwner({ setPlaceformModal }: { setPlaceformModa
       showsVerticalScrollIndicator={false}
     >
       <Modal visible={finishModal}>
-        <FinishModal setPlaceformModal={setPlaceformModal} setFinishModal={setFinishModal} />
+        <FinishModal
+          setModal={setFinishModal}
+          timeout={()=>{setPlaceformModal(false)}}
+          title='제보 완료 !'
+          subtitle={['제보해주신 장소는', 'SASM에서 검토한 후', '최종 등록됩니다']}
+        />
       </Modal>
       <Header>
         <HeaderBox current={tab == 0}><Text style={tab == 0 ? TextStyles.headerWhite : TextStyles.header}>기본정보</Text></HeaderBox>
