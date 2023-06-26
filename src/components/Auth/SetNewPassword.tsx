@@ -9,27 +9,10 @@ import InputWithMessage from '../mypage/components/InputWithMessage';
 import ChangePw, { formProps } from './function/ChangePw';
 import InputWithLabel from '../../common/InputWithLabel';
 import Check from '../../assets/img/common/Check.svg';
-
-const FinishModal = ({ setFinishModal }: { setFinishModal: Dispatch<SetStateAction<boolean>> }): JSX.Element => {
-
-  const navigationToMyPage = useNavigation<StackNavigationProp<MyPageProps>>();
-  useEffect(() => {
-    setTimeout(() => {
-      setFinishModal(false);
-      navigationToMyPage.navigate('login');
-    }, 3000)
-  }, [])
-
-  return (
-    <SafeAreaView style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', flex: 1 }}>
-      <Check color={"#75E59B"} />
-      <Text style={TextStyles.finish_title}>비밀번호 변경 완료 !</Text>
-      <Text style={TextStyles.finish_subtitle}>다시 로그인해주세요</Text>
-    </SafeAreaView>
-  )
-}
+import FinishModal from '../../common/FinishModal';
 
 export default function SetNewPassword(): JSX.Element {
+  const navigationToMyPage = useNavigation<StackNavigationProp<MyPageProps>>();
   const [finishModal, setFinishModal] = useState<boolean>(false);
   const [form, setForm] = useState<formProps>({
     code: "",
@@ -61,7 +44,12 @@ export default function SetNewPassword(): JSX.Element {
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: '#FFFFFF', display: 'flex', justifyContent: 'center' }}>
       <Modal visible={finishModal}>
-        <FinishModal setFinishModal={setFinishModal}/>
+        <FinishModal
+          navigation={()=>navigationToMyPage.navigate('login')}
+          setModal={setFinishModal}
+          title='비밀번호 변경 완료!'
+          subtitle={['다시 로그인해주세요']}
+        />
       </Modal>
       <InputWithLabel
         label='인증번호'
