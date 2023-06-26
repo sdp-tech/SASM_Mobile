@@ -42,7 +42,6 @@ export default function MapList({ placeData, setSheetMode, setPage, page, total,
             <CardView
               pageWidth={WINDOW_WIDTH}
               dot={false}
-              height={400}
               data={recommends}
               gap={0}
               offset={0}

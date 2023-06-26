@@ -182,7 +182,6 @@ const Storys = ({ navigation, data }: { navigation: StackNavigationProp<TabProps
       {
         data.rep_photos != null &&
         <CardView
-          height={300}
           pageWidth={250}
           data={data.rep_photos}
           renderItem={({ item }: any) => <Image source={{ uri: item }} style={{ width: 250, height: 300, marginHorizontal: 5 }} />}

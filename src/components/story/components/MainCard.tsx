@@ -36,7 +36,7 @@ const MainCard = ({id, place_name, title, rep_pic, story_like, category, preview
   }
 
   return (
-    <View style={{width: width, overflow: 'hidden'}}>
+    <View style={{width: width, overflow: 'hidden', height: width*0.85+140}}>
     <Image source={{uri: rep_pic}} resizeMode='cover' style={{position: 'absolute', borderTopLeftRadius: 5, top: 50, left: 0, width: width*0.6, height: width*0.6, opacity: 0.3}} />
     <Image source={{uri: rep_pic}} resizeMode='cover' style={{position: 'absolute', borderTopRightRadius: 5, top: 50, right: 0, width: width*0.6, height: width*0.6, opacity: 0.3}} />
     <View style={{position: 'absolute', borderBottomLeftRadius: 5, top: 50+width*0.6, left: 0, width: 30, height: width*0.2, opacity: 0.3, backgroundColor: 'white', shadowColor: 'black', shadowOpacity: 0.3, shadowOffset: { width: 0, height: 5}}}/>

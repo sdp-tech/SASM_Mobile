@@ -198,7 +198,6 @@ const StoryDetailBox = ({navigation, id}: StoryDetailProps) => {
                                 offset={0}
                                 data={data!.extra_pics}
                                 pageWidth={width}
-                                height={330}
                                 dot={false}
                                 renderItem={({item}: any) => (
                                     <ImageBackground
@@ -260,7 +259,6 @@ const StoryDetailBox = ({navigation, id}: StoryDetailProps) => {
                             offset={12}
                             data={item}
                             pageWidth={width*0.6}
-                            height={width*0.5}
                             dot={false}
                             renderItem={({item}: any) => (
                                 <TouchableOpacity style={{marginHorizontal: 8}}>
@@ -284,7 +282,6 @@ const StoryDetailBox = ({navigation, id}: StoryDetailProps) => {
                             offset={12}
                             data={item}
                             pageWidth={width*0.6}
-                            height={width*0.3}
                             dot={false}
                             renderItem={({item}: any) => (
                                 <TouchableOpacity style={{marginHorizontal: 8}}>
