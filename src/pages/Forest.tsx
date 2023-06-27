@@ -27,19 +27,15 @@ export interface BoardFormat {
 export type ForestStackParams = {
   BoardList: any;
   BoardDetail: {
-    board_id: number;
-    board_name: string;
+    board_category: any;
   }
   PostList: {
-    board_id?: number;
-    board_name: string;
-    board_category?: string;
+    board_name?: string;
+    board_category?: any;
   };
   PostSearch: any;
   PostDetail: {
-    board_id: number;
     post_id: number;
-    board_name: string;
   };
   PostComments: {
     id: number;
@@ -50,15 +46,16 @@ export type ForestStackParams = {
     photoUri: any;
   }
   CategoryForm: {
-    categories: any;
-  };
+    post?: any;
+  }
   SemiCategoryForm: {
     category: any;
+    post?: any;
   };
   ForestForm: {
     category: any;
     semi_categories: any;
-    id?: number;
+    post?: any;
   }
 };
 

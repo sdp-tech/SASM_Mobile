@@ -33,7 +33,7 @@ interface Post {
   board: number;
   title: string;
   subtitle: string;
-  category: string;
+  category: any;
   content: string;
   writer: any;
   email: string;
@@ -49,15 +49,13 @@ interface Post {
 
 interface PostDetailSectionProps {
   post: Post;
-  boardname: string;
-  //navToPostUpload: any;
-  // deletePost: any;
-  navToPhotoPreview: any;
 }
 
 interface UserInfoSectionProps {
   user: any;
   onFollow: () => void;
+  posts: any;
+  navigation: any;
 }
 
 interface PostRecommendSectionProps {
@@ -68,10 +66,6 @@ const { width, height } = Dimensions.get('screen');
 
 const PostDetailSection = ({
   post,
-  boardname,
-  //navToPostUpload,
-  // deletePost,
-  navToPhotoPreview,
 }: PostDetailSectionProps) => {
   const markup = {
     html: `${post?.content}`
@@ -110,7 +104,7 @@ const PostDetailSection = ({
               flex: 1
             }}
           >
-            {boardname}
+            {post.category.name}
           </Text>
         </View>
         <View style={{ flex: 1, padding: 20, justifyContent: 'flex-end' }}>
@@ -165,7 +159,7 @@ const PostDetailSection = ({
           </TouchableOpacity>
         </View>
         <View style={{alignItems: 'flex-start'}}>
-        <CardView data={post.semi_categories} offset={0} gap={0} pageWidth={100} dot={false} height={30} renderItem={({item}: any) => {
+        <CardView data={post.semi_categories} offset={0} gap={0} pageWidth={100} dot={false} renderItem={({item}: any) => {
           return (
             <View style={{borderRadius: 16, backgroundColor: '#67D393', paddingVertical: 4, paddingHorizontal: 16, marginRight: 8, justifyContent: 'center'}}>
               <Text style={{color: 'white', fontSize: 14, fontWeight: '600'}}>{item.name}</Text>
@@ -179,7 +173,7 @@ const PostDetailSection = ({
 };
 
 const UserInfoSection = ({
-  user, onFollow
+  user, onFollow, posts, navigation
 }: UserInfoSectionProps) => {
   return (
     <View
@@ -192,20 +186,29 @@ const UserInfoSection = ({
         borderBottomColor: "#E3E3E3",
       }}
     >
-      <Image
-        style={{ width: 50, height: 50, borderRadius: 60 }}
-        source={{
-          uri: user.profile,
-        }}
-      />
-      <View style={{ flex: 1, padding: 5 }}>
-        <Text style={{color: '#67D393', fontWeight: '700', fontSize: 16, lineHeight: 22}}>{user.nickname}</Text>
-        <Text style={{color: '#848484', fontSize: 10, lineHeight: 18}}>자기소개 한 줄</Text>
+      <View style={{alignItems: 'center'}}>
+        <Image
+          style={{ width: 56, height: 56, borderRadius: 60 }}
+          source={{
+            uri: user.profile,
+          }}
+        />
+        <TouchableOpacity style={{borderColor: '#67D393', borderWidth: 1, borderRadius: 12, alignItems: 'center', justifyContent: 'center', paddingVertical: 5, paddingHorizontal: 15, marginTop: 20}} onPress={onFollow}>
+          <Text style={{color: '#202020', fontSize: 12}}>+ 팔로우</Text>
+        </TouchableOpacity>
+      </View>
+      <View style={{ flex: 1, marginLeft: 20 }}>
+        <View style={{flexDirection: 'row', marginBottom: 10, flex: 1}}>
+          <Text style={{fontSize: 12, fontWeight: '600', color: user.is_verified ? '#209DF5' : '#67D393'}}>{user.is_verified ? 'Editor' : 'User'}</Text>
+          <Text style={{color: '#202020', fontSize: 12, fontWeight: '600'}}> {user.nickname}님의 다른 글</Text>
+        </View>
+        <FlatList data={posts.slice(0,4)} scrollEnabled={false} renderItem={({item}: any) => { return (
+          <TouchableOpacity style={{borderBottomColor: '#EDF8F2', borderBottomWidth: 0.5}} onPress={() => {navigation.push('PostDetail', {post_id: item.id})}}>
+            <Text style={{color: '#3C3C3C', fontSize: 10, lineHeight: 18, opacity: 0.6,}} numberOfLines={1}>{item.title}</Text>
+          </TouchableOpacity>
+        )}} />
       </View>
       <View style={{justifyContent: 'center'}}>
-      <TouchableOpacity style={{borderColor: '#67D393', borderWidth: 1, borderRadius: 12, alignItems: 'center', justifyContent: 'center', paddingVertical: 2, paddingHorizontal: 15}} onPress={onFollow}>
-        <Text style={{color: '#202020', fontSize: 12}}>+ 팔로우</Text>
-      </TouchableOpacity>
       </View>
     </View>
   );
@@ -225,7 +228,6 @@ const PostRecommendSection = ({ data }: PostRecommendSectionProps) => {
         gap={0}
         offset={0}
         dot={false}
-        height={120}
         pageWidth={120}
         data={data}
         renderItem={({ item }: any) => {
@@ -295,15 +297,14 @@ const PostDetailScreen = ({
   const [user, setUser] = useState([] as any);
   const [updateText, setUpdateText] = useState<string>('');
   const [follow, setFollow] = useState<boolean>(false);
+  const [writerPosts, setWriterPosts] = useState([] as any);
   // const [category, setCategory] = useState({id: 0, name: ''});
   const [like, setLike] = useState<boolean>(false);
   // const [semiCategories, setSemiCategories] = useState([] as any);
 
   const request = new Request();
 
-  const board_id = route.params.board_id;
   const post_id = route.params.post_id;
-  const board_name = route.params.board_name;
  
   const toggleLike = async () => {
     const response = await request.post(`/forest/${post_id}/like/`);
@@ -320,8 +321,10 @@ const PostDetailScreen = ({
     setLoading(true);
     const response_detail = await request.get(`/forest/${post_id}/`, {}, {});
     const response_comment = await request.get(`/forest/${post_id}/comments/`, {}, {});
+    const response_writer = await request.get('/forest/', {writer_filter: post?.writer.email})
     setPost(response_detail.data.data);
-    setComment(response_comment.data.data);
+    setComment(response_comment.data.data.results);
+    setWriterPosts(response_writer.data.data.results);
     setLoading(false);
   };
 
@@ -342,10 +345,7 @@ const PostDetailScreen = ({
   const deletePost = async () => {
     const _delete = async () => {
       await request.delete(`/forest/${post_id}/delete/`);
-      navigation.replace("PostList", {
-        board_id: board_id,
-        board_name: board_name,
-      });
+      navigation.goBack();
     };
     Alert.alert(
       "게시글 삭제 확인",
@@ -384,34 +384,6 @@ const PostDetailScreen = ({
     { uri: "https://reactnative.dev/img/tiny_logo.png", title: "사슴" },
   ];
 
-  // const matchCategory = async () => {
-  //   let post_category = {id: 0, name: ''};
-  //   const categories = [
-  //     { id: 1, name: "시사" },
-  //     { id: 2, name: "문화" },
-  //     { id: 3, name: "라이프스타일" },
-  //     { id: 4, name: "뷰티" },
-  //     { id: 5, name: "푸드" },
-  //     { id: 6, name: "액티비티" },
-  //   ];
-  //   for (let _category of categories) {
-  //     if (_category.id.toString() == post?.category){
-  //       post_category.id = _category.id;
-  //       post_category.name = _category.name;
-  //     }
-  //   }
-  //   setCategory(post_category);
-  //   let semi_category = [];
-  //   const response = await request.get(`/forest/semi_categories/`, {category: post_category.id}, {});
-  //   let semi_categories = response.data.data.results;
-  //   for (let i = 0; i < semi_categories.length; i++) {
-  //     if (post?.semi_categories.includes(semi_categories[i].name)) {
-  //       semi_category.push(semi_categories[i]);
-  //     }
-  //   }
-  //   setSemiCategories(semi_category);
-  // }
-
   useEffect(() => {
     checkUser();
     loadItem();
@@ -433,16 +405,8 @@ const PostDetailScreen = ({
             // onEndReachedThreshold={0.6}
             ListHeaderComponent={
               <>
-                <PostDetailSection
-                  post={post}
-                  boardname={board_name}
-                  // navToPostUpload={navToPostUpload}
-                  // deletePost={deletePost}
-                  navToPhotoPreview={(photoUri: string) =>
-                    navigation.navigate("PhotoPreview", { photoUri: photoUri })
-                  }
-                />
-                <UserInfoSection user={post.writer} onFollow={onFollow} />
+                <PostDetailSection post={post}/>
+                <UserInfoSection user={post.writer} onFollow={onFollow} posts={writerPosts} navigation={navigation}/>
                 <View style={{flexDirection: 'row'}}>
                   <Text style={{fontSize: 14, fontWeight: '500', margin: 15}}>한줄평</Text>
                   <View style={{marginTop: 15}}><CommentIcon /></View>
@@ -470,7 +434,7 @@ const PostDetailScreen = ({
               )
           }}
           />
-          <BottomBarSection post={post} like={like} toggleLike={toggleLike} onDelete={deletePost} onUpdate={() => {navigation.navigate('ForestForm', {category: post.category, semi_categories: post.semi_categories, id: post.id})}} />
+          <BottomBarSection post={post} like={like} toggleLike={toggleLike} onDelete={deletePost} onUpdate={() => {navigation.navigate('CategoryForm', {post: post})}} />
         </>
       )}
     </View>

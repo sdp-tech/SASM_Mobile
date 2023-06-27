@@ -4,7 +4,7 @@ import Search from '../../../assets/img/common/Search.svg';
 
 interface ListHeaderProps {
     board_name: string;
-    board_category?: string;
+    board_category?: any;
     navigation: any;
 }
 const ListHeader = ({ board_name,board_category,navigation }: ListHeaderProps) => {
@@ -14,8 +14,8 @@ const ListHeader = ({ board_name,board_category,navigation }: ListHeaderProps) =
         <Arrow width={18} height={18} transform={[{rotate: '180deg'}]} />
       </TouchableOpacity>
       <Text style={{ flex: 1, fontSize: 20, fontWeight: "700", textAlign: 'center' }}>
+        {board_category ? board_category.name + " / " : ""}
         {board_name}
-        {board_category ? " / " + board_category : ""}
       </Text>
       <TouchableOpacity style={{marginRight: 5}} onPress={() => {navigation.navigate('PostSearch')}}>
         <Search width={18} height={18} />

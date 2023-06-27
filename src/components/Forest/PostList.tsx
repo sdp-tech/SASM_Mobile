@@ -14,6 +14,7 @@ import {
 import type { NativeStackScreenProps } from "@react-navigation/native-stack";
 import styled from "styled-components/native";
 import ListHeader from "./components/ListHeader";
+import Add from "../../assets/img/common/Add.svg";
 
 import { ForestStackParams, BoardFormat } from "../../pages/Forest";
 import { Request } from "../../common/requests";
@@ -31,9 +32,7 @@ interface PostSearchSectionProps {
   searchQuery: string;
   doHashtagSearch: any;
 }
-
-const windowWidth = Dimensions.get("window").width;
-const windowHeight = Dimensions.get("window").height;
+const { width, height } = Dimensions.get('window');
 
 const PostListScreen = ({
   navigation,
@@ -54,13 +53,14 @@ const PostListScreen = ({
 
   const request = new Request();
 
-  const board_name = route.params.board_name;
-  const board_category = route.params.board_category;
+  const board_name = route.params?.board_name;
+  const board_category = route.params?.board_category;
 
   const getPosts = async () => {
     setLoading(true);
     const response = await request.get('/forest/', {
-      order: order
+      order: order,
+      category_filter: board_category.id
     }, null);
     setPosts(response.data.data.results);
     setCount(response.data.data.count);
@@ -68,47 +68,18 @@ const PostListScreen = ({
     console.log(response)
   }
 
+  const onChangeOrder = async () => {
+    setOrder(toggleItems[orderList].order);
+  }
+
+  useEffect(() => {
+    onChangeOrder();
+  }, [orderList]);
+
   useEffect(() => {
     getPosts();
   }, [order]);
 
-  // const getBoardFormat = async () => {
-  //   const response = await request.get(`/community/boards/${board_id}/`);
-  //   return response.data;
-  // };
-
-  // const getPosts = async (
-  //   searchQuery: string,
-  //   searchType: string,
-  //   page: number
-  // ) => {
-  //   const response = await request.get(
-  //     "/community/posts/",
-  //     {
-  //       board: board_id,
-  //       query: searchQuery,
-  //       query_type: searchType,
-  //       page: page,
-  //       latest: true,
-  //     },
-  //     null
-  //   );
-  //   return response.data.data.results;
-  // };
-  // const getPostsBySearch = async () => {
-  //   const response = await request.get(
-  //     "/community/posts/",
-  //     {
-  //       board: board_id,
-  //       query: searchQuery,
-  //       query_type: searchType,
-  //       page: page,
-  //       latest: true,
-  //     },
-  //     null
-  //   );
-  //   setPosts(response.data.data.results);
-  // };
   // const onRefresh = async () => {
   //   if (!refreshing) {
   //     setPage(1);
@@ -126,32 +97,10 @@ const PostListScreen = ({
   //   }
   // };
 
-  // const hashtagSearching = () => {
-  //   return searchQuery.length > 0 && searchQuery[0] == "#";
-  // };
-
-  // useEffect(() => {
-  //   async function _getData() {
-  //     try {
-  //       setLoading(true);
-  //       setBoardFormat(await getBoardFormat());
-  //       setPosts(await getPosts(searchQuery, "default", 1));
-  //       setLoading(false);
-  //     } catch (err) {
-  //       console.warn(err);
-  //     }
-  //   }
-  //   _getData();
-  // }, [route]);
-
-  // useEffect(() => {
-  //   getPostsBySearch();
-  // }, [searchQuery]);
-
   return (
     <SafeAreaView style={styles.container}>
       <ListHeader
-        board_name={board_name}
+        board_name={board_name!}
         board_category={board_category}
         navigation={navigation}
       />
@@ -185,13 +134,12 @@ const PostListScreen = ({
                     created,
                     commentCount,
                     like_cnt,
+                    user_likes
                   } = item;
                   return (
                     <PostItem
-                          // key={id}
-                          board_id={1}
+                          key={id}
                           post_id={id}
-                          board_name={"시사"}
                           title={title}
                           preview={preview}
                           writer={writer}
@@ -199,18 +147,19 @@ const PostListScreen = ({
                           created={created}
                           commentCount={commentCount}
                           like_cnt={like_cnt}
+                          user_likes={user_likes}
                           navigation={navigation}
                         />
                   );
                 }}
               />
-              {/* <TouchableOpacity style={{ position: 'absolute', bottom: '5%', right: 8 }} onPress={() => navigation.navigate('PostUpload', { board_id: board_id, boardFormat: boardFormat })}>
-                                <View style={{ backgroundColor: '#01A0FC', padding: 10, borderRadius: 10 }}>
-                                    <Text style={{ fontSize: 18, color: 'white' }}>글쓰기</Text>
-                                </View>
-                            </TouchableOpacity> */}
             </>
       )}
+      <TouchableOpacity onPress={() => {navigation.navigate('CategoryForm', {})}}
+            style={{position: "absolute", top: height * 0.85, left: width * 0.85, shadowColor: 'black', shadowOffset: { width: 0, height: 5 }, shadowOpacity: 0.3}}
+          >
+            <Add />
+          </TouchableOpacity>
     </SafeAreaView>
   );
 };

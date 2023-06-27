@@ -18,9 +18,9 @@ import SearchBar from "../../common/SearchBar";
 import CardView from "../../common/CardView";
 import DropDown from "../../common/DropDown";
 import PostItem from "./components/PostItem";
+import Add from "../../assets/img/common/Add.svg";
 
-const windowWidth = Dimensions.get("window").width;
-const windowHeight = Dimensions.get("window").height;
+const { width, height } = Dimensions.get('window');
 
 interface PostSearchListSectionProps {
   posts: any;
@@ -44,13 +44,12 @@ const PostSearchListSection = ({
           created,
           commentCount,
           like_cnt,
+          user_likes
         } = item;
         return (
           <PostItem
             key={id}
-            board_id={1}
             post_id={id}
-            board_name={"시사"}
             title={title}
             preview={preview}
             writer={writer}
@@ -58,6 +57,7 @@ const PostSearchListSection = ({
             created={created}
             commentCount={commentCount}
             like_cnt={like_cnt}
+            user_likes={user_likes}
             navigation={navigation}
           />
         );
@@ -101,6 +101,13 @@ const PostSearchScreen = ({
   //   setBoardFormat(response.data);
   //   //console.log(response.data)
   // };
+  const onChangeOrder = async () => {
+    setOrder(toggleItems[orderList].order);
+  }
+
+  useEffect(() => {
+    onChangeOrder();
+  }, [orderList]);
 
   useEffect(() => {
     // getBoardFormat();
@@ -147,7 +154,6 @@ const PostSearchScreen = ({
               pageWidth={80}
               data={boardLists}
               dot={false}
-              height={40}
               renderItem={({ item }: any) => (
                 <TouchableOpacity
                   style={{
@@ -175,8 +181,7 @@ const PostSearchScreen = ({
           <CardView
             gap={0}
             offset={0}
-            height={windowHeight - 170}
-            pageWidth={windowWidth}
+            pageWidth={width}
             dot={false}
             data={posts}
             renderItem={({ item }: any) => {
@@ -217,7 +222,7 @@ const PostSearchScreen = ({
             <FlatList
               data={[{ title: "비건 레시피" }, { title: "맛있는" }]}
               renderItem={({ item }: any) => (
-                <View style={{ flexDirection: "row", borderBottomColor: '#A8A8A8', borderBottomWidth: 1, width: windowWidth-40, paddingVertical: 5 }}>
+                <View style={{ flexDirection: "row", borderBottomColor: '#A8A8A8', borderBottomWidth: 1, width: width-40, paddingVertical: 5 }}>
                   <TouchableOpacity style={{flex: 1}}>
                     <Text style={{color: '#373737', lineHeight: 20}}>{item.title}</Text>
                   </TouchableOpacity>
@@ -230,6 +235,11 @@ const PostSearchScreen = ({
           </View>
         </>
       )}
+      <TouchableOpacity onPress={() => {navigation.navigate('CategoryForm', {})}}
+            style={{position: "absolute", top: height * 0.85, left: width * 0.85, shadowColor: 'black', shadowOffset: { width: 0, height: 5 }, shadowOpacity: 0.3}}
+          >
+            <Add />
+          </TouchableOpacity>
     </SafeAreaView>
   );
 };

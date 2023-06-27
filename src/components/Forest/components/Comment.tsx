@@ -51,7 +51,7 @@ const Comment = ({ data, reRenderScreen, post_id, email, callback }: CommentProp
     }
     
     let isWriter = false;
-    if (data.writer_email == email) {
+    if (data.writer.email == email) {
         isWriter = true;
     }
 
@@ -59,12 +59,12 @@ const Comment = ({ data, reRenderScreen, post_id, email, callback }: CommentProp
         <View style={{borderBottomColor: '#D9D9D9', borderBottomWidth: 1, height: 90}}>
             <View style = {{ flexDirection: 'row', padding: 20}}>
                 <View style = {{alignSelf: 'center'}}>
-                    <Image source={{uri: data.writer_profile}} style={{width:50,height:50,borderRadius:60}} />
+                    <Image source={{uri: data.writer.profile}} style={{width:50,height:50,borderRadius:60}} />
                 </View>
                 <View style={{ marginLeft: 10}}>
                     <View style={{flexDirection: 'row', justifyContent: 'flex-start'}}>
                         <Text style={[textStyles.nickname, {color: data!.writer_is_verified ? '#209DF5' : '#89C77F'}]}>{data!.writer_is_verified ? ('Editor') : ('User')}</Text>
-                        <Text style={textStyles.nickname}> {data!.writer_nickname}</Text>
+                        <Text style={textStyles.nickname}> {data!.writer.nickname}</Text>
                         <Text style={textStyles.date}>{date} 작성</Text>
                         {isWriter ?
                             <TouchableOpacity onPress={() => setModalVisible(!modalVisible)} style={{marginLeft: 120, marginTop: 5}}>

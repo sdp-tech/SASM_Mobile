@@ -16,6 +16,7 @@ import type { NativeStackScreenProps } from "@react-navigation/native-stack";
 import styled from "styled-components/native";
 import ListHeader from "./components/ListHeader";
 import PostItem, { HotPostItem } from "./components/PostItem";
+import Add from "../../assets/img/common/Add.svg";
 
 import { ForestStackParams, BoardFormat } from "../../pages/Forest";
 import { Request } from "../../common/requests";
@@ -43,20 +44,7 @@ const BoardDetailScreen = ({
   const [newPosts, setNewPosts] = useState([] as any);
   const request = new Request();
 
-  const board_id = route.params.board_id;
-  const board_name = route.params.board_name;
-
-  const filters = [
-    { id: 1, name: "전체" },
-    { id: 2, name: "관리자" },
-    { id: 3, name: "일반인" },
-    { id: 4, name: "팔로잉" },
-  ];
-
-  const getBoardFormat = async () => {
-    const response = await request.get(`/community/boards/${board_id}/`);
-    return response.data;
-  };
+  const board_category = route.params.board_category;
 
   const getUserInfo = async () => {
     const response = await request.get('/mypage/me/', {}, {});
@@ -65,14 +53,14 @@ const BoardDetailScreen = ({
 
   const getPosts = async () => {
     const response = await request.get('/forest/', {
-      category_filter: board_id
+      category_filter: board_category.id
     }, null);
     const response_hot = await request.get('/forest/', {
-      category_filter: board_id,
+      category_filter: board_category.id,
       order: 'hot'
     }, null);
     const response_new = await request.get('/forest/', {
-      category_filter: board_id,
+      category_filter: board_category.id,
       order: 'latest'
     }, null);
     setPosts(response.data.data.results);
@@ -93,7 +81,7 @@ const BoardDetailScreen = ({
   useEffect(() => {
     getUserInfo();
     getPosts();
-  }, [board_id])
+  }, [board_category.id])
 
   // const onRefresh = async () => {
   //   if (!refreshing) {
@@ -127,13 +115,13 @@ const BoardDetailScreen = ({
   return (
     <SafeAreaView style={styles.container}>
     <ScrollView>
-      <ListHeader board_name={board_name} navigation={navigation} />
+      <ListHeader board_name={board_category.name} navigation={navigation} />
       {loading ? (
         <ActivityIndicator />
       ) : (
         <>
           <View style={{padding: 15, backgroundColor: '#F1FCF5', borderTopColor: '#EDF8F2', borderBottomColor: '#EDF8F2', borderTopWidth: 1, borderBottomWidth: 1}}>
-            <CardView gap={0} offset={0} pageWidth={windowWidth} dot={false} height={30} data={hashtags} renderItem={({item}: any) => {
+            <CardView gap={0} offset={0} pageWidth={windowWidth} dot={false} data={hashtags} renderItem={({item}: any) => {
               return (
               <TouchableOpacity
                 style={{height:30, borderRadius: 16, borderColor: '#67D393', borderWidth: 1, backgroundColor: 'white', paddingVertical: 4, paddingHorizontal: 16, marginHorizontal: 8}}>
@@ -154,7 +142,8 @@ const BoardDetailScreen = ({
               <TouchableOpacity
                 onPress={() => {
                   navigation.navigate("PostList", {
-                    board_name: "사슴의 추천글",
+                    board_name: "추천글",
+                    board_category: board_category
                   });
                 }}
               >
@@ -174,7 +163,6 @@ const BoardDetailScreen = ({
                 offset={0}
                 data={chunkArray(posts, 3)}
                 pageWidth={width}
-                height={420}
                 dot={true}
                 renderItem={({ item }: any) => {
                   return (
@@ -191,13 +179,12 @@ const BoardDetailScreen = ({
                           created,
                           commentCount,
                           like_cnt,
+                          user_likes
                         } = item;
                         return (
                           <PostItem
                             key={id}
-                            board_id={1}
                             post_id={id}
-                            board_name={"시사"}
                             title={title}
                             preview={preview}
                             writer={writer}
@@ -205,6 +192,7 @@ const BoardDetailScreen = ({
                             created={created}
                             commentCount={commentCount}
                             like_cnt={like_cnt}
+                            user_likes={user_likes}
                             navigation={navigation}
                           />
                       )}}
@@ -228,7 +216,7 @@ const BoardDetailScreen = ({
                 data={posts.slice(0,3)}
                 scrollEnabled={false}
                 renderItem={({ item }: any) => (
-                  <TouchableOpacity style={{ flexDirection: "row", marginTop: 10}} onPress={() => {navigation.navigate('PostDetail', {post_id: item.id, board_id: 1, board_name: '시사'})}}>
+                  <TouchableOpacity style={{ flexDirection: "row", marginTop: 10}} onPress={() => {navigation.navigate('PostDetail', {post_id: item.id})}}>
                     <View style={{borderColor: '#67D393', borderWidth: 1, borderRadius: 8, paddingVertical: 2, paddingHorizontal: 4}}>
                       <Text style={{color: '#67D393', fontSize: 10, fontWeight: '600'}}>#ESG</Text>
                     </View>
@@ -249,7 +237,8 @@ const BoardDetailScreen = ({
               <TouchableOpacity
                 onPress={() => {
                   navigation.navigate("PostList", {
-                    board_name: "사슴의 인기글",
+                    board_name: "인기글",
+                    board_category: board_category
                   });
                 }}
               >
@@ -270,7 +259,6 @@ const BoardDetailScreen = ({
                 data={chunkArray(hotPosts, 3)}
                 pageWidth={width}
                 dot={true}
-                height={340}
                 renderItem={({ item }: any) => {
                   return (
                     <FlatList
@@ -285,14 +273,13 @@ const BoardDetailScreen = ({
                           photos,
                           created,
                           commentCount,
-                          like_cnt
+                          like_cnt,
+                          user_likes
                         } = item;
                         return(
                           <HotPostItem
-                            // key={id}
-                            board_id={1}
+                            key={id}
                             post_id={id}
-                            board_name={"시사"}
                             title={title}
                             preview={preview}
                             writer={writer}
@@ -300,6 +287,7 @@ const BoardDetailScreen = ({
                             created={created}
                             commentCount={commentCount}
                             like_cnt={like_cnt}
+                            user_likes={user_likes}
                             navigation={navigation}
                           />
                       )}}
@@ -318,7 +306,8 @@ const BoardDetailScreen = ({
               <TouchableOpacity
                 onPress={() => {
                   navigation.navigate("PostList", {
-                    board_name: "사슴의 최신글",
+                    board_name: "최신글",
+                    board_category: board_category
                   });
                 }}
               >
@@ -346,13 +335,12 @@ const BoardDetailScreen = ({
                     created,
                     commentCount,
                     like_cnt,
+                    user_likes
                   } = item;
                   return (
                     <PostItem
-                      // key={id}
-                      board_id={1}
+                      key={id}
                       post_id={id}
-                      board_name={"시사"}
                       title={title}
                       preview={preview}
                       writer={writer}
@@ -360,6 +348,7 @@ const BoardDetailScreen = ({
                       created={created}
                       commentCount={commentCount}
                       like_cnt={like_cnt}
+                      user_likes={user_likes}
                       navigation={navigation}
                     />
                   );
@@ -369,6 +358,11 @@ const BoardDetailScreen = ({
         </>
       )}
     </ScrollView>
+    <TouchableOpacity onPress={() => {navigation.navigate('CategoryForm', {})}}
+            style={{position: "absolute", top: height * 0.85, left: width * 0.85, shadowColor: 'black', shadowOffset: { width: 0, height: 5 }, shadowOpacity: 0.3}}
+          >
+            <Add />
+          </TouchableOpacity>
     </SafeAreaView>
   );
 };

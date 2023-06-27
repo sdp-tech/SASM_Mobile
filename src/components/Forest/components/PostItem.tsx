@@ -1,7 +1,6 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 // import { TextPretendard as Text } from "../../../common/CustomText";
 import { View, ImageBackground, TouchableOpacity, Dimensions, Text, Image } from 'react-native';
-import RenderHTML from 'react-native-render-html';
 import Scrap from "../../../assets/img/Forest/Scrap.svg";
 import Arrow from "../../../assets/img/common/Arrow.svg";
 import CommentIcon from '../../../assets/img/Story/Comment.svg';
@@ -9,9 +8,7 @@ import Heart from '../../../common/Heart';
 import { Request } from '../../../common/requests';
 
 interface PostItemProps {
-  board_id: number;
   post_id: number;
-  board_name: string;
   title: string;
   preview: string;
   writer: any;
@@ -19,15 +16,14 @@ interface PostItemProps {
   created: string;
   commentCount: number;
   like_cnt: number;
+  user_likes: boolean;
   navigation: any;
 }
 
 const { width, height } = Dimensions.get("window");
 
 const PostItem = ({
-  board_id,
   post_id,
-  board_name,
   title,
   preview,
   writer,
@@ -35,17 +31,10 @@ const PostItem = ({
   created,
   commentCount,
   like_cnt,
+  user_likes,
   navigation,
 }: PostItemProps) => {
   const [pressed, setPressed] = useState<boolean>(false);
-  const markup = {
-    html: `${preview}`
-  }
-  const renderersProps = {
-    img: {
-      enableExperimentalPercentWidth: true
-    }
-  };
   const [like, setLike] = useState<boolean>(false);
   const request = new Request();
 
@@ -57,9 +46,7 @@ const PostItem = ({
     <TouchableOpacity
       onPress={() => {
         navigation.navigate("PostDetail", {
-          board_id: board_id,
           post_id: post_id,
-          board_name: board_name,
         });
       }}
     >
@@ -94,16 +81,16 @@ const PostItem = ({
                   }}
                   numberOfLines={12}
                 >
-                  <RenderHTML
-                    contentWidth = {width}
-                    source = {markup}
-                    renderersProps = {renderersProps}
-                  />
+                  {preview}
                 </Text>
               </View>
               <View style={{flexDirection: 'row', }}>
                 <Text style={{ color: '#67D393', fontSize: 12, fontWeight: "600", opacity: 0.6, lineHeight: 18, flex: 1 }}>{writer.nickname}</Text>
-                <Heart like={like} onPress={toggleLike} />
+                {user_likes ? (
+                  <Heart like={!like} onPress={toggleLike} />
+                ) : (
+                  <Heart like={like} onPress={toggleLike} />
+                )}
                 <Text style={{color: '#209DF5', fontSize: 12, lineHeight: 18}}>{like_cnt}</Text>
                 <CommentIcon width={15} height={15} />
                 <Text style={{color: '#209DF5', fontSize: 12, lineHeight: 18}}>30</Text>
@@ -150,11 +137,7 @@ const PostItem = ({
                 }}
                 numberOfLines={2}
               >
-                <RenderHTML
-                  contentWidth = {width}
-                  source = {markup}
-                  renderersProps = {renderersProps} 
-                />
+                {preview}
               </Text>
               <Text style={{ color: '#67D393', fontSize: 12, fontWeight: "600", opacity: 0.6 }}>
                 {writer.nickname}
@@ -187,9 +170,7 @@ const PostItem = ({
 };
 
 export const HotPostItem = ({
-  board_id,
   post_id,
-  board_name,
   title,
   preview,
   writer,
@@ -197,6 +178,7 @@ export const HotPostItem = ({
   created,
   commentCount,
   like_cnt,
+  user_likes,
   navigation,
 }: PostItemProps) => {
   const [like, setLike] = useState<boolean>(false);
@@ -212,9 +194,7 @@ export const HotPostItem = ({
       <TouchableOpacity style={{ marginBottom: 8, marginLeft: 20 }} 
         onPress={() => {
           navigation.navigate("PostDetail", {
-            board_id: board_id,
             post_id: post_id,
-            board_name: board_name,
           });
         }}
       >
@@ -225,7 +205,11 @@ export const HotPostItem = ({
           </View>
           <View style={{flexDirection: "row", padding: 10}}>
             <View style={{flexDirection: "row", alignSelf: "flex-start", flex: 1}}>
-              <Heart like={like} onPress={toggleLike} white={true}/>
+              {user_likes ? (
+                <Heart like={!like} onPress={toggleLike} white={true} />
+              ) : (
+                <Heart like={like} onPress={toggleLike} white={true} />
+              )}
               <Text style={{ color: "white", lineHeight: 18, marginLeft: 3 }}>{like_cnt}</Text>
             </View>
             <View style={{flexDirection: "row", alignSelf: "flex-end"}}>

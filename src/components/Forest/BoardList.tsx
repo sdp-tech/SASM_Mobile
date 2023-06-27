@@ -21,7 +21,6 @@ import BoardItem from "./components/BoardItem";
 
 import { ForestStackParams, BoardFormat } from "../../pages/Forest";
 import { Request } from "../../common/requests";
-import { TouchableWithoutFeedback } from "react-native-gesture-handler";
 
 const { width, height } = Dimensions.get("window");
 
@@ -36,6 +35,7 @@ const BoardListScreen = ({
   const [searchType, setSearchType] = useState("default");
   const [searchEnabled, setSearchEnabled] = useState(true);
   const [boardLists, setBoardLists] = useState([] as any);
+  const [like, setLike] = useState<boolean>(false);
   const [posts, setPosts] = useState([] as any);
   const [hotPosts, setHotPosts] = useState([] as any);
   const [newPosts, setNewPosts] = useState([] as any);
@@ -177,10 +177,10 @@ const BoardListScreen = ({
                   data={categories}
                   renderItem={({ item }: any) => (
                     <BoardItem
-                      id={item.id}
+                      key={item.id}
                       name={item.name}
                       onPress={() => {
-                        navigation.navigate("BoardDetail", { board_id: item.id, board_name: item.name });
+                        navigation.navigate("BoardDetail", { board_category: item });
                       }}
                     />
                   )}
@@ -226,7 +226,6 @@ const BoardListScreen = ({
                 offset={0}
                 data={chunkArray(posts, 3)}
                 pageWidth={width}
-                height={420}
                 dot={true}
                 renderItem={({ item }: any) => {
                   return (
@@ -243,13 +242,12 @@ const BoardListScreen = ({
                           created,
                           commentCount,
                           like_cnt,
+                          user_likes,
                         } = item;
                         return (
                           <PostItem
                             key={id}
-                            board_id={1}
                             post_id={id}
-                            board_name={"시사"}
                             title={title}
                             preview={preview}
                             writer={writer}
@@ -257,6 +255,7 @@ const BoardListScreen = ({
                             created={created}
                             commentCount={commentCount}
                             like_cnt={like_cnt}
+                            user_likes={user_likes}
                             navigation={navigation}
                           />
                       )}}
@@ -279,8 +278,9 @@ const BoardListScreen = ({
               <FlatList
                 data={posts.slice(0,3)}
                 scrollEnabled={false}
+                keyExtractor={(item) => item.id.toString()}
                 renderItem={({ item }: any) => (
-                  <TouchableOpacity style={{ flexDirection: "row", marginTop: 10}} onPress={() => {navigation.navigate('PostDetail', {post_id: item.id, board_id: 1, board_name: '시사'})}}>
+                  <TouchableOpacity style={{ flexDirection: "row", marginTop: 10}} onPress={() => {navigation.navigate('PostDetail', {post_id: item.id})}}>
                     <View style={{borderColor: '#67D393', borderWidth: 1, borderRadius: 8, paddingVertical: 2, paddingHorizontal: 4}}>
                       <Text style={{color: '#67D393', fontSize: 10, fontWeight: '600'}}>#ESG</Text>
                     </View>
@@ -322,7 +322,6 @@ const BoardListScreen = ({
                 data={chunkArray(hotPosts, 3)}
                 pageWidth={width}
                 dot={true}
-                height={340}
                 renderItem={({ item }: any) => {
                   return (
                     <FlatList
@@ -337,14 +336,13 @@ const BoardListScreen = ({
                           photos,
                           created,
                           commentCount,
-                          like_cnt
+                          like_cnt,
+                          user_likes
                         } = item;
                         return(
                           <HotPostItem
-                            // key={id}
-                            board_id={1}
+                            key={id}
                             post_id={id}
-                            board_name={"시사"}
                             title={title}
                             preview={preview}
                             writer={writer}
@@ -352,6 +350,7 @@ const BoardListScreen = ({
                             created={created}
                             commentCount={commentCount}
                             like_cnt={like_cnt}
+                            user_likes={user_likes}
                             navigation={navigation}
                           />
                       )}}
@@ -398,13 +397,12 @@ const BoardListScreen = ({
                     created,
                     commentCount,
                     like_cnt,
+                    user_likes
                   } = item;
                   return (
                     <PostItem
-                      // key={id}
-                      board_id={1}
+                      key={id}
                       post_id={id}
-                      board_name={"시사"}
                       title={title}
                       preview={preview}
                       writer={writer}
@@ -412,6 +410,7 @@ const BoardListScreen = ({
                       created={created}
                       commentCount={commentCount}
                       like_cnt={like_cnt}
+                      user_likes={user_likes}
                       navigation={navigation}
                     />
                   );
@@ -419,7 +418,7 @@ const BoardListScreen = ({
               />
             </View>
           </ScrollView>
-          <TouchableOpacity onPress={() => {navigation.navigate('CategoryForm',{ categories: categories })}}
+          <TouchableOpacity onPress={() => {navigation.navigate('CategoryForm', {} )}}
             style={{position: "absolute", top: height * 0.85, left: width * 0.85, shadowColor: 'black', shadowOffset: { width: 0, height: 5 }, shadowOpacity: 0.3}}
           >
             <Add />
