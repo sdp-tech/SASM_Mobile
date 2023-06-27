@@ -19,7 +19,6 @@ interface ItemCardProps extends MyPageParams {
 const ItemCard = ({ props, navigation }: ItemCardProps) => {
   const [like, setLike] = useState(false);
   const request = new Request();
-
   // 좋아요 클릭 이벤트
   const toggleLike = async () => {
     const response = await request.post(
@@ -27,7 +26,6 @@ const ItemCard = ({ props, navigation }: ItemCardProps) => {
       { id: props.place_id },
       null
     );
-    console.log("response", response);
     //색상 채우기
     setLike(!like);
   };

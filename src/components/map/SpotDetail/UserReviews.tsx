@@ -42,7 +42,6 @@ export default function UserReviews({ reviewData, rerender, category }: UserRevi
               gap={8}
               offset={19}
               pageWidth={194}
-              height={125}
               dot={false}
             />
           }

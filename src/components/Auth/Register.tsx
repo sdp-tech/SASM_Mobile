@@ -96,7 +96,7 @@ export default function RegisterScreen({ navigation, route }: StackScreenProps<M
   return (
     <SafeAreaView style={{ backgroundColor: '#FFFFFF', flex: 1 }}>
       <View style={{ position: 'relative', marginBottom: 30 }}>
-        <Text style={TextStyles.title}>로그인</Text>
+        <Text style={TextStyles.title}>회원가입</Text>
         <TouchableOpacity style={{ left: 10, marginBottom: 30, position: 'absolute' }} onPress={() => { navigation.goBack() }}>
           <Arrow width={20} height={20} transform={[{ rotateY: '180deg' }]} />
         </TouchableOpacity>

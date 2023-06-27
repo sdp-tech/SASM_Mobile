@@ -5,7 +5,6 @@ import { FlatList } from 'react-native-gesture-handler';
 interface CardViewProps {
     gap: number;    // 카드 사이 간격은 renderItem에서 marginHorizontal: gap / 2로 설정해주기
     offset: number;
-    height: number;
     data: any[];
     pageWidth: number;  // 카드 width. Image width랑 동일하게 설정해주기
     renderItem: any;
@@ -32,7 +31,7 @@ const Dot = ({focused}: DotProps) => {
     )
 }
 
-const CardView = ({ gap, offset, height, data, pageWidth, renderItem, dot, onEndReached, onRefresh, refreshing }: CardViewProps) => {
+const CardView = ({ gap, offset, data, pageWidth, renderItem, dot, onEndReached, onRefresh, refreshing }: CardViewProps) => {
     const [page, setPage] = useState<number>(0);
     const onScroll = (e: any) => {
         const newPage = Math.round(
@@ -41,13 +40,8 @@ const CardView = ({ gap, offset, height, data, pageWidth, renderItem, dot, onEnd
         setPage(newPage);
     }
 
-
     return (
-        <View style = {{
-            height: height,
-            justifyContent: 'center',
-            alignItems: 'center'
-        }}>
+        <>
             <FlatList
                 data = {data}
                 renderItem = {renderItem}
@@ -67,13 +61,13 @@ const CardView = ({ gap, offset, height, data, pageWidth, renderItem, dot, onEnd
                 refreshing = {refreshing}
             />
             {dot? (
-                <View style = {{ flexDirection: 'row', alignItems: 'center' }}>
+                <View style = {{ flexDirection: 'row', alignItems: 'center', justifyContent: 'center', marginTop: 10 }}>
                     {Array.from({length: data.length}, (_, i) => i).map((i) => (
                         <Dot key={i} focused={i === page ? true : false} />
                     ))}
                 </View>
             ):(<></>)}
-        </View>
+        </>
     )
 }
 
