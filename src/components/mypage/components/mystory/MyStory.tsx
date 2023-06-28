@@ -65,17 +65,17 @@ const MyStory = ({ navigation, route }: MyPageParams) => {
 
   const getWrittenStory = async () => {
     const response = await request.get('/mypage/my_story/');
-    setWritten(response.data.data);
+    setWritten(response.data.data.results);
   }
 
   useFocusEffect(useCallback(() => {
     getStories();
   }, [page, search, checkedList]));
 
-  useEffect(()=>{
-    if(!type) getWrittenStory();
+  useEffect(() => {
+    if (!type) getWrittenStory();
   }, [type])
-  
+
   return (
     <View style={styles().Container}>
       <View style={styles(isCategory).Searchbox}>
@@ -114,7 +114,7 @@ const MyStory = ({ navigation, route }: MyPageParams) => {
         }
       </View>
       <View style={styles().Story}>
-        {info.length === 0 ? (
+        {(type ? info : written).length === 0 ? (
           <View style={{ alignItems: 'center', marginVertical: 20 }}>
             <NothingIcon />
             <Text style={{ marginTop: 20 }}>해당하는 스토리가 없습니다</Text>
@@ -122,12 +122,12 @@ const MyStory = ({ navigation, route }: MyPageParams) => {
         ) : (
           <FlatList
             data={type ? info : written}
-            renderItem={({ item }: any) => (
+            renderItem={({ item }: any) =>
               <ItemCard
                 props={item}
                 navigation={navigation}
               />
-            )}
+            }
             numColumns={2}
             style={{ alignContent: 'space-between' }}
           />

@@ -134,7 +134,7 @@ const MyPlace = ({ navigation }: MyPageParams) => {
         }
       </View>
       <View style={styles().Place}>
-        {info.length === 0 ? (
+        {(type ? info : written).length === 0 ? (
           <View style={{ alignItems: 'center', marginVertical: 20 }}>
             <NothingIcon />
             <Text style={{ marginTop: 20 }}>해당하는 장소가 없습니다</Text>
