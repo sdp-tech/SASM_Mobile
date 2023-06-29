@@ -129,7 +129,7 @@ const MyStory = ({ navigation, route }: MyPageParams) => {
               />
             )}
             numColumns={2}
-          //style={{alignContent:'space-between'}}
+          // style={{alignContent:'space-between'}}
           />
         )}
       </View>

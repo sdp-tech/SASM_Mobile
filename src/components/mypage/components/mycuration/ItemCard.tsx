@@ -2,19 +2,24 @@ import { useState, useEffect, useCallback } from 'react';
 import { View, TouchableOpacity, ImageBackground, StyleSheet, Dimensions } from 'react-native';
 import { TextPretendard as Text } from '../../../../common/CustomText';
 import { MyPageParams } from '../../../../pages/MyPage';
+import { useNavigation } from '@react-navigation/native';
+import { StackNavigationProp } from '@react-navigation/stack';
+import { HomeStackParams } from '../../../../pages/Home';
 
 interface ItemCardProps extends MyPageParams {
   props: any;
 }
 
-const ItemCard = ({ props, navigation }:ItemCardProps) => {
+const ItemCard = ({ props, navigation }: ItemCardProps) => {
   const { width, height } = Dimensions.get("window");
+  const navigationHome = useNavigation<StackNavigationProp<HomeStackParams>>();
+
   return (
-    <TouchableOpacity>
-      <ImageBackground source={{uri: props.rep_pic}} style={{width: width/2, height: 240}}>
-        <View style={{backgroundColor: 'rgba(0,0,0,0.3)', width: width/2, height: 240, padding: 10}}>
-          <View style={{flexDirection: "row", marginTop: 150}}>
-            <Text style={[textStyles.writer, {color: props.verified ? '#209DF5' : '#89C77F'}]}>{props.verified ? ('Editor') : ('User')}</Text>
+    <TouchableOpacity onPress={() => { navigationHome.navigate('Detail', { id: props.id }) }}>
+      <ImageBackground source={{ uri: props.rep_pic }} style={{ width: width / 2, height: 240 }}>
+        <View style={{ backgroundColor: 'rgba(0,0,0,0.3)', width: width / 2, height: 240, padding: 10 }}>
+          <View style={{ flexDirection: "row", marginTop: 150 }}>
+            <Text style={[textStyles.writer, { color: props.verified ? '#209DF5' : '#89C77F' }]}>{props.verified ? ('Editor') : ('User')}</Text>
             <Text style={textStyles.writer}> {props.writer_nickname}</Text>
           </View>
           <Text style={textStyles.title}>{props.title}</Text>

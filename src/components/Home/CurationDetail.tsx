@@ -29,6 +29,11 @@ const ContentBox = styled.View`
 const GotoMap = styled.TouchableOpacity`
   margin: 20px auto;
 `
+const ButtonBox = styled.View`
+  border-top-width: 3px;
+  border-color: #EAEAEA;
+  padding: 10px 25px;
+`
 const StorySection = styled.View`
   border-top-width: 3px;
   border-color: #EAEAEA;
@@ -112,6 +117,10 @@ export default function CurationDetail({ navigation, route }: StackScreenProps<H
     setCuratedStory(reponse_story_detail.data.data);
   }
 
+  const handleLike = async () => {
+    const response = await request.post(`/curations/curation_like/${route.params.id}/`);
+    setCurationDetail({...curationDetail, like_curation:!curationDetail.like_curation});
+  }
   useFocusEffect(useCallback(() => {
     getCurationDetail();
     getCurationStoryDetail();
@@ -141,6 +150,9 @@ export default function CurationDetail({ navigation, route }: StackScreenProps<H
         <GotoMap onPress={() => { navigationTab.navigate('맵', {}) }}>
           <Text style={TextStyles.gotomap}>맵페이지로 이동</Text>
         </GotoMap>
+        <ButtonBox>
+          <Heart like={curationDetail.like_curation} onPress={handleLike} />
+        </ButtonBox>
         {
           curatedStory.map(data =>
             <Storys data={data} navigation={navigationTab} />
@@ -160,7 +172,7 @@ const Storys = ({ navigation, data }: { navigation: StackNavigationProp<TabProps
     setLike(!like);
   }
 
-  useEffect(()=>{
+  useEffect(() => {
     setLike(data.like_story);
   }, [])
   return (
@@ -209,7 +221,7 @@ const TextStyles = StyleSheet.create({
     position: 'absolute',
     paddingHorizontal: 20,
     bottom: 20,
-    color:'#FFFFFF',
+    color: '#FFFFFF',
     width: '100%',
   },
   content: {
@@ -231,7 +243,7 @@ const TextStyles = StyleSheet.create({
   story_review: {
     fontSize: 16,
     marginBottom: 20,
-    fontWeight:'700',
+    fontWeight: '700',
   },
   place_name: {
     fontSize: 24,
