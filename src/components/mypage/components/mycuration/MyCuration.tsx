@@ -76,8 +76,8 @@ const MyStory = ({ navigation, route }: MyPageParams) => {
     getCuration();
   }, [search]));
 
-  useEffect(()=>{
-    if(!type) getWrittenCuration();
+  useEffect(() => {
+    if (!type) getWrittenCuration();
   }, [type])
 
   return (
@@ -114,24 +114,24 @@ const MyStory = ({ navigation, route }: MyPageParams) => {
         }
       </View>
       <View style={styles.Curation}>
-        {/* {info.length === 0 ? (
-          <View style={{alignItems: 'center', marginVertical: 20}}>
+        {(type ? info : written).length === 0 ? (
+          <View style={{ alignItems: 'center', marginVertical: 20 }}>
             <NothingIcon />
-            <Text style={{marginTop: 20}}>해당하는 큐레이션이 없습니다</Text>
+            <Text style={{ marginTop: 20 }}>해당하는 큐레이션이 없습니다</Text>
           </View>
-        ) : ( */}
-        <FlatList
-          data={type ? data : written}
-          renderItem={({ item }: any) => (
-            <ItemCard
-              props={item}
-              navigation={navigation}
-            />
-          )}
-          numColumns={2}
-        //style={{alignContent:'space-between'}}
-        />
-        {/* )} */}
+        ) : (
+          <FlatList
+            data={type ? data : written}
+            renderItem={({ item }: any) => (
+              <ItemCard
+                props={item}
+                navigation={navigation}
+              />
+            )}
+            numColumns={2}
+          //style={{alignContent:'space-between'}}
+          />
+        )}
       </View>
     </View>
   );
