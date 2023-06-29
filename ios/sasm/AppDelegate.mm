@@ -2,6 +2,9 @@
 
 #import <React/RCTBundleURLProvider.h>
 #import "RNSplashScreen.h"
+#import <RNKakaoLogins.h>
+#import <NaverThirdPartyLogin/NaverThirdPartyLoginConnection.h>
+
 @implementation AppDelegate
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
@@ -33,6 +36,24 @@
 - (BOOL)concurrentRootEnabled
 {
   return true;
+}
+
+// allow redirection from social login
+- (BOOL)application:(UIApplication *)application
+     openURL:(NSURL *)url
+     options:(NSDictionary<UIApplicationOpenURLOptionsKey,id> *)options {
+
+  // kakao
+  if([RNKakaoLogins isKakaoTalkLoginUrl:url]) {
+      return [RNKakaoLogins handleOpenUrl: url];
+  }
+
+  // naver
+  if ([url.scheme isEqualToString:@"kr.co.sasm"]) {
+    return [[NaverThirdPartyLoginConnection getSharedInstance] application:application openURL:url options:options];
+  }
+
+ return NO;
 }
 
 @end
