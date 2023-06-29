@@ -31,7 +31,7 @@ const App = (): JSX.Element => {
   useEffect(() => {
     setTimeout(() => {
       SplashScreen.hide();
-    }, 3000);
+    }, 800);
   });
 
   return (
