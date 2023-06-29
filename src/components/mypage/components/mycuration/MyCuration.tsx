@@ -34,6 +34,13 @@ const styles = StyleSheet.create({
   },
 });
 
+interface CurationItemCard {
+  id: number;
+  rep_pic: string;
+  writer_nickname: string;
+  title: string;
+}
+
 const MyStory = ({ navigation, route }: MyPageParams) => {
   const { width, height } = Dimensions.get("window");
   const [info, setInfo] = useState([] as any);
@@ -42,6 +49,9 @@ const MyStory = ({ navigation, route }: MyPageParams) => {
   const [isSearch, setIsSearch] = useState<boolean>(false);
   const [isMenu, setIsMenu] = useState<boolean>(false);
   const request = new Request();
+  const [written, setWritten] = useState<CurationItemCard[]>([]);
+  //true일 경우, 좋아요한 큐레이션 false일 경우, 작성한 큐레이션
+  const [type, setType] = useState<boolean>(true);
 
   const data = [
     { id: 1, writer_nickname: '김사슴', rep_pic: 'https://images.velog.io/images/offdutybyblo/post/55e6994d-1767-4f76-bd5d-58974dc1ed14/react-native.png', title: '서울 어쩌구 저쩌구 비건 카페 5곳' },
@@ -57,9 +67,18 @@ const MyStory = ({ navigation, route }: MyPageParams) => {
     setInfo(response.data.data);
   };
 
+  const getWrittenCuration = async () => {
+    const response = await request.get('/mypage/my_curation/');
+    setWritten(response.data.data);
+  }
+
   useFocusEffect(useCallback(() => {
     getCuration();
   }, [search]));
+
+  useEffect(() => {
+    if (!type) getWrittenCuration();
+  }, [type])
 
   return (
     <View style={styles.Container}>
@@ -87,22 +106,22 @@ const MyStory = ({ navigation, route }: MyPageParams) => {
             <TouchableOpacity style={{ borderRadius: 12, borderColor: "#D7D7D7", borderWidth: 0.25, justifyContent: "center", alignItems: "center", marginHorizontal: 10, paddingHorizontal: 5, height: 25 }}>
               <Text style={{ fontSize: 12 }}>편집</Text>
             </TouchableOpacity>
-            <TouchableOpacity style={{ borderRadius: 20, borderColor: "#D7D7D7", borderWidth: 0.25, justifyContent: "center", alignItems: "center", marginRight: 15, paddingHorizontal: 5, height: 25 }}
-              onPress={() => { navigation.navigate('written_story') }}>
+            <TouchableOpacity style={{ backgroundColor: type ? '#FFFFFF' : '#D7D7D7', borderRadius: 20, borderColor: "#D7D7D7", borderWidth: 0.25, justifyContent: "center", alignItems: "center", marginRight: 15, paddingHorizontal: 5, height: 25 }}
+              onPress={() => { setType(!type) }}>
               <Text style={{ fontSize: 12 }}>내 큐레이션</Text>
             </TouchableOpacity>
           </>
         }
       </View>
       <View style={styles.Curation}>
-        {info.length === 0 ? (
+        {(type ? info : written).length === 0 ? (
           <View style={{ alignItems: 'center', marginVertical: 20 }}>
             <NothingIcon />
             <Text style={{ marginTop: 20 }}>해당하는 큐레이션이 없습니다</Text>
           </View>
         ) : (
           <FlatList
-            data={info}
+            data={type ? data : written}
             renderItem={({ item }: any) => (
               <ItemCard
                 props={item}

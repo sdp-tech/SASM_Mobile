@@ -21,17 +21,17 @@ import { MyPageParams } from "../../../../pages/MyPage";
 import { useFocusEffect } from "@react-navigation/native";
 
 const styles = (isCategory?: boolean) => StyleSheet.create({
-  Container:{
+  Container: {
     flex: 1
   },
-  Title:{
+  Title: {
     height: 50,
     borderBottomColor: '#E3E3E3',
     borderBottomWidth: 2,
     flexDirection: 'row',
     alignItems: 'center'
   },
-  Searchbox:{
+  Searchbox: {
     height: 50,
     justifyContent: isCategory ? "flex-start" : "flex-end",
     paddingRight: 15,
@@ -40,11 +40,19 @@ const styles = (isCategory?: boolean) => StyleSheet.create({
     //flex: 1,
     zIndex: 1
   },
-  Place:{
+  Place: {
     alignItems: 'center',
     flex: 1
   },
 });
+
+interface PlaceItemCard {
+  id: number;
+  place_name: string;
+  category: string;
+  rep_pic: string;
+  address: string;
+}
 
 const MyPlace = ({ navigation }: MyPageParams) => {
   const [info, setInfo] = useState([]);
@@ -54,7 +62,8 @@ const MyPlace = ({ navigation }: MyPageParams) => {
   const [isCategory, setIsCategory] = useState<boolean>(false);
   const [isSearch, setIsSearch] = useState<boolean>(false);
   const request = new Request();
-
+  const [type, setType] = useState<boolean>(true);
+  const [written, setWritten] = useState<PlaceItemCard[]>([]);
   const getPlaces = async () => {
     const response = await request.get(
       "/users/like_place/",
@@ -67,22 +76,30 @@ const MyPlace = ({ navigation }: MyPageParams) => {
     setInfo(response.data.data.results);
   };
 
+  const getWrittenReview = async () => {
+    const response = await request.get('/mypage/my_reviewed_place/');
+    setWritten(response.data.data.results);
+  }
+
   useFocusEffect(useCallback(() => {
     getPlaces();
-    console.log(info);
   }, [page, search, checkedList]));
+
+  useEffect(() => {
+    if (!type) getWrittenReview();
+  }, [type])
 
   return (
     <View style={styles().Container}>
       <View style={styles().Title}>
-        <Text style={{fontSize: 14, flex: 1, marginLeft: 20}}>플레이스 리스트</Text>
-        <TouchableOpacity style={{flexDirection: 'row', marginRight: 20}} onPress={() => navigation.navigate('place_list')}>
-          <Text style={{fontSize: 10, marginRight: 10}}>모두 보기</Text>
+        <Text style={{ fontSize: 14, flex: 1, marginLeft: 20 }}>플레이스 리스트</Text>
+        <TouchableOpacity style={{ flexDirection: 'row', marginRight: 20 }} onPress={() => navigation.navigate('place_list')}>
+          <Text style={{ fontSize: 10, marginRight: 10 }}>모두 보기</Text>
           <Arrow width={12} height={12} />
         </TouchableOpacity>
       </View>
       <View style={styles(isCategory).Searchbox}>
-        { isSearch &&
+        {isSearch &&
           <SearchBar
             setPage={setPage}
             search={search}
@@ -92,47 +109,47 @@ const MyPlace = ({ navigation }: MyPageParams) => {
             placeholderTextColor={"#848484"}
           />
         }
-        <TouchableOpacity style={{marginHorizontal: 10}} onPress={() => {setIsSearch(!isSearch); setIsCategory(false);}}>
-          <Search width={18} height={18}/>
+        <TouchableOpacity style={{ marginHorizontal: 10 }} onPress={() => { setIsSearch(!isSearch); setIsCategory(false); }}>
+          <Search width={18} height={18} />
         </TouchableOpacity>
-        <TouchableOpacity style={{marginHorizontal: 10}} onPress={() => {setIsSearch(false); setIsCategory(false)}}>
-          <Map width={18} height={18}/>
+        <TouchableOpacity style={{ marginHorizontal: 10 }} onPress={() => { setIsSearch(false); setIsCategory(false) }}>
+          <Map width={18} height={18} />
         </TouchableOpacity>
-        { !isCategory &&
-          <TouchableOpacity style={{marginHorizontal: 10}} onPress={() => {setIsSearch(false); setIsCategory(!isCategory)}}>
-            <Menu width={18} height={18}/>
+        {!isCategory &&
+          <TouchableOpacity style={{ marginHorizontal: 10 }} onPress={() => { setIsSearch(false); setIsCategory(!isCategory) }}>
+            <Menu width={18} height={18} />
           </TouchableOpacity>
         }
-        { isCategory &&
-          <View style={{flexDirection: "row", marginLeft: 10, flex: 1, alignItems: 'center'}}>
-            <TouchableOpacity style={{borderRadius: 12, borderColor: "#D7D7D7", borderWidth: 0.25, justifyContent: "center", alignItems: "center", marginRight: 5, paddingHorizontal: 5, height: 25}}>
-              <Text style={{fontSize: 12}}>편집</Text>
+        {isCategory &&
+          <View style={{ flexDirection: "row", marginLeft: 10, flex: 1, alignItems: 'center' }}>
+            <TouchableOpacity style={{ borderRadius: 12, borderColor: "#D7D7D7", borderWidth: 0.25, justifyContent: "center", alignItems: "center", marginRight: 5, paddingHorizontal: 5, height: 25 }}>
+              <Text style={{ fontSize: 12 }}>편집</Text>
             </TouchableOpacity>
-            <TouchableOpacity style={{borderRadius: 20, borderColor: "#D7D7D7", borderWidth: 0.25, justifyContent: "center", alignItems: "center", marginRight: 5, paddingHorizontal: 5, height: 25}}
-              onPress={() => {navigation.navigate('written_story')}}>
-              <Text style={{fontSize: 12}}>내 리뷰</Text>
+            <TouchableOpacity style={{ backgroundColor: type ? '#FFFFFF' : '#D7D7D7', borderRadius: 20, borderColor: "#D7D7D7", borderWidth: 0.25, justifyContent: "center", alignItems: "center", marginRight: 5, paddingHorizontal: 5, height: 25 }}
+              onPress={() => { setType(!type) }}>
+              <Text style={{ fontSize: 12 }}>내 리뷰</Text>
             </TouchableOpacity>
             <Category checkedList={checkedList} setCheckedList={setCheckedList} story={true} />
           </View>
         }
       </View>
       <View style={styles().Place}>
-        {info.length === 0 ? (
-          <View style={{alignItems: 'center', marginVertical: 20}}>
+        {(type ? info : written).length === 0 ? (
+          <View style={{ alignItems: 'center', marginVertical: 20 }}>
             <NothingIcon />
-            <Text style={{marginTop: 20}}>해당하는 장소가 없습니다</Text>
+            <Text style={{ marginTop: 20 }}>해당하는 장소가 없습니다</Text>
           </View>
         ) : (
           <FlatList
-            data ={info}
-            renderItem ={({item}: any) => (
+            data={type ? info : written}
+            renderItem={({ item }: any) => (
               <ItemCard
                 props={item}
                 navigation={navigation}
               />
             )}
             numColumns={3}
-            style={{alignContent:'space-between'}}
+            style={{ alignContent: 'space-between' }}
           />
         )}
       </View>

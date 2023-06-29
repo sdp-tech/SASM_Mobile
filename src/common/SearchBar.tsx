@@ -28,7 +28,7 @@ const ResetButton = styled.TouchableOpacity`
 interface SearchBarProps extends TextInputProps {
   search: string;
   style: TextStyle;
-  setPage: Dispatch<SetStateAction<number>>;
+  setPage?: Dispatch<SetStateAction<number>>;
   setSearch: Dispatch<SetStateAction<string>>;
 }
 export default function SearchBar({ style, search, setSearch, setPage, ...rest }: SearchBarProps) {
@@ -39,7 +39,7 @@ export default function SearchBar({ style, search, setSearch, setPage, ...rest }
       <StyledInput
         value={search}
         spellCheck={false}
-        onChangeText={(text: string) => { setSearch(text); setPage(1); }}
+        onChangeText={(text: string) => { setSearch(text); if(setPage) setPage(1)}}
         {...rest}
       />
       <ResetButton onPress={() => setSearch("")}>

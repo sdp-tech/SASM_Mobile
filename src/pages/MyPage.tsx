@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Text, View, SafeAreaView } from "react-native";
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import MyPageTabView from '../components/mypage/MyPageTabView';
+import MyPageTabView, { IUserInfo } from '../components/mypage/MyPageTabView';
 import UserInfoBox from '../components/mypage/components/UserInfoBox';
 import LoginScreen from '../components/Auth/Login';
 import RegisterScreen from '../components/Auth/Register';
@@ -13,7 +13,6 @@ import { StackNavigationProp } from '@react-navigation/stack';
 import Following from '../components/mypage/components/Following_List';
 import Follower from '../components/mypage/components/Follower_List';
 import Options from '../components/mypage/components/OptionPage';
-import WrittenStory from '../components/mypage/components/mystory/WrittenStory';
 import PlaceList from '../components/mypage/components/myplace/PlaceList';
 
 export interface MyPageParams {
@@ -23,18 +22,25 @@ export interface MyPageParams {
 
 export type MyPageProps = {
     'mypage': any;
-    'written_story': any;
     'place_list': any;
     'login': any;
     'register': any;
-    'user': any;
+    'user': {
+        info: IUserInfo;
+        follower: number;
+        following: number;
+    }
     'change': any;
     'changepw': any;
     'feedback': any;
     'findidpw': any;
-    'following': any;
-    'follower':any;
-    'options' : any;
+    'following': {
+        email: string;
+    }
+    'follower': {
+        email: string;
+    }
+    'options': any;
 }
 const MyPageStack = createNativeStackNavigator<MyPageProps>();
 
@@ -45,7 +51,6 @@ const MyPageScreen = () => {
                 headerShown: false,
             })} >
             <MyPageStack.Screen name="mypage" component={MyPageTabView} />
-            <MyPageStack.Screen name="written_story" component={WrittenStory} />
             <MyPageStack.Screen name="place_list" component={PlaceList} />
             <MyPageStack.Screen name="user" component={UserInfoBox} />
             <MyPageStack.Screen name="login" component={LoginScreen} />
@@ -55,8 +60,8 @@ const MyPageScreen = () => {
             <MyPageStack.Screen name='feedback' component={Feedback} />
             <MyPageStack.Screen name="findidpw" component={FindIDPWScreen} />
             <MyPageStack.Screen name="following" component={Following} />
-            <MyPageStack.Screen name="follower" component={Follower}/>
-            <MyPageStack.Screen name="options" component={Options}/>
+            <MyPageStack.Screen name="follower" component={Follower} />
+            <MyPageStack.Screen name="options" component={Options} />
         </MyPageStack.Navigator>
     )
 }
