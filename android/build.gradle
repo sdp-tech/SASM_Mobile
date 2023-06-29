@@ -5,7 +5,11 @@ allprojects {
         jcenter()
         // 네이버 지도 저장소
         maven {
-            url 'https://naver.jfrog.io/artifactory/maven/'
+            url 'https://naver.jfrog.io/artifactory/maven/'  
+        }
+        // 카카오 로그인 저장소
+        maven {
+            url 'https://devrepo.kakao.com/nexus/content/groups/public/'
         }
     }
 }
@@ -27,5 +31,6 @@ buildscript {
     dependencies {
         classpath("com.android.tools.build:gradle:7.3.1")
         classpath("com.facebook.react:react-native-gradle-plugin")
+        classpath("com.google.gms:google-services:4.3.15")
     }
 }

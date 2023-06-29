@@ -104,3 +104,9 @@ yarn-error.log
 
 #env
 .env
+env.d.ts
+android/app/src/main/res/values/strings.xml
+
+# social login
+ios/sasm/GoogleService-Info.plist
+android/app/google-services.json
