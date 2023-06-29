@@ -10,6 +10,10 @@
 ### 3. Property List
 - 공유 받은 local.properties를 andorid 폴더에 넣기
 - Info.plist를 ios/sasm 폴더에 넣기
+- env.d.ts를 프로젝트 최상위 폴더에 넣기
+- strings.xml을 android/app/src/main/res/values 폴더에 넣기
+- GoogleService-Info.plist를 ios/sasm 폴더에 넣기
+- google-services.json android/app 폴더에 넣기
 
 ### 4. .env 파일 생성
 - 프로젝트 최상위 폴더에 .env 파일 생성
