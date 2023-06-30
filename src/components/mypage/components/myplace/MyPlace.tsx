@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback, useContext } from "react";
+import { useState, useEffect, useCallback } from "react";
 import {
   View,
   StyleSheet,
@@ -19,8 +19,6 @@ import Menu from "../../../../assets/img/MyPage/Menu.svg";
 import Arrow from "../../../../assets/img/common/Arrow.svg";
 import { MyPageParams } from "../../../../pages/MyPage";
 import { useFocusEffect } from "@react-navigation/native";
-import { LoginContext } from "../../../../common/Context";
-import RequireLogin from "../RequireLogin";
 
 const styles = (isCategory?: boolean) => StyleSheet.create({
   Container: {
@@ -57,7 +55,6 @@ interface PlaceItemCard {
 }
 
 const MyPlace = ({ navigation }: MyPageParams) => {
-  const {isLogin, setLogin} = useContext(LoginContext);
   const [info, setInfo] = useState([]);
   const [page, setPage] = useState(1);
   const [checkedList, setCheckedList] = useState([] as any);
@@ -101,10 +98,7 @@ const MyPlace = ({ navigation }: MyPageParams) => {
           <Arrow width={12} height={12} />
         </TouchableOpacity>
       </View>
-      {
-        isLogin?
-        <View>
-          <View style={styles(isCategory).Searchbox}>
+      <View style={styles(isCategory).Searchbox}>
         {isSearch &&
           <SearchBar
             setPage={setPage}
@@ -159,9 +153,6 @@ const MyPlace = ({ navigation }: MyPageParams) => {
           />
         )}
       </View>
-        </View>:
-        <RequireLogin index={0}/>
-      }
     </View>
   );
 };
