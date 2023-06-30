@@ -4,7 +4,7 @@ import { TouchableOpacity, View, Button, StyleSheet, SafeAreaView, Dimensions, A
 import NaverMapView, { Align, Marker } from './NaverMap';
 import styled from "styled-components/native";
 import SearchBar from '../../common/SearchBar';
-import Category from '../../common/Category';
+import Category, { MatchCategory } from '../../common/Category';
 import MapList from './SpotList';
 import SpotDetail from './SpotDetail';
 import { Request } from '../../common/requests';
@@ -37,8 +37,10 @@ const MoveToCenterButton = styled(Circle)`
 	display: flex;
 	align-items: center;
 	justify-content: center;
-	position: relative;
-	right: -90%;
+	position: absolute;
+  z-index: 0;
+  top: ${height / 2};
+  right: 15;
 `
 const PlusButton = styled.TouchableOpacity`
   width: 45px;
@@ -106,9 +108,10 @@ interface MapProps {
   center: Coord;
   setCenter: Dispatch<SetStateAction<Coord>>;
   setTempCoor: Dispatch<SetStateAction<Coord>>;
+  nowCoor: Coord;
 }
 
-const Map = ({ mapView, setSheetMode, placeData, setTempCoor, setDetailData, center, setCenter }: MapProps) => {
+const Map = ({ mapView, setSheetMode, placeData, setTempCoor, setDetailData, center, setCenter, nowCoor }: MapProps) => {
   const request = new Request();
   //지도가 이동할때마다 지도의 중심 좌표를 임시로 저장
   const onChangeCenter = (event: any) => {
@@ -139,14 +142,41 @@ const Map = ({ mapView, setSheetMode, placeData, setTempCoor, setDetailData, cen
         zoomControl={false}
         zoomGesturesEnabled={true}
       >
+        <Marker
+          key={0}
+          coordinate={nowCoor}
+          image={require(`../../assets/img/Map/Markers/MarkerNow.png`)}
+          width={20} height={30} />
         {
           placeData.map((data: placeDataProps, index: number) => {
             const coor: Coord = { latitude: data.latitude, longitude: data.longitude }
+            const category = MatchCategory(data.category);
+            let image;
+            switch (category) {
+              case 0:
+                image = require(`../../assets/img/Map/Markers/Marker0.png`);
+                break;
+              case 1:
+                image = require(`../../assets/img/Map/Markers/Marker1.png`);
+                break;
+              case 2:
+                image = require(`../../assets/img/Map/Markers/Marker2.png`);
+                break;
+              case 3:
+                image = require(`../../assets/img/Map/Markers/Marker3.png`);
+                break;
+              case 4:
+                image = require(`../../assets/img/Map/Markers/Marker4.png`);
+                break;
+              case 5:
+                image = require(`../../assets/img/Map/Markers/Marker5.png`);
+                break;
+            }
             return (
               <Marker
                 key={index}
                 coordinate={coor}
-                image={require(`../../assets/img/marker.png`)}
+                image={image}
                 onClick={() => { getDetail(data.id) }}
                 width={20} height={30}
                 caption={{
@@ -261,7 +291,7 @@ export default function MapContainer({ nowCoor, navigation, route }: MapContaine
     mapView?.current.animateToCoordinate(nowCoor);
   }
 
-  useFocusEffect(useCallback(()=>{
+  useFocusEffect(useCallback(() => {
     setSheetMode(true);
   }, []))
 
@@ -275,7 +305,14 @@ export default function MapContainer({ nowCoor, navigation, route }: MapContaine
         setSheetMode={setSheetMode}
         setCenter={setCenter}
         setTempCoor={setTempCoor}
+        nowCoor={nowCoor}
       />
+
+      <MoveToCenterButton width={29}
+        onPress={handleToCenter}>
+        <Circle width={9}
+          onPress={handleToCenter} />
+      </MoveToCenterButton>
       <BottomSheetMemo
         sheetMode={sheetMode}
         setSheetMode={setSheetMode}
@@ -289,6 +326,7 @@ export default function MapContainer({ nowCoor, navigation, route }: MapContaine
         total={total}
         detailData={detailData}
       />
+
       <Animated.View style={buttonAnimatedStyle}>
         {
           (searchHere.latitude.toFixed(8) != tempCoor.latitude.toFixed(8) || searchHere.longitude.toFixed(8) != tempCoor.longitude.toFixed(8)) &&
@@ -298,15 +336,10 @@ export default function MapContainer({ nowCoor, navigation, route }: MapContaine
         <SearchBar
           search={search}
           setSearch={setSearch}
-          style={{ backgroundColor: "#FFFFFF", width: '95%', marginBottom:10 }}
+          style={{ backgroundColor: "#FFFFFF", width: '95%', marginBottom: 10 }}
           placeholder="장소를 검색해주세요"
           setPage={setPage}
         />
-        <MoveToCenterButton width={29}
-          onPress={handleToCenter}>
-          <Circle width={9}
-            onPress={handleToCenter} />
-        </MoveToCenterButton>
       </Animated.View>
       <PlusButton onPress={() => { setPlaceformModal(true) }}>
         <AddColor width={25} height={25} color={'#FFFFFF'} />
