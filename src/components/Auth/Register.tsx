@@ -1,15 +1,20 @@
-import { StackScreenProps } from '@react-navigation/stack';
+import { StackNavigationProp, StackScreenProps } from '@react-navigation/stack';
 import React, { useEffect, useState } from 'react';
 import { ScrollView, TextInput, TouchableOpacity, View, Alert, SafeAreaView, StyleSheet, Dimensions } from 'react-native';
 import { TextPretendard as Text } from '../../common/CustomText';
 import styled from 'styled-components/native';
 import { Request } from '../../common/requests';
 import InputWithMessage from '../mypage/components/InputWithMessage';
-import { MyPageProps } from '../../pages/MyPage';
+import { MyPageParams, MyPageProps } from '../../pages/MyPage';
 import InputWithLabel from '../../common/InputWithLabel';
 import Arrow from "../../assets/img/common/Arrow.svg";
 import DropDown from '../../common/DropDown';
 import DatePicker from '../../common/DatePicker';
+import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import Logo from '../../assets/img/common/Logo.svg';
+import { useNavigation } from '@react-navigation/native';
+import SocialLogin from './SocialLogin';
+
 
 const { width, height } = Dimensions.get('window');
 
@@ -26,7 +31,39 @@ interface CheckTypes {
   nickname: boolean;
 }
 
+export type RegisterParams = {
+  home: undefined;
+  email: undefined;
+}
+
 export default function RegisterScreen({ navigation, route }: StackScreenProps<MyPageProps, 'register'>): JSX.Element {
+  const RegisterStack = createNativeStackNavigator<RegisterParams>();
+  return (
+    <RegisterStack.Navigator
+      screenOptions={{
+        headerShown: false
+      }}
+    >
+      <RegisterStack.Screen name='home' component={RegisterHome} />
+      <RegisterStack.Screen name='email' component={RegisterEmail} />
+    </RegisterStack.Navigator>
+  )
+}
+
+function RegisterHome({ navigation, route }: StackScreenProps<RegisterParams>) {
+  return (
+    <SafeAreaView style={{ flex: 1, backgroundColor: '#FFFFFF', display: 'flex', alignItems: 'center', width: '100%' }}>
+      <Logo width={56} height={56} style={{marginTop: 60}}/>
+      <Text style={TextStyles.home_title}>SASM</Text>
+      <Text style={TextStyles.home_subtitle}>당신의 발자국에 녹색을 더합니다</Text>
+      <Text style={TextStyles.home_label}>지속가능한 공간들을 둘러보고 공유해보세요</Text>
+      <SocialLogin type='register'/>
+    </SafeAreaView>
+  )
+}
+
+function RegisterEmail({ navigation, route }: StackScreenProps<RegisterParams>) {
+  const navigationToMypage = useNavigation<StackNavigationProp<MyPageProps, 'register'>>();
   const [form, setForm] = useState<FormTypes>({
     email: "",
     password: "",
@@ -90,13 +127,13 @@ export default function RegisterScreen({ navigation, route }: StackScreenProps<M
     }
     else {
       const response_register = await request.post('/users/signup/', form);
-      Alert.alert('회원가입 인증 메일을 확인해주세요 : )', '', [{ text: 'OK', onPress: () => { navigation.navigate('login'); } }]);
+      Alert.alert('회원가입 인증 메일을 확인해주세요 : )', '', [{ text: 'OK', onPress: () => { navigationToMypage.navigate('login'); } }]);
     }
   }
   return (
     <SafeAreaView style={{ backgroundColor: '#FFFFFF', flex: 1 }}>
       <View style={{ position: 'relative', marginBottom: 30 }}>
-        <Text style={TextStyles.title}>회원가입</Text>
+        <Text style={TextStyles.header}>회원가입</Text>
         <TouchableOpacity style={{ left: 10, marginBottom: 30, position: 'absolute' }} onPress={() => { navigation.goBack() }}>
           <Arrow width={20} height={20} transform={[{ rotateY: '180deg' }]} />
         </TouchableOpacity>
@@ -171,7 +208,7 @@ const TextStyles = StyleSheet.create({
     overflow: 'hidden',
     backgroundColor: '#67D393'
   },
-  title: {
+  header: {
     fontSize: 20,
     lineHeight: 28,
     letterSpacing: -0.6,
@@ -188,5 +225,26 @@ const TextStyles = StyleSheet.create({
     borderColor: '#848484',
     borderWidth: 1,
     paddingHorizontal: 10
+  },
+  home_title: {
+    fontSize: 30,
+    lineHeight: 36,
+    fontWeight: '700',
+    marginVertical: 15
+  },
+  home_subtitle: {
+    fontSize: 16,
+    lineHeight: 22,
+    letterSpacing: -0.6,
+    fontWeight: '700',
+    marginTop: 5,
+    marginBottom: 150
+  },
+  home_label: {
+    fontSize: 14,
+    lineHeight: 20,
+    letterSpacing: -0.6,
+    color:'#202020',
+    marginBottom: 10
   }
 })
