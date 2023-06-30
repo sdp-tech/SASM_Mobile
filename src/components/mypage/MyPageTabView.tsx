@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useContext } from 'react';
 import { View, SafeAreaView, useWindowDimensions, Image } from 'react-native';
 import { TextPretendard as Text } from '../../common/CustomText';
 import { TouchableOpacity } from 'react-native-gesture-handler';
@@ -13,6 +13,7 @@ import Settings from '../../assets/img/MyPage/Settings.svg';
 import { getAccessToken } from '../../common/storage';
 import { useFocusEffect } from '@react-navigation/native';
 import { StackScreenProps } from '@react-navigation/stack';
+import { LoginContext } from '../../common/Context';
 
 const MyCommunity = () => {
   return (
@@ -35,6 +36,7 @@ export interface IUserInfo {
 }
 
 const MyPageTabView = ({ navigation }: StackScreenProps<MyPageProps, 'mypage'>) => {
+  const {isLogin, setLogin} = useContext(LoginContext);
   const [info, setInfo] = useState<IUserInfo>({
     id: 0,
     gender: '',
@@ -90,32 +92,50 @@ const MyPageTabView = ({ navigation }: StackScreenProps<MyPageProps, 'mypage'>) 
     }
   }
 
-  const checkIsLogin = async () => {
-    const token = await getAccessToken();
-    if (!token) navigation.navigate('login');
-    else getUserinfo();
-  }
 
   useFocusEffect(useCallback(() => {
-    checkIsLogin();
-  }, []))
+    if(isLogin) getUserinfo();
+  }, [isLogin]))
 
   const ProfileSection = () => {
     return (
       <View style={{ flexDirection: "row", marginLeft: 15 }}>
-        <Image source={{ uri: info?.profile_image }} style={{ width: 80, height: 80, borderRadius: 60 }} />
-        <View style={{ paddingVertical: 10, marginLeft: 10 }}>
-          <Text style={{ fontWeight: "700", fontSize: 16 }}>{info?.nickname}</Text>
-          <Text style={{ fontWeight: "400", fontSize: 12, marginTop: 10 }}>자기소개</Text>
-          <View style={{ flexDirection: "row" }}>
-            <TouchableOpacity onPress={() => { navigation.navigate('follower', { email: info.email }) }}>
-              <Text style={{ fontWeight: "400", fontSize: 10, color: "#848484", marginTop: 10 }}>팔로워 {follower.num}  |  </Text>
-            </TouchableOpacity>
-            <TouchableOpacity onPress={() => { navigation.navigate('following', { email: info.email }) }}>
-              <Text style={{ fontWeight: "400", fontSize: 10, color: "#848484", marginTop: 10 }}>팔로잉 {following.num}</Text>
-            </TouchableOpacity>
+        {
+          isLogin ?
+          <View>
+          <Image source={{ uri: info?.profile_image }} style={{ width: 80, height: 80, borderRadius: 60 }} />
+          <View style={{ paddingVertical: 10, marginLeft: 10 }}>
+            <Text style={{ fontWeight: "700", fontSize: 16 }}>{info?.nickname}</Text>
+            <Text style={{ fontWeight: "400", fontSize: 12, marginTop: 10 }}>자기소개</Text>
+            <View style={{ flexDirection: "row" }}>
+              <TouchableOpacity onPress={() => { navigation.navigate('follower', { email: info.email }) }}>
+                <Text style={{ fontWeight: "400", fontSize: 10, color: "#848484", marginTop: 10 }}>팔로워 {follower.num}  |  </Text>
+              </TouchableOpacity>
+              <TouchableOpacity onPress={() => { navigation.navigate('following', { email: info.email }) }}>
+                <Text style={{ fontWeight: "400", fontSize: 10, color: "#848484", marginTop: 10 }}>팔로잉 {following.num}</Text>
+              </TouchableOpacity>
+            </View>
           </View>
-        </View>
+          </View>
+          :
+          <View>
+          <View style={{ width: 80, height: 80, borderRadius: 60, borderColor:'#4DB1F7', borderWidth: 1, display:'flex', justifyContent:'center', alignItems:'center'}}>
+            <Profile/>
+          </View>
+          <View style={{ paddingVertical: 10, marginLeft: 10 }}>
+            <Text style={{ fontWeight: "700", fontSize: 16 }}>SASM</Text>
+            <Text style={{ fontWeight: "400", fontSize: 12, marginTop: 10 }}>로그인해서 다른 사람들의 장소를 탐색해보세요</Text>
+            <View style={{ flexDirection: "row" }}>
+              <TouchableOpacity>
+                <Text style={{ fontWeight: "400", fontSize: 10, color: "#848484", marginTop: 10 }}>팔로워 {follower.num}  |  </Text>
+              </TouchableOpacity>
+              <TouchableOpacity>
+                <Text style={{ fontWeight: "400", fontSize: 10, color: "#848484", marginTop: 10 }}>팔로잉 {following.num}</Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+          </View>
+        }
       </View>
     )
   }

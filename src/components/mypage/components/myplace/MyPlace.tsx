@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useContext } from "react";
 import {
   View,
   StyleSheet,
@@ -19,6 +19,8 @@ import Menu from "../../../../assets/img/MyPage/Menu.svg";
 import Arrow from "../../../../assets/img/common/Arrow.svg";
 import { MyPageParams } from "../../../../pages/MyPage";
 import { useFocusEffect } from "@react-navigation/native";
+import { LoginContext } from "../../../../common/Context";
+import RequireLogin from "../RequiredLogin";
 
 const styles = (isCategory?: boolean) => StyleSheet.create({
   Container: {
@@ -55,6 +57,7 @@ interface PlaceItemCard {
 }
 
 const MyPlace = ({ navigation }: MyPageParams) => {
+  const { isLogin, setLogin } = useContext(LoginContext);
   const [info, setInfo] = useState([]);
   const [page, setPage] = useState(1);
   const [checkedList, setCheckedList] = useState([] as any);
@@ -82,8 +85,8 @@ const MyPlace = ({ navigation }: MyPageParams) => {
   }
 
   useFocusEffect(useCallback(() => {
-    getPlaces();
-  }, [page, search, checkedList]));
+    if (isLogin) getPlaces();
+  }, [page, search, checkedList, isLogin]));
 
   useEffect(() => {
     if (!type) getWrittenReview();
@@ -98,61 +101,68 @@ const MyPlace = ({ navigation }: MyPageParams) => {
           <Arrow width={12} height={12} />
         </TouchableOpacity>
       </View>
-      <View style={styles(isCategory).Searchbox}>
-        {isSearch &&
-          <SearchBar
-            setPage={setPage}
-            search={search}
-            setSearch={setSearch}
-            style={{ backgroundColor: "#F4F4F4", borderRadius: 10, height: 35, width: 280, position: "absolute", right: 90, zIndex: 1 }}
-            placeholder="내용 입력 전"
-            placeholderTextColor={"#848484"}
-          />
-        }
-        <TouchableOpacity style={{ marginHorizontal: 10 }} onPress={() => { setIsSearch(!isSearch); setIsCategory(false); }}>
-          <Search width={18} height={18} />
-        </TouchableOpacity>
-        <TouchableOpacity style={{ marginHorizontal: 10 }} onPress={() => { setIsSearch(false); setIsCategory(false) }}>
-          <Map width={18} height={18} />
-        </TouchableOpacity>
-        {!isCategory &&
-          <TouchableOpacity style={{ marginHorizontal: 10 }} onPress={() => { setIsSearch(false); setIsCategory(!isCategory) }}>
-            <Menu width={18} height={18} />
-          </TouchableOpacity>
-        }
-        {isCategory &&
-          <View style={{ flexDirection: "row", marginLeft: 10, flex: 1, alignItems: 'center' }}>
-            <TouchableOpacity style={{ borderRadius: 12, borderColor: "#D7D7D7", borderWidth: 0.25, justifyContent: "center", alignItems: "center", marginRight: 5, paddingHorizontal: 5, height: 25 }}>
-              <Text style={{ fontSize: 12 }}>편집</Text>
-            </TouchableOpacity>
-            <TouchableOpacity style={{ backgroundColor: type ? '#FFFFFF' : '#D7D7D7', borderRadius: 20, borderColor: "#D7D7D7", borderWidth: 0.25, justifyContent: "center", alignItems: "center", marginRight: 5, paddingHorizontal: 5, height: 25 }}
-              onPress={() => { setType(!type) }}>
-              <Text style={{ fontSize: 12 }}>내 리뷰</Text>
-            </TouchableOpacity>
-            <Category checkedList={checkedList} setCheckedList={setCheckedList} story={true} />
-          </View>
-        }
-      </View>
-      <View style={styles().Place}>
-        {(type ? info : written).length === 0 ? (
-          <View style={{ alignItems: 'center', marginVertical: 20 }}>
-            <NothingIcon />
-            <Text style={{ marginTop: 20 }}>해당하는 장소가 없습니다</Text>
-          </View>
-        ) : (
-          <FlatList
-            data={type ? info : written}
-            renderItem={({ item }: any) => (
-              <ItemCard
-                props={item}
-                navigation={navigation}
-              />
-            )}
-            numColumns={3}
-            style={{ alignContent: 'space-between' }}
-          />
-        )}
-      </View>
+      {
+        isLogin ?
+          <>
+            <View style={styles(isCategory).Searchbox}>
+              {isSearch &&
+                <SearchBar
+                  setPage={setPage}
+                  search={search}
+                  setSearch={setSearch}
+                  style={{ backgroundColor: "#F4F4F4", borderRadius: 10, height: 35, width: 280, position: "absolute", right: 90, zIndex: 1 }}
+                  placeholder="내용 입력 전"
+                  placeholderTextColor={"#848484"}
+                />
+              }
+              <TouchableOpacity style={{ marginHorizontal: 10 }} onPress={() => { setIsSearch(!isSearch); setIsCategory(false); }}>
+                <Search width={18} height={18} />
+              </TouchableOpacity>
+              <TouchableOpacity style={{ marginHorizontal: 10 }} onPress={() => { setIsSearch(false); setIsCategory(false) }}>
+                <Map width={18} height={18} />
+              </TouchableOpacity>
+              {!isCategory &&
+                <TouchableOpacity style={{ marginHorizontal: 10 }} onPress={() => { setIsSearch(false); setIsCategory(!isCategory) }}>
+                  <Menu width={18} height={18} />
+                </TouchableOpacity>
+              }
+              {isCategory &&
+                <View style={{ flexDirection: "row", marginLeft: 10, flex: 1, alignItems: 'center' }}>
+                  <TouchableOpacity style={{ borderRadius: 12, borderColor: "#D7D7D7", borderWidth: 0.25, justifyContent: "center", alignItems: "center", marginRight: 5, paddingHorizontal: 5, height: 25 }}>
+                    <Text style={{ fontSize: 12 }}>편집</Text>
+                  </TouchableOpacity>
+                  <TouchableOpacity style={{ backgroundColor: type ? '#FFFFFF' : '#D7D7D7', borderRadius: 20, borderColor: "#D7D7D7", borderWidth: 0.25, justifyContent: "center", alignItems: "center", marginRight: 5, paddingHorizontal: 5, height: 25 }}
+                    onPress={() => { setType(!type) }}>
+                    <Text style={{ fontSize: 12 }}>내 리뷰</Text>
+                  </TouchableOpacity>
+                  <Category checkedList={checkedList} setCheckedList={setCheckedList} story={true} />
+                </View>
+              }
+            </View>
+            <View style={styles().Place}>
+              {(type ? info : written).length === 0 ? (
+                <View style={{ alignItems: 'center', marginVertical: 20 }}>
+                  <NothingIcon />
+                  <Text style={{ marginTop: 20 }}>해당하는 장소가 없습니다</Text>
+                </View>
+              ) : (
+                <FlatList
+                  data={type ? info : written}
+                  renderItem={({ item }: any) => (
+                    <ItemCard
+                      props={item}
+                      navigation={navigation}
+                    />
+                  )}
+                  numColumns={3}
+                  style={{ alignContent: 'space-between' }}
+                />
+              )}
+            </View>
+          </>
+          :
+          <RequireLogin index={0} />
+      }
     </View>
   );
 };

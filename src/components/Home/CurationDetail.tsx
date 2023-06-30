@@ -129,7 +129,7 @@ export default function CurationDetail({ navigation, route }: StackScreenProps<H
       targetEmail: target
     })
   }
-  
+    
   useFocusEffect(useCallback(() => {
     getCurationDetail();
     getCurationStoryDetail();
