@@ -1,4 +1,4 @@
-import { SASM_API_URL } from '@env';
+import { SASM_API_URL } from 'react-native-dotenv';
 import axios from "axios";
 import { getAccessToken, getRefreshToken, removeAccessToken, setAccessToken } from './storage';
 

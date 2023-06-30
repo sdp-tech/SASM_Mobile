@@ -6,7 +6,7 @@ import { Request } from "../../common/requests";
 import { useFocusEffect } from "@react-navigation/native";
 import { StoryProps } from "../../pages/Story";
 import CardView from "../../common/CardView";
-import Add from "../../assets/img/Story/Add.svg";
+import Add from "../../assets/img/common/Add.svg";
 import StorySearch from "./components/StorySearch";
 import Category from "../../common/Category";
 import MainCard from "./components/MainCard";
@@ -152,7 +152,7 @@ const StoryMainPage = ({ navigation, route }: StoryProps) => {
             />
           </View>
           <View style={{paddingVertical: 20}}>
-            <CardView data={item} gap={0} offset={0} pageWidth={width} height={width*0.84+160} dot={true}
+            <CardView data={item} gap={0} offset={0} pageWidth={width} dot={true}
               renderItem={({item}: any) => {
                 return (
                   <MainCard

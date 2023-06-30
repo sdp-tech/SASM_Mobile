@@ -21,6 +21,7 @@ const InfoBox = styled.View`
   display: flex;
   flex-direction: row;
   align-items: center;
+  position: relative;
 `
 const ContentBox = styled.View`
   margin-vertical: 25px;
@@ -28,6 +29,11 @@ const ContentBox = styled.View`
 `
 const GotoMap = styled.TouchableOpacity`
   margin: 20px auto;
+`
+const ButtonBox = styled.View`
+  border-top-width: 3px;
+  border-color: #EAEAEA;
+  padding: 10px 25px;
 `
 const StorySection = styled.View`
   border-top-width: 3px;
@@ -112,6 +118,18 @@ export default function CurationDetail({ navigation, route }: StackScreenProps<H
     setCuratedStory(reponse_story_detail.data.data);
   }
 
+  const handleLike = async () => {
+    const response = await request.post(`/curations/curation_like/${route.params.id}/`);
+    setCurationDetail({...curationDetail, like_curation:!curationDetail.like_curation});
+  }
+
+  const following = async (target: string) => {
+    const response = await request.post('/mypage/follow/',
+    {
+      targetEmail: target
+    })
+  }
+    
   useFocusEffect(useCallback(() => {
     getCurationDetail();
     getCurationStoryDetail();
@@ -133,6 +151,10 @@ export default function CurationDetail({ navigation, route }: StackScreenProps<H
             <Text style={TextStyles.writer}>{curationDetail.nickname}</Text>
             <Text style={TextStyles.created}>{curationDetail.created.slice(0, 10).replace(/-/gi, '.')}작성</Text>
           </View>
+          <TouchableOpacity style={{position:'absolute', right: 25}}
+            onPress={()=>{following(curationDetail.writer_email)}}>
+            <Text style={TextStyles.following}>+ 팔로잉</Text>
+          </TouchableOpacity>
         </InfoBox>
         <ContentBox>
           <Text style={TextStyles.content}>{curationDetail.contents}</Text>
@@ -141,6 +163,9 @@ export default function CurationDetail({ navigation, route }: StackScreenProps<H
         <GotoMap onPress={() => { navigationTab.navigate('맵', {}) }}>
           <Text style={TextStyles.gotomap}>맵페이지로 이동</Text>
         </GotoMap>
+        <ButtonBox>
+          <Heart like={curationDetail.like_curation} onPress={handleLike} />
+        </ButtonBox>
         {
           curatedStory.map(data =>
             <Storys data={data} navigation={navigationTab} />
@@ -160,7 +185,7 @@ const Storys = ({ navigation, data }: { navigation: StackNavigationProp<TabProps
     setLike(!like);
   }
 
-  useEffect(()=>{
+  useEffect(() => {
     setLike(data.like_story);
   }, [])
   return (
@@ -182,7 +207,6 @@ const Storys = ({ navigation, data }: { navigation: StackNavigationProp<TabProps
       {
         data.rep_photos != null &&
         <CardView
-          height={300}
           pageWidth={250}
           data={data.rep_photos}
           renderItem={({ item }: any) => <Image source={{ uri: item }} style={{ width: 250, height: 300, marginHorizontal: 5 }} />}
@@ -210,7 +234,7 @@ const TextStyles = StyleSheet.create({
     position: 'absolute',
     paddingHorizontal: 20,
     bottom: 20,
-    color:'#FFFFFF',
+    color: '#FFFFFF',
     width: '100%',
   },
   content: {
@@ -232,7 +256,7 @@ const TextStyles = StyleSheet.create({
   story_review: {
     fontSize: 16,
     marginBottom: 20,
-    fontWeight:'700',
+    fontWeight: '700',
   },
   place_name: {
     fontSize: 24,
@@ -257,4 +281,16 @@ const TextStyles = StyleSheet.create({
     borderRadius: 10,
     marginBottom: 20
   },
+  following: {
+    width: 75,
+    height: 28,
+    borderRadius: 14,
+    color:'#FFFFFF',
+    backgroundColor:'#4DB1F7',
+    letterSpacing: -0.6,
+    fontSize: 12,
+    lineHeight: 28,
+    textAlign:'center',
+    overflow:'hidden'
+  }
 })

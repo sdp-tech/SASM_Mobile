@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useContext } from 'react';
 import { View, SafeAreaView, useWindowDimensions, Image } from 'react-native';
 import { TextPretendard as Text } from '../../common/CustomText';
 import { TouchableOpacity } from 'react-native-gesture-handler';
@@ -7,11 +7,13 @@ import { Request } from '../../common/requests';
 import MyPlace from './components/myplace/MyPlace';
 import MyStory from './components/mystory/MyStory';
 import MyCuration from './components/mycuration/MyCuration';
-import { MyPageParams } from '../../pages/MyPage';
+import { MyPageParams, MyPageProps } from '../../pages/MyPage';
 import Profile from '../../assets/img/MyPage/Profile.svg';
 import Settings from '../../assets/img/MyPage/Settings.svg';
 import { getAccessToken } from '../../common/storage';
 import { useFocusEffect } from '@react-navigation/native';
+import { StackScreenProps } from '@react-navigation/stack';
+import { LoginContext } from '../../common/Context';
 
 const MyCommunity = () => {
   return (
@@ -21,80 +23,130 @@ const MyCommunity = () => {
   )
 }
 
-const MyPageTabView = ({ navigation }: MyPageParams) => {
-  const [nickname, setNickname] = useState<string>("");
-  const [intro, setIntro] = useState<string>("");
-  const [follow, setFollow] = useState({
-    follower: 0,
-    following: 0
-  })
-  const [img, setImg] = useState<string>("");
+export interface IUserInfo {
+  id: number;
+  gender: string;
+  nickname: string;
+  birthdate: string;
+  email: string;
+  profile_image: string;
+  address: string;
+  is_sdp_admin: boolean;
+  is_verifed: boolean;
+}
+
+const MyPageTabView = ({ navigation }: StackScreenProps<MyPageProps, 'mypage'>) => {
+  const {isLogin, setLogin} = useContext(LoginContext);
+  const [info, setInfo] = useState<IUserInfo>({
+    id: 0,
+    gender: '',
+    nickname: '',
+    birthdate: '',
+    email: '',
+    profile_image: '',
+    address: '',
+    is_sdp_admin: false,
+    is_verifed: false,
+  });
+  const [follower, setFollower] = useState<{ num: number, list: any[] }>({ num: 0, list: [] });
+  const [following, setFollowing] = useState<{ num: number, list: any[] }>({ num: 0, list: [] });
+
+  const getUserinfo = async () => {
+    const response_info = await request.get(`/mypage/me/`);
+    setInfo(response_info.data.data)
+
+    const response_following = await request.get('/mypage/following/', {
+      email: response_info.data.data.email,
+      search_email: '',
+    })
+    const response_follower = await request.get('/mypage/follower/', {
+      email: response_info.data.data.email,
+      search_email: '',
+    })
+
+    setFollower({ num: response_follower.data.data.count, list: response_follower.data.data.results })
+    setFollowing({ num: response_following.data.data.count, list: response_following.data.data.results })
+
+  }
+
   const layout = useWindowDimensions();
   const [index, setIndex] = useState<number>(0);
   const [routes] = useState([
     { key: "place", title: "장소" },
     { key: "story", title: "스토리" },
-    { key: "curation", title: "큐레이션"},
-    { key: "community", title: "정보글"}
+    { key: "curation", title: "큐레이션" },
+    { key: "community", title: "정보글" }
   ]);
   const request = new Request();
 
   const renderScene = ({ route }: any) => {
     switch (route.key) {
       case "place":
-        return <MyPlace />;
+        return <MyPlace navigation={navigation} />;
       case "story":
         return <MyStory navigation={navigation} />;
       case "curation":
-        return <MyCuration navigation={navigation}/>;
+        return <MyCuration navigation={navigation} />;
       case "community":
         return <MyCommunity />;
     }
   }
 
-  const getProfile = async () => {
-    const response = await request.get(`/users/me/`,{},{});
-    setNickname(response.data.data.nickname);
-    setImg(response.data.data.profile_image);
-  }
 
-  const checkIsLogin = async () => {
-    const token = await getAccessToken();
-    if(!token) navigation.navigate('login');
-    else getProfile();
-  }
-
-  useFocusEffect(useCallback(()=>{
-    checkIsLogin();
-  }, []))
+  useFocusEffect(useCallback(() => {
+    if(isLogin) getUserinfo();
+  }, [isLogin]))
 
   const ProfileSection = () => {
     return (
-      <View style={{flexDirection: "row", marginLeft: 15}}>
-        <Image source={{uri: img}} style={{width: 80, height: 80, borderRadius: 60}} />
-        <View style={{paddingVertical: 10, marginLeft: 10}}>
-          <Text style={{fontWeight: "700", fontSize: 16}}>{nickname}</Text>
-          <Text style={{fontWeight: "400", fontSize: 12, marginTop: 10}}>자기소개</Text>
-          <View style={{flexDirection: "row"}}>
-            <TouchableOpacity onPress={() => {navigation.navigate('follower')}}>
-              <Text style={{fontWeight: "400", fontSize: 10, color: "#848484", marginTop: 10}}>팔로워 {follow.follower}  |  </Text>
-            </TouchableOpacity>
-            <TouchableOpacity onPress={() => {navigation.navigate('following')}}>
-              <Text style={{fontWeight: "400", fontSize: 10, color: "#848484", marginTop: 10}}>팔로잉 {follow.following}</Text>
-            </TouchableOpacity>
+      <View style={{ flexDirection: "row", marginLeft: 15 }}>
+        {
+          isLogin ?
+          <View>
+          <Image source={{ uri: info?.profile_image }} style={{ width: 80, height: 80, borderRadius: 60 }} />
+          <View style={{ paddingVertical: 10, marginLeft: 10 }}>
+            <Text style={{ fontWeight: "700", fontSize: 16 }}>{info?.nickname}</Text>
+            <Text style={{ fontWeight: "400", fontSize: 12, marginTop: 10 }}>자기소개</Text>
+            <View style={{ flexDirection: "row" }}>
+              <TouchableOpacity onPress={() => { navigation.navigate('follower', { email: info.email }) }}>
+                <Text style={{ fontWeight: "400", fontSize: 10, color: "#848484", marginTop: 10 }}>팔로워 {follower.num}  |  </Text>
+              </TouchableOpacity>
+              <TouchableOpacity onPress={() => { navigation.navigate('following', { email: info.email }) }}>
+                <Text style={{ fontWeight: "400", fontSize: 10, color: "#848484", marginTop: 10 }}>팔로잉 {following.num}</Text>
+              </TouchableOpacity>
+            </View>
           </View>
-        </View>
+          </View>
+          :
+          <View>
+          <View style={{ width: 80, height: 80, borderRadius: 60, borderColor:'#4DB1F7', borderWidth: 1, display:'flex', justifyContent:'center', alignItems:'center'}}>
+            <Profile/>
+          </View>
+          <View style={{ paddingVertical: 10, marginLeft: 10 }}>
+            <Text style={{ fontWeight: "700", fontSize: 16 }}>SASM</Text>
+            <Text style={{ fontWeight: "400", fontSize: 12, marginTop: 10 }}>로그인해서 다른 사람들의 장소를 탐색해보세요</Text>
+            <View style={{ flexDirection: "row" }}>
+              <TouchableOpacity>
+                <Text style={{ fontWeight: "400", fontSize: 10, color: "#848484", marginTop: 10 }}>팔로워 {follower.num}  |  </Text>
+              </TouchableOpacity>
+              <TouchableOpacity>
+                <Text style={{ fontWeight: "400", fontSize: 10, color: "#848484", marginTop: 10 }}>팔로잉 {following.num}</Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+          </View>
+        }
       </View>
     )
   }
 
   return (
-    <SafeAreaView style={{backgroundColor: 'white', flex: 1}}>
-      <View style={{flexDirection: "row", paddingHorizontal: 20, paddingVertical: 10}}>
-        <TouchableOpacity onPress={() => {navigation.navigate('user')}}>
+    <SafeAreaView style={{ backgroundColor: 'white', flex: 1 }}>
+      <View style={{ flexDirection: "row", paddingHorizontal: 20, paddingVertical: 10 }}>
+        <TouchableOpacity onPress={() => { navigation.navigate('user', { info: info, follower: follower.num, following: following.num }) }}>
           <Profile />
         </TouchableOpacity>
-        <TouchableOpacity style={{marginLeft: 300}} onPress={() => {navigation.navigate('options')}}>
+        <TouchableOpacity style={{ marginLeft: 300 }} onPress={() => { navigation.navigate('options') }}>
           <Settings />
         </TouchableOpacity>
       </View>
@@ -125,7 +177,7 @@ const MyPageTabView = ({ navigation }: MyPageParams) => {
             pressColor={"transparent"}
           />
         )}
-    />
+      />
     </SafeAreaView>
   )
 }
