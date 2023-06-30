@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useCallback } from 'react';
+import React, { useEffect, useState, useCallback, useContext } from 'react';
 import { View, TouchableOpacity, Alert, StyleSheet, SafeAreaView, Image, ImageBackground, Button, Dimensions } from "react-native";
 import { ScrollView } from 'react-native-gesture-handler';
 import { TextPretendard as Text } from '../../../common/CustomText';
@@ -8,6 +8,7 @@ import { Request } from '../../../common/requests';
 import { StackScreenProps } from '@react-navigation/stack';
 import { MyPageProps } from '../../../pages/MyPage';
 import styled from 'styled-components/native';
+import { LoginContext } from '../../../common/Context';
 
 const StyledButton = styled.TouchableOpacity`
     height: 40px;
@@ -21,11 +22,13 @@ const StyledButton = styled.TouchableOpacity`
 
 export default function Options({ navigation }: StackScreenProps<MyPageProps, 'options'>) {
     const request = new Request();
+    const {isLogin, setLogin} = useContext(LoginContext);
 
     const logOut = () => {
         removeAccessToken();
         removeNickname();
         removeRefreshToken();
+        setLogin(false);
         navigation.navigate('login');
     }
 

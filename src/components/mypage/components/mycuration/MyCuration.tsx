@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useContext } from 'react';
 import { SafeAreaView, View, StyleSheet, TouchableOpacity, Image, FlatList, ScrollView, Dimensions, Pressable } from 'react-native';
 import { TextPretendard as Text } from '../../../../common/CustomText';
 import ItemCard from "./ItemCard";
@@ -9,6 +9,8 @@ import SearchBar from '../../../../common/SearchBar';
 import { useFocusEffect } from '@react-navigation/native';
 import Menu from "../../../../assets/img/MyPage/Menu.svg";
 import { MyPageParams } from '../../../../pages/MyPage';
+import { LoginContext } from '../../../../common/Context';
+import RequireLogin from '../RequireLogin';
 
 const styles = StyleSheet.create({
   Container: {
@@ -42,6 +44,7 @@ interface CurationItemCard {
 }
 
 const MyStory = ({ navigation, route }: MyPageParams) => {
+  const { isLogin, setLogin } = useContext(LoginContext);
   const { width, height } = Dimensions.get("window");
   const [info, setInfo] = useState([] as any);
   const [page, setPage] = useState<number>(1);
@@ -82,57 +85,64 @@ const MyStory = ({ navigation, route }: MyPageParams) => {
 
   return (
     <View style={styles.Container}>
-      <View style={styles.Searchbox}>
-        {isSearch &&
-          <SearchBar
-            setPage={setPage}
-            search={search}
-            setSearch={setSearch}
-            style={{ backgroundColor: "#F4F4F4", borderRadius: 10, height: 35, width: 320, position: "absolute", right: 50, zIndex: 1 }}
-            placeholder="내용 입력 전"
-            placeholderTextColor={"#848484"}
-          />
-        }
-        <TouchableOpacity style={{ marginHorizontal: 10 }} onPress={() => { setIsSearch(!isSearch); setIsMenu(false); }}>
-          <Search width={18} height={18} />
-        </TouchableOpacity>
-        {!isMenu &&
-          <TouchableOpacity style={{ marginHorizontal: 10 }} onPress={() => { setIsSearch(false); setIsMenu(!isMenu) }}>
-            <Menu width={18} height={18} />
-          </TouchableOpacity>
-        }
-        {isMenu &&
-          <>
-            <TouchableOpacity style={{ borderRadius: 12, borderColor: "#D7D7D7", borderWidth: 0.25, justifyContent: "center", alignItems: "center", marginHorizontal: 10, paddingHorizontal: 5, height: 25 }}>
-              <Text style={{ fontSize: 12 }}>편집</Text>
-            </TouchableOpacity>
-            <TouchableOpacity style={{ backgroundColor: type ? '#FFFFFF' : '#D7D7D7', borderRadius: 20, borderColor: "#D7D7D7", borderWidth: 0.25, justifyContent: "center", alignItems: "center", marginRight: 15, paddingHorizontal: 5, height: 25 }}
-              onPress={() => { setType(!type) }}>
-              <Text style={{ fontSize: 12 }}>내 큐레이션</Text>
-            </TouchableOpacity>
-          </>
-        }
-      </View>
-      <View style={styles.Curation}>
-        {(type ? info : written).length === 0 ? (
-          <View style={{ alignItems: 'center', marginVertical: 20 }}>
-            <NothingIcon />
-            <Text style={{ marginTop: 20 }}>해당하는 큐레이션이 없습니다</Text>
+      {
+        isLogin ?
+          <View>
+            <View style={styles.Searchbox}>
+              {isSearch &&
+                <SearchBar
+                  setPage={setPage}
+                  search={search}
+                  setSearch={setSearch}
+                  style={{ backgroundColor: "#F4F4F4", borderRadius: 10, height: 35, width: 320, position: "absolute", right: 50, zIndex: 1 }}
+                  placeholder="내용 입력 전"
+                  placeholderTextColor={"#848484"}
+                />
+              }
+              <TouchableOpacity style={{ marginHorizontal: 10 }} onPress={() => { setIsSearch(!isSearch); setIsMenu(false); }}>
+                <Search width={18} height={18} />
+              </TouchableOpacity>
+              {!isMenu &&
+                <TouchableOpacity style={{ marginHorizontal: 10 }} onPress={() => { setIsSearch(false); setIsMenu(!isMenu) }}>
+                  <Menu width={18} height={18} />
+                </TouchableOpacity>
+              }
+              {isMenu &&
+                <>
+                  <TouchableOpacity style={{ borderRadius: 12, borderColor: "#D7D7D7", borderWidth: 0.25, justifyContent: "center", alignItems: "center", marginHorizontal: 10, paddingHorizontal: 5, height: 25 }}>
+                    <Text style={{ fontSize: 12 }}>편집</Text>
+                  </TouchableOpacity>
+                  <TouchableOpacity style={{ backgroundColor: type ? '#FFFFFF' : '#D7D7D7', borderRadius: 20, borderColor: "#D7D7D7", borderWidth: 0.25, justifyContent: "center", alignItems: "center", marginRight: 15, paddingHorizontal: 5, height: 25 }}
+                    onPress={() => { setType(!type) }}>
+                    <Text style={{ fontSize: 12 }}>내 큐레이션</Text>
+                  </TouchableOpacity>
+                </>
+              }
+            </View>
+            <View style={styles.Curation}>
+              {(type ? info : written).length === 0 ? (
+                <View style={{ alignItems: 'center', marginVertical: 20 }}>
+                  <NothingIcon />
+                  <Text style={{ marginTop: 20 }}>해당하는 큐레이션이 없습니다</Text>
+                </View>
+              ) : (
+                <FlatList
+                  data={type ? data : written}
+                  renderItem={({ item }: any) => (
+                    <ItemCard
+                      props={item}
+                      navigation={navigation}
+                    />
+                  )}
+                  numColumns={2}
+                //style={{alignContent:'space-between'}}
+                />
+              )}
+            </View>
           </View>
-        ) : (
-          <FlatList
-            data={type ? data : written}
-            renderItem={({ item }: any) => (
-              <ItemCard
-                props={item}
-                navigation={navigation}
-              />
-            )}
-            numColumns={2}
-          //style={{alignContent:'space-between'}}
-          />
-        )}
-      </View>
+          :
+          <RequireLogin index={2} />
+      }
     </View>
   );
 };

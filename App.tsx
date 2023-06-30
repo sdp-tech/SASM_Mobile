@@ -20,6 +20,7 @@ import { GestureHandlerRootView } from "react-native-gesture-handler";
 import HomeScreen from "./src/pages/Home";
 import { Coord } from "react-native-nmap";
 import SplashScreen from "react-native-splash-screen";
+import { LoginProvider } from "./src/common/Context";
 
 export type AppProps = {
   Home: any;
@@ -37,16 +38,18 @@ const App = (): JSX.Element => {
 
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
-      <NavigationContainer>
-        <Stack.Navigator
-          screenOptions={() => ({
-            headerShown: false,
-          })}
-        >
-          <Stack.Screen name="Home" component={HomeScreens} />
-          <Stack.Screen name="Login" component={LoginScreen} />
-        </Stack.Navigator>
-      </NavigationContainer>
+      <LoginProvider>
+        <NavigationContainer>
+          <Stack.Navigator
+            screenOptions={() => ({
+              headerShown: false,
+            })}
+          >
+            <Stack.Screen name="Home" component={HomeScreens} />
+            <Stack.Screen name="Login" component={LoginScreen} />
+          </Stack.Navigator>
+        </NavigationContainer>
+      </LoginProvider>
     </GestureHandlerRootView>
   );
 };

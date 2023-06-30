@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { Platform, TouchableOpacity, View, TextInput, StyleSheet, SafeAreaView, Alert } from "react-native";
 import { TextPretendard as Text } from '../../common/CustomText';
 import styled, { css } from 'styled-components/native';
@@ -18,6 +18,7 @@ import NaverLogin from '@react-native-seoul/naver-login';
 import { GoogleSignin } from '@react-native-google-signin/google-signin';
 
 import { GOOGLE_WEB_CLIENT_ID, NAVER_APP_CLIENT_ID, NAVER_APP_CLIENT_SECRET, NAVER_APP_SERVICE_URL_SCHEME } from 'react-native-dotenv';
+import { LoginContext } from '../../common/Context';
 
 
 const LoginInput = styled.TextInput`
@@ -39,6 +40,7 @@ const InputWrapper = styled.View`
 
 const LoginScreen = () => {
   const navigation = useNavigation<NavigationScreenProp<MyPageParams>>();
+  const {isLogin, setLogin} = useContext(LoginContext);
   const [form, setForm] = useState<{ email: string, password: string }>({
     email: '',
     password: ''
@@ -57,6 +59,7 @@ const LoginScreen = () => {
       setNickname(nickname)
       setAccessToken(accessToken)
       setRefreshToken(refreshToken)
+      setLogin(true);
       navigation.navigate('mypage');
     } else if (response.status == 400) {
       setAlert({ alertString: '올바른 이메일과 비밀번호를 입력해주세요', isAlert: true })
