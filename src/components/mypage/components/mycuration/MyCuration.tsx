@@ -53,13 +53,6 @@ const MyStory = ({ navigation, route }: MyPageParams) => {
   //true일 경우, 좋아요한 큐레이션 false일 경우, 작성한 큐레이션
   const [type, setType] = useState<boolean>(true);
 
-  const data = [
-    { id: 1, writer_nickname: '김사슴', rep_pic: 'https://images.velog.io/images/offdutybyblo/post/55e6994d-1767-4f76-bd5d-58974dc1ed14/react-native.png', title: '서울 어쩌구 저쩌구 비건 카페 5곳' },
-    { id: 2, writer_nickname: '김사슴', rep_pic: 'https://images.velog.io/images/offdutybyblo/post/55e6994d-1767-4f76-bd5d-58974dc1ed14/react-native.png', title: '서울 어쩌구 저쩌구 비건 카페 5곳' },
-    { id: 3, writer_nickname: '김사슴', rep_pic: 'https://images.velog.io/images/offdutybyblo/post/55e6994d-1767-4f76-bd5d-58974dc1ed14/react-native.png', title: '서울 어쩌구 저쩌구 비건 카페 5곳' },
-    { id: 4, writer_nickname: '김사슴', rep_pic: 'https://images.velog.io/images/offdutybyblo/post/55e6994d-1767-4f76-bd5d-58974dc1ed14/react-native.png', title: '서울 어쩌구 저쩌구 비건 카페 5곳' }
-  ]
-
   const getCuration = async () => {
     const response = await request.get("/mypage/my_liked_curation/", {
       search: search,
@@ -121,7 +114,7 @@ const MyStory = ({ navigation, route }: MyPageParams) => {
           </View>
         ) : (
           <FlatList
-            data={type ? data : written}
+            data={type ? info : written}
             renderItem={({ item }: any) => (
               <ItemCard
                 props={item}
@@ -129,7 +122,6 @@ const MyStory = ({ navigation, route }: MyPageParams) => {
               />
             )}
             numColumns={2}
-          // style={{alignContent:'space-between'}}
           />
         )}
       </View>
