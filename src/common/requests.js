@@ -9,7 +9,7 @@ export class Request {
         const accessToken = await getAccessToken();
         const refreshToken = await getRefreshToken();
 
-        const url = 'https://api.sasmbe.com' + path;
+        const url = SASM_API_URL + path;
 
         let headerValue;
 
@@ -27,7 +27,8 @@ export class Request {
             if (err.response == undefined) {
                 // 백엔드와 통신 자체가 실패(ERR_CONNECTION_REFUSED)
                 console.log(err);
-                alert("ERR_CONNECTION_REFUSED" + SASM_API_URL + ' ');
+                alert("ERR_CONNECTION_REFUSED" + SASM_API_URL);
+                console.warn(SASM_API_URL);
                 throw err;
             }
             else if (
