@@ -21,6 +21,7 @@ const InfoBox = styled.View`
   display: flex;
   flex-direction: row;
   align-items: center;
+  position: relative;
 `
 const ContentBox = styled.View`
   margin-vertical: 25px;
@@ -121,6 +122,14 @@ export default function CurationDetail({ navigation, route }: StackScreenProps<H
     const response = await request.post(`/curations/curation_like/${route.params.id}/`);
     setCurationDetail({...curationDetail, like_curation:!curationDetail.like_curation});
   }
+
+  const following = async (target: string) => {
+    const response = await request.post('/mypage/follow/',
+    {
+      targetEmail: target
+    })
+  }
+    
   useFocusEffect(useCallback(() => {
     getCurationDetail();
     getCurationStoryDetail();
@@ -142,6 +151,10 @@ export default function CurationDetail({ navigation, route }: StackScreenProps<H
             <Text style={TextStyles.writer}>{curationDetail.nickname}</Text>
             <Text style={TextStyles.created}>{curationDetail.created.slice(0, 10).replace(/-/gi, '.')}작성</Text>
           </View>
+          <TouchableOpacity style={{position:'absolute', right: 25}}
+            onPress={()=>{following(curationDetail.writer_email)}}>
+            <Text style={TextStyles.following}>+ 팔로잉</Text>
+          </TouchableOpacity>
         </InfoBox>
         <ContentBox>
           <Text style={TextStyles.content}>{curationDetail.contents}</Text>
@@ -268,4 +281,16 @@ const TextStyles = StyleSheet.create({
     borderRadius: 10,
     marginBottom: 20
   },
+  following: {
+    width: 75,
+    height: 28,
+    borderRadius: 14,
+    color:'#FFFFFF',
+    backgroundColor:'#4DB1F7',
+    letterSpacing: -0.6,
+    fontSize: 12,
+    lineHeight: 28,
+    textAlign:'center',
+    overflow:'hidden'
+  }
 })

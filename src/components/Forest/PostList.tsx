@@ -16,22 +16,11 @@ import styled from "styled-components/native";
 import ListHeader from "./components/ListHeader";
 import Add from "../../assets/img/common/Add.svg";
 
-import { ForestStackParams, BoardFormat } from "../../pages/Forest";
+import { ForestStackParams } from "../../pages/Forest";
 import { Request } from "../../common/requests";
 import DropDown from "../../common/DropDown";
 import PostItem from "./components/PostItem";
 
-interface PostSectionProps {
-  name: string;
-  postCount: number;
-  doHashtagSearch: any;
-}
-
-interface PostSearchSectionProps {
-  boardId: number;
-  searchQuery: string;
-  doHashtagSearch: any;
-}
 const { width, height } = Dimensions.get('window');
 
 const PostListScreen = ({
@@ -49,7 +38,7 @@ const PostListScreen = ({
   const [orderList, setOrderList] = useState(0);
   const [order, setOrder] = useState<string>(toggleItems[orderList].order);
   const [count, setCount] = useState(0);
-  const [posts, setPosts] = useState([]); // id, title, preview, nickname, email, likeCount, created, commentCount
+  const [posts, setPosts] = useState([]);
 
   const request = new Request();
 
@@ -131,8 +120,8 @@ const PostListScreen = ({
                     preview,
                     writer,
                     photos,
-                    created,
-                    commentCount,
+                    rep_pic,
+                    comment_cnt,
                     like_cnt,
                     user_likes
                   } = item;
@@ -144,8 +133,8 @@ const PostListScreen = ({
                           preview={preview}
                           writer={writer}
                           photos={photos}
-                          created={created}
-                          commentCount={commentCount}
+                          rep_pic={rep_pic}
+                          comment_cnt={comment_cnt}
                           like_cnt={like_cnt}
                           user_likes={user_likes}
                           navigation={navigation}

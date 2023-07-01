@@ -41,25 +41,25 @@ const PostSearchListSection = ({
           preview,
           writer,
           photos,
-          created,
-          commentCount,
+          rep_pic,
+          comment_cnt,
           like_cnt,
           user_likes
         } = item;
         return (
           <PostItem
-            key={id}
-            post_id={id}
-            title={title}
-            preview={preview}
-            writer={writer}
-            photos={photos}
-            created={created}
-            commentCount={commentCount}
-            like_cnt={like_cnt}
-            user_likes={user_likes}
-            navigation={navigation}
-          />
+                key={id}
+                post_id={id}
+                title={title}
+                preview={preview}
+                writer={writer}
+                photos={photos}
+                rep_pic={rep_pic}
+                comment_cnt={comment_cnt}
+                like_cnt={like_cnt}
+                user_likes={user_likes}
+                navigation={navigation}
+              />
         );
       }}
     />

@@ -45,7 +45,6 @@ export const processLoginResponse = (response: any, navigation:any, setLogin: (v
     setLogin(true);
     navigation.navigate('mypage');
   } else if (response.status == 400) {
-    console.error(response);
     Alert.alert('올바른 이메일과 비밀번호를 입력해주세요')
   } else if (response.status == 404) {
     Alert.alert('존재하지 않는 이메일입니다');

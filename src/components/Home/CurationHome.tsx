@@ -12,7 +12,7 @@ import styled from "styled-components/native";
 import AddColor from "../../assets/img/common/AddColor.svg";
 import CardView from "../../common/CardView";
 import Arrow from "../../assets/img/common/Arrow.svg";
-import Search from "../../assets/img/common/Search.svg";
+import CustomHeader from "../../common/CustomHeader";
 
 const { width, height } = Dimensions.get('screen');
 
@@ -52,16 +52,6 @@ const PlusButton = styled.TouchableOpacity`
   display: flex;
   justify-content: center;
   align-items: center;
-`
-const SearchButton = styled.TouchableOpacity`
-  width: 80%;
-  background-color: #F1F1F1;
-  height: 35px;
-  margin: 20px auto;
-  border-radius: 20px;
-  display: flex;
-  align-items: flex-end;
-  justify-content: center;
 `
 
 export interface CurationProps {
@@ -118,11 +108,10 @@ export default function CurationHome({ navigation, route }: StackScreenProps<Hom
       {loading ? <ActivityIndicator />
         : <>
           <ScrollView>
-            <SearchButton onPress={() => { navigation.navigate('List', { data: [] }) }}>
-              <View style={{ width: '15%', display: 'flex', alignItems: 'center' }}>
-                <Search />
-              </View>
-            </SearchButton>
+            <CustomHeader
+              onSearch={()=>{navigation.navigate('List', {data: []})}}
+              onAlarm={()=>{}}
+            />
             <CardView
               gap={0}
               offset={0}
