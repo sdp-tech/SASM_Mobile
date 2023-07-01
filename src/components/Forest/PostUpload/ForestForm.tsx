@@ -50,10 +50,6 @@ const ForestForm = ({ navigation, route }: NativeStackScreenProps<ForestStackPar
     loadInfo();
   }, [post])
 
-  useEffect(() => {
-    console.log(forest.rep_pic, repPic[0]);
-  }, [])
-
   const options: ImageLibraryOptions = {
     mediaType: "photo",
     maxWidth: 300,
@@ -129,9 +125,9 @@ const ForestForm = ({ navigation, route }: NativeStackScreenProps<ForestStackPar
       if (key === "rep_pic") {
         if(repPic.length > 0){
           formData.append(`${key}`, {
-            uri: repPic.uri,
-            name: repPic.fileName,
-            type: repPic.uri.endsWith('.jpg') ? 'image/jpeg' : 'image/png',
+            uri: repPic[0].uri,
+            name: repPic[0].fileName,
+            type: repPic[0].uri.endsWith('.jpg') ? 'image/jpeg' : 'image/png',
           });
         }
       } else if (key === 'hashtags') {
@@ -183,35 +179,14 @@ const ForestForm = ({ navigation, route }: NativeStackScreenProps<ForestStackPar
     setModalVisible(true);
   }
 
-  const showModal = (post_id: number) => {
-    setModalVisible(true);
-    setTimeout(() => {
-      setModalVisible(false);
-      navigation.replace('PostDetail', {post_id: post_id})
-    }, 3000)
-  }
-
   const handleCursorPosition = useCallback((scrollY: number) => {
     // Positioning scroll bar
     scrollRef.current!.scrollTo({y: scrollY - 30, animated: true});
   }, []);
 
-  const onKeyDown= (e: any) => {
-    if (e.key === 'Backspace') {
-      console.log('back');
-    }
-  }
-
   return (
     <View style={{flex: 1, backgroundColor: 'white'}}>
       <Modal visible={modalVisible}>
-        {/* <View style={{width: width, height: height, backgroundColor: 'white', alignItems: 'center', justifyContent: 'center'}}>
-          <Check color={"#75E59B"}/>
-          <Text style={{fontSize: 20, fontWeight: '700', marginVertical: 10}}>{ post ? '수정 완료 !' : '작성 완료 !'}</Text>
-          <Text>작성한 포레스트는</Text>
-          <Text>마이페이지 {'>'} 포레스트 {'>'} 내가 쓴 포레스트</Text>
-          <Text>에서 확인할 수 있어요</Text>
-        </View> */}
         <FinishModal
           navigation={()=>navigation.replace('PostDetail', {post_id: postId})}
           setModal={setModalVisible}
@@ -284,7 +259,6 @@ const ForestForm = ({ navigation, route }: NativeStackScreenProps<ForestStackPar
           placeholder="내용"
           initialHeight={450}
           useContainer={true}
-          onKeyDown={onKeyDown}
           onCursorPosition={handleCursorPosition}
         />
       </ScrollView>
