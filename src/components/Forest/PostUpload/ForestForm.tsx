@@ -20,7 +20,8 @@ const ForestForm = ({ navigation, route }: NativeStackScreenProps<ForestStackPar
   const scrollRef = useRef<ScrollView>(null);
   const { width, height } = Dimensions.get('window');
   const [nickname, setNickname] = useState<string>('');
-  const [forest, setForest] = useState({ title: "", subtitle: "", content: "", category: post_category.id, semi_categories: [], hashtags: "", photos: [] });
+  const [repPic, setRepPic] = useState([] as any);
+  const [forest, setForest] = useState({ title: "", subtitle: "", content: "", category: post_category.id, semi_categories: [], hashtags: "", photos: [], rep_pic: "" });
   const [photoList, setPhotoList] = useState([] as any);
   const [modalVisible, setModalVisible] = useState(false);
   const [hashtag, setHashtag] = useState([] as any);
@@ -35,20 +36,23 @@ const ForestForm = ({ navigation, route }: NativeStackScreenProps<ForestStackPar
     }
     else {
       // const response_forest = await request.get(`/forest/${post.id}/`);
-      const {title, subtitle, content, category, semi_categories, hashtags, photos} = post;
+      const {title, subtitle, content, category, semi_categories, hashtags, photos, rep_pic} = post;
       const _hashtags = '#'+hashtags.join('#');
       setHashtag(hashtags)
       setForest({
         ...forest,
-        title: title, subtitle: subtitle, content: content, semi_categories: semi_categories, hashtags: _hashtags, photos: photos
+        title: title, subtitle: subtitle, content: content, semi_categories: semi_categories, hashtags: _hashtags, photos: photos, rep_pic: rep_pic
       });
     }
-    console.log(forest);
   }
 
   useEffect(() => {
     loadInfo();
   }, [post])
+
+  useEffect(() => {
+    console.log(forest.rep_pic, repPic[0]);
+  }, [])
 
   const options: ImageLibraryOptions = {
     mediaType: "photo",
@@ -59,6 +63,19 @@ const ForestForm = ({ navigation, route }: NativeStackScreenProps<ForestStackPar
     launchImageLibrary(options, (response: any) => {
       uploadImage(response.assets[0]);
     });
+  }
+
+  const handleRepPic = () => {
+    Alert.alert('대표 사진 선택', '', [
+      {
+        text: '카메라',
+        onPress: () => { launchCamera({ mediaType: 'photo', maxHeight: height / 2, maxWidth: width }, (response: any) => setRepPic(response.assets)) }
+      },
+      {
+        text: '앨범',
+        onPress: () => { launchImageLibrary({ mediaType: 'photo', selectionLimit: 1, maxHeight: height / 2, maxWidth: width }, (response: any) => setRepPic(response.assets)) }
+      }
+    ])
   }
 
   const uploadImage = async (image: any) => {
@@ -82,17 +99,13 @@ const ForestForm = ({ navigation, route }: NativeStackScreenProps<ForestStackPar
       formData.append('semi_categories', "add,"+semi_category.id.toString());
     }
     for (let [key, value] of Object.entries(forest)) {
-      // if (key === "rep_pic") {
-      //   formData.append(`${key}`, {
-      //     uri: repPic[0].uri,
-      //     name: repPic[0].fileName,
-      //     type: 'image/jpeg/png',
-      //   });
-      // } else {
-      //   //문자열의 경우 변환
-      //   formData.append(`${key}`, `${value}`);
-      // }
-      if (key === 'hashtags') {
+      if (key === "rep_pic") {
+        formData.append(`${key}`, {
+          uri: repPic[0].uri,
+          name: repPic[0].fileName,
+          type: repPic[0].uri.endsWith('.jpg') ? 'image/jpeg' : 'image/png',
+        });
+      } else if (key === 'hashtags') {
         let hashtags = value.split('#');
         hashtags = hashtags.splice(1);
         for (const _hashtag of hashtags){
@@ -112,72 +125,60 @@ const ForestForm = ({ navigation, route }: NativeStackScreenProps<ForestStackPar
 
   const updateForest = async () => {
     const formData = new FormData();
-    if(photoList.length > 0){
-      for (const photo of photoList){
-        formData.append('photos', "add,"+photo);
-      }
-    }
-    for (const photo of forest.photos){
-      if (forest.content.includes(photo)===false){
-        formData.append('photos', "remove,"+photo);
-      }
-    }
     for (let [key, value] of Object.entries(forest)) {
-      // if (key === "rep_pic") {
-      //   formData.append(`${key}`, {
-      //     uri: repPic.uri,
-      //     name: repPic.fileName,
-      //     type: 'image/jpeg/png',
-      //   });
-      // } else {
-      //   //문자열의 경우 변환
-      //   formData.append(`${key}`, `${value}`);
-      // }
-      if (key === 'hashtags') {
+      if (key === "rep_pic") {
+        if(repPic.length > 0){
+          formData.append(`${key}`, {
+            uri: repPic.uri,
+            name: repPic.fileName,
+            type: repPic.uri.endsWith('.jpg') ? 'image/jpeg' : 'image/png',
+          });
+        }
+      } else if (key === 'hashtags') {
         let hashtags = value.split('#');
         hashtags = hashtags.splice(1);
         // 추가된 데이터 찾기
         for (const item of hashtags) {
           if (!hashtag.includes(item)) {
-            formData.append('hashtags', "add,"+item.trim());
+            formData.append('hashtags', `add,${item.trim()}`);
           }
         };
         // 삭제된 데이터 찾기
         for (const item of hashtag) {
           if (!hashtags.includes(item)) {
-            formData.append('hashtags', "remove,"+item.trim());
+            formData.append('hashtags', `remove,${item.trim()}`);
           }
         };
       } else if (key === 'photos') {
         if(photoList.length > 0){
           for (const photo of photoList){
-            formData.append('photos', "add,"+photo);
+            formData.append('photos', `add,${photo}`);
           }
         }
         for (const photo of forest.photos){
           if (forest.content.includes(photo)===false){
-            formData.append('photos', "remove,"+photo);
+            formData.append('photos', `remove,${photo}`);
           }
         }
       } else if (key === 'semi_categories') {
         for (const item of value) {
-          if (!post_semi_categories.includes(item)) {
-            formData.append('semi_categories', "add,"+item.id.toString());
+          const existingCategory = post_semi_categories.find((category: any) => category.id === item.id);
+          if (!existingCategory) {
+            formData.append('semi_categories', `remove,${item.id}`);
           }
-        };
-        // 삭제된 데이터 찾기
+        }
         for (const item of post_semi_categories) {
-          if (!value.includes(item)) {
-            formData.append('semi_categories', "remove,"+item.id.toString());
+          const existingCategory = value.find((category: any) => category.id === item.id);
+          if (!existingCategory) {
+            formData.append('semi_categories', `add,${item.id}`);
           }
-        };
+        }
       } else {
         formData.append(`${key}`, `${value}`);
       }
     }
     console.log(formData);
-    // const response = await request.patch(`/forest/${post.id}/update/`, formData, { "Content-Type": "multipart/form-data" });
-    // console.log('수정', response)
+    const response = await request.patch(`/forest/${post.id}/update/`, formData, { "Content-Type": "multipart/form-data" });
     setPostId(post.id);
     setModalVisible(true);
   }
@@ -203,8 +204,6 @@ const ForestForm = ({ navigation, route }: NativeStackScreenProps<ForestStackPar
 
   return (
     <View style={{flex: 1, backgroundColor: 'white'}}>
-      <FormHeader title='포레스트 작성' onLeft={() => navigation.goBack()} onRight={post ? updateForest : saveForest} />
-      <ScrollView>
       <Modal visible={modalVisible}>
         {/* <View style={{width: width, height: height, backgroundColor: 'white', alignItems: 'center', justifyContent: 'center'}}>
           <Check color={"#75E59B"}/>
@@ -214,14 +213,15 @@ const ForestForm = ({ navigation, route }: NativeStackScreenProps<ForestStackPar
           <Text>에서 확인할 수 있어요</Text>
         </View> */}
         <FinishModal
-          navigation={()=>navigation.navigate('PostDetail', {post_id: postId})}
+          navigation={()=>navigation.replace('PostDetail', {post_id: postId})}
           setModal={setModalVisible}
-          timeout={()=>{setModalVisible(false)}}
           title={ post ? '수정 완료 !' : '작성 완료 !'}
           subtitle={['작성한 포레스트는', '마이페이지 > 포레스트 > 내가 쓴 포레스트', '에서 확인할 수 있어요']}
         />
       </Modal>
-      <ImageBackground source={{ uri: post ? forest.photos[0] : photoList.length > 0 ? photoList[0] : "https://reactnative.dev/img/logo-og.png"}} style={{width: width, height: width}}>
+      <FormHeader title='포레스트 작성' onLeft={() => navigation.goBack()} onRight={post ? updateForest : saveForest} />
+      <ScrollView>
+      <ImageBackground source={{ uri: repPic.length > 0 ? repPic[0].uri : forest.rep_pic != '' ? forest.rep_pic : "https://reactnative.dev/img/logo-og.png"}} style={{width: width, height: width}}>
         <Text style={{fontSize: 20, fontWeight: '700', marginLeft: 10, marginTop: 10}}>{post_category.name}</Text>
         <FlatList data={post_semi_categories} renderItem={({item}: any) => { return (
             <View style={{borderRadius: 16, backgroundColor: '#67D393', paddingVertical: 4, paddingHorizontal: 16, marginHorizontal: 8}}>
@@ -253,7 +253,7 @@ const ForestForm = ({ navigation, route }: NativeStackScreenProps<ForestStackPar
           maxLength={40}
         />
         <View style={{flexDirection: 'row', padding: 10, marginLeft: 10}}>
-          <TouchableOpacity onPress={pickImage}>
+          <TouchableOpacity onPress={handleRepPic}>
             <Camera />
           </TouchableOpacity>
           <Text style={{color: '#209DF5', lineHeight: 20, marginLeft: width-150}}>Editor </Text>

@@ -13,8 +13,8 @@ interface PostItemProps {
   preview: string;
   writer: any;
   photos: any;
-  created: string;
-  commentCount: number;
+  rep_pic: string;
+  comment_cnt: number;
   like_cnt: number;
   user_likes: boolean;
   navigation: any;
@@ -28,8 +28,8 @@ const PostItem = ({
   preview,
   writer,
   photos,
-  created,
-  commentCount,
+  rep_pic,
+  comment_cnt,
   like_cnt,
   user_likes,
   navigation,
@@ -93,7 +93,7 @@ const PostItem = ({
                 )}
                 <Text style={{color: '#209DF5', fontSize: 12, lineHeight: 18}}>{like_cnt}</Text>
                 <CommentIcon width={15} height={15} />
-                <Text style={{color: '#209DF5', fontSize: 12, lineHeight: 18}}>30</Text>
+                <Text style={{color: '#209DF5', fontSize: 12, lineHeight: 18}}>{comment_cnt}</Text>
               </View>
             </View>
             <View>
@@ -105,14 +105,19 @@ const PostItem = ({
                   justifyContent: "flex-end",
                   padding: 5,
                 }}
-                source={{ uri: photos[0] }}
+                source={{ uri: rep_pic }}
               >
                 <TouchableOpacity onPress={() => console.log("저장")}>
                   <Scrap />
                 </TouchableOpacity>
               </ImageBackground>
-              <Image style={{width: 90, height: 90}} source={{uri: photos[1]}} />
-              <Image style={{width: 90, height: 90}} source={{uri: photos[2]}} />
+              {photos.map((uri: string, index: number) => {
+                return (
+                  <Image style={{width: 90, height: 90}} key={index} source={{uri: uri}} />
+                )
+              })}
+              {/* <Image style={{width: 90, height: 90}} source={{uri: photos[1]}} />
+              <Image style={{width: 90, height: 90}} source={{uri: photos[2]}} /> */}
             </View>
             <TouchableOpacity onPress={() => setPressed(false)}
               style={{ position: "absolute", top: 300, left: (width-30) / 2 }}
@@ -151,7 +156,7 @@ const PostItem = ({
                 justifyContent: "flex-end",
                 padding: 5,
               }}
-              source={{ uri: photos[0] }}
+              source={{ uri: rep_pic }}
             >
               <TouchableOpacity onPress={() => console.log("저장")}>
                 <Scrap />
@@ -175,8 +180,8 @@ export const HotPostItem = ({
   preview,
   writer,
   photos,
-  created,
-  commentCount,
+  rep_pic,
+  comment_cnt,
   like_cnt,
   user_likes,
   navigation,
@@ -198,7 +203,7 @@ export const HotPostItem = ({
           });
         }}
       >
-        <ImageBackground source={{ uri: photos[0] }}
+        <ImageBackground source={{ uri: rep_pic }}
           style={{ width: width - 40, height: 100 }} imageStyle={{ borderRadius: 4 }}>
           <View style={{ alignItems: "center", flex: 1, marginTop: 40 }}>
             <Text style={{ color: "white", fontSize: 16, fontWeight: "700"}}>{title}</Text>
