@@ -40,8 +40,10 @@ interface Post {
   created: string;
   updated: string;
   like_cnt: number;
+  comment_cnt: number;
   viewCount: number;
   likes: boolean;
+  rep_pic: string;
   photos: Array<string>;
   hashtags: Array<string>;
   semi_categories: Array<string>;
@@ -81,7 +83,7 @@ const PostDetailSection = ({
       <ImageBackground
         style={{ height: 400 }}
         source={{
-          uri: post.photos[0],
+          uri: post.rep_pic,
         }}
       >
         <View
@@ -267,7 +269,7 @@ const BottomBarSection = ({post, onUpdate, onDelete, like, toggleLike}: BottomBa
         <Heart like={like} onPress={toggleLike}></Heart>
         <Text>{post.like_cnt}</Text>
         <CommentIcon />
-        <Text>30</Text>
+        <Text>{post.comment_cnt}</Text>
       </View>
       <TouchableOpacity>
         <Scrap fill={'black'}/>
@@ -368,6 +370,12 @@ const PostDetailScreen = ({
   const onFollow = async () => {
     const response = await request.post('/mypage/follow/', {}, {});
     setFollow(response.data.data.follows);
+  }
+
+  const onReport = async () => {
+    const response = await request.post(`/forest/${post_id}/report/`, {
+      category: 1
+    }, {});
   }
 
   const callback = (text: string, id: number) => {
