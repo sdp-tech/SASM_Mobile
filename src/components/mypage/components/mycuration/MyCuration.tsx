@@ -120,7 +120,7 @@ const MyStory = ({ navigation, route }: MyPageParams) => {
                 </View>
               ) : (
                 <FlatList
-                  data={type ? data : written}
+                  data={type ? info : written}
                   renderItem={({ item }: any) => (
                     <ItemCard
                       props={item}
