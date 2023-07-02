@@ -4,6 +4,7 @@ import { View, TouchableOpacity, Dimensions, Pressable } from 'react-native';
 import { TextPretendard as Text } from './CustomText';
 import styled from 'styled-components/native';
 import Animated, { Easing, useAnimatedStyle, useSharedValue, withTiming } from 'react-native-reanimated';
+import Add from '../assets/img/common/Add.svg';
 
 
 const ButtonWrapper = styled.TouchableOpacity`
@@ -18,53 +19,32 @@ const ButtonWrapper = styled.TouchableOpacity`
 
 interface PlusProps {
   onPress: () => void;
+  position: 'leftbottom' | 'lefttop' | 'rightbottom' | 'righttop';
 }
 
-export default function PlusButton({ onPress }: PlusProps): JSX.Element {
-  const { width, height } = Dimensions.get('screen');
-  //modal 보이기
-  const [modalView, setModalView] = useState<boolean>(false);
-  //탭 전환 시 modal 자동 닫기
-  useFocusEffect(useCallback(() => {
-    setModalView(false);
-  }, []));
-  const animatedPosition = useSharedValue(0);
-  const animatedStyle1 = useAnimatedStyle(() => {
-    return {
-      transform: [{ translateY: withTiming(animatedPosition.value, { duration: 500 }) }]
-    };
-  })
-  const animatedStyle2 = useAnimatedStyle(() => {
-    return {
-      transform: [{ translateY: withTiming(2 * animatedPosition.value, { duration: 500 }) }]
-    };
-  })
-  useEffect(() => {
-    if (modalView) {
-    }
-  }, [modalView]);
+export default function PlusButton({ onPress, position }: PlusProps) {
+  
+  let style;
+  switch (position) {
+    case ('leftbottom'):
+      style = { left: 15, bottom: 15 }
+      break;
+    case ('lefttop'):
+      style = { left: 15, top: 15 }
+      break;
+    case ('rightbottom'):
+      style = { right: 15, bottom: 15 }
+      break;
+    case ('righttop'):
+      style = { right: 15, top: 15 }
+      break;
+  }
+
   return (
-    <>
-      {
-        modalView &&
-        <Pressable
-          onPress={() => { setModalView(!modalView); animatedPosition.value = modalView ? 0 : -60 }}
-          style={{ width: width, height: height, backgroundColor: 'rgba(0,0,0,0.5)', position: 'absolute', right: 0, bottom: 0 }}>
-        </Pressable>
-      }
-      <Animated.View style={animatedStyle2}>
-        <ButtonWrapper onPress={() => { }}>
-        </ButtonWrapper>
-      </Animated.View>
-      <Animated.View style={animatedStyle1}>
-        <ButtonWrapper onPress={() => { }}>
-        </ButtonWrapper>
-      </Animated.View>
-      <Animated.View>
-        <ButtonWrapper onPress={() => { setModalView(!modalView); animatedPosition.value = modalView ? 0 : -60 }}>
-          <Text>{modalView ? 'down' : 'up'}</Text>
-        </ButtonWrapper>
-      </Animated.View>
-    </>
+    <TouchableOpacity
+      onPress={onPress}
+      style={{ position: "absolute",  ...style ,shadowColor: 'black', shadowOffset: { width: 0, height: 5 }, shadowOpacity: 0.3 }}>
+      <Add />
+    </TouchableOpacity>
   )
 }
