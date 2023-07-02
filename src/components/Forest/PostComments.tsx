@@ -2,7 +2,6 @@ import { useEffect, useState } from 'react';
 import { TextPretendard as Text } from '../../common/CustomText';
 import { SafeAreaView, View, TouchableOpacity, Dimensions, FlatList, Modal, Pressable } from 'react-native';
 import { Request } from '../../common/requests';
-import { StoryProps } from '../../pages/Story';
 import Comment from './components/Comment';
 import WriteComment from './components/WriteComment';
 import Arrow from '../../assets/img/common/Arrow.svg';
@@ -13,8 +12,6 @@ import { ForestStackParams } from '../../pages/Forest';
 const PostCommentsScreen = ({ navigation, route }: NativeStackScreenProps<ForestStackParams, "PostComments">) => {
   const { width, height } = Dimensions.get('screen');
   const id = route.params.id;
-  //const reRenderScreen = route.params.reRenderScreen;
-  //const comment = route.params.comment;
   const email = route.params.email;
   const [comment, setComment] = useState([] as any);
   const [updateText, setUpdateText] = useState<string>('');
@@ -31,7 +28,7 @@ const PostCommentsScreen = ({ navigation, route }: NativeStackScreenProps<Forest
   const loadComment = async () => {
     setLoading(true);
     const response= await request.get(`/forest/${id}/comments/`, {}, {});
-    setComment(response.data.data);
+    setComment(response.data.data.results);
     setLoading(false);
   }
 
