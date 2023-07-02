@@ -254,7 +254,7 @@ const TextStyles = StyleSheet.create({
     fontWeight: "600",
     fontSize: 16,
     lineHeight: 19,
-    widht: '70%',
+    width: '70%',
   },
   Sub: {
     fontWeight: "400",
