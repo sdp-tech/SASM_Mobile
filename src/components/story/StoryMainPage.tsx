@@ -61,22 +61,16 @@ const StoryMainPage = ({ navigation, route }: StoryProps) => {
       setItem([]);
     }
   };
-
+  
   const getStories = async () => {
-    let category;
-    if (checkedList.length > 0) {
-      category = checkedList.toString()
-    } else {
-      category = null
+    let params = new URLSearchParams();
+    for (const category of checkedList){
+      params.append('filter', category);
     }
-
-    const response = await request.get("/stories/story_search/", {
-      page: page,
-      search: search,
-      order: order,
-      filter: category
-    }, null);
-
+    params.append('search', search);
+    params.append('page', page.toString());
+    params.append('order', order);
+    const response = await request.get(`/stories/story_search/?${params.toString()}`,null, null)
     if (page === 1) {
       setItem(response.data.data.results);
     } else {
@@ -84,8 +78,6 @@ const StoryMainPage = ({ navigation, route }: StoryProps) => {
     }
     setCount(response.data.data.count);
     setNextPage(response.data.data.next);
-    console.log(orderList, order);
-    console.log(item);
   };
 
   const onRefresh = async () => {
