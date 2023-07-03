@@ -1,8 +1,7 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import {
   FlatList,
   StyleSheet,
-  Text,
   SafeAreaView,
   ActivityIndicator,
   ScrollView,
@@ -12,13 +11,15 @@ import {
   TouchableOpacity,
   Image,
 } from "react-native";
+import { TextPretendard as Text } from "../../common/CustomText";
 import type { NativeStackScreenProps } from "@react-navigation/native-stack";
+import { useFocusEffect } from "@react-navigation/native";
 import CardView from "../../common/CardView";
 import CustomHeader from "../../common/CustomHeader";
 import PostItem, { HotPostItem } from "./components/PostItem";
 import BoardItem from "./components/BoardItem";
 
-import { ForestStackParams, BoardFormat } from "../../pages/Forest";
+import { ForestStackParams } from "../../pages/Forest";
 import { Request } from "../../common/requests";
 import PlusButton from "../../common/PlusButton";
 
@@ -31,9 +32,6 @@ const BoardListScreen = ({
   const [refreshing, setRefreshing] = useState(false);
   const [nickname, setNickname] = useState('');
   const [page, setPage] = useState(1);
-  const [searchQuery, setSearchQuery] = useState("");
-  const [searchType, setSearchType] = useState("default");
-  const [searchEnabled, setSearchEnabled] = useState(true);
   const [boardLists, setBoardLists] = useState([] as any);
   const [like, setLike] = useState<boolean>(false);
   const [posts, setPosts] = useState([] as any);
@@ -70,26 +68,6 @@ const BoardListScreen = ({
     setNewPosts(response_new.data.data.results);
   };
 
-  // const getRefreshData = async () => {
-  //     setRefreshing(true);
-  //     await RefreshDataFetch();
-  //     setRefreshing(false);
-  // }
-
-  // const onRefresh = () => {
-  //     if (!refreshing) {
-  //         getRefreshData();
-  //     }
-  // }
-
-  // const getData = async () => {
-  //     if (true) {
-  //         setLoading(true);
-  //         await DataFetch();
-  //         setLoading(false);
-  //     }
-  // }
-
   const chunkArray = (array: any, size: number) => {
     const chunkedArray = [];
     let index = 0;
@@ -100,11 +78,19 @@ const BoardListScreen = ({
     return chunkedArray;
   };
 
+  const onRefresh = () => {
+    setRefreshing(true);
+    setRefreshing(false);
+  }
+
   useEffect(() => {
-    getUserInfo();
     getBoardItems();
+  }, [refreshing]);
+
+  useFocusEffect(useCallback(() => {
+    getUserInfo();
     getPosts();
-  }, [page]);
+  }, [refreshing]))
 
   return (
     <SafeAreaView style={styles.container}>
@@ -256,6 +242,7 @@ const BoardListScreen = ({
                         comment_cnt={comment_cnt}
                         like_cnt={like_cnt}
                         user_likes={user_likes}
+                        onRefresh={onRefresh}
                         navigation={navigation}
                       />
                     );
@@ -275,17 +262,17 @@ const BoardListScreen = ({
             padding: 20
           }}
         >
-          <Text style={{ color: '#3C3C3C', fontWeight: '700', fontSize: 16, lineHeight: 22 }}>{nickname}님 이 정보들은 어떠신가요?</Text>
+          <Text style={{color: '#3C3C3C', fontWeight: '700', fontSize: 16, lineHeight: 22}}>{nickname}님 이 정보들은 어떠신가요?</Text>
           <FlatList
-            data={posts.slice(0, 3)}
+            data={posts.slice(0,3)}
             scrollEnabled={false}
             keyExtractor={(item) => item.id.toString()}
             renderItem={({ item }: any) => (
-              <TouchableOpacity style={{ flexDirection: "row", marginTop: 10 }} onPress={() => { navigation.navigate('PostDetail', { post_id: item.id }) }}>
-                <View style={{ borderColor: '#67D393', borderWidth: 1, borderRadius: 8, paddingVertical: 2, paddingHorizontal: 4 }}>
-                  <Text style={{ color: '#67D393', fontSize: 10, fontWeight: '600' }}>#ESG</Text>
+              <TouchableOpacity style={{ flexDirection: "row", marginTop: 10}} onPress={() => {navigation.navigate('PostDetail', {post_id: item.id})}}>
+                <View style={{borderColor: '#67D393', borderWidth: 1, borderRadius: 8, paddingVertical: 2, paddingHorizontal: 4}}>
+                  <Text style={{color: '#67D393', fontSize: 10, fontWeight: '600'}}>#ESG</Text>
                 </View>
-                <Text style={{ color: '#3C3C3C', fontSize: 12, lineHeight: 18, marginLeft: 5 }} numberOfLines={1}>{item.title}</Text>
+                <Text style={{color: '#3C3C3C', fontSize: 12, lineHeight: 18, marginLeft: 5}} numberOfLines={1}>{item.title}</Text>
               </TouchableOpacity>
             )}
           />
@@ -352,6 +339,7 @@ const BoardListScreen = ({
                         comment_cnt={comment_cnt}
                         like_cnt={like_cnt}
                         user_likes={user_likes}
+                        onRefresh={onRefresh}
                         navigation={navigation}
                       />
                     )
@@ -413,6 +401,7 @@ const BoardListScreen = ({
                   comment_cnt={comment_cnt}
                   like_cnt={like_cnt}
                   user_likes={user_likes}
+                  onRefresh={onRefresh}
                   navigation={navigation}
                 />
               );

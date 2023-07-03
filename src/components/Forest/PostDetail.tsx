@@ -42,7 +42,7 @@ interface Post {
   like_cnt: number;
   comment_cnt: number;
   viewCount: number;
-  likes: boolean;
+  user_likes: boolean;
   rep_pic: string;
   photos: Array<string>;
   hashtags: Array<string>;
@@ -51,6 +51,7 @@ interface Post {
 
 interface PostDetailSectionProps {
   post: Post;
+  navigation: any;
 }
 
 interface UserInfoSectionProps {
@@ -68,6 +69,7 @@ const { width, height } = Dimensions.get('screen');
 
 const PostDetailSection = ({
   post,
+  navigation
 }: PostDetailSectionProps) => {
   const markup = {
     html: `${post?.content}`
@@ -92,17 +94,18 @@ const PostDetailSection = ({
             marginTop: 45,
             alignSelf: "center",
             flex: 1,
+            padding: 10
           }}
         >
-          <TouchableOpacity>
-            <Arrow transform={[{ rotate: '180deg'}]}/>
+          <TouchableOpacity style={{marginTop: 5}} onPress={() => {navigation.goBack()}}>
+            <Arrow width={18} height={18} transform={[{ rotate: '180deg'}]}/>
           </TouchableOpacity>
           <Text
             style={{
               fontSize: 20,
               fontWeight: "700",
               marginBottom: 15,
-              textAlign: "center",
+              marginLeft: width/2 -50,
               flex: 1
             }}
           >
@@ -258,11 +261,18 @@ interface BottomBarSectionProps {
   post: Post;
   onUpdate: () => void;
   onDelete: () => void;
-  like: boolean,
-  toggleLike: () => void;
+  onRefresh: any;
 }
 
-const BottomBarSection = ({post, onUpdate, onDelete, like, toggleLike}: BottomBarSectionProps) => {
+const BottomBarSection = ({post, onUpdate, onDelete, onRefresh}: BottomBarSectionProps) => {
+  const [like, setLike] = useState<boolean>(post.user_likes)
+  const request = new Request();
+
+  const toggleLike = async () => {
+    const response = await request.post(`/forest/${post.id}/like/`);
+    setLike(!like);
+    onRefresh();
+  };
   return (
     <View style={{ flexDirection: "row", padding: 10 }}>
       <View style={{flexDirection: 'row', flex: 1}}>
@@ -300,19 +310,9 @@ const PostDetailScreen = ({
   const [updateText, setUpdateText] = useState<string>('');
   const [follow, setFollow] = useState<boolean>(false);
   const [writerPosts, setWriterPosts] = useState([] as any);
-  // const [category, setCategory] = useState({id: 0, name: ''});
-  const [like, setLike] = useState<boolean>(false);
-  // const [semiCategories, setSemiCategories] = useState([] as any);
 
   const request = new Request();
-
   const post_id = route.params.post_id;
- 
-  const toggleLike = async () => {
-    const response = await request.post(`/forest/${post_id}/like/`);
-    setLike(!like);
-    onRefresh();
-  };
 
   const checkUser = async () => {
     const response = await request.get(`/mypage/me/`,{},{});
@@ -335,14 +335,6 @@ const PostDetailScreen = ({
     setUpdateText('');
     setRefreshing(false);
   };
-
-  const onRefresh = async () => {
-    if(!refreshing){
-      setRefreshing(true);
-      await loadItem();
-      setRefreshing(false);
-    }
-  }
 
   const deletePost = async () => {
     const _delete = async () => {
@@ -381,7 +373,6 @@ const PostDetailScreen = ({
   const callback = (text: string, id: number) => {
     setUpdateText(text);
     setCommentId(id);
-    console.log(updateText);
   }
 
   const data = [
@@ -405,15 +396,12 @@ const PostDetailScreen = ({
         <>
           <FlatList
             data={comment}
-            // keyExtractor={(_) => _.name}
             style={styles.container}
-            onRefresh={onRefresh}
+            onRefresh={reRenderScreen}
             refreshing={refreshing}
-            // onEndReached={onEndReached}
-            // onEndReachedThreshold={0.6}
             ListHeaderComponent={
               <>
-                <PostDetailSection post={post}/>
+                <PostDetailSection post={post} navigation={navigation}/>
                 <UserInfoSection user={post.writer} onFollow={onFollow} posts={writerPosts} navigation={navigation}/>
                 <View style={{flexDirection: 'row'}}>
                   <Text style={{fontSize: 14, fontWeight: '500', margin: 15}}>한줄평</Text>
@@ -442,7 +430,7 @@ const PostDetailScreen = ({
               )
           }}
           />
-          <BottomBarSection post={post} like={like} toggleLike={toggleLike} onDelete={deletePost} onUpdate={() => {navigation.navigate('CategoryForm', {post: post})}} />
+          <BottomBarSection post={post} onDelete={deletePost} onUpdate={() => {navigation.navigate('CategoryForm', {post: post})}} onRefresh={reRenderScreen} />
         </>
       )}
     </View>
@@ -455,13 +443,5 @@ const styles = StyleSheet.create({
     backgroundColor: "white",
   },
 });
-
-const PhotoBox = styled.View`
-  display: flex;
-  min-height: 110px;
-  margin: 10px 0;
-  flex-flow: row wrap;
-  justify-content: space-around;
-`;
 
 export default PostDetailScreen;

@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
-// import { TextPretendard as Text } from "../../../common/CustomText";
-import { View, ImageBackground, TouchableOpacity, Dimensions, Text, Image } from 'react-native';
+import { TextPretendard as Text } from "../../../common/CustomText";
+import { View, ImageBackground, TouchableOpacity, Dimensions, Image } from 'react-native';
 import Scrap from "../../../assets/img/Forest/Scrap.svg";
 import Arrow from "../../../assets/img/common/Arrow.svg";
 import CommentIcon from '../../../assets/img/Story/Comment.svg';
@@ -17,6 +17,7 @@ interface PostItemProps {
   comment_cnt: number;
   like_cnt: number;
   user_likes: boolean;
+  onRefresh: any;
   navigation: any;
 }
 
@@ -32,15 +33,20 @@ const PostItem = ({
   comment_cnt,
   like_cnt,
   user_likes,
+  onRefresh,
   navigation,
 }: PostItemProps) => {
   const [pressed, setPressed] = useState<boolean>(false);
   const [like, setLike] = useState<boolean>(false);
   const request = new Request();
+  useEffect(() => {
+    user_likes && setLike(true);
+  }, [user_likes])
 
   const toggleLike = async () => {
     const response = await request.post(`/forest/${post_id}/like/`);
     setLike(!like);
+    onRefresh();
   };
   return (
     <TouchableOpacity
@@ -54,7 +60,7 @@ const PostItem = ({
         style={{
           width: width - 30,
           paddingTop: 20,
-          paddingBottom: pressed ? 40 : 20,
+          paddingBottom: 20,
           borderBottomWidth: 1,
           borderBottomColor: "#373737",
           flexDirection: "row",
@@ -86,15 +92,16 @@ const PostItem = ({
               </View>
               <View style={{flexDirection: 'row', }}>
                 <Text style={{ color: '#67D393', fontSize: 12, fontWeight: "600", opacity: 0.6, lineHeight: 18, flex: 1 }}>{writer.nickname}</Text>
-                {user_likes ? (
-                  <Heart like={!like} onPress={toggleLike} />
-                ) : (
-                  <Heart like={like} onPress={toggleLike} />
-                )}
+                <Heart like={like} onPress={toggleLike} />
                 <Text style={{color: '#209DF5', fontSize: 12, lineHeight: 18}}>{like_cnt}</Text>
                 <CommentIcon width={15} height={15} />
                 <Text style={{color: '#209DF5', fontSize: 12, lineHeight: 18}}>{comment_cnt}</Text>
               </View>
+              <TouchableOpacity onPress={() => setPressed(false)}
+                style={{ marginLeft: (width-30) / 2 }}
+              >
+                <Arrow transform={[{ rotate: "270deg" }]} width={15} height={15} />
+              </TouchableOpacity>
             </View>
             <View>
               <ImageBackground
@@ -116,14 +123,7 @@ const PostItem = ({
                   <Image style={{width: 90, height: 90}} key={index} source={{uri: uri}} />
                 )
               })}
-              {/* <Image style={{width: 90, height: 90}} source={{uri: photos[1]}} />
-              <Image style={{width: 90, height: 90}} source={{uri: photos[2]}} /> */}
             </View>
-            <TouchableOpacity onPress={() => setPressed(false)}
-              style={{ position: "absolute", top: 300, left: (width-30) / 2 }}
-            >
-              <Arrow transform={[{ rotate: "270deg" }]} width={15} height={15} />
-            </TouchableOpacity>
           </>
         ) : (
           <>
@@ -184,14 +184,20 @@ export const HotPostItem = ({
   comment_cnt,
   like_cnt,
   user_likes,
+  onRefresh,
   navigation,
 }: PostItemProps) => {
   const [like, setLike] = useState<boolean>(false);
   const request = new Request();
 
+  useEffect(() => {
+    user_likes && setLike(true);
+  }, [user_likes])
+
   const toggleLike = async () => {
     const response = await request.post(`/forest/${post_id}/like/`);
     setLike(!like);
+    onRefresh();
   };
 
   return (
@@ -210,11 +216,7 @@ export const HotPostItem = ({
           </View>
           <View style={{flexDirection: "row", padding: 10}}>
             <View style={{flexDirection: "row", alignSelf: "flex-start", flex: 1}}>
-              {user_likes ? (
-                <Heart like={!like} onPress={toggleLike} white={true} />
-              ) : (
-                <Heart like={like} onPress={toggleLike} white={true} />
-              )}
+              <Heart like={like} onPress={toggleLike} white={true} />
               <Text style={{ color: "white", lineHeight: 18, marginLeft: 3 }}>{like_cnt}</Text>
             </View>
             <View style={{flexDirection: "row", alignSelf: "flex-end"}}>
