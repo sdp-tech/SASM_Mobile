@@ -1,5 +1,4 @@
-import { useEffect, useState } from "react";
-// import { TextPretendard as Text } from "../../common/CustomText";
+import { useEffect, useState, useCallback } from "react";
 import {
   View,
   TouchableOpacity,
@@ -8,63 +7,22 @@ import {
   StyleSheet,
   ImageBackground,
   Dimensions,
-  Text
+  ActivityIndicator,
 } from "react-native";
+import { TextPretendard as Text } from "../../common/CustomText";
 import type { NativeStackScreenProps } from "@react-navigation/native-stack";
+import { useFocusEffect } from "@react-navigation/native";
 
-import { ForestStackParams, BoardFormat } from "../../pages/Forest";
+import { ForestStackParams } from "../../pages/Forest";
 import { Request } from "../../common/requests";
 import SearchBar from "../../common/SearchBar";
 import CardView from "../../common/CardView";
 import DropDown from "../../common/DropDown";
 import PostItem from "./components/PostItem";
 import Add from "../../assets/img/common/Add.svg";
+import Arrow from "../../assets/img/common/Arrow.svg";
 
 const { width, height } = Dimensions.get('window');
-
-interface PostSearchListSectionProps {
-  posts: any;
-  navigation: any;
-}
-
-const PostSearchListSection = ({
-  posts,
-  navigation,
-}: PostSearchListSectionProps) => {
-  return (
-    <FlatList
-      data={posts}
-      renderItem={({ item }: any) => {
-        const {
-          id,
-          title,
-          preview,
-          writer,
-          photos,
-          rep_pic,
-          comment_cnt,
-          like_cnt,
-          user_likes
-        } = item;
-        return (
-          <PostItem
-                key={id}
-                post_id={id}
-                title={title}
-                preview={preview}
-                writer={writer}
-                photos={photos}
-                rep_pic={rep_pic}
-                comment_cnt={comment_cnt}
-                like_cnt={like_cnt}
-                user_likes={user_likes}
-                navigation={navigation}
-              />
-        );
-      }}
-    />
-  );
-};
 
 const PostSearchScreen = ({
   navigation,
@@ -73,13 +31,9 @@ const PostSearchScreen = ({
     { label: '최신순', value: 0, order: 'latest' },
     { label: '인기순', value: 1, order: 'hot' },
   ]
-  const [loading, setLoading] = useState(false);
   const [refreshing, setRefreshing] = useState(false);
-  const [boardFormat, setBoardFormat] = useState<BoardFormat>();
-  const [page, setPage] = useState(1);
   const [search, setSearch] = useState("");
-  const [category, setCategory] = useState<string>("");
-  const [searchEnabled, setSearchEnabled] = useState(true);
+  const [category, setCategory] = useState(1);
   const [orderList, setOrderList] = useState(0);
   const [order, setOrder] = useState<string>(toggleItems[orderList].order);
   const [count, setCount] = useState(0);
@@ -96,23 +50,26 @@ const PostSearchScreen = ({
     { id: 6, name: "액티비티" },
   ];
 
-  // const getBoardFormat = async () => {
-  //   const response = await request.get(`/community/boards/${1}/`);
-  //   setBoardFormat(response.data);
-  //   //console.log(response.data)
-  // };
   const onChangeOrder = async () => {
     setOrder(toggleItems[orderList].order);
+  }
+
+  const checkCategory = (itemId: any) => {
+    setCategory(itemId);
+  };
+
+  const onRefresh = () => {
+    setRefreshing(true);
+    setRefreshing(false);
   }
 
   useEffect(() => {
     onChangeOrder();
   }, [orderList]);
 
-  useEffect(() => {
-    // getBoardFormat();
+  useFocusEffect(useCallback(() => {
     getPosts();
-  }, [order, search, category]);
+  }, [order, search, category, refreshing]));
 
   const getPosts = async () => {
     const response = await request.get(
@@ -126,24 +83,26 @@ const PostSearchScreen = ({
     );
     setPosts(response.data.data.results);
     setCount(response.data.data.count);
-    //console.log(response.data.data.results);
   };
 
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: "white" }}>
+      <View style={{flexDirection: 'row'}}>
+      <TouchableOpacity style={{justifyContent: 'center', marginLeft: 10}} onPress={()=>{navigation.goBack();}}>
+        <Arrow width={18} height={18} transform={[{rotate: '180deg'}]} />
+      </TouchableOpacity>
       <SearchBar
         search={search}
         setSearch={setSearch}
-        setPage={setPage}
-        style={{ backgroundColor: "#F4F4F4", width: 350 }}
+        style={{ backgroundColor: "#F4F4F4", width: 330 }}
         placeholder={"무엇을 검색하시겠습니까"}
       />
+      </View>
       {search.length > 0 ? (
         <>
           <View
             style={{
               borderColor: "#E3E3E3",
-              borderBottomWidth: 1,
               borderTopWidth: 1,
               marginTop: 10,
             }}
@@ -158,12 +117,13 @@ const PostSearchScreen = ({
                 <TouchableOpacity
                   style={{
                     alignItems: "center",
-                    borderBottomColor: "#67D393",
-                    borderBottomWidth: 1,
+                    borderBottomColor: item.id === category ? "#67D393" : "#E3E3E3",
+                    borderBottomWidth: 2,
                     width: 90,
+                    height: 40,
                     justifyContent: "center",
                   }}
-                  onPress={()=>setCategory(item.id)}
+                  onPress={()=>checkCategory(item.id)}
                 >
                   <Text style={{ fontSize: 14, fontWeight: "200" }}>
                     {item.name}
@@ -171,25 +131,48 @@ const PostSearchScreen = ({
                 </TouchableOpacity>
               )}
             />
-            <View style={{flexDirection: 'row', zIndex: 1, alignItems: 'center', padding: 15, backgroundColor: '#F1FCF5'}}>
+          </View>
+          <View style={{flexDirection: 'row', zIndex: 1, alignItems: 'center', padding: 15, backgroundColor: '#F1FCF5'}}>
               <Text style={{fontSize: 12, fontWeight: '400', flex: 1}}>전체 검색결과 {count}개</Text>
               <View style={{width: 100, zIndex: 2000}}>
                 <DropDown value={orderList} setValue={setOrderList} isBorder={false} items={toggleItems} />
               </View>
             </View>
-          </View>
-          <CardView
-            gap={0}
-            offset={0}
-            pageWidth={width}
-            dot={false}
-            data={posts}
-            renderItem={({ item }: any) => {
-              return (
-                <PostSearchListSection posts={posts} navigation={navigation} />
-              );
-            }}
-          />
+              <FlatList
+                data={posts}
+                style={{flexGrow: 1}}
+                refreshing={refreshing}
+                onRefresh={onRefresh}
+                renderItem={({ item }: any) => {
+                  const {
+                    id,
+                    title,
+                    preview,
+                    writer,
+                    photos,
+                    rep_pic,
+                    comment_cnt,
+                    like_cnt,
+                    user_likes
+                  } = item;
+                  return (
+                    <PostItem
+                          key={id}
+                          post_id={id}
+                          title={title}
+                          preview={preview}
+                          writer={writer}
+                          photos={photos}
+                          rep_pic={rep_pic}
+                          comment_cnt={comment_cnt}
+                          like_cnt={like_cnt}
+                          user_likes={user_likes}
+                          onRefresh={onRefresh}
+                          navigation={navigation}
+                        />
+                  );
+                }}
+              />
         </>
       ) : (
         <>

@@ -1,9 +1,8 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import {
   View,
   FlatList,
   StyleSheet,
-  Text,
   SafeAreaView,
   ActivityIndicator,
   TouchableOpacity,
@@ -12,13 +11,15 @@ import {
   ImageBackground,
   ScrollView,
 } from "react-native";
+import { TextPretendard as Text } from "../../common/CustomText";
 import type { NativeStackScreenProps } from "@react-navigation/native-stack";
 import styled from "styled-components/native";
 import ListHeader from "./components/ListHeader";
 import PostItem, { HotPostItem } from "./components/PostItem";
+import { useFocusEffect } from "@react-navigation/native";
 import Add from "../../assets/img/common/Add.svg";
 
-import { ForestStackParams, BoardFormat } from "../../pages/Forest";
+import { ForestStackParams } from "../../pages/Forest";
 import { Request } from "../../common/requests";
 import CardView from "../../common/CardView";
 
@@ -33,11 +34,6 @@ const BoardDetailScreen = ({
 }: NativeStackScreenProps<ForestStackParams, "BoardDetail">) => {
   const [loading, setLoading] = useState(false);
   const [refreshing, setRefreshing] = useState(false);
-  const [boardFormat, setBoardFormat] = useState<BoardFormat>();
-  const [page, setPage] = useState(1);
-  const [searchQuery, setSearchQuery] = useState("");
-  const [searchType, setSearchType] = useState("default");
-  const [searchEnabled, setSearchEnabled] = useState(true);
   const [nickname, setNickname] = useState('');
   const [posts, setPosts] = useState([] as any);
   const [hotPosts, setHotPosts] = useState([] as any);
@@ -78,31 +74,15 @@ const BoardDetailScreen = ({
     return chunkedArray;
   };
 
-  useEffect(() => {
+  const onRefresh = () => {
+    setRefreshing(true);
+    setRefreshing(false);
+  }
+
+  useFocusEffect(useCallback(() => {
     getUserInfo();
     getPosts();
-  }, [board_category.id])
-
-  // const onRefresh = async () => {
-  //   if (!refreshing) {
-  //     setPage(1);
-  //     setRefreshing(true);
-  //     setPosts(await getPosts(searchQuery, "default", 1));
-  //     setRefreshing(false);
-  //   }
-  // };
-
-  // const onEndReached = async () => {
-  //   if (!loading) {
-  //     const newPosts = await getPosts(searchQuery, searchType, page + 1);
-  //     setPosts([...posts, ...(newPosts as never)]);
-  //     setPage(page + 1);
-  //   }
-  // };
-
-  // const hashtagSearching = () => {
-  //   return searchQuery.length > 0 && searchQuery[0] == "#";
-  // };
+  }, [refreshing]))
 
   const hashtags = [
     { name: "비건" },
@@ -193,6 +173,7 @@ const BoardDetailScreen = ({
                                 comment_cnt={comment_cnt}
                                 like_cnt={like_cnt}
                                 user_likes={user_likes}
+                                onRefresh={onRefresh}
                                 navigation={navigation}
                               />
                         )}}
@@ -288,6 +269,7 @@ const BoardDetailScreen = ({
                                 comment_cnt={comment_cnt}
                                 like_cnt={like_cnt}
                                 user_likes={user_likes}
+                                onRefresh={onRefresh}
                                 navigation={navigation}
                               />
                         )}}
@@ -349,6 +331,7 @@ const BoardDetailScreen = ({
                           comment_cnt={comment_cnt}
                           like_cnt={like_cnt}
                           user_likes={user_likes}
+                          onRefresh={onRefresh}
                           navigation={navigation}
                         />
                   );

@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { TextPretendard as Text } from "../../common/CustomText";
 import {
   View,
@@ -12,7 +12,7 @@ import {
   ImageBackground,
 } from "react-native";
 import type { NativeStackScreenProps } from "@react-navigation/native-stack";
-import styled from "styled-components/native";
+import { useFocusEffect } from "@react-navigation/native";
 import ListHeader from "./components/ListHeader";
 import Add from "../../assets/img/common/Add.svg";
 
@@ -49,42 +49,29 @@ const PostListScreen = ({
     setLoading(true);
     const response = await request.get('/forest/', {
       order: order,
-      category_filter: board_category.id
+      category_filter: board_category?.id
     }, null);
     setPosts(response.data.data.results);
     setCount(response.data.data.count);
     setLoading(false);
-    console.log(response)
   }
 
   const onChangeOrder = async () => {
     setOrder(toggleItems[orderList].order);
   }
 
+  const onRefresh = () => {
+    setRefreshing(true);
+    setRefreshing(false);
+  }
+
   useEffect(() => {
     onChangeOrder();
   }, [orderList]);
 
-  useEffect(() => {
+  useFocusEffect(useCallback(() => {
     getPosts();
-  }, [order]);
-
-  // const onRefresh = async () => {
-  //   if (!refreshing) {
-  //     setPage(1);
-  //     setRefreshing(true);
-  //     setPosts(await getPosts(searchQuery, "default", 1));
-  //     setRefreshing(false);
-  //   }
-  // };
-
-  // const onEndReached = async () => {
-  //   if (!loading) {
-  //     const newPosts = await getPosts(searchQuery, searchType, page + 1);
-  //     setPosts([...posts, ...(newPosts as never)]);
-  //     setPage(page + 1);
-  //   }
-  // };
+  }, [order, refreshing]));
 
   return (
     <SafeAreaView style={styles.container}>
@@ -99,18 +86,11 @@ const PostListScreen = ({
           <DropDown value={orderList} setValue={setOrderList} isBorder={false} items={toggleItems} />
         </View>
       </View>
-      {loading ? (
-        <ActivityIndicator />
-      ) : (
-        <>
               <FlatList
                 data={posts}
-                // keyExtractor={(_) => _.title}
                 style={{ flexGrow: 1 }}
-                // ListHeaderComponent={<StorySection />}
-                // onRefresh={onRefresh}
+                onRefresh={onRefresh}
                 refreshing={refreshing}
-                // onEndReached={onEndReached}
                 onEndReachedThreshold={0}
                 ListFooterComponent={loading ? <ActivityIndicator /> : <></>}
                 renderItem={({ item }) => {
@@ -137,13 +117,12 @@ const PostListScreen = ({
                           comment_cnt={comment_cnt}
                           like_cnt={like_cnt}
                           user_likes={user_likes}
+                          onRefresh={onRefresh}
                           navigation={navigation}
                         />
                   );
                 }}
               />
-            </>
-      )}
       <TouchableOpacity onPress={() => {navigation.navigate('CategoryForm', {})}}
             style={{position: "absolute", top: height * 0.85, left: width * 0.85, shadowColor: 'black', shadowOffset: { width: 0, height: 5 }, shadowOpacity: 0.3}}
           >
@@ -160,21 +139,5 @@ const styles = StyleSheet.create({
     backgroundColor: "white",
   },
 });
-
-const Header = styled.View`
-  height: 40px;
-  padding: 10px;
-  flex-direction: row;
-`;
-const SearchBarInput = styled.TextInput`
-  width: 80%;
-  height: 32px;
-  marginright: 10px;
-  padding: 5px;
-  borderwidth: 1px;
-  background: #ffffff;
-  border-radius: 3px;
-  box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
-`;
 
 export default PostListScreen;
