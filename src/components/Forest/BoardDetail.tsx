@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from "react";
+import React, { useState, useEffect, useCallback, useContext } from "react";
 import {
   View,
   FlatList,
@@ -22,6 +22,8 @@ import Add from "../../assets/img/common/Add.svg";
 import { ForestStackParams } from "../../pages/Forest";
 import { Request } from "../../common/requests";
 import CardView from "../../common/CardView";
+import { LoginContext } from "../../common/Context";
+import PlusButton from "../../common/PlusButton";
 
 const windowWidth = Dimensions.get("window").width;
 const windowHeight = Dimensions.get("window").height;
@@ -38,6 +40,7 @@ const BoardDetailScreen = ({
   const [posts, setPosts] = useState([] as any);
   const [hotPosts, setHotPosts] = useState([] as any);
   const [newPosts, setNewPosts] = useState([] as any);
+  const {isLogin, setLogin} = useContext(LoginContext);
   const request = new Request();
 
   const board_category = route.params.board_category;
@@ -80,7 +83,10 @@ const BoardDetailScreen = ({
   }
 
   useFocusEffect(useCallback(() => {
-    getUserInfo();
+    if(isLogin) getUserInfo();
+  }, [isLogin]))
+
+  useFocusEffect(useCallback(() => {
     getPosts();
   }, [refreshing]))
 
@@ -174,6 +180,7 @@ const BoardDetailScreen = ({
                                 like_cnt={like_cnt}
                                 user_likes={user_likes}
                                 onRefresh={onRefresh}
+                                isLogin={isLogin}
                                 navigation={navigation}
                               />
                         )}}
@@ -270,6 +277,7 @@ const BoardDetailScreen = ({
                                 like_cnt={like_cnt}
                                 user_likes={user_likes}
                                 onRefresh={onRefresh}
+                                isLogin={isLogin}
                                 navigation={navigation}
                               />
                         )}}
@@ -332,6 +340,7 @@ const BoardDetailScreen = ({
                           like_cnt={like_cnt}
                           user_likes={user_likes}
                           onRefresh={onRefresh}
+                          isLogin={isLogin}
                           navigation={navigation}
                         />
                   );
@@ -341,11 +350,11 @@ const BoardDetailScreen = ({
         </>
       )}
     </ScrollView>
-    <TouchableOpacity onPress={() => {navigation.navigate('CategoryForm', {})}}
-            style={{position: "absolute", top: height * 0.85, left: width * 0.85, shadowColor: 'black', shadowOffset: { width: 0, height: 5 }, shadowOpacity: 0.3}}
-          >
-            <Add />
-          </TouchableOpacity>
+    {isLogin &&
+      <PlusButton
+        onPress={() => navigation.navigate('CategoryForm', {})}
+        position="rightbottom" />
+    }
     </SafeAreaView>
   );
 };

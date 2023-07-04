@@ -1,4 +1,4 @@
-import { useEffect, useState, useCallback } from "react";
+import { useEffect, useState, useCallback, useContext } from "react";
 import {
   View,
   TouchableOpacity,
@@ -12,6 +12,7 @@ import {
 import { TextPretendard as Text } from "../../common/CustomText";
 import type { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { useFocusEffect } from "@react-navigation/native";
+import { LoginContext } from "../../common/Context";
 
 import { ForestStackParams } from "../../pages/Forest";
 import { Request } from "../../common/requests";
@@ -21,6 +22,7 @@ import DropDown from "../../common/DropDown";
 import PostItem from "./components/PostItem";
 import Add from "../../assets/img/common/Add.svg";
 import Arrow from "../../assets/img/common/Arrow.svg";
+import PlusButton from "../../common/PlusButton";
 
 const { width, height } = Dimensions.get('window');
 
@@ -38,6 +40,7 @@ const PostSearchScreen = ({
   const [order, setOrder] = useState<string>(toggleItems[orderList].order);
   const [count, setCount] = useState(0);
   const [posts, setPosts] = useState([]); // id, title, preview, nickname, email, likeCount, created, commentCount
+  const {isLogin, setLogin} = useContext(LoginContext);
 
   const request = new Request();
 
@@ -168,6 +171,7 @@ const PostSearchScreen = ({
                           like_cnt={like_cnt}
                           user_likes={user_likes}
                           onRefresh={onRefresh}
+                          isLogin={isLogin}
                           navigation={navigation}
                         />
                   );
@@ -218,11 +222,11 @@ const PostSearchScreen = ({
           </View>
         </>
       )}
-      <TouchableOpacity onPress={() => {navigation.navigate('CategoryForm', {})}}
-            style={{position: "absolute", top: height * 0.85, left: width * 0.85, shadowColor: 'black', shadowOffset: { width: 0, height: 5 }, shadowOpacity: 0.3}}
-          >
-            <Add />
-          </TouchableOpacity>
+      {isLogin &&
+        <PlusButton
+          onPress={() => navigation.navigate('CategoryForm', {})}
+          position="rightbottom" />
+      }
     </SafeAreaView>
   );
 };

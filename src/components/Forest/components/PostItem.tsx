@@ -1,11 +1,12 @@
 import { useState, useEffect } from 'react';
 import { TextPretendard as Text } from "../../../common/CustomText";
-import { View, ImageBackground, TouchableOpacity, Dimensions, Image } from 'react-native';
+import { View, ImageBackground, TouchableOpacity, Dimensions, Image, Alert } from 'react-native';
 import Scrap from "../../../assets/img/Forest/Scrap.svg";
 import Arrow from "../../../assets/img/common/Arrow.svg";
 import CommentIcon from '../../../assets/img/Story/Comment.svg';
 import Heart from '../../../common/Heart';
 import { Request } from '../../../common/requests';
+import { LoginContext } from '../../../common/Context';
 
 interface PostItemProps {
   post_id: number;
@@ -18,6 +19,7 @@ interface PostItemProps {
   like_cnt: number;
   user_likes: boolean;
   onRefresh: any;
+  isLogin: boolean;
   navigation: any;
 }
 
@@ -34,6 +36,7 @@ const PostItem = ({
   like_cnt,
   user_likes,
   onRefresh,
+  isLogin,
   navigation,
 }: PostItemProps) => {
   const [pressed, setPressed] = useState<boolean>(false);
@@ -44,9 +47,29 @@ const PostItem = ({
   }, [user_likes])
 
   const toggleLike = async () => {
-    const response = await request.post(`/forest/${post_id}/like/`);
-    setLike(!like);
-    onRefresh();
+    if(isLogin){
+      const response = await request.post(`/forest/${post_id}/like/`);
+      setLike(!like);
+      onRefresh();
+    } else {
+      Alert.alert(
+        "로그인이 필요합니다.",
+        "로그인 항목으로 이동하시겠습니까?",
+        [
+            {
+                text: "이동",
+                onPress: () => navigation.navigate('Login'),
+
+            },
+            {
+                text: "취소",
+                onPress: () => { },
+                style: "cancel"
+            },
+        ],
+        { cancelable: false }
+      );
+    }
   };
   return (
     <TouchableOpacity
@@ -185,6 +208,7 @@ export const HotPostItem = ({
   like_cnt,
   user_likes,
   onRefresh,
+  isLogin,
   navigation,
 }: PostItemProps) => {
   const [like, setLike] = useState<boolean>(false);
@@ -195,9 +219,29 @@ export const HotPostItem = ({
   }, [user_likes])
 
   const toggleLike = async () => {
-    const response = await request.post(`/forest/${post_id}/like/`);
-    setLike(!like);
-    onRefresh();
+    if(isLogin){
+      const response = await request.post(`/forest/${post_id}/like/`);
+      setLike(!like);
+      onRefresh();
+    } else {
+      Alert.alert(
+        "로그인이 필요합니다.",
+        "로그인 항목으로 이동하시겠습니까?",
+        [
+            {
+                text: "이동",
+                onPress: () => navigation.navigate('Login'),
+
+            },
+            {
+                text: "취소",
+                onPress: () => { },
+                style: "cancel"
+            },
+        ],
+        { cancelable: false }
+      );
+    }
   };
 
   return (

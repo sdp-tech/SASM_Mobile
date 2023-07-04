@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from "react";
+import React, { useState, useEffect, useCallback, useContext } from "react";
 import {
   FlatList,
   StyleSheet,
@@ -18,7 +18,7 @@ import CardView from "../../common/CardView";
 import CustomHeader from "../../common/CustomHeader";
 import PostItem, { HotPostItem } from "./components/PostItem";
 import BoardItem from "./components/BoardItem";
-
+import { LoginContext } from "../../common/Context";
 import { ForestStackParams } from "../../pages/Forest";
 import { Request } from "../../common/requests";
 import PlusButton from "../../common/PlusButton";
@@ -33,21 +33,12 @@ const BoardListScreen = ({
   const [nickname, setNickname] = useState('');
   const [page, setPage] = useState(1);
   const [boardLists, setBoardLists] = useState([] as any);
-  const [like, setLike] = useState<boolean>(false);
   const [posts, setPosts] = useState([] as any);
   const [hotPosts, setHotPosts] = useState([] as any);
   const [newPosts, setNewPosts] = useState([] as any);
+  const {isLogin, setLogin} = useContext(LoginContext);
 
   const request = new Request();
-
-  const categories = [
-    { id: 1, name: "시사" },
-    { id: 2, name: "문화" },
-    { id: 3, name: "라이프스타일" },
-    { id: 4, name: "뷰티" },
-    { id: 5, name: "푸드" },
-    { id: 6, name: "액티비티" },
-  ];
 
   const getUserInfo = async () => {
     const response = await request.get('/mypage/me/', {}, {});
@@ -88,7 +79,10 @@ const BoardListScreen = ({
   }, [refreshing]);
 
   useFocusEffect(useCallback(() => {
-    getUserInfo();
+    if(isLogin) getUserInfo();
+  }, [isLogin]))
+
+  useFocusEffect(useCallback(() => {
     getPosts();
   }, [refreshing]))
 
@@ -104,7 +98,7 @@ const BoardListScreen = ({
           <View
             style={{ backgroundColor: "#C8F5D7", padding: 20, height: 100 }}
           >
-            <Text style={{ color: '#3C3C3C', fontWeight: '700', fontSize: 16 }}>{nickname}님 이 정보들은 어떠신가요?</Text>
+            <Text style={{ color: '#3C3C3C', fontWeight: '700', fontSize: 16 }}>{isLogin? (`${nickname}님 이 정보들은 어떠신가요?`):('로그인 후 추천 글을 받아보세요')}</Text>
             <Text>
               {posts[0]?.title}
             </Text>
@@ -113,7 +107,7 @@ const BoardListScreen = ({
             style={{
               backgroundColor: "#F1FCF5",
               alignItems: "center",
-              height: 300,
+              minHeight: 300,
               justifyContent: "flex-end",
             }}
           >
@@ -131,6 +125,7 @@ const BoardListScreen = ({
                 marginBottom: 25,
               }}
             >
+              {isLogin ? <>
               <Text style={{ color: '#848484', fontWeight: '700', fontSize: 16 }}>{nickname}님의 카테고리를 추가해보세요.</Text>
               <TouchableOpacity
                 style={{
@@ -144,6 +139,7 @@ const BoardListScreen = ({
               >
                 <Text>+</Text>
               </TouchableOpacity>
+              </> : <Text style={{ color: '#848484', fontWeight: '700', fontSize: 16 }}>로그인 후 나만의 카테고리를 추가해보세요.</Text>}
             </View>
           </View>
           <View
@@ -160,7 +156,7 @@ const BoardListScreen = ({
             }}
           >
             <FlatList
-              data={categories}
+              data={boardLists}
               renderItem={({ item }: any) => (
                 <BoardItem
                   key={item.id}
@@ -206,7 +202,6 @@ const BoardListScreen = ({
               사슴의 추천글
             </Text>
           </TouchableOpacity>
-          {/* <CategoriesList /> */}
           <CardView
             gap={0}
             offset={0}
@@ -243,6 +238,7 @@ const BoardListScreen = ({
                         like_cnt={like_cnt}
                         user_likes={user_likes}
                         onRefresh={onRefresh}
+                        isLogin={isLogin}
                         navigation={navigation}
                       />
                     );
@@ -262,6 +258,7 @@ const BoardListScreen = ({
             padding: 20
           }}
         >
+          {isLogin && (<>
           <Text style={{color: '#3C3C3C', fontWeight: '700', fontSize: 16, lineHeight: 22}}>{nickname}님 이 정보들은 어떠신가요?</Text>
           <FlatList
             data={posts.slice(0,3)}
@@ -276,6 +273,7 @@ const BoardListScreen = ({
               </TouchableOpacity>
             )}
           />
+          </>)}
         </View>
         <View
           style={{
@@ -340,6 +338,7 @@ const BoardListScreen = ({
                         like_cnt={like_cnt}
                         user_likes={user_likes}
                         onRefresh={onRefresh}
+                        isLogin={isLogin}
                         navigation={navigation}
                       />
                     )
@@ -402,6 +401,7 @@ const BoardListScreen = ({
                   like_cnt={like_cnt}
                   user_likes={user_likes}
                   onRefresh={onRefresh}
+                  isLogin={isLogin}
                   navigation={navigation}
                 />
               );
@@ -409,9 +409,11 @@ const BoardListScreen = ({
           />
         </View>
       </ScrollView>
-      <PlusButton
-        onPress={() => navigation.navigate('CategoryForm', {})}
-        position="rightbottom" />
+      {isLogin &&
+        <PlusButton
+          onPress={() => navigation.navigate('CategoryForm', {})}
+          position="rightbottom" />
+      }
     </SafeAreaView>
   );
 };

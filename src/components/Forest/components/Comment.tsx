@@ -10,10 +10,12 @@ interface CommentProps {
     reRenderScreen: any;
     post_id: number;
     email: string;
+    isLogin: boolean;
+    navigation: any;
     callback?: any;
 }
 
-const Comment = ({ data, reRenderScreen, post_id, email, callback }: CommentProps) => {
+const Comment = ({ data, reRenderScreen, post_id, email, isLogin, navigation, callback }: CommentProps) => {
     const date = data.created.slice(0, 10);
     const { width, height } = Dimensions.get('screen');
     const [modalVisible, setModalVisible] = useState<boolean>(false);
@@ -21,9 +23,29 @@ const Comment = ({ data, reRenderScreen, post_id, email, callback }: CommentProp
     const request = new Request();
 
     const toggleLike = async () => {
+        if(isLogin){
         const response = await request.post(`/forest/${post_id}/comments/${data.id}/like/`, {}, {});
         setLike(!like);
         reRenderScreen();
+        } else {
+            Alert.alert(
+              "로그인이 필요합니다.",
+              "로그인 항목으로 이동하시겠습니까?",
+              [
+                  {
+                      text: "이동",
+                      onPress: () => navigation.navigate('Login')
+      
+                  },
+                  {
+                      text: "취소",
+                      onPress: () => { },
+                      style: "cancel"
+                  },
+              ],
+              { cancelable: false }
+            );
+          }
     };
 
     const deleteComment = async () => {

@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from "react";
+import React, { useState, useEffect, useCallback, useContext } from "react";
 import { TextPretendard as Text } from "../../common/CustomText";
 import {
   View,
@@ -15,11 +15,13 @@ import type { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { useFocusEffect } from "@react-navigation/native";
 import ListHeader from "./components/ListHeader";
 import Add from "../../assets/img/common/Add.svg";
+import { LoginContext } from "../../common/Context";
 
 import { ForestStackParams } from "../../pages/Forest";
 import { Request } from "../../common/requests";
 import DropDown from "../../common/DropDown";
 import PostItem from "./components/PostItem";
+import PlusButton from "../../common/PlusButton";
 
 const { width, height } = Dimensions.get('window');
 
@@ -39,6 +41,7 @@ const PostListScreen = ({
   const [order, setOrder] = useState<string>(toggleItems[orderList].order);
   const [count, setCount] = useState(0);
   const [posts, setPosts] = useState([]);
+  const {isLogin, setLogin} = useContext(LoginContext);
 
   const request = new Request();
 
@@ -86,48 +89,49 @@ const PostListScreen = ({
           <DropDown value={orderList} setValue={setOrderList} isBorder={false} items={toggleItems} />
         </View>
       </View>
-              <FlatList
-                data={posts}
-                style={{ flexGrow: 1 }}
-                onRefresh={onRefresh}
-                refreshing={refreshing}
-                onEndReachedThreshold={0}
-                ListFooterComponent={loading ? <ActivityIndicator /> : <></>}
-                renderItem={({ item }) => {
-                  const {
-                    id,
-                    title,
-                    preview,
-                    writer,
-                    photos,
-                    rep_pic,
-                    comment_cnt,
-                    like_cnt,
-                    user_likes
-                  } = item;
-                  return (
-                    <PostItem
-                          key={id}
-                          post_id={id}
-                          title={title}
-                          preview={preview}
-                          writer={writer}
-                          photos={photos}
-                          rep_pic={rep_pic}
-                          comment_cnt={comment_cnt}
-                          like_cnt={like_cnt}
-                          user_likes={user_likes}
-                          onRefresh={onRefresh}
-                          navigation={navigation}
-                        />
-                  );
-                }}
-              />
-      <TouchableOpacity onPress={() => {navigation.navigate('CategoryForm', {})}}
-            style={{position: "absolute", top: height * 0.85, left: width * 0.85, shadowColor: 'black', shadowOffset: { width: 0, height: 5 }, shadowOpacity: 0.3}}
-          >
-            <Add />
-          </TouchableOpacity>
+      <FlatList
+        data={posts}
+        style={{ flexGrow: 1 }}
+        onRefresh={onRefresh}
+        refreshing={refreshing}
+        onEndReachedThreshold={0}
+        ListFooterComponent={loading ? <ActivityIndicator /> : <></>}
+        renderItem={({ item }) => {
+          const {
+            id,
+            title,
+            preview,
+            writer,
+            photos,
+            rep_pic,
+            comment_cnt,
+            like_cnt,
+            user_likes
+          } = item;
+          return (
+            <PostItem
+                  key={id}
+                  post_id={id}
+                  title={title}
+                  preview={preview}
+                  writer={writer}
+                  photos={photos}
+                  rep_pic={rep_pic}
+                  comment_cnt={comment_cnt}
+                  like_cnt={like_cnt}
+                  user_likes={user_likes}
+                  onRefresh={onRefresh}
+                  isLogin={isLogin}
+                  navigation={navigation}
+                />
+          );
+        }}
+      />
+      {isLogin &&
+        <PlusButton
+          onPress={() => navigation.navigate('CategoryForm', {})}
+          position="rightbottom" />
+      }
     </SafeAreaView>
   );
 };
