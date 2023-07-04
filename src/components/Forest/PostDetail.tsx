@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext, useRef } from "react";
 import { TextPretendard as Text } from "../../common/CustomText";
 import {
   View,
@@ -23,7 +23,7 @@ import Comment from "./components/Comment";
 import CommentIcon from '../../assets/img/Story/Comment.svg';
 import Share from '../../assets/img/common/Share.svg';
 import Scrap from '../../assets/img/Forest/Scrap.svg';
-
+import { LoginContext } from "../../common/Context";
 import { ForestStackParams } from "../../pages/Forest";
 import { Request } from "../../common/requests";
 import CardView from "../../common/CardView";
@@ -56,9 +56,10 @@ interface PostDetailSectionProps {
 
 interface UserInfoSectionProps {
   user: any;
-  onFollow: () => void;
   posts: any;
+  isLogin: boolean;
   navigation: any;
+  onRefresh: any;
 }
 
 interface PostRecommendSectionProps {
@@ -178,8 +179,36 @@ const PostDetailSection = ({
 };
 
 const UserInfoSection = ({
-  user, onFollow, posts, navigation
+  user, posts, isLogin, navigation, onRefresh
 }: UserInfoSectionProps) => {
+  const [follow, setFollow] = useState<boolean>(false);
+  const request = new Request();
+  const onFollow = async () => {
+    if (isLogin) {
+      const response = await request.post('/mypage/follow/', {
+        targetEmail: user.email
+      }, {});
+      setFollow(response.data.data.follows);
+    } else {
+      Alert.alert(
+        "로그인이 필요합니다.",
+        "로그인 항목으로 이동하시겠습니까?",
+        [
+            {
+                text: "이동",
+                onPress: () => navigation.navigate('Login')
+
+            },
+            {
+                text: "취소",
+                onPress: () => { },
+                style: "cancel"
+            },
+        ],
+        { cancelable: false }
+      );
+    }
+  }
   return (
     <View
       style={{
@@ -198,8 +227,8 @@ const UserInfoSection = ({
             uri: user.profile,
           }}
         />
-        <TouchableOpacity style={{ borderColor: '#67D393', borderWidth: 1, borderRadius: 12, alignItems: 'center', justifyContent: 'center', paddingVertical: 5, paddingHorizontal: 15, marginTop: 20 }} onPress={onFollow}>
-          <Text style={{ color: '#202020', fontSize: 12 }}>+ 팔로우</Text>
+        <TouchableOpacity style={{ width: 75, borderColor: '#67D393', borderWidth: 1, borderRadius: 12, alignItems: 'center', justifyContent: 'center', paddingVertical: 5, paddingHorizontal: 15, marginTop: 20 }} onPress={onFollow}>
+          <Text style={{ color: '#202020', fontSize: 12 }}>{follow ? '팔로잉' : '+ 팔로우'}</Text>
         </TouchableOpacity>
       </View>
       <View style={{ flex: 1, marginLeft: 20 }}>
@@ -261,19 +290,41 @@ const PostRecommendSection = ({ data }: PostRecommendSectionProps) => {
 
 interface BottomBarSectionProps {
   post: Post;
+  email: string;
   onUpdate: () => void;
   onDelete: () => void;
   onRefresh: any;
+  navigation: any;
 }
 
-const BottomBarSection = ({ post, onUpdate, onDelete, onRefresh }: BottomBarSectionProps) => {
+const BottomBarSection = ({ post, email, onUpdate, onDelete, onRefresh, navigation }: BottomBarSectionProps) => {
   const [like, setLike] = useState<boolean>(post.user_likes)
   const request = new Request();
 
   const toggleLike = async () => {
+    if(email){
     const response = await request.post(`/forest/${post.id}/like/`);
     setLike(!like);
     onRefresh();
+    } else {
+      Alert.alert(
+        "로그인이 필요합니다.",
+        "로그인 항목으로 이동하시겠습니까?",
+        [
+            {
+                text: "이동",
+                onPress: () => navigation.navigate('Login')
+
+            },
+            {
+                text: "취소",
+                onPress: () => { },
+                style: "cancel"
+            },
+        ],
+        { cancelable: false }
+      );
+    }
   };
   return (
     <View style={{ flexDirection: "row", padding: 10 }}>
@@ -289,12 +340,16 @@ const BottomBarSection = ({ post, onUpdate, onDelete, onRefresh }: BottomBarSect
       <TouchableOpacity>
         <Share />
       </TouchableOpacity>
-      <TouchableOpacity onPress={onUpdate}>
-        <Text>수정</Text>
-      </TouchableOpacity>
-      <TouchableOpacity onPress={onDelete}>
-        <Text>삭제</Text>
-      </TouchableOpacity>
+      {post.writer.email === email && (
+        <>
+          <TouchableOpacity onPress={onUpdate}>
+            <Text>수정</Text>
+          </TouchableOpacity>
+          <TouchableOpacity onPress={onDelete}>
+            <Text>삭제</Text>
+          </TouchableOpacity>
+        </>
+      )}
     </View>
   )
 }
@@ -303,6 +358,7 @@ const PostDetailScreen = ({
   navigation,
   route,
 }: NativeStackScreenProps<ForestStackParams, "PostDetail">) => {
+  const scrollRef = useRef<FlatList>(null);
   const [loading, setLoading] = useState(false);
   const [refreshing, setRefreshing] = useState(false);
   const [post, setPost] = useState<Post>();
@@ -310,8 +366,8 @@ const PostDetailScreen = ({
   const [commentId, setCommentId] = useState<number>(0);
   const [user, setUser] = useState([] as any);
   const [updateText, setUpdateText] = useState<string>('');
-  const [follow, setFollow] = useState<boolean>(false);
   const [writerPosts, setWriterPosts] = useState([] as any);
+  const {isLogin, setLogin} = useContext(LoginContext);
 
   const request = new Request();
   const post_id = route.params.post_id;
@@ -327,7 +383,7 @@ const PostDetailScreen = ({
     setPost(response_detail.data.data);
     const response_comment = await request.get(`/forest/${post_id}/comments/`, {}, {});
     setComment(response_comment.data.data.results);
-    const response_writer = await request.get('/forest/', { writer_filter: post?.writer.email })
+    const response_writer = await request.get('/forest/', { writer_filter: response_detail.data.data.writer.email })
     setWriterPosts(response_writer.data.data.results);
     setLoading(false);
   };
@@ -361,11 +417,6 @@ const PostDetailScreen = ({
     );
   };
 
-  const onFollow = async () => {
-    const response = await request.post('/mypage/follow/', {}, {});
-    setFollow(response.data.data.follows);
-  }
-
   const onReport = async () => {
     const response = await request.post(`/forest/${post_id}/report/`, {
       category: 1
@@ -377,6 +428,12 @@ const PostDetailScreen = ({
     setCommentId(id);
   }
 
+  const scrollToTop = () => {
+    if (scrollRef.current) {
+      scrollRef.current.scrollToOffset({ offset: 0, animated: true });
+    }
+  };
+
   const data = [
     { uri: "https://reactnative.dev/img/tiny_logo.png", title: "사슴" },
     { uri: "https://reactnative.dev/img/tiny_logo.png", title: "사슴" },
@@ -386,7 +443,10 @@ const PostDetailScreen = ({
   ];
 
   useEffect(() => {
-    checkUser();
+    if(isLogin) checkUser();
+  }, [isLogin]);
+
+  useEffect(() => {
     loadItem();
   }, [refreshing]);
 
@@ -397,6 +457,7 @@ const PostDetailScreen = ({
       ) : (
         <>
           <FlatList
+            ref={scrollRef}
             data={comment}
             style={styles.container}
             onRefresh={reRenderScreen}
@@ -404,7 +465,7 @@ const PostDetailScreen = ({
             ListHeaderComponent={
               <>
                 <PostDetailSection post={post} navigation={navigation} />
-                <UserInfoSection user={post.writer} onFollow={onFollow} posts={writerPosts} navigation={navigation} />
+                <UserInfoSection user={post.writer} posts={writerPosts} isLogin={isLogin} navigation={navigation} onRefresh={reRenderScreen}/>
                 <View style={{ flexDirection: 'row' }}>
                   <Text style={{ fontSize: 14, fontWeight: '500', margin: 15 }}>한줄평</Text>
                   <View style={{ marginTop: 15 }}><CommentIcon /></View>
@@ -412,27 +473,27 @@ const PostDetailScreen = ({
                     <Text style={{ fontSize: 10 }}>더보기{'>'}</Text>
                   </TouchableOpacity>
                 </View>
-                <WriteComment id={post_id} reRenderScreen={reRenderScreen} data={updateText} commentId={commentId} />
+                <WriteComment id={post_id} reRenderScreen={reRenderScreen} data={updateText} commentId={commentId} isLogin={isLogin} navigation={navigation} />
               </>
             }
             ListFooterComponent={
               <>
                 <PostRecommendSection data={data} />
                 <View style={{ justifyContent: 'center', alignItems: 'center', paddingVertical: 20 }}>
-                  <TouchableOpacity style={{ flexDirection: 'row' }}>
-                    <Arrow />
-                    <Text>맨 위로 이동</Text>
+                  <TouchableOpacity onPress={scrollToTop} style={{ flexDirection: 'row' }}>
+                    <Arrow width={18} height={18} transform={[{rotate: '270deg'}]} />
+                    <Text style={{color: '#666666', fontWeight: '600', marginTop: 3}}>맨 위로 이동</Text>
                   </TouchableOpacity>
                 </View>
               </>
             }
             renderItem={({ item }) => {
               return (
-                <Comment data={item} reRenderScreen={reRenderScreen} post_id={post_id} email={user.email} callback={callback} />
+                <Comment data={item} reRenderScreen={reRenderScreen} post_id={post_id} email={user.email} isLogin={isLogin} navigation={navigation} callback={callback} />
               )
             }}
           />
-          <BottomBarSection post={post} onDelete={deletePost} onUpdate={() => { navigation.navigate('CategoryForm', { post: post }) }} onRefresh={reRenderScreen} />
+          <BottomBarSection post={post} email={user.email} navigation={navigation} onDelete={deletePost} onUpdate={() => { navigation.navigate('CategoryForm', { post: post }) }} onRefresh={reRenderScreen} />
         </>
       )}
     </View>
