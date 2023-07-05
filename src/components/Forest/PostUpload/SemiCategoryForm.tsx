@@ -23,7 +23,7 @@ const SemiCategoryForm = ({ navigation, route }: NativeStackScreenProps<ForestSt
 
   useEffect(() => {
     getSemiCategories();
-    if (post){
+    if (post && post.category.id === category.id){
       setSemiCategories(post.semi_categories);
       setSelectedIds(post.semi_categories.map((category: any) => category.id));
     }
@@ -32,11 +32,11 @@ const SemiCategoryForm = ({ navigation, route }: NativeStackScreenProps<ForestSt
     <View style={{flex: 1, backgroundColor: 'white'}}>
       <FormHeader title='포레스트 작성' onLeft={() => navigation.navigate('CategoryForm', {post: post})} onRight={() => {}} />
       <View style={{alignItems: 'center', justifyContent: 'center', paddingVertical: 150}}>
-        <Text style={{fontSize: 16, color: '#202020', marginBottom: 30}}>세부 카테고리를 선택해 주세요</Text>
+        <Text style={{fontSize: 16, color: '#202020', marginBottom: 80}}>세부 카테고리를 선택해 주세요</Text>
         <FlatList
           data={items}
           renderItem={({ item }: any) => (
-            <TouchableOpacity style={{borderRadius: 16, borderColor: '#67D393', borderWidth: 1, paddingVertical: 4, paddingHorizontal: 16, marginHorizontal: 8, backgroundColor: selectedIds.includes(item.id) ? '#67D393' : 'white'}}
+            <TouchableOpacity style={{borderRadius: 16, borderColor: '#67D393', borderWidth: 1, paddingVertical: 4, paddingHorizontal: 16, margin: 4, backgroundColor: selectedIds.includes(item.id) ? '#67D393' : 'white'}}
               onPress={() => {
                 if (selectedIds.includes(item.id)) {
                   setSelectedIds(selectedIds.filter(id => id !== item.id));
@@ -50,12 +50,8 @@ const SemiCategoryForm = ({ navigation, route }: NativeStackScreenProps<ForestSt
               <Text style={{color: selectedIds.includes(item.id) ? 'white' : '#202020', fontSize: 14, fontWeight: selectedIds.includes(item.id) ? '600' : '400'}}># {item.name}</Text>
             </TouchableOpacity>
           )}
+          contentContainerStyle={{ flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'center' }}
           keyExtractor={(item) => item.id.toString()}
-          columnWrapperStyle={{
-            justifyContent: "space-between",
-            margin: 10,
-          }}
-          numColumns={3}
           scrollEnabled={false}
         />
         { semiCategories.length > 0 &&

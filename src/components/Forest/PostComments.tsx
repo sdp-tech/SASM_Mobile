@@ -1,26 +1,25 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useContext } from 'react';
 import { TextPretendard as Text } from '../../common/CustomText';
 import { SafeAreaView, View, TouchableOpacity, Dimensions, FlatList, Modal, Pressable } from 'react-native';
 import { Request } from '../../common/requests';
-import { StoryProps } from '../../pages/Story';
 import Comment from './components/Comment';
 import WriteComment from './components/WriteComment';
 import Arrow from '../../assets/img/common/Arrow.svg';
 import Loading from '../../common/Loading';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { ForestStackParams } from '../../pages/Forest';
+import { LoginContext } from '../../common/Context';
 
 const PostCommentsScreen = ({ navigation, route }: NativeStackScreenProps<ForestStackParams, "PostComments">) => {
   const { width, height } = Dimensions.get('screen');
   const id = route.params.id;
-  //const reRenderScreen = route.params.reRenderScreen;
-  //const comment = route.params.comment;
   const email = route.params.email;
   const [comment, setComment] = useState([] as any);
   const [updateText, setUpdateText] = useState<string>('');
   const [commentId, setCommentId] = useState<number>(0);
   const [refreshing, setRefreshing] = useState<boolean>(false);
   const [loading, setLoading] = useState<boolean>(true);
+  const {isLogin, setLogin} = useContext(LoginContext);
   const request = new Request();
 
   const callback = (text: string, id: number) => {
@@ -31,7 +30,7 @@ const PostCommentsScreen = ({ navigation, route }: NativeStackScreenProps<Forest
   const loadComment = async () => {
     setLoading(true);
     const response= await request.get(`/forest/${id}/comments/`, {}, {});
-    setComment(response.data.data);
+    setComment(response.data.data.results);
     setLoading(false);
   }
 
@@ -70,11 +69,11 @@ const PostCommentsScreen = ({ navigation, route }: NativeStackScreenProps<Forest
             <Text style={{textAlign: 'center', textAlignVertical: 'center', fontSize: 20, fontWeight: '700'}}>한줄평</Text>
           </View>
           <View style={{borderBottomColor: '#D9D9D9', width: width, borderBottomWidth: 1, marginBottom: 20}} />
-          <WriteComment id={id} reRenderScreen={reRenderScreen} data={updateText} commentId={commentId} />
+          <WriteComment id={id} reRenderScreen={reRenderScreen} data={updateText} commentId={commentId} isLogin={isLogin} navigation={navigation}/>
         </>}
         renderItem={({item}) => { 
           return (
-            <Comment data={item} reRenderScreen={reRenderScreen} post_id={id} email={email} callback={callback}/>
+            <Comment data={item} reRenderScreen={reRenderScreen} post_id={id} email={email} isLogin={isLogin} navigation={navigation} callback={callback}/>
           )
         }}
         keyExtractor={(item: any)=>item.id}

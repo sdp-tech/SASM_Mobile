@@ -1,4 +1,5 @@
-import { View,Text,TouchableOpacity } from "react-native";
+import { View, TouchableOpacity } from "react-native";
+import { TextPretendard as Text } from "../../../common/CustomText";
 import Arrow from '../../../assets/img/common/Arrow.svg';
 import Search from '../../../assets/img/common/Search.svg';
 

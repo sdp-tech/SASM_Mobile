@@ -51,18 +51,14 @@ const MyStory = ({ navigation, route }: MyPageParams) => {
   const request = new Request();
   const [type, setType] = useState<boolean>(true);
   const [written, setWritten] = useState<any>([]);
+
   const getStories = async () => {
-    let category;
-    if (checkedList.length > 0) {
-      category = checkedList.toString()
-    } else {
-      category = null
+    let params = new URLSearchParams();
+    for (const category of checkedList){
+      params.append('filter', category);
     }
-    const response = await request.get("/mypage/mypick_story/", {
-      page: page,
-      search: search,
-      filter: category
-    }, null);
+    params.append('search', search);
+    const response = await request.get(`/mypage/mypick_story/?${params.toString()}`,null, null)
     setInfo(response.data.data.results);
   };
 

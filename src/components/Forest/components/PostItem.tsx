@@ -1,11 +1,12 @@
 import { useState, useEffect } from 'react';
-// import { TextPretendard as Text } from "../../../common/CustomText";
-import { View, ImageBackground, TouchableOpacity, Dimensions, Text, Image } from 'react-native';
+import { TextPretendard as Text } from "../../../common/CustomText";
+import { View, ImageBackground, TouchableOpacity, Dimensions, Image, Alert } from 'react-native';
 import Scrap from "../../../assets/img/Forest/Scrap.svg";
 import Arrow from "../../../assets/img/common/Arrow.svg";
 import CommentIcon from '../../../assets/img/Story/Comment.svg';
 import Heart from '../../../common/Heart';
 import { Request } from '../../../common/requests';
+import { LoginContext } from '../../../common/Context';
 
 interface PostItemProps {
   post_id: number;
@@ -13,10 +14,12 @@ interface PostItemProps {
   preview: string;
   writer: any;
   photos: any;
-  created: string;
-  commentCount: number;
+  rep_pic: string;
+  comment_cnt: number;
   like_cnt: number;
   user_likes: boolean;
+  onRefresh: any;
+  isLogin: boolean;
   navigation: any;
 }
 
@@ -28,19 +31,45 @@ const PostItem = ({
   preview,
   writer,
   photos,
-  created,
-  commentCount,
+  rep_pic,
+  comment_cnt,
   like_cnt,
   user_likes,
+  onRefresh,
+  isLogin,
   navigation,
 }: PostItemProps) => {
   const [pressed, setPressed] = useState<boolean>(false);
   const [like, setLike] = useState<boolean>(false);
   const request = new Request();
+  useEffect(() => {
+    user_likes && setLike(true);
+  }, [user_likes])
 
   const toggleLike = async () => {
-    const response = await request.post(`/forest/${post_id}/like/`);
-    setLike(!like);
+    if(isLogin){
+      const response = await request.post(`/forest/${post_id}/like/`);
+      setLike(!like);
+      onRefresh();
+    } else {
+      Alert.alert(
+        "로그인이 필요합니다.",
+        "로그인 항목으로 이동하시겠습니까?",
+        [
+            {
+                text: "이동",
+                onPress: () => navigation.navigate('Login'),
+
+            },
+            {
+                text: "취소",
+                onPress: () => { },
+                style: "cancel"
+            },
+        ],
+        { cancelable: false }
+      );
+    }
   };
   return (
     <TouchableOpacity
@@ -54,7 +83,7 @@ const PostItem = ({
         style={{
           width: width - 30,
           paddingTop: 20,
-          paddingBottom: pressed ? 40 : 20,
+          paddingBottom: 20,
           borderBottomWidth: 1,
           borderBottomColor: "#373737",
           flexDirection: "row",
@@ -86,15 +115,16 @@ const PostItem = ({
               </View>
               <View style={{flexDirection: 'row', }}>
                 <Text style={{ color: '#67D393', fontSize: 12, fontWeight: "600", opacity: 0.6, lineHeight: 18, flex: 1 }}>{writer.nickname}</Text>
-                {user_likes ? (
-                  <Heart like={!like} onPress={toggleLike} />
-                ) : (
-                  <Heart like={like} onPress={toggleLike} />
-                )}
+                <Heart like={like} onPress={toggleLike} />
                 <Text style={{color: '#209DF5', fontSize: 12, lineHeight: 18}}>{like_cnt}</Text>
                 <CommentIcon width={15} height={15} />
-                <Text style={{color: '#209DF5', fontSize: 12, lineHeight: 18}}>30</Text>
+                <Text style={{color: '#209DF5', fontSize: 12, lineHeight: 18}}>{comment_cnt}</Text>
               </View>
+              <TouchableOpacity onPress={() => setPressed(false)}
+                style={{ marginLeft: (width-30) / 2 }}
+              >
+                <Arrow transform={[{ rotate: "270deg" }]} width={15} height={15} />
+              </TouchableOpacity>
             </View>
             <View>
               <ImageBackground
@@ -105,20 +135,18 @@ const PostItem = ({
                   justifyContent: "flex-end",
                   padding: 5,
                 }}
-                source={{ uri: photos[0] }}
+                source={{ uri: rep_pic }}
               >
                 <TouchableOpacity onPress={() => console.log("저장")}>
                   <Scrap />
                 </TouchableOpacity>
               </ImageBackground>
-              <Image style={{width: 90, height: 90}} source={{uri: photos[1]}} />
-              <Image style={{width: 90, height: 90}} source={{uri: photos[2]}} />
+              {photos.map((uri: string, index: number) => {
+                return (
+                  <Image style={{width: 90, height: 90}} key={index} source={{uri: uri}} />
+                )
+              })}
             </View>
-            <TouchableOpacity onPress={() => setPressed(false)}
-              style={{ position: "absolute", top: 300, left: (width-30) / 2 }}
-            >
-              <Arrow transform={[{ rotate: "270deg" }]} width={15} height={15} />
-            </TouchableOpacity>
           </>
         ) : (
           <>
@@ -151,7 +179,7 @@ const PostItem = ({
                 justifyContent: "flex-end",
                 padding: 5,
               }}
-              source={{ uri: photos[0] }}
+              source={{ uri: rep_pic }}
             >
               <TouchableOpacity onPress={() => console.log("저장")}>
                 <Scrap />
@@ -175,18 +203,45 @@ export const HotPostItem = ({
   preview,
   writer,
   photos,
-  created,
-  commentCount,
+  rep_pic,
+  comment_cnt,
   like_cnt,
   user_likes,
+  onRefresh,
+  isLogin,
   navigation,
 }: PostItemProps) => {
   const [like, setLike] = useState<boolean>(false);
   const request = new Request();
 
+  useEffect(() => {
+    user_likes && setLike(true);
+  }, [user_likes])
+
   const toggleLike = async () => {
-    const response = await request.post(`/forest/${post_id}/like/`);
-    setLike(!like);
+    if(isLogin){
+      const response = await request.post(`/forest/${post_id}/like/`);
+      setLike(!like);
+      onRefresh();
+    } else {
+      Alert.alert(
+        "로그인이 필요합니다.",
+        "로그인 항목으로 이동하시겠습니까?",
+        [
+            {
+                text: "이동",
+                onPress: () => navigation.navigate('Login'),
+
+            },
+            {
+                text: "취소",
+                onPress: () => { },
+                style: "cancel"
+            },
+        ],
+        { cancelable: false }
+      );
+    }
   };
 
   return (
@@ -198,18 +253,14 @@ export const HotPostItem = ({
           });
         }}
       >
-        <ImageBackground source={{ uri: photos[0] }}
+        <ImageBackground source={{ uri: rep_pic }}
           style={{ width: width - 40, height: 100 }} imageStyle={{ borderRadius: 4 }}>
           <View style={{ alignItems: "center", flex: 1, marginTop: 40 }}>
             <Text style={{ color: "white", fontSize: 16, fontWeight: "700"}}>{title}</Text>
           </View>
           <View style={{flexDirection: "row", padding: 10}}>
             <View style={{flexDirection: "row", alignSelf: "flex-start", flex: 1}}>
-              {user_likes ? (
-                <Heart like={!like} onPress={toggleLike} white={true} />
-              ) : (
-                <Heart like={like} onPress={toggleLike} white={true} />
-              )}
+              <Heart like={like} onPress={toggleLike} white={true} />
               <Text style={{ color: "white", lineHeight: 18, marginLeft: 3 }}>{like_cnt}</Text>
             </View>
             <View style={{flexDirection: "row", alignSelf: "flex-end"}}>

@@ -6,11 +6,11 @@ import { Request } from "../../common/requests";
 import { useFocusEffect } from "@react-navigation/native";
 import { StoryProps } from "../../pages/Story";
 import CardView from "../../common/CardView";
-import Add from "../../assets/img/common/Add.svg";
 import StorySearch from "./components/StorySearch";
 import Category from "../../common/Category";
 import MainCard from "./components/MainCard";
 import Arrow from "../../assets/img/common/Arrow.svg";
+import PlusButton from "../../common/PlusButton";
 
 export interface StoryListProps {
   id: number;
@@ -61,22 +61,16 @@ const StoryMainPage = ({ navigation, route }: StoryProps) => {
       setItem([]);
     }
   };
-
+  
   const getStories = async () => {
-    let category;
-    if (checkedList.length > 0){
-      category = checkedList.toString()
-    } else {
-      category = null
+    let params = new URLSearchParams();
+    for (const category of checkedList){
+      params.append('filter', category);
     }
-
-    const response = await request.get("/stories/story_search/", {
-      page: page,
-      search: search,
-      order: order,
-      filter: category
-    }, null);
-
+    params.append('search', search);
+    params.append('page', page.toString());
+    params.append('order', order);
+    const response = await request.get(`/stories/story_search/?${params.toString()}`,null, null)
     if (page === 1) {
       setItem(response.data.data.results);
     } else {
@@ -84,10 +78,8 @@ const StoryMainPage = ({ navigation, route }: StoryProps) => {
     }
     setCount(response.data.data.count);
     setNextPage(response.data.data.next);
-    console.log(orderList, order);
-    console.log(item);
   };
-  
+
   const onRefresh = async () => {
     if (!refreshing || page !== 1) {
       setRefreshing(true);
@@ -97,7 +89,7 @@ const StoryMainPage = ({ navigation, route }: StoryProps) => {
   };
 
   const onEndReached = async () => {
-    if(search.length > 0 && nextPage !== null){
+    if (search.length > 0 && nextPage !== null) {
       setPage(page + 1);
     }
     else {
@@ -110,7 +102,7 @@ const StoryMainPage = ({ navigation, route }: StoryProps) => {
   }
 
   return (
-    <SafeAreaView style={{ flex: 1, backgroundColor: "white", }}>
+    <SafeAreaView style={{ flex: 1, backgroundColor: "white" }}>
       <SearchBar
         setPage={setPage}
         search={search}
@@ -134,26 +126,26 @@ const StoryMainPage = ({ navigation, route }: StoryProps) => {
           onRefresh={onRefresh}
         />
       ) : (
-        <View>
+        <>
           <View style={{ flexDirection: "row", paddingHorizontal: 30, paddingTop: 20, paddingBottom: 10 }}>
-            <View style={{flex: 1}}>
+            <View style={{ flex: 1 }}>
               <Text style={textStyles.title}>{toggleItems[orderList].title}</Text>
               <Text style={textStyles.subtitle}>{toggleItems[orderList].subtitle}</Text>
             </View>
-            <TouchableOpacity onPress={() => setOrderList((orderList+1)%3)} style={{marginTop: 10}}>
-              <Arrow transform={[{rotate: '90deg'}]}/>
+            <TouchableOpacity onPress={() => setOrderList((orderList + 1) % 3)} style={{ marginTop: 10 }}>
+              <Arrow transform={[{ rotate: '90deg' }]} />
             </TouchableOpacity>
           </View>
-          <View style={{backgroundColor: "white", width: width, marginVertical: 10, shadowOffset: { width: 0, height: 1 }, shadowColor: "black", shadowOpacity: 0.1}}>
+          <View style={{ backgroundColor: "white", width: width, marginVertical: 10, shadowOffset: { width: 0, height: 1 }, shadowColor: "black", shadowOpacity: 0.1 }}>
             <Category
               checkedList={checkedList}
               setCheckedList={setCheckedList}
               story={true}
             />
           </View>
-          <View style={{paddingVertical: 20}}>
+          <View style={{ paddingVertical: 20 }}>
             <CardView data={item} gap={0} offset={0} pageWidth={width} dot={true}
-              renderItem={({item}: any) => {
+              renderItem={({ item }: any) => {
                 return (
                   <MainCard
                     id={item.id}
@@ -171,12 +163,11 @@ const StoryMainPage = ({ navigation, route }: StoryProps) => {
                     width={width}
                   />
                 )
-              }}/>
+              }} />
           </View>
-          <TouchableOpacity onPress={() => {navigation.navigate("WriteStory")}} style={{position: "absolute", top: height * 0.7, left: width * 0.85, shadowColor: 'black', shadowOffset: { width: 0, height: 5 }, shadowOpacity: 0.3}}>
-            <Add />
-          </TouchableOpacity>
-        </View>
+          <PlusButton onPress={() => navigation.navigate('WriteStory')}
+            position="rightbottom" />
+        </>
       )}
     </SafeAreaView>
   );
