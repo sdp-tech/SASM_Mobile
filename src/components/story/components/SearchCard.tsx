@@ -37,60 +37,53 @@ const SearchCard = ({id, place_name, title, rep_pic, extra_pics, story_like, cat
   }
     
   return (
-    <View>
-      <View style={{flexDirection: 'row', alignItems: 'center'}}>
-        <View style={{flexDirection: 'row', flex: 3}}>
-          <Text style={textStyles.writer}>{verified ? ('Editor') : ('User')} {nickname} 님의 이야기</Text>
-          <View style={{backgroundColor: verified ? '#209DF5' : '#89C77F', width: 14, height: 14, borderRadius: 60, marginTop: 1, marginLeft: 5}}/>
-        </View>
-        <View style={{flex: 1}}>
-          <Text style={textStyles.date}>{created.slice(0, 10)} 작성</Text>
-        </View>
+    <View style={{flex: 1, width: width-30, marginBottom: 30}}>
+      <View style={{flexDirection: 'row'}}>
+        <Text style={[textStyles.writer, {color: verified ? '#209DF5' : '#67D393', flex: 1}]}>{nickname}</Text>
+        <Text style={textStyles.date}>{created.slice(0, 10)} 작성</Text>
       </View>
-      <TouchableOpacity style={{marginTop: 10, marginBottom: 20}} onPress={onPress}>
+      <TouchableOpacity style={{marginTop: 5}} onPress={onPress}>
         <View style={{flexDirection: 'row'}}>
           <ImageBackground 
             source={{uri: rep_pic}}
-            style={{width: width*0.55, height: width*0.6}}
-            imageStyle={{borderRadius: 5}}
+            style={{width: width*0.57, height: width*0.7}}
           >
-            <View style={{width: width*0.55, height: width*0.6, borderRadius: 5, backgroundColor: 'rgba(0, 0, 0, 0.3)', padding: 10}}>
-              <View style={{flexDirection: 'row', padding: 8, flex: 1}}>
-                <View style={{width: '70%'}}>
+            <View style={{width: width*0.57, height: width*0.7, backgroundColor: 'rgba(0, 0, 0, 0.3)', padding: 15}}>
+              <View style={{flex: 1}}>
                   <Text style={textStyles.title}>{title}</Text>
                   <Text style={textStyles.placename}>{place_name}</Text>
-                </View>
-                <View style={{marginLeft: 35}}>
+              </View>
+              <Text style={textStyles.preview} numberOfLines={6} ellipsizeMode={'tail'}>{preview}</Text>
+            </View>
+          </ImageBackground>
+          <View style={{marginLeft: 8}}>
+            { extra_pics != null ? (
+              <>
+              <ImageBackground 
+                source={{uri: extra_pics[0]}}
+                style={{width: width*0.34, height: width*0.34, alignItems: 'flex-end', padding: 10, marginBottom: 8}}
+              >
                   {story_like ? (
                     <Heart like={!like} onPress={toggleLike} white={true} />
                   ) : (
                     <Heart like={like} onPress={toggleLike} white={true} />
                   )}
-                </View>
-              </View>
-              <Text style={textStyles.preview} numberOfLines={6} ellipsizeMode={'tail'}>{preview}</Text>
-            </View>
-          </ImageBackground>
-          <View style={{marginLeft: 7}}>
-            { extra_pics != null ? (
-              <>
-              <Image 
-                source={{uri: extra_pics[0]}}
-                style={{width: width*0.27, height: width*0.29, borderRadius: 5, marginBottom: 7}}
-              />
+              </ImageBackground>
               <Image 
                 source={{uri: extra_pics[1]}}
-                style={{width: width*0.275, height: width*0.29, borderRadius: 5}}
+                style={{width: width*0.34, height: width*0.34}}
               />
               </>
             ) : (
               <>
-              <View style={{width: width*0.27, height: width*0.29, borderRadius: 5, marginBottom: 7, backgroundColor: '#D9D9D9', alignItems: 'center', justifyContent: 'center'}}>
-                <Text>사진 없음</Text>
+              <View style={{width: width*0.34, height: width*0.34, marginBottom: 8, backgroundColor: '#D9D9D9', alignItems: 'flex-end', padding: 10}}>
+                  {story_like ? (
+                    <Heart like={!like} onPress={toggleLike} white={true} />
+                  ) : (
+                    <Heart like={like} onPress={toggleLike} white={true} />
+                  )}
               </View>
-              <View style={{width: width*0.27, height: width*0.29, borderRadius: 5, marginBottom: 7, backgroundColor: '#D9D9D9', alignItems: 'center', justifyContent: 'center'}}>
-                <Text>사진 없음</Text>
-              </View>
+              <View style={{width: width*0.34, height: width*0.34, backgroundColor: '#D9D9D9'}} />
               </>
             )}
           </View>
@@ -102,46 +95,32 @@ const SearchCard = ({id, place_name, title, rep_pic, extra_pics, story_like, cat
 
 const textStyles = StyleSheet.create({
   title: {
-    fontSize: 10,
-    fontWeight: '600',
-    lineHeight: 12,
+    fontSize: 16,
+    fontWeight: '700',
+    lineHeight: 22,
     color: 'white',
     marginBottom: 5
   },
   placename: {
-    fontSize: 14,
+    fontSize: 20,
     fontWeight: '700',
+    lineHeight: 28,
+    color: 'white'
+  },
+  preview: {
+    fontSize: 12,
+    fontWeight: '400',
     lineHeight: 18,
     color: 'white'
   },
-  tag: {
-    fontSize: 8,
-    fontWeight: '400',
-    color: 'white',
-  },
-  preview: {
-    fontSize: 8,
-    fontWeight: '500',
-    lineHeight: 14,
-    color: 'white'
-  },
-  address: {
-    fontSize: 6,
-    fontWeight: '400',
-    lineHeight: 7,
-    color: 'white',
-    marginLeft: 2,
-    alignSelf: 'flex-end',
-    marginBottom: 2,
-  },
   writer: { 
-    fontSize: 14,
+    fontSize: 12,
     fontWeight: '600',
   },
   date: {
     fontSize: 10,
     fontWeight: '400',
-    color: '#676767'
+    color: '#676767',
   }
 });
 

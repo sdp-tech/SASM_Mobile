@@ -5,7 +5,8 @@ import { RichEditor, RichToolbar, actions } from 'react-native-pell-rich-editor'
 import { ImageLibraryOptions, launchCamera, launchImageLibrary } from 'react-native-image-picker';
 import { Request } from '../../common/requests';
 import styled from 'styled-components/native';
-import PhotoOptions from '../../common/PhotoOptions';
+import FormHeader from '../../common/FormHeader';
+import FinishModal from '../../common/FinishModal';
 import ModalSelector from 'react-native-modal-selector';
 import Check from '../../assets/img/common/Check.svg';
 import { StoryProps } from '../../pages/Story';
@@ -29,6 +30,7 @@ export default function WriteStoryPage({ navigation, route }: StoryProps) {
   const [story, setStory] = useState({ title: "", tag: "", preview: "", place: 0, story_review: "", html_content: "", photoList: [], rep_pic: "" });
   const [photoList, setPhotoList] = useState([] as any);
   const [modalVisible, setModalVisible] = useState(false);
+  const [storyId, setStoryId] = useState<number>(0);
 
   const options: ImageLibraryOptions = {
     mediaType: "photo",
@@ -117,7 +119,7 @@ export default function WriteStoryPage({ navigation, route }: StoryProps) {
       }
     }
     const response = await request.post("/stories/create/", formData, { "Content-Type": "multipart/form-data" });
-    showModal(response.data.data.id);
+    setStoryId(response.data.data.id);
   };
 
   const updateStory = async () => {
@@ -138,15 +140,7 @@ export default function WriteStoryPage({ navigation, route }: StoryProps) {
       }
     }
     const response = await request.put(`/stories/${id}/update/`, formData, { "Content-Type": "multipart/form-data" });
-    showModal(id);
-  }
-
-  const showModal = (id: number) => {
-    setModalVisible(true);
-    setTimeout(() => {
-      setModalVisible(false);
-      navigation.replace('StoryDetail', {id: id})
-    }, 3000)
+    setStoryId(id);
   }
 
   const handleCursorPosition = useCallback((scrollY: number) => {
@@ -155,22 +149,16 @@ export default function WriteStoryPage({ navigation, route }: StoryProps) {
   }, []);
   
   return (
-    <SafeAreaView>
-      <Modal animationType='slide' visible={modalVisible}>
-        <View style={{width: width, height: height, backgroundColor: 'white', alignItems: 'center', justifyContent: 'center'}}>
-          <Check color={"#75E59B"}/>
-          <Text style={{fontSize: 20, fontWeight: '700', marginVertical: 10}}>{ id ? '수정 완료 !' : '작성 완료 !'}</Text>
-          <Text>작성한 스토리는</Text>
-          <Text>마이페이지 {'>'} 스토리 {'>'} 내가 쓴 스토리</Text>
-          <Text>에서 확인할 수 있어요</Text>
-        </View>
+    <View style={{flex: 1, backgroundColor: 'white'}}>
+      <Modal visible={modalVisible}>
+        <FinishModal
+          navigation={()=>navigation.replace('StoryDetail', {id: storyId})}
+          setModal={setModalVisible}
+          title={ id ? '수정 완료 !' : '작성 완료 !'}
+          subtitle={['작성한 스토리는', '마이페이지 > 스토리 > 내가 쓴 스토리', '에서 확인할 수 있어요']}
+        />
       </Modal>
-      <View style={{flexDirection: 'row', borderBottomColor: '#D9D9D9', borderBottomWidth: 1}}>
-        <Text style={{fontSize: 20, fontWeight: '700', textAlign: 'center', marginLeft: 150, marginBottom: 10}}>스토리 작성</Text>
-        <TouchableOpacity style={{marginLeft: 100, marginTop: 5}} onPress={id ? updateStory : saveStory}>
-          <Text>{ id ? '수정' : '등록'}</Text>
-        </TouchableOpacity>
-      </View>
+      <FormHeader title='스토리 작성' onLeft={() => navigation.goBack()} onRight={id ? updateStory : saveStory} />
       <ScrollView>
         <TextInput
           value={story.title}
@@ -248,6 +236,6 @@ export default function WriteStoryPage({ navigation, route }: StoryProps) {
           </>
         }
       </ScrollView>
-    </SafeAreaView>
+    </View>
   )
 }

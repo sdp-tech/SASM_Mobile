@@ -6,10 +6,11 @@ import { Request } from "../../common/requests";
 import { useFocusEffect } from "@react-navigation/native";
 import { StoryProps } from "../../pages/Story";
 import CardView from "../../common/CardView";
+import CustomHeader from "../../common/CustomHeader";
 import StorySearch from "./components/StorySearch";
 import Category from "../../common/Category";
 import MainCard from "./components/MainCard";
-import Arrow from "../../assets/img/common/Arrow.svg";
+import Reload from "../../assets/img/Story/Reload.svg";
 import PlusButton from "../../common/PlusButton";
 
 export interface StoryListProps {
@@ -50,17 +51,9 @@ const StoryMainPage = ({ navigation, route }: StoryProps) => {
 
   useFocusEffect(
     useCallback(() => {
-      handleSearchToggle();
       getStories();
-    }, [page, search, checkedList, order])
+    }, [page, checkedList, order])
   );
-
-  const handleSearchToggle = async () => {
-    if (search.length === 0) {
-      setPage(1);
-      setItem([]);
-    }
-  };
   
   const getStories = async () => {
     let params = new URLSearchParams();
@@ -80,70 +73,34 @@ const StoryMainPage = ({ navigation, route }: StoryProps) => {
     setNextPage(response.data.data.next);
   };
 
-  const onRefresh = async () => {
-    if (!refreshing || page !== 1) {
-      setRefreshing(true);
-      setPage(1);
-      setRefreshing(false);
-    }
-  };
-
-  const onEndReached = async () => {
-    if (search.length > 0 && nextPage !== null) {
-      setPage(page + 1);
-    }
-    else {
-      return;
-    }
-  };
-
   const onChangeOrder = async () => {
     setOrder(toggleItems[orderList].order);
   }
 
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: "white" }}>
-      <SearchBar
-        setPage={setPage}
-        search={search}
-        setSearch={setSearch}
-        style={{ backgroundColor: "#D9D9D9", opacity: 0.3, marginTop: 20, borderRadius: 10, height: 30, width: 350 }}
-        placeholder="궁금한 내용을 검색해보세요"
-        placeholderTextColor={"black"}
+      <CustomHeader
+        onSearch={() => {
+          navigation.navigate("StorySearch");
+        }}
       />
-      {search.length > 0 ? (
-        <StorySearch
-          item={item}
-          order={toggleItems}
-          count={count}
-          navigation={navigation}
-          checkedList={checkedList}
-          setCheckedList={setCheckedList}
-          onEndReached={onEndReached}
-          refreshing={refreshing}
-          value={orderList}
-          setValue={setOrderList}
-          onRefresh={onRefresh}
-        />
-      ) : (
-        <>
-          <View style={{ flexDirection: "row", paddingHorizontal: 30, paddingTop: 20, paddingBottom: 10 }}>
+          <View style={{ flexDirection: "row", paddingHorizontal: 30, paddingVertical: 20 }}>
             <View style={{ flex: 1 }}>
               <Text style={textStyles.title}>{toggleItems[orderList].title}</Text>
               <Text style={textStyles.subtitle}>{toggleItems[orderList].subtitle}</Text>
             </View>
             <TouchableOpacity onPress={() => setOrderList((orderList + 1) % 3)} style={{ marginTop: 10 }}>
-              <Arrow transform={[{ rotate: '90deg' }]} />
+              <Reload />
             </TouchableOpacity>
           </View>
-          <View style={{ backgroundColor: "white", width: width, marginVertical: 10, shadowOffset: { width: 0, height: 1 }, shadowColor: "black", shadowOpacity: 0.1 }}>
+          <View style={{ borderTopColor: 'rgba(203, 203, 203, 1)', borderTopWidth: 1, paddingTop: 10}}>
             <Category
               checkedList={checkedList}
               setCheckedList={setCheckedList}
               story={true}
             />
           </View>
-          <View style={{ paddingVertical: 20 }}>
+          <View style={{ paddingVertical: 5 }}>
             <CardView data={item} gap={0} offset={0} pageWidth={width} dot={true}
               renderItem={({ item }: any) => {
                 return (
@@ -167,8 +124,6 @@ const StoryMainPage = ({ navigation, route }: StoryProps) => {
           </View>
           <PlusButton onPress={() => navigation.navigate('WriteStory')}
             position="rightbottom" />
-        </>
-      )}
     </SafeAreaView>
   );
 };
