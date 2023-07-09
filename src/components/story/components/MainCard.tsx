@@ -1,5 +1,5 @@
 import { useState, useRef } from 'react';
-import { SafeAreaView, View, TouchableOpacity, Image, StyleSheet, Dimensions, ImageBackground, Pressable } from 'react-native';
+import { View, TouchableOpacity, Image, StyleSheet, Dimensions, ImageBackground, Pressable, Alert } from 'react-native';
 import { TextPretendard as Text } from '../../../common/CustomText';
 import { Request } from '../../../common/requests';
 import Heart from '../../../common/Heart';
@@ -16,19 +16,40 @@ export interface MainCardProps {
   nickname: string;
   profile: string;
   writer_is_verified: boolean;
+  isLogin: boolean;
   navigation: any;
   width: any;
 }
 
-const MainCard = ({id, place_name, title, rep_pic, story_like, category, preview, writer, nickname, profile, writer_is_verified, width, navigation}: MainCardProps) => {
+const MainCard = ({id, place_name, title, rep_pic, story_like, category, preview, writer, nickname, profile, writer_is_verified, isLogin, width, navigation}: MainCardProps) => {
   //const { width, height } = Dimensions.get('screen');
   const [verified, setVerified] = useState<boolean>(writer_is_verified);
   const [like, setLike] = useState<boolean>(false);
   const request = new Request();
 
   const toggleLike = async () => {
-    const response = await request.post('/stories/story_like/', { id: id }, null);
-    setLike(!like);
+    if(isLogin){
+      const response = await request.post(`/stories/story_like/`, {id: id}, {});
+      setLike(!like);
+    } else {
+      Alert.alert(
+        "로그인이 필요합니다.",
+        "로그인 항목으로 이동하시겠습니까?",
+        [
+            {
+                text: "이동",
+                onPress: () => navigation.navigate('Login'),
+
+            },
+            {
+                text: "취소",
+                onPress: () => { },
+                style: "cancel"
+            },
+        ],
+        { cancelable: false }
+      );
+    }
   };
 
   const onPress = () => {

@@ -1,6 +1,6 @@
 import { SafeAreaView, View, StyleSheet, TouchableOpacity, Dimensions, ScrollView, FlatList, Image, Share, Alert, ImageBackground } from 'react-native';
 import { TextPretendard as Text } from '../../common/CustomText';
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, useContext } from 'react';
 import Loading from '../../common/Loading';
 import { Request } from '../../common/requests';
 import Heart from '../../common/Heart';
@@ -15,6 +15,7 @@ import Scrap from '../../assets/img/Forest/Scrap.svg';
 import CommentIcon from '../../assets/img/Story/Comment.svg';
 import StoryDetailBox, { StoryDetail } from './components/StoryDetailBox';
 import { StoryProps } from '../../pages/Story';
+import { LoginContext } from '../../common/Context';
 
 interface PostRecommendSectionProps {
   item: any;
@@ -37,7 +38,7 @@ const PostRecommendSection = ({item}: PostRecommendSectionProps) => {
     <View>
       <Text style={textStyles.subject}>스토리가 포함된 큐레이션</Text>
       <CardView 
-                        gap={10}
+        gap={10}
                         offset={12}
                         data={item}
                         pageWidth={width*0.6}
@@ -147,6 +148,7 @@ const BottomBarSection = ({ post, email, onUpdate, onDelete, onShare, onRefresh,
 const StoryDetailPage = ({ navigation, route }: StoryProps) => {
   const id = route.params.id;
   const scrollRef = useRef<FlatList>(null);
+  const {isLogin, setLogin} = useContext(LoginContext);
   const [data, setData] = useState<StoryDetail>();
   const [comment, setComment] = useState([] as any);
   const [like, setLike] = useState<boolean>(false);
@@ -160,7 +162,6 @@ const StoryDetailPage = ({ navigation, route }: StoryProps) => {
   const checkUser = async () => {
       const response = await request.get(`/mypage/me/`,{},{});
       setEmail(response.data.data.email);
-      console.log('email', email);
   }
   
   const loadItem = async () => {
@@ -233,7 +234,6 @@ const StoryDetailPage = ({ navigation, route }: StoryProps) => {
   const callback = (text: string, id: number) => {
       setUpdateText(text);
       setCommentId(id);
-      console.log(updateText);
   }
 
   const scrollToTop = () => {
@@ -243,7 +243,10 @@ const StoryDetailPage = ({ navigation, route }: StoryProps) => {
     };
 
   useEffect(() => {
-      checkUser();
+    if(isLogin) checkUser();
+  }, [isLogin]);
+
+  useEffect(() => {
       loadItem();
       getStories();
   }, [refreshing]);
@@ -272,7 +275,7 @@ const StoryDetailPage = ({ navigation, route }: StoryProps) => {
                 disableVirtualization = {false}
                 ListHeaderComponent={
                 <>
-                    <StoryDetailBox data={data} navigation={navigation}/>
+                    <StoryDetailBox data={data} navigation={navigation} isLogin={isLogin} />
                     <View style={{borderBottomColor: '#D9D9D9', width: width, borderBottomWidth: 1, marginTop: 40}} />
                     <View style={{flexDirection: 'row'}}>
                         <Text style={textStyles.subject}>한줄평</Text>
@@ -281,11 +284,11 @@ const StoryDetailPage = ({ navigation, route }: StoryProps) => {
                             <Text style={{fontSize: 10}}>더보기{'>'}</Text>
                         </TouchableOpacity>
                     </View>
-                    <WriteComment id = {id} reRenderScreen = {reRenderScreen} data={updateText} commentId={commentId} />
+                    <WriteComment id = {id} reRenderScreen = {reRenderScreen} data={updateText} commentId={commentId} isLogin={isLogin} navigation={navigation} />
                 </>}
                 renderItem = {({item}) => { 
                     return (
-                        <Comment data = {item} reRenderScreen = {reRenderScreen} email={email} callback={callback} />
+                        <Comment data = {item} reRenderScreen = {reRenderScreen} email={email} callback={callback} isLogin={isLogin} />
                     )
                 }}
                 ListFooterComponent = {

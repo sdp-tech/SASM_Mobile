@@ -18,6 +18,7 @@ import Selector5 from "../../../assets/img/Category/Selector5.svg";
 interface StoryDetailProps {
     data: any;
     navigation: any;
+    isLogin: boolean;
 }
 
 export interface StoryDetail {
@@ -54,36 +55,36 @@ const CategoryWrapper = styled.View`
   border-width: 1;
 `
 
-const StoryDetailBox = ({navigation, data}: StoryDetailProps) => {
+const StoryDetailBox = ({navigation, data, isLogin}: StoryDetailProps) => {
     const { width, height } = Dimensions.get('screen');
     const [follow, setFollow] = useState<boolean>(false);
     const request = new Request();
 
     const onFollow = async () => {
-        // if (isLogin) {
+        if (isLogin) {
           const response = await request.post('/mypage/follow/', {
             targetEmail: data.writer
           }, {});
           setFollow(response.data.data.follows);
-        // } else {
-        //   Alert.alert(
-        //     "로그인이 필요합니다.",
-        //     "로그인 항목으로 이동하시겠습니까?",
-        //     [
-        //         {
-        //             text: "이동",
-        //             onPress: () => navigation.navigate('Login')
+        } else {
+          Alert.alert(
+            "로그인이 필요합니다.",
+            "로그인 항목으로 이동하시겠습니까?",
+            [
+                {
+                    text: "이동",
+                    onPress: () => navigation.navigate('Login')
     
-        //         },
-        //         {
-        //             text: "취소",
-        //             onPress: () => { },
-        //             style: "cancel"
-        //         },
-        //     ],
-        //     { cancelable: false }
-        //   );
-        // }
+                },
+                {
+                    text: "취소",
+                    onPress: () => { },
+                    style: "cancel"
+                },
+            ],
+            { cancelable: false }
+          );
+        }
       }
 
     const handlePageGoToMap = async () => {

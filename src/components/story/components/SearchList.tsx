@@ -1,9 +1,10 @@
 import { View, FlatList, TouchableOpacity } from 'react-native';
-import { useRef } from 'react';
+import { useRef, useContext } from 'react';
 import { TextPretendard as Text } from '../../../common/CustomText';
 import Arrow from "../../../assets/img/common/Arrow.svg";
 import SearchCard from './SearchCard';
 import ListCard from './ListCard';
+import { LoginContext } from '../../../common/Context';
 
 interface SearchListProps {
   info: any;
@@ -15,6 +16,8 @@ interface SearchListProps {
 }
 
 const SearchList = ({ info, onEndReached, onRefresh, refreshing, navigation, card }: SearchListProps) => {
+  const {isLogin, setLogin} = useContext(LoginContext);
+  const scrollRef = useRef<FlatList>(null);
   const cardItem = ({item}: any) => {
     return (
       <SearchCard
@@ -30,6 +33,7 @@ const SearchList = ({ info, onEndReached, onRefresh, refreshing, navigation, car
         nickname = {item.nickname}
         created = {item.created}
         writer_is_verified = {item.writer_is_verified}
+        isLogin = {isLogin}
         navigation = {navigation}
       />
     )
@@ -48,14 +52,13 @@ const SearchList = ({ info, onEndReached, onRefresh, refreshing, navigation, car
         writer = {item.writer}
         nickname = {item.nickname}
         writer_is_verified = {item.writer_is_verified}
+        isLogin = {isLogin}
         navigation = {navigation}
       />
     )
   }
 
-  const scrollRef = useRef<FlatList>(null);
   const scrollToTop = () => {
-    console.log('인식함', scrollRef.current)
     if (scrollRef.current) {
       scrollRef.current.scrollToOffset({ offset: 0, animated: true });
       console.log('작동함')

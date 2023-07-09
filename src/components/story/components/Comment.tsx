@@ -8,24 +8,11 @@ interface CommentProps {
     data: any;
     reRenderScreen: any;
     email: string;
+    isLogin: boolean;
     callback?: any;
 }
 
-interface TextButtonProps {
-    text: string;
-    onPress: any;
-}
-
-const TextButton = ({text, onPress}: TextButtonProps) => {
-    return (
-        <TouchableOpacity
-            onPress = {onPress}>
-            <Text>{text}</Text>
-        </TouchableOpacity>
-    )
-}
-
-const Comment = ({ data, reRenderScreen, email, callback }: CommentProps) => {
+const Comment = ({ data, reRenderScreen, email, isLogin, callback }: CommentProps) => {
     const date = data.created_at.slice(0, 10);
     const [update, setUpdate] = useState<boolean>(false);
     const [updateText, setUpdateText] = useState(data.content);

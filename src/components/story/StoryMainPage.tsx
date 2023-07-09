@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useContext } from "react";
 import { SafeAreaView, View, StyleSheet, TouchableOpacity, Dimensions } from "react-native";
 import { TextPretendard as Text } from '../../common/CustomText';
 import SearchBar from "../../common/SearchBar";
@@ -12,6 +12,7 @@ import Category from "../../common/Category";
 import MainCard from "./components/MainCard";
 import Reload from "../../assets/img/Story/Reload.svg";
 import PlusButton from "../../common/PlusButton";
+import { LoginContext } from "../../common/Context";
 
 export interface StoryListProps {
   id: number;
@@ -32,6 +33,7 @@ const StoryMainPage = ({ navigation, route }: StoryProps) => {
     { label: '최신 순', value: 1, title: '방금 올라온 스토리', subtitle: '가장 생생한 장소의 이야기가 궁금하다면?', order: 'latest' },
     { label: '인기 순', value: 2, title: '이번 달 인기 스토리', subtitle: '5월, 가장 많은 사람들의 관심을 받은 이야기를 둘러보세요.', order: 'hot' },
   ]
+  const {isLogin, setLogin} = useContext(LoginContext);
   const [item, setItem] = useState([] as any);
   const [orderList, setOrderList] = useState(0);
   const [order, setOrder] = useState<string>(toggleItems[orderList].order);
@@ -116,14 +118,15 @@ const StoryMainPage = ({ navigation, route }: StoryProps) => {
                     nickname={item.nickname}
                     profile={item.profile}
                     writer_is_verified={item.writer_is_verified}
+                    isLogin={isLogin}
                     navigation={navigation}
                     width={width}
                   />
                 )
               }} />
           </View>
-          <PlusButton onPress={() => navigation.navigate('WriteStory')}
-            position="rightbottom" />
+          {isLogin && <PlusButton onPress={() => navigation.navigate('WriteStory')}
+            position="rightbottom" />}
     </SafeAreaView>
   );
 };
