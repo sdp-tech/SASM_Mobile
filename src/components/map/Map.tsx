@@ -332,7 +332,10 @@ export default function MapContainer({ nowCoor, navigation, route }: MapContaine
           (searchHere.latitude.toFixed(8) != tempCoor.latitude.toFixed(8) || searchHere.longitude.toFixed(8) != tempCoor.longitude.toFixed(8)) &&
           <SearchHereButton onPress={() => { setSearchHere(tempCoor) }}><SearchHere /></SearchHereButton>
         }
-        <Category checkedList={checkedList} setCheckedList={setCheckedList} />
+        <Category
+          setPage={setPage}
+          checkedList={checkedList}
+          setCheckedList={setCheckedList} />
         <SearchBar
           search={search}
           setSearch={setSearch}
@@ -404,7 +407,7 @@ const BottomSheetMemo = memo(
       >
         {
           loading ?
-            <ActivityIndicator /> :
+            <ActivityIndicator style={{ flex: 1 }} /> :
             <>
               {
                 sheetMode ?

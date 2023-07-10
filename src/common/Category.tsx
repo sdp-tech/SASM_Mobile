@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { Dispatch, SetStateAction } from 'react';
 import { Image, View, Dimensions, TouchableOpacity } from 'react-native';
 import { TextPretendard as Text } from './CustomText';
 import { FlatList } from 'react-native-gesture-handler';
@@ -54,10 +54,12 @@ interface CategoryProps {
   checkedList: string[];
   setCheckedList: (list: string[]) => void;
   story?: boolean;
+  setPage?: Dispatch<SetStateAction<number>>;
 }
 
-export default function Category({ checkedList, setCheckedList, story }: CategoryProps): JSX.Element {
+export default function Category({ checkedList, setCheckedList, story, setPage }: CategoryProps): JSX.Element {
   const handleCheckedList = (data: string): void => {
+    if(setPage) setPage(1);
     if (checkedList.includes(data)) {
       setCheckedList(checkedList.filter(element => element != data));
     }
