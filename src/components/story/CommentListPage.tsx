@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useContext } from 'react';
 import { TextPretendard as Text } from '../../common/CustomText';
 import { SafeAreaView, View, TouchableOpacity, Dimensions, FlatList, Modal, Pressable } from 'react-native';
 import { Request } from '../../common/requests';
@@ -7,13 +7,13 @@ import Comment from './components/Comment';
 import WriteComment from './components/WriteComment';
 import Arrow from '../../assets/img/common/Arrow.svg';
 import Loading from '../../common/Loading';
+import { LoginContext } from '../../common/Context';
 
 const CommentListPage = ({ navigation, route }: StoryProps) => {
   const { width, height } = Dimensions.get('screen');
   const id = route.params.id;
-  //const reRenderScreen = route.params.reRenderScreen;
-  //const comment = route.params.comment;
   const email = route.params.email;
+  const {isLogin, setLogin} = useContext(LoginContext);
   const [comment, setComment] = useState([] as any);
   const [updateText, setUpdateText] = useState<string>('');
   const [commentId, setCommentId] = useState<number>(0);
@@ -68,11 +68,11 @@ const CommentListPage = ({ navigation, route }: StoryProps) => {
             <Text style={{textAlign: 'center', textAlignVertical: 'center', fontSize: 20, fontWeight: '700'}}>한줄평</Text>
           </View>
           <View style={{borderBottomColor: '#D9D9D9', width: width, borderBottomWidth: 1, marginBottom: 20}} />
-          <WriteComment id={id} reRenderScreen={reRenderScreen} data={updateText} commentId={commentId} />
+          <WriteComment id={id} reRenderScreen={reRenderScreen} data={updateText} commentId={commentId} isLogin={isLogin} navigation={navigation} />
         </>}
         renderItem={({item}) => { 
           return (
-            <Comment data={item} reRenderScreen={reRenderScreen} email={email} callback={callback}/>
+            <Comment data={item} reRenderScreen={reRenderScreen} email={email} callback={callback} isLogin={isLogin} />
           )
         }}
         keyExtractor={(item: any)=>item.id}

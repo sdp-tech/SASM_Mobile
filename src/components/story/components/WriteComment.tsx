@@ -6,35 +6,56 @@ import { TextPretendard as Text } from '../../../common/CustomText';
 interface WriteCommentParams {
     id: number;
     reRenderScreen: any;
+    isLogin: boolean;
+    navigation: any;
     data?: string;
     commentId?: number;
 }
 
-const WriteComment = ({ id, reRenderScreen, data, commentId }: WriteCommentParams) => {
+const WriteComment = ({ id, reRenderScreen, data, isLogin, navigation, commentId }: WriteCommentParams) => {
     const { width, height } = Dimensions.get('screen');
     const [comment, setComment] = useState<string>('');
     const request = new Request();
     
     const uploadComment = async () => {
-        if(comment === "" || comment === null){
-            Alert.alert("댓글을 입력해주세요.");
-        }
-        else {
-            if (data) {
-                const response = await request.put(`/stories/comments/update/${commentId}/`, {
-                    content: comment,
-                });
-                Alert.alert("댓글이 수정되었습니다.");
-                reRenderScreen();
-            } else {
-                const response = await request.post("/stories/comments/create/", {
-                    story: id,
-                    content: comment,
-                }, null);
-                Alert.alert("댓글이 등록되었습니다.");
-                reRenderScreen();
+        if(isLogin){
+            if(comment === "" || comment === null){
+                Alert.alert("댓글을 입력해주세요.");
             }
-        }
+            else {
+                if (data) {
+                    const response = await request.put(`/stories/comments/update/${commentId}/`, {
+                        content: comment,
+                    });
+                    Alert.alert("댓글이 수정되었습니다.");
+                    reRenderScreen();
+                } else {
+                    const response = await request.post("/stories/comments/create/", {
+                        story: id,
+                        content: comment,
+                    }, null);
+                    Alert.alert("댓글이 등록되었습니다.");
+                    reRenderScreen();
+                }
+        }} else {
+            Alert.alert(
+                "로그인이 필요합니다.",
+                "로그인 항목으로 이동하시겠습니까?",
+                [
+                    {
+                        text: "이동",
+                        onPress: () => navigation.navigate('Login')
+        
+                    },
+                    {
+                        text: "취소",
+                        onPress: () => { },
+                        style: "cancel"
+                    },
+                ],
+                { cancelable: false }
+                );
+          }
     }
 
     useEffect(()=>{
