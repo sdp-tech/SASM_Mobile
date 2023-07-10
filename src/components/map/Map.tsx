@@ -1,6 +1,6 @@
 import BottomSheet from "@gorhom/bottom-sheet";
-import React, { useEffect, useRef, useState, useMemo, SetStateAction, Dispatch, useCallback, memo, RefObject } from 'react';
-import { TouchableOpacity, View, Button, StyleSheet, SafeAreaView, Dimensions, ActivityIndicator, Modal, } from "react-native";
+import React, { useEffect, useRef, useState, useMemo, SetStateAction, Dispatch, useCallback, memo, useContext } from 'react';
+import { TouchableOpacity, View, Button, StyleSheet, SafeAreaView, Dimensions, ActivityIndicator, Modal, Alert } from "react-native";
 import NaverMapView, { Align, Marker } from './NaverMap';
 import styled from "styled-components/native";
 import SearchBar from '../../common/SearchBar';
@@ -16,6 +16,8 @@ import { StackScreenProps } from "@react-navigation/stack";
 import { TabProps } from "../../../App";
 import { useFocusEffect } from "@react-navigation/native";
 import SearchHere from "../../assets/img/Map/SearchHere.svg";
+import { LoginContext } from "../../common/Context";
+import PlusButton from "../../common/PlusButton";
 
 const { width, height } = Dimensions.get('window');
 
@@ -42,18 +44,7 @@ const MoveToCenterButton = styled(Circle)`
   top: ${height / 2};
   right: 15;
 `
-const PlusButton = styled.TouchableOpacity`
-  width: 45px;
-  height: 45px;
-  border-radius: 22.5px;
-  position: absolute;
-  top: 40px;
-  right: 20px;
-  background-color: #75E59B;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-`
+
 
 // 최소 단위 interface
 export interface DataTypes {
@@ -194,6 +185,7 @@ interface MapContainerProps extends StackScreenProps<TabProps, '맵'> {
 }
 
 export default function MapContainer({ nowCoor, navigation, route }: MapContainerProps): JSX.Element {
+  const {isLogin, setLogin} = useContext(LoginContext);
   //지도의 Ref
   const mapView = useRef<any>(null);
   const [loading, setLoading] = useState<boolean>(true);
@@ -332,7 +324,10 @@ export default function MapContainer({ nowCoor, navigation, route }: MapContaine
           (searchHere.latitude.toFixed(8) != tempCoor.latitude.toFixed(8) || searchHere.longitude.toFixed(8) != tempCoor.longitude.toFixed(8)) &&
           <SearchHereButton onPress={() => { setSearchHere(tempCoor) }}><SearchHere /></SearchHereButton>
         }
-        <Category checkedList={checkedList} setCheckedList={setCheckedList} />
+        <Category
+          setPage={setPage}
+          checkedList={checkedList}
+          setCheckedList={setCheckedList} />
         <SearchBar
           search={search}
           setSearch={setSearch}
@@ -341,9 +336,15 @@ export default function MapContainer({ nowCoor, navigation, route }: MapContaine
           setPage={setPage}
         />
       </Animated.View>
-      <PlusButton onPress={() => { setPlaceformModal(true) }}>
-        <AddColor width={25} height={25} color={'#FFFFFF'} />
-      </PlusButton>
+      <PlusButton
+        position="rightbottom"
+        onPress={() => {
+        if (!isLogin) {
+          Alert.alert('로그인이 필요합니다', '', [{ text: '로그인', onPress: () => { navigation.navigate('마이페이지') }, style: 'cancel' }, { text: 'ok' }]);
+          return;
+        }
+        setPlaceformModal(true);
+      }}/>
       <Modal visible={placeformModal}>
         <PlaceForm setPlaceformModal={setPlaceformModal} />
       </Modal>
@@ -404,7 +405,7 @@ const BottomSheetMemo = memo(
       >
         {
           loading ?
-            <ActivityIndicator /> :
+            <ActivityIndicator style={{ flex: 1 }} /> :
             <>
               {
                 sheetMode ?
