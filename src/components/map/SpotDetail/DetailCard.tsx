@@ -1,5 +1,5 @@
-import React, { useEffect, useState, useCallback, useRef } from 'react';
-import { Dimensions, Image, View, TouchableOpacity, StyleSheet, Button, Linking, Modal, SafeAreaView } from 'react-native';
+import React, { useEffect, useState, useCallback, useRef, useContext } from 'react';
+import { Dimensions, Image, View, TouchableOpacity, StyleSheet, Button, Linking, Modal, SafeAreaView, Alert } from 'react-native';
 import { TextPretendard as Text } from '../../../common/CustomText';
 import { ScrollView } from 'react-native-gesture-handler';
 import styled from 'styled-components/native';
@@ -21,6 +21,7 @@ import { StoryDetail } from '../../story/components/StoryDetailBox';
 import { useNavigation } from '@react-navigation/native';
 import { StackNavigationProp } from '@react-navigation/stack';
 import { TabProps } from '../../../../App';
+import { LoginContext } from '../../../common/Context';
 
 const { width, height } = Dimensions.get('window');
 
@@ -101,6 +102,7 @@ export interface reviewDataProps {
 }
 
 export default function DetailCard({ detailData }: DetailCardProps): JSX.Element {
+  const { isLogin, setLogin } = useContext(LoginContext);
   const navigationToTab = useNavigation<StackNavigationProp<TabProps, '스토리'>>();
   const detailRef = useRef<ScrollView>(null);
   const [viewHours, setViewHours] = useState<boolean>(false);
@@ -156,10 +158,18 @@ export default function DetailCard({ detailData }: DetailCardProps): JSX.Element
   }
 
   const handlePlaceLike = async () => {
+    if (!isLogin) {
+      Alert.alert('로그인이 필요합니다', '', [{ text: '로그인', onPress: () => { navigationToTab.navigate('마이페이지') }, style: 'cancel' }, { text: 'ok' }]);
+      return;
+    }
     const response = await request.post('/places/place_like/', { id: detailData.id });
     setLikePlace(!likePlace);
   }
   const handleStoryLike = async () => {
+    if (!isLogin) {
+      Alert.alert('로그인이 필요합니다', '', [{ text: '로그인', onPress: () => { navigationToTab.navigate('마이페이지') }, style: 'cancel' }, { text: 'ok' }]);
+      return;
+    }
     const response_like = await request.post('/stories/story_like/', { id: detailData.story_id });
     setLikeStory(!likeStory);
   }
@@ -200,6 +210,10 @@ export default function DetailCard({ detailData }: DetailCardProps): JSX.Element
         <Image source={{ uri: detailData.rep_pic }} style={{ width: '100%', height: 350 }} />
         <ButtonBox>
           <TouchableOpacity onPress={() => {
+            if (!isLogin) {
+              Alert.alert('로그인이 필요합니다', '', [{ text: '로그인', onPress: () => { navigationToTab.navigate('마이페이지') }, style: 'cancel' }, { text: 'ok' }]);
+              return;
+            }
             setReviewModal(true);
           }}>
             <PlusWhite />
@@ -217,7 +231,7 @@ export default function DetailCard({ detailData }: DetailCardProps): JSX.Element
         </ButtonBox>
         <TextBox>
           <Text style={TextStyles.info}>{detailData.category}</Text>
-          <Text style={{ ...TextStyles.info, marginBottom: 20, fontWeight:'700' }}>{detailData.place_name}</Text>
+          <Text style={{ ...TextStyles.info, marginBottom: 20, fontWeight: '700' }}>{detailData.place_name}</Text>
           <Text style={TextStyles.info}>{detailData.place_review}</Text>
         </TextBox>
         <View>
@@ -310,9 +324,13 @@ export default function DetailCard({ detailData }: DetailCardProps): JSX.Element
                 </Section>,
                 1: <Section>
                   {
-                    reviewData && reviewData.map((data: reviewDataProps) => (
-                      <UserReviews category={detailData.category} rerender={rerenderScreen} reviewData={data} />
-                    ))
+                    reviewData && (
+                      reviewData.length != 0 ? reviewData.map((data: reviewDataProps) => (
+                        <UserReviews category={detailData.category} rerender={rerenderScreen} reviewData={data} />
+                      ))
+                        :
+                        <Text style={{ marginHorizontal: 15, fontWeight: '700', color: '#000000' }}>리뷰가 없습니다.</Text>
+                    )
                   }
                 </Section>,
                 2: <Section>
@@ -347,7 +365,7 @@ const TextStyles = StyleSheet.create({
     lineHeight: 19,
     color: '#FFFFFF',
     textShadowRadius: 4,
-    textShadowOffset: {width: -1, height:1},
+    textShadowOffset: { width: -1, height: 1 },
     textShadowColor: 'rgba(0,0,0,0.9)',
   },
   common: {
