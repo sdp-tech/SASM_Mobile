@@ -19,6 +19,7 @@ import { StackNavigationProp } from '@react-navigation/stack';
 import { MyPageProps } from '../../pages/MyPage';
 import { Request } from '../../common/requests';
 import { LoginContext } from '../../common/Context';
+import { RegisterParams } from './Register';
 const { width, height } = Dimensions.get('window');
 
 const Button = styled.TouchableOpacity`
@@ -57,6 +58,7 @@ export const processLoginResponse = (response: any, navigation:any, setLogin: (v
 
 export default function SocialLogin({ type }: { type: string }) {
   const navigation = useNavigation<StackNavigationProp<MyPageProps>>();
+  const navigationRegister = useNavigation<StackNavigationProp<RegisterParams>>();
   const {isLogin, setLogin} = useContext(LoginContext);
   const google_configure = () => {
     GoogleSignin.configure({
@@ -144,6 +146,12 @@ export default function SocialLogin({ type }: { type: string }) {
           'login': '로그인'
         }[type]}</Text>
       </Button>
+      {
+        (type=='register') &&
+        <Button style={{borderColor:'#67D393', borderWidth: 1}} onPress={()=>navigationRegister.navigate('email')}>
+        <Text style={TextStyles.button}>이메일로 회원가입</Text>
+      </Button>
+      }
     </View>
   )
 }

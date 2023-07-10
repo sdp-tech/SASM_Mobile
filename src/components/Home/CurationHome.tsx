@@ -1,8 +1,8 @@
-import React, { useState, useEffect, useCallback } from "react";
-import { SafeAreaView, View, TouchableOpacity, Dimensions, ActivityIndicator, StyleSheet, ImageBackground } from "react-native";
+import React, { useState, useEffect, useCallback, useContext } from "react";
+import { SafeAreaView, View, TouchableOpacity, Dimensions, ActivityIndicator, StyleSheet, ImageBackground, Alert } from "react-native";
 import { TextPretendard as Text } from "../../common/CustomText";
 import { ScrollView } from "react-native-gesture-handler";
-import ItemCard, {SearchItemCard} from "./ItemCard";
+import ItemCard, { SearchItemCard } from "./ItemCard";
 import { Request } from "../../common/requests";
 import { StackScreenProps, StackNavigationProp } from "@react-navigation/stack";
 import { useFocusEffect, useNavigation } from '@react-navigation/native';
@@ -13,6 +13,8 @@ import AddColor from "../../assets/img/common/AddColor.svg";
 import CardView from "../../common/CardView";
 import Arrow from "../../assets/img/common/Arrow.svg";
 import CustomHeader from "../../common/CustomHeader";
+import PlusButton from "../../common/PlusButton";
+import { LoginContext } from "../../common/Context";
 
 const { width, height } = Dimensions.get('screen');
 
@@ -41,18 +43,6 @@ const TextBox = styled.View`
   margin: 0 15px;
   margin-bottom: 10px;
 `
-const PlusButton = styled.TouchableOpacity`
-  width: 45px;
-  height: 45px;
-  border-radius: 27.5px;
-  position: absolute;
-  bottom: 20px;
-  right: 20px;
-  background-color: #75E59B;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-`
 
 export interface CurationProps {
   title: string;
@@ -63,6 +53,7 @@ export interface CurationProps {
 }
 
 export default function CurationHome({ navigation, route }: StackScreenProps<HomeStackParams, 'Home'>): JSX.Element {
+  const { isLogin, setLogin } = useContext(LoginContext);
   const [loading, setLoading] = useState<boolean>(true);
   const [adminCuration, setAdminCuration] = useState<CurationProps[]>([]);
   const [repCuration, setRepCuration] = useState<CurationProps[]>([]);
@@ -98,7 +89,7 @@ export default function CurationHome({ navigation, route }: StackScreenProps<Hom
     verifedList.push(verifedCuration[i]);
   }
 
-  useFocusEffect(useCallback(()=>{
+  useFocusEffect(useCallback(() => {
     getStory();
     getCurration();
   }, []))
@@ -109,8 +100,8 @@ export default function CurationHome({ navigation, route }: StackScreenProps<Hom
         : <>
           <ScrollView>
             <CustomHeader
-              onSearch={()=>{navigation.navigate('List', {data: []})}}
-              onAlarm={()=>{}}
+              onSearch={() => { navigation.navigate('List', { data: [] }) }}
+              onAlarm={() => { }}
             />
             <CardView
               gap={0}
@@ -233,28 +224,40 @@ export default function CurationHome({ navigation, route }: StackScreenProps<Hom
               ></CardView>
             </SectionCuration>
           </ScrollView>
-          <CurationPlusButton />
+          <PlusButton
+            onPress={() => {
+              if (!isLogin) {
+                Alert.alert('로그인이 필요합니다', "",
+                  [
+                    {
+                      text: "로그인",
+                      onPress: () => navigationToTab.navigate('마이페이지'),
+                      style: "cancel"
+                    },
+                    {
+                      text: "ok",
+                      style: "cancel"
+                    },
+                  ])
+                return;
+              }
+              navigation.navigate('Form')
+            }}
+            position='rightbottom'
+          />
         </>
       }
     </SafeAreaView>
   )
 }
 
-export const CurationPlusButton = () => {
-  const navigation = useNavigation<StackNavigationProp<HomeStackParams>>();
-  return (
-    <PlusButton onPress={() => { navigation.navigate('Form') }}>
-      <AddColor width={25} height={25} color={'#FFFFFF'} />
-    </PlusButton>
-  )
-}
 const TextStyles = StyleSheet.create({
   Title: {
     // fontFamily:"Inter",
     fontWeight: "600",
     fontSize: 16,
     lineHeight: 19,
-    widht: '70%',
+    width: '70%',
   },
   Sub: {
     fontWeight: "400",
