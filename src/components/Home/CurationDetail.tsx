@@ -133,9 +133,9 @@ export default function CurationDetail({ navigation, route }: StackScreenProps<H
   })
   const getCurationDetail = async () => {
     const response_detail = await request.get(`/curations/curation_detail/${route.params.id}/`);
-    setCurationDetail(response_detail.data.data[0]);
-    Image.getSize(response_detail.data.data[0].rep_pic, (width, height) => { setReppicSize({ width: width, height: height }) });
-    Image.getSize(response_detail.data.data[0].map_image, (width, height) => { setMapImageSize({ width: width, height: height }) })
+    setCurationDetail(response_detail.data.data);
+    Image.getSize(response_detail.data.data.rep_pic, (width, height) => { setReppicSize({ width: width, height: height }) });
+    Image.getSize(response_detail.data.data.map_image, (width, height) => { setMapImageSize({ width: width, height: height }) })
   }
   const getCurationStoryDetail = async () => {
     const reponse_story_detail = await request.get(`/curations/curated_story_detail/${route.params.id}/`);
