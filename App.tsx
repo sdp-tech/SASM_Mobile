@@ -71,7 +71,7 @@ const CustomTab = ({ state, descriptors, navigation }: BottomTabBarProps) => {
   return (
     <View
       style={{
-        height: 75,
+        height: 88,
         display: "flex",
         flexDirection: "row",
         justifyContent: "space-around",
