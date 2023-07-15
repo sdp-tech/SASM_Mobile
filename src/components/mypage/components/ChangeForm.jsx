@@ -126,7 +126,7 @@ export default function UserInfoBox({ navigation }) {
        name: photo,
      }
     )
-
+                             
     const response = await request.patch('/mypage/me/update/',formData, {"Content-Type": "multipart/form-data"} );
     console.log("변경됨 ",response);
 
