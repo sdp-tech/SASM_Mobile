@@ -59,7 +59,6 @@ export default function CurationHome({ navigation, route }: StackScreenProps<Hom
   const [repCuration, setRepCuration] = useState<CurationProps[]>([]);
   const [verifedCuration, setVerifiedCuration] = useState<CurationProps[]>([]);
   const navigationToTab = useNavigation<StackNavigationProp<TabProps>>();
-  const [refresh, setRefresh] = useState<boolean>(false);
   // 연관 스토리 검색
   const [storyData, setStoryData] = useState([]);
   const request = new Request();
@@ -111,6 +110,7 @@ export default function CurationHome({ navigation, route }: StackScreenProps<Hom
               dot={false}
               renderItem={({ item }: any) => (
                 <ItemCard
+                  rep={true}
                   data={item}
                   style={{ width: width, height: height * 0.4 }}
                 />
@@ -119,6 +119,7 @@ export default function CurationHome({ navigation, route }: StackScreenProps<Hom
             <SectionCuration>
               <TextBox>
                 <Text style={TextStyles.Title}>큐레이션</Text>
+                <Text style={TextStyles.Sub}>장소를 모아 놓은 코스를 추천받아보세요.</Text>
                 <TouchableOpacity onPress={() => { navigation.navigate('List', { data: adminCuration }) }}><Text style={TextStyles.SubBlack}>모두보기 <Arrow /></Text></TouchableOpacity>
               </TextBox>
               <CardView
@@ -138,8 +139,8 @@ export default function CurationHome({ navigation, route }: StackScreenProps<Hom
             <SectionCuration>
               <TextBox>
                 <Text style={TextStyles.Title}>이 큐레이션은 어때요?</Text>
-                <TouchableOpacity onPress={() => { navigation.navigate('List', { data: verifedCuration }) }}><Text style={TextStyles.SubBlack}>모두보기 <Arrow /></Text></TouchableOpacity>
                 <Text style={TextStyles.Sub}>유저가 직접 작성한 큐레이션</Text>
+                <TouchableOpacity onPress={() => { navigation.navigate('List', { data: verifedCuration }) }}><Text style={TextStyles.SubBlack}>모두보기 <Arrow /></Text></TouchableOpacity>
               </TextBox>
               {
                 verifedList.map((data, index) =>
@@ -150,58 +151,60 @@ export default function CurationHome({ navigation, route }: StackScreenProps<Hom
               }
             </SectionCuration>
             <SectionCuration>
-              <TextBox>
-                <Text style={TextStyles.Title}>추천 장소</Text>
-              </TextBox>
-              <View style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-around' }}>
-                <RecommendWrapper>
-                  <RecommendPlace
-                    onPress={() => { navigationToTab.navigate('맵', { coor: { latitude: 37.544641605, longitude: 127.055896738 } }) }}>
-                    <ImageBackground
-                      imageStyle={{ borderRadius: width / 10 }}
-                      style={{ flex: 1 }}
-                      resizeMode='contain'
-                      source={require('../../assets/img/Home/place_seongsu.png')}
-                    />
-                  </RecommendPlace>
-                  <Text style={TextStyles.recommend}>성수동</Text>
-                </RecommendWrapper>
-                <RecommendWrapper>
-                  <RecommendPlace
-                    onPress={() => { navigationToTab.navigate('맵', { coor: { latitude: 37.5090846971287, longitude: 127.108220751231 } }) }}>
-                    <ImageBackground
-                      imageStyle={{ borderRadius: width / 10 }}
-                      style={{ flex: 1 }}
-                      resizeMode='contain'
-                      source={require('../../assets/img/Home/place_songridan.png')}
-                    />
-                  </RecommendPlace>
-                  <Text style={TextStyles.recommend}>송리단길</Text>
-                </RecommendWrapper>
-                <RecommendWrapper>
-                  <RecommendPlace
-                    onPress={() => { navigationToTab.navigate('맵', { coor: { latitude: 37.555833333333325, longitude: 126.89999999999999 } }) }}>
-                    <ImageBackground
-                      imageStyle={{ borderRadius: width / 10 }}
-                      style={{ flex: 1 }}
-                      resizeMode='cover'
-                      source={require('../../assets/img/Home/place_mangwon.png')}
-                    />
-                  </RecommendPlace>
-                  <Text style={TextStyles.recommend}>망원동</Text>
-                </RecommendWrapper>
-                <RecommendWrapper>
-                  <RecommendPlace
-                    onPress={() => { navigationToTab.navigate('맵', { coor: { latitude: 37.55972222222222, longitude: 126.9752777777778 } }) }}>
-                    <ImageBackground
-                      imageStyle={{ borderRadius: width / 10 }}
-                      style={{ flex: 1 }}
-                      resizeMode='cover'
-                      source={require('../../assets/img/Home/place_namdaemun.png')}
-                    />
-                  </RecommendPlace>
-                  <Text style={TextStyles.recommend}>남대문</Text>
-                </RecommendWrapper>
+              <View style={{backgroundColor:'#EDF8F2', paddingVertical: 25}}>
+                <TextBox>
+                  <Text style={TextStyles.Title}>장소 추천</Text>
+                </TextBox>
+                <View style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-around' }}>
+                  <RecommendWrapper>
+                    <RecommendPlace
+                      onPress={() => { navigationToTab.navigate('맵', { coor: { latitude: 37.544641605, longitude: 127.055896738 } }) }}>
+                      <ImageBackground
+                        imageStyle={{ borderRadius: width / 10 }}
+                        style={{ flex: 1 }}
+                        resizeMode='contain'
+                        source={require('../../assets/img/Home/place_seongsu.png')}
+                      />
+                    </RecommendPlace>
+                    <Text style={TextStyles.recommend}>성수동</Text>
+                  </RecommendWrapper>
+                  <RecommendWrapper>
+                    <RecommendPlace
+                      onPress={() => { navigationToTab.navigate('맵', { coor: { latitude: 37.5090846971287, longitude: 127.108220751231 } }) }}>
+                      <ImageBackground
+                        imageStyle={{ borderRadius: width / 10 }}
+                        style={{ flex: 1 }}
+                        resizeMode='contain'
+                        source={require('../../assets/img/Home/place_songridan.png')}
+                      />
+                    </RecommendPlace>
+                    <Text style={TextStyles.recommend}>송리단길</Text>
+                  </RecommendWrapper>
+                  <RecommendWrapper>
+                    <RecommendPlace
+                      onPress={() => { navigationToTab.navigate('맵', { coor: { latitude: 37.555833333333325, longitude: 126.89999999999999 } }) }}>
+                      <ImageBackground
+                        imageStyle={{ borderRadius: width / 10 }}
+                        style={{ flex: 1 }}
+                        resizeMode='cover'
+                        source={require('../../assets/img/Home/place_mangwon.png')}
+                      />
+                    </RecommendPlace>
+                    <Text style={TextStyles.recommend}>망원동</Text>
+                  </RecommendWrapper>
+                  <RecommendWrapper>
+                    <RecommendPlace
+                      onPress={() => { navigationToTab.navigate('맵', { coor: { latitude: 37.55972222222222, longitude: 126.9752777777778 } }) }}>
+                      <ImageBackground
+                        imageStyle={{ borderRadius: width / 10 }}
+                        style={{ flex: 1 }}
+                        resizeMode='cover'
+                        source={require('../../assets/img/Home/place_namdaemun.png')}
+                      />
+                    </RecommendPlace>
+                    <Text style={TextStyles.recommend}>남대문</Text>
+                  </RecommendWrapper>
+                </View>
               </View>
             </SectionCuration>
             <SectionCuration style={{ marginBottom: 30 }}>
@@ -255,16 +258,16 @@ const TextStyles = StyleSheet.create({
   Title: {
     // fontFamily:"Inter",
     fontWeight: "600",
-    fontSize: 16,
-    lineHeight: 19,
-    width: '70%',
+    fontSize: 20,
+    lineHeight: 28,
+    width: '100%'
   },
   Sub: {
+    width: '70%',
     fontWeight: "400",
     fontSize: 10,
     lineHeight: 12,
     color: '#595959',
-    width: width,
   },
   SubBlack: {
     fontWeight: "400",
@@ -273,7 +276,7 @@ const TextStyles = StyleSheet.create({
   },
   recommend: {
     color: '#FFFFFF',
-    backgroundColor: '#3B3B3B',
+    backgroundColor: '#67D393',
     fontSize: 12,
     paddingHorizontal: 6,
     paddingVertical: 3,

@@ -56,7 +56,8 @@ export default function SelectStoryModal({ setSelectStoryModal, selectedStory, s
   const [total, setTotal] = useState<number>(0);
   const [placeList, setPlaceList] = useState<placeDataProps[]>([]);
   const [storyListModal, setStoryListModal] = useState<boolean>(false);
-  const [selectedPlace, setSelectedPlace] = useState<any>();
+  const [target, setTarget] = useState<any>();
+  const [selectedPlace, setSelectedPlace] = useState<string[]>([]);
   const listRef = useRef<FlatList>(null);
   const getPlaceList = async () => {
     setLoading(true);
@@ -87,7 +88,7 @@ export default function SelectStoryModal({ setSelectStoryModal, selectedStory, s
   const closeModal = () => {
     filterRef.current?.close();
   }
-
+  
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
       <SafeAreaView style={{ flex: 1 }}>
@@ -105,7 +106,7 @@ export default function SelectStoryModal({ setSelectStoryModal, selectedStory, s
         <FlatList
           data={placeList}
           renderItem={({ item }) =>
-            <ItemCard selected={false} onPress={() => { setStoryListModal(true); setSelectedPlace({ place_name: item.place_name, address: item.address }); }}>
+            <ItemCard selected={selectedPlace.includes(item.place_name)} onPress={() => { setStoryListModal(true); setTarget({ place_name: item.place_name, address: item.address }); }}>
               <Image source={{ uri: item.rep_pic }} style={{ height: 50, width: 50, marginRight: 15, borderRadius: 3 }} />
               <TextBox>
                 <Text style={TextStyles.place_name}>{item.place_name}</Text>
@@ -135,7 +136,7 @@ export default function SelectStoryModal({ setSelectStoryModal, selectedStory, s
           </BottomSheetModal>
         </BottomSheetModalProvider>
         <Modal visible={storyListModal}>
-          <StoryListModal selectedPlace={selectedPlace} setStoryListModal={setStoryListModal} selectedStory={selectedStory} setSelectedStory={setSelectedStory} />
+          <StoryListModal setSelectedPlace={setSelectedPlace} selectedPlace={selectedPlace} target={target} setStoryListModal={setStoryListModal} selectedStory={selectedStory} setSelectedStory={setSelectedStory} />
         </Modal>
       </SafeAreaView>
     </GestureHandlerRootView>

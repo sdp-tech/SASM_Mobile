@@ -30,13 +30,15 @@ const TextBox = styled.View`
 `
 
 interface StoryListModalProps {
-  selectedPlace: any;
+  target: any;
   setStoryListModal: Dispatch<SetStateAction<boolean>>;
   selectedStory: any[];
   setSelectedStory: Dispatch<SetStateAction<any[]>>;
+  setSelectedPlace: Dispatch<SetStateAction<string[]>>;
+  selectedPlace: string[]
 }
 
-export default function StoryListModal({ selectedPlace, setStoryListModal, selectedStory, setSelectedStory }: StoryListModalProps): JSX.Element {
+export default function StoryListModal({ target, setStoryListModal, selectedStory, setSelectedStory, selectedPlace, setSelectedPlace}: StoryListModalProps): JSX.Element {
   const request = new Request();
   const [storyId, setStoryId] = useState<number>(0);
   const [storyList, setStoryList] = useState<StoryListProps[]>([]);
@@ -48,7 +50,7 @@ export default function StoryListModal({ selectedPlace, setStoryListModal, selec
   const getStoryList = async (set: boolean) => {
     setLoading(true);
     const response_story_list = await request.get('/stories/story_search/', {
-      search: selectedPlace.place_name,
+      search: target.place_name,
       latest: dropValue == 1 ? true : false
     })
     if (set) {
@@ -71,12 +73,14 @@ export default function StoryListModal({ selectedPlace, setStoryListModal, selec
     getStoryList(false);
   }, [dropValue])
 
-  const handleSelectedStory = (id: number, rep_pic: string) => {
+  const handleSelectedStory = (id: number, rep_pic: string, place_name:string) => {
     if (selectedStory.filter(el => el.id == id).length > 0) {
       setSelectedStory(selectedStory.filter(el => el.id != id));
+      setSelectedPlace(selectedPlace.filter(el => el != place_name))
     }
     else {
       setSelectedStory([...selectedStory, { id: id, rep_pic: rep_pic }]);
+      setSelectedPlace([...selectedPlace, place_name]);
     }
   }
 
@@ -97,8 +101,8 @@ export default function StoryListModal({ selectedPlace, setStoryListModal, selec
         </TouchableOpacity>
         <View style={{ paddingHorizontal: 15, marginTop: 10, zIndex: 2 }}>
           <Text style={{ ...ListTextStyles.title, fontSize: 20, marginBottom: 20 }}>스토리 선택</Text>
-          <Text style={{ ...ListTextStyles.title, fontSize: 20 }}>{selectedPlace.place_name}</Text>
-          <Text style={{ ...ListTextStyles.address, fontSize: 12, marginVertical: 5 }}>{selectedPlace.address}</Text>
+          <Text style={{ ...ListTextStyles.title, fontSize: 20 }}>{target.place_name}</Text>
+          <Text style={{ ...ListTextStyles.address, fontSize: 12, marginVertical: 5 }}>{target.address}</Text>
           <View style={{ width: 100, marginVertical: 10, alignSelf: 'flex-end' }}>
             <DropDown value={dropValue} setValue={setDropValue} isBorder={false} items={toggleItems} />
           </View>
@@ -106,7 +110,7 @@ export default function StoryListModal({ selectedPlace, setStoryListModal, selec
         <FlatList
           data={storyList}
           renderItem={({ item }) =>
-            <ItemCard selected={selectedStory.filter(el => el.id == item.id).length > 0} onPress={() => { handleSelectedStory(item.id, item.rep_pic) }}>
+            <ItemCard selected={selectedStory.filter(el => el.id == item.id).length > 0} onPress={() => { handleSelectedStory(item.id, item.rep_pic, item.place_name) }}>
               <Image source={{ uri: item.rep_pic }} style={{ height: 100, width: 100, marginRight: 15, borderRadius: 3 }} />
               <TextBox>
                 <Text style={ListTextStyles.title}>{item.title}</Text>
