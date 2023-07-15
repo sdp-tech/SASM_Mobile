@@ -355,8 +355,8 @@ export default function MapContainer({ nowCoor, navigation, route }: MapContaine
 const CustomHandle = ({ mode }: { mode: boolean }) => {
 
   return (
-    <View style={{ backgroundColor: mode ? '#FFFFFF' : 'none', position: 'absolute', width: width, height: 15, borderTopEndRadius: 10, borderTopStartRadius: 10, display: 'flex', justifyContent: 'center' }}>
-      <View style={{ width: 60, height: 5, alignSelf: 'center', backgroundColor: '#D9D9D9', borderRadius: 2.5 }}></View>
+    <View style={{ backgroundColor: mode ? '#FFFFFF' : 'none', position: 'absolute', width: width, height: 39, borderTopEndRadius: 10, borderTopStartRadius: 10, display: 'flex', justifyContent: 'flex-start' }}>
+      <View style={{ width: 60, height: 5, alignSelf: 'center', backgroundColor: '#D9D9D9', borderRadius: 2.5, marginTop: 5 }}></View>
     </View>
   );
 };
