@@ -4,7 +4,7 @@ import { TextPretendard as Text } from '../../../common/CustomText';
 import { useFocusEffect, useNavigation } from '@react-navigation/native';
 import { getNickname, removeNickname, removeAccessToken, getEmail } from '../../../common/storage';
 import { launchImageLibrary } from 'react-native-image-picker';
-import PhotoOptions from '../../../common/PhotoOptions';
+import PhotoOptions, { PhotoSelector } from '../../../common/PhotoOptions';
 import { Request } from '../../../common/requests';
 import { TextInput } from 'react-native-gesture-handler';
 import styled, { css } from 'styled-components/native';
@@ -30,17 +30,19 @@ export default function UserInfoBox({ navigation }) {
  
   const formData = new FormData();
   const [nickname, setNickname] = useState('')
-  const [changednick,setChangednick] = useState(''); 
+  const [nick, setNick] = useState('')
+  const [changednick,setChangednick] = useState('');
+
   const [photo, setPhoto] = useState('');
   const [email,setEmail] = useState('');
   const [birthdate,setBirthdate] = useState('');
-  const [info,setInfo] = useState('');
+  
   const [newphoto,setNewphoto] = useState('');
   const [gender,setGender] = useState('');
   const [followernum, setFollowernum] = useState();
   const [followingnum, setFollowingnum] = useState();
   const [text,setText] = useState('');
-
+  
   const TextChange = (newText) =>{
     setText(newText)
   }
@@ -52,7 +54,7 @@ export default function UserInfoBox({ navigation }) {
       setEmail('')
   }
   const getUserinfo = async () => {
-    const response = await request.get(`mypage/me/`,{},{});
+    const response = await request.get(`/mypage/me/`,{},{});
     console.log("응답 : ",response);
     console.log("이메일 : ",response.data.data.email);
     console.log("생년월일 : ", response.data.data.birthdate);
@@ -64,16 +66,16 @@ export default function UserInfoBox({ navigation }) {
     setBirthdate(response.data.data.birthdate)
     setPhoto(response.data.data.profile_image)
     setGender(response.data.data.gender)
-    
-    const response0 = await request.get('mypage/following/', {
+    const response0 = await request.get('/mypage/following/', {
       email: response.data.data.email,
       search_email: '',
     })
-    const response1 = await request.get('mypage/follower/', {
+    const response1 = await request.get('/mypage/follower/', {
       email: response.data.data.email,
       search_email: '',
     })
-    
+    //console.log("*******",newphoto[0].uri)
+    //setPhoto(newphoto[0].uri)
     setFollowingnum(response0.data.data.count);
     setFollowernum(response1.data.data.count);
 
@@ -83,20 +85,20 @@ export default function UserInfoBox({ navigation }) {
     //변경된 정보 post
     console.log("닉네임 : ",changednick);
     console.log("생년월일 : ", birthdate);
-    //console.log("프로필 사진 : " , newphoto[0].uri)
-    console.log("성별 : ", gender)
-      // console.log(file);
-      //setPhoto(newphoto[0].uri)
+    // //console.log("프로필 사진 : " , newphoto[0].uri)
+    // console.log("성별 : ", gender)
+    //   // console.log(file);
+    //   //setPhoto(newphoto[0].uri)
       
-    // var changephoto = {
-    //   uri: newphoto[0].uri,
-    //   name: newphoto[0].fileName,
-    //   type: 'image/jpeg/png',
-    // }
-    //formData.append('nickname',changednick)
-    //formData.append('birthdate', birthdate);
-    //formData.append('profile_image',changephoto)
-    //formData.append('gender', gender)
+    // // var changephoto = {
+    // //   uri: newphoto[0].uri,
+    // //   name: newphoto[0].fileName,
+    // //   type: 'image/jpeg/png',
+    // // }
+    // //formData.append('nickname',changednick)
+    // //formData.append('birthdate', birthdate);
+    // //formData.append('profile_image',changephoto)
+    // //formData.append('gender', gender)
     console.log(formData);
     /*const response = await request.post('/users/me/',{nickname:changednick,birthdate:birthdate,profile_image:{
       uri: newphoto[0].uri,
@@ -107,66 +109,63 @@ export default function UserInfoBox({ navigation }) {
 
   const handleButtonPress = async (selectedGender) => {
     setGender(selectedGender);
+
+    if (newphoto && newphoto[0] && newphoto[0].uri) {
+      setPhoto(newphoto[0].uri);
+    }
     formData.append('gender', gender);
-    formData.append('nickname', nickname);
+    if(changednick != nick){
+      formData.append('nickname', nick);
+      }
+
     formData.append('birthdate', birthdate);
-    formData.append('email', email);
-    formData.append('address', '주소');
     formData.append('profile_image',  
     {
        uri: photo,
+       type: photo.endsWith('.jpg')?'image/jpeg':'image/png',
        name: photo,
-       type: "image/jpeg/png",
      }
     )
-    const response = await request.patch('mypage/me/update/',formData, {"Content-Type": "multipart/form-data"} );
+
+    const response = await request.patch('/mypage/me/update/',formData, {"Content-Type": "multipart/form-data"} );
     console.log("변경됨 ",response);
 
+    
     navigation.navigate('mypage');
   
   };
 
-    // const handleChoosePhoto = () => {
-    //   launchImageLibrary({ noData: true }, (response) => {
-    //     // console.log(response);
-    //     if (response) {
-    //       console.log('bbbb',response)
-    //       setPhoto(response.uri);
-    //       console.log('aaaaa', photo,'bbbb');
-    //     }
-    //   });
-    // };
-  
     useFocusEffect(
       useCallback(() => {
-          // Do someth2ing when the screen is focused
-          async function _getNickname() {
-              setNickname(await getNickname());
-          }
-          _getNickname();
-          getUserinfo();
-          // return () => {
-          //     // Do something when the screen is unfocused
-          //     // Useful for cleanup functions
-          // };
-      }, [nickname]))
-      
+         // Do someth2ing when the screen is focused
+         async function _getNickname() {
+          setNickname(await getNickname());
+      }
+      _getNickname();
+      getUserinfo();
+  }, [nickname]))
+   
       
   
-    const handleUploadPhoto = () => {
-//      const response = await request.post("/users/me/",photo );
-    };
-
-  //useEffect(()=>{console.log('프로필정보',newphoto)}, [newphoto])
   return (
     <View style={{flex : 1, backgroundColor :'white'}}>
     {nickname ? (
       <ScrollView >
         <View style={styles.container}>
-          <View style={styles.imageBox}>
-                <Image source={{ uri: photo }} style={styles.imageBackground}  />               
-            </View>
-          <Text style={styles.nicknameText}>  {nickname}님</Text>
+        <View style={styles.followContainer}> 
+                  
+          <View style={styles.imageBox}>         
+            <Image source={{ uri: photo }} style={styles.imageBackground}>
+                </Image>         
+              </View>
+  
+            <TouchableOpacity style={styles.imageBox}>
+            <PhotoSelector max={1} width={90} height={90} setPhoto={setNewphoto}>
+              {/* {(data)=>(setPhoto(data[0].uri))} */}
+            </PhotoSelector>
+            </TouchableOpacity>    
+          </View>
+          <Text style={styles.nicknameText}>  {changednick}님</Text>
           
           <View style={styles.userContainer}>
           <TextInput style={styles.textInput} 
@@ -186,8 +185,10 @@ export default function UserInfoBox({ navigation }) {
                 </View>
               <View style={styles.followContainer}>
                 <Text style={styles.Text}>이름       </Text>
-                <TextInput style={styles.Text} placeholder={nickname} value={changednick}
-                onChangeText={(text)=>{setChangednick(text)}}/>
+                <TextInput style={styles.Text} placeholder={changednick} value={nick}
+                onChangeText={(text)=>{setNick(text)}}/>
+             
+             
               </View>
               <View style={styles.followContainer}>
                 <Text style={styles.Text}>성별        </Text>
@@ -219,6 +220,12 @@ export default function UserInfoBox({ navigation }) {
                 <TextInput style={styles.Text} placeholder={birthdate} value={birthdate} 
                 onChangeText={(text)=>{setBirthdate(text)}}/>
               </View>
+
+              <TouchableOpacity
+                      onPress={()=>{SaveInfo()}}
+                    >
+                      <Text style={styles.Text}>확인</Text>
+                    </TouchableOpacity>
           </View>
 
               <View style={styles.OutdotContainer} >
@@ -245,6 +252,12 @@ export default function UserInfoBox({ navigation }) {
 }
 
 const styles = StyleSheet.create({
+  smallSquareButton: {
+    width: 20,
+    height: 20,
+    backgroundColor: 'red',
+    marginLeft: 5,
+  },
 imageBackground: {
 flex: 1,
 resizeMode: 'cover',
