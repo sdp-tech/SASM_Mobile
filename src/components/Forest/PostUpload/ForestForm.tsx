@@ -65,11 +65,15 @@ const ForestForm = ({ navigation, route }: NativeStackScreenProps<ForestStackPar
     Alert.alert('대표 사진 선택', '', [
       {
         text: '카메라',
-        onPress: () => { launchCamera({ mediaType: 'photo', maxHeight: height / 2, maxWidth: width }, (response: any) => setRepPic(response.assets)) }
+        onPress: () => { launchCamera({ mediaType: 'photo', maxHeight: height / 2, maxWidth: width }, response => {
+          if (response && response.assets) setRepPic(response.assets)})
+        }
       },
       {
         text: '앨범',
-        onPress: () => { launchImageLibrary({ mediaType: 'photo', selectionLimit: 1, maxHeight: height / 2, maxWidth: width }, (response: any) => setRepPic(response.assets)) }
+        onPress: () => { launchImageLibrary({ mediaType: 'photo', selectionLimit: 1, maxHeight: height / 2, maxWidth: width }, response => {
+          if (response && response.assets) setRepPic(response.assets)})
+        }
       }
     ])
   }
@@ -195,7 +199,7 @@ const ForestForm = ({ navigation, route }: NativeStackScreenProps<ForestStackPar
       </Modal>
       <FormHeader title='포레스트 작성' onLeft={() => navigation.goBack()} onRight={post ? updateForest : saveForest} />
       <ScrollView>
-      <ImageBackground source={{ uri: repPic.length > 0 ? repPic[0].uri : forest.rep_pic != '' ? forest.rep_pic : "https://reactnative.dev/img/logo-og.png"}} style={{width: width, height: width}}>
+      <ImageBackground source={{ uri: (repPic && repPic.length > 0) ? repPic[0].uri : forest.rep_pic != '' ? forest.rep_pic : "https://reactnative.dev/img/logo-og.png"}} style={{width: width, height: width}}>
         <Text style={{fontSize: 20, fontWeight: '700', marginLeft: 10, marginVertical: 10}}>{post_category.name}</Text>
         <CardView data={post_semi_categories} offset={10} gap={0} pageWidth={100} dot={false} renderItem={({item}: any) => { return (
             <View style={{height: 25, borderRadius: 16, backgroundColor: '#67D393', paddingVertical: 4, paddingHorizontal: 16, margin: 4}}>
