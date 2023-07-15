@@ -1,8 +1,8 @@
-import React, { useState, useEffect, useCallback } from "react";
-import { SafeAreaView, View, TouchableOpacity, Dimensions, ActivityIndicator, StyleSheet, ImageBackground } from "react-native";
+import React, { useState, useEffect, useCallback, useContext } from "react";
+import { SafeAreaView, View, TouchableOpacity, Dimensions, ActivityIndicator, StyleSheet, ImageBackground, Alert } from "react-native";
 import { TextPretendard as Text } from "../../common/CustomText";
 import { ScrollView } from "react-native-gesture-handler";
-import ItemCard, {SearchItemCard} from "./ItemCard";
+import ItemCard, { SearchItemCard } from "./ItemCard";
 import { Request } from "../../common/requests";
 import { StackScreenProps, StackNavigationProp } from "@react-navigation/stack";
 import { useFocusEffect, useNavigation } from '@react-navigation/native';
@@ -12,8 +12,9 @@ import styled from "styled-components/native";
 import AddColor from "../../assets/img/common/AddColor.svg";
 import CardView from "../../common/CardView";
 import Arrow from "../../assets/img/common/Arrow.svg";
-import Search from "../../assets/img/common/Search.svg";
-import { print } from "@gorhom/bottom-sheet/lib/typescript/utilities/logger";
+import CustomHeader from "../../common/CustomHeader";
+import PlusButton from "../../common/PlusButton";
+import { LoginContext } from "../../common/Context";
 
 const { width, height } = Dimensions.get('screen');
 
@@ -42,28 +43,6 @@ const TextBox = styled.View`
   margin: 0 15px;
   margin-bottom: 10px;
 `
-const PlusButton = styled.TouchableOpacity`
-  width: 45px;
-  height: 45px;
-  border-radius: 27.5px;
-  position: absolute;
-  bottom: 20px;
-  right: 20px;
-  background-color: #75E59B;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-`
-const SearchButton = styled.TouchableOpacity`
-  width: 80%;
-  background-color: #F1F1F1;
-  height: 35px;
-  margin: 20px auto;
-  border-radius: 20px;
-  display: flex;
-  align-items: flex-end;
-  justify-content: center;
-`
 
 export interface CurationProps {
   title: string;
@@ -74,12 +53,12 @@ export interface CurationProps {
 }
 
 export default function CurationHome({ navigation, route }: StackScreenProps<HomeStackParams, 'Home'>): JSX.Element {
+  const { isLogin, setLogin } = useContext(LoginContext);
   const [loading, setLoading] = useState<boolean>(true);
   const [adminCuration, setAdminCuration] = useState<CurationProps[]>([]);
   const [repCuration, setRepCuration] = useState<CurationProps[]>([]);
   const [verifedCuration, setVerifiedCuration] = useState<CurationProps[]>([]);
   const navigationToTab = useNavigation<StackNavigationProp<TabProps>>();
-  const [refresh, setRefresh] = useState<boolean>(false);
   // 연관 스토리 검색
   const [storyData, setStoryData] = useState([]);
   const request = new Request();
@@ -104,11 +83,12 @@ export default function CurationHome({ navigation, route }: StackScreenProps<Hom
     setLoading(false);
   }
 
-  // let verifedList = [];
-  // for (let i = 0; i < Math.min(3, verifedCuration.length); i++) {
-  //   verifedList.push(verifedCuration[i]);
-  // }
-  useFocusEffect(useCallback(()=>{
+  let verifedList = [];
+  for (let i = 0; i < Math.min(3, verifedCuration.length); i++) {
+    verifedList.push(verifedCuration[i]);
+  }
+
+  useFocusEffect(useCallback(() => {
     getStory();
     getCurration();
   }, []))
@@ -118,20 +98,19 @@ export default function CurationHome({ navigation, route }: StackScreenProps<Hom
       {loading ? <ActivityIndicator />
         : <>
           <ScrollView>
-            <SearchButton onPress={() => { navigation.navigate('List', { data: [] }) }}>
-              <View style={{ width: '15%', display: 'flex', alignItems: 'center' }}>
-                <Search />
-              </View>
-            </SearchButton>
+            <CustomHeader
+              onSearch={() => { navigation.navigate('List', { data: [] }) }}
+              onAlarm={() => { }}
+            />
             <CardView
               gap={0}
               offset={0}
-              height={height * 0.45}
               data={repCuration}
               pageWidth={width}
               dot={false}
               renderItem={({ item }: any) => (
                 <ItemCard
+                  rep={true}
                   data={item}
                   style={{ width: width, height: height * 0.4 }}
                 />
@@ -140,6 +119,7 @@ export default function CurationHome({ navigation, route }: StackScreenProps<Hom
             <SectionCuration>
               <TextBox>
                 <Text style={TextStyles.Title}>큐레이션</Text>
+                <Text style={TextStyles.Sub}>장소를 모아 놓은 코스를 추천받아보세요.</Text>
                 <TouchableOpacity onPress={() => { navigation.navigate('List', { data: adminCuration }) }}><Text style={TextStyles.SubBlack}>모두보기 <Arrow /></Text></TouchableOpacity>
               </TextBox>
               <CardView
@@ -147,7 +127,6 @@ export default function CurationHome({ navigation, route }: StackScreenProps<Hom
                 offset={0}
                 data={adminCuration}
                 pageWidth={width * 0.6}
-                height={height * 0.4}
                 dot={false}
                 renderItem={({ item }: any) => (
                   <ItemCard
@@ -160,8 +139,8 @@ export default function CurationHome({ navigation, route }: StackScreenProps<Hom
             <SectionCuration>
               <TextBox>
                 <Text style={TextStyles.Title}>이 큐레이션은 어때요?</Text>
-                <TouchableOpacity onPress={() => { navigation.navigate('List', { data: verifedCuration }) }}><Text style={TextStyles.SubBlack}>모두보기 <Arrow /></Text></TouchableOpacity>
                 <Text style={TextStyles.Sub}>유저가 직접 작성한 큐레이션</Text>
+                <TouchableOpacity onPress={() => { navigation.navigate('List', { data: verifedCuration }) }}><Text style={TextStyles.SubBlack}>모두보기 <Arrow /></Text></TouchableOpacity>
               </TextBox>
               {/* {
                 verifedList.map((data, index) =>
@@ -172,58 +151,60 @@ export default function CurationHome({ navigation, route }: StackScreenProps<Hom
               } */}
             </SectionCuration>
             <SectionCuration>
-              <TextBox>
-                <Text style={TextStyles.Title}>추천 장소</Text>
-              </TextBox>
-              <View style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-around' }}>
-                <RecommendWrapper>
-                  <RecommendPlace
-                    onPress={() => { navigationToTab.navigate('맵', { coor: { latitude: 37.544641605, longitude: 127.055896738 } }) }}>
-                    <ImageBackground
-                      imageStyle={{ borderRadius: width / 10 }}
-                      style={{ flex: 1 }}
-                      resizeMode='contain'
-                      source={require('../../assets/img/Home/place_seongsu.png')}
-                    />
-                  </RecommendPlace>
-                  <Text style={TextStyles.recommend}>성수동</Text>
-                </RecommendWrapper>
-                <RecommendWrapper>
-                  <RecommendPlace
-                    onPress={() => { navigationToTab.navigate('맵', { coor: { latitude: 37.5090846971287, longitude: 127.108220751231 } }) }}>
-                    <ImageBackground
-                      imageStyle={{ borderRadius: width / 10 }}
-                      style={{ flex: 1 }}
-                      resizeMode='contain'
-                      source={require('../../assets/img/Home/place_songridan.png')}
-                    />
-                  </RecommendPlace>
-                  <Text style={TextStyles.recommend}>송리단길</Text>
-                </RecommendWrapper>
-                <RecommendWrapper>
-                  <RecommendPlace
-                    onPress={() => { navigationToTab.navigate('맵', { coor: { latitude: 37.555833333333325, longitude: 126.89999999999999 } }) }}>
-                    <ImageBackground
-                      imageStyle={{ borderRadius: width / 10 }}
-                      style={{ flex: 1 }}
-                      resizeMode='cover'
-                      source={require('../../assets/img/Home/place_mangwon.png')}
-                    />
-                  </RecommendPlace>
-                  <Text style={TextStyles.recommend}>망원동</Text>
-                </RecommendWrapper>
-                <RecommendWrapper>
-                  <RecommendPlace
-                    onPress={() => { navigationToTab.navigate('맵', { coor: { latitude: 37.55972222222222, longitude: 126.9752777777778 } }) }}>
-                    <ImageBackground
-                      imageStyle={{ borderRadius: width / 10 }}
-                      style={{ flex: 1 }}
-                      resizeMode='cover'
-                      source={require('../../assets/img/Home/place_namdaemun.png')}
-                    />
-                  </RecommendPlace>
-                  <Text style={TextStyles.recommend}>남대문</Text>
-                </RecommendWrapper>
+              <View style={{backgroundColor:'#EDF8F2', paddingVertical: 25}}>
+                <TextBox>
+                  <Text style={TextStyles.Title}>장소 추천</Text>
+                </TextBox>
+                <View style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-around' }}>
+                  <RecommendWrapper>
+                    <RecommendPlace
+                      onPress={() => { navigationToTab.navigate('맵', { coor: { latitude: 37.544641605, longitude: 127.055896738 } }) }}>
+                      <ImageBackground
+                        imageStyle={{ borderRadius: width / 10 }}
+                        style={{ flex: 1 }}
+                        resizeMode='contain'
+                        source={require('../../assets/img/Home/place_seongsu.png')}
+                      />
+                    </RecommendPlace>
+                    <Text style={TextStyles.recommend}>성수동</Text>
+                  </RecommendWrapper>
+                  <RecommendWrapper>
+                    <RecommendPlace
+                      onPress={() => { navigationToTab.navigate('맵', { coor: { latitude: 37.5090846971287, longitude: 127.108220751231 } }) }}>
+                      <ImageBackground
+                        imageStyle={{ borderRadius: width / 10 }}
+                        style={{ flex: 1 }}
+                        resizeMode='contain'
+                        source={require('../../assets/img/Home/place_songridan.png')}
+                      />
+                    </RecommendPlace>
+                    <Text style={TextStyles.recommend}>송리단길</Text>
+                  </RecommendWrapper>
+                  <RecommendWrapper>
+                    <RecommendPlace
+                      onPress={() => { navigationToTab.navigate('맵', { coor: { latitude: 37.555833333333325, longitude: 126.89999999999999 } }) }}>
+                      <ImageBackground
+                        imageStyle={{ borderRadius: width / 10 }}
+                        style={{ flex: 1 }}
+                        resizeMode='cover'
+                        source={require('../../assets/img/Home/place_mangwon.png')}
+                      />
+                    </RecommendPlace>
+                    <Text style={TextStyles.recommend}>망원동</Text>
+                  </RecommendWrapper>
+                  <RecommendWrapper>
+                    <RecommendPlace
+                      onPress={() => { navigationToTab.navigate('맵', { coor: { latitude: 37.55972222222222, longitude: 126.9752777777778 } }) }}>
+                      <ImageBackground
+                        imageStyle={{ borderRadius: width / 10 }}
+                        style={{ flex: 1 }}
+                        resizeMode='cover'
+                        source={require('../../assets/img/Home/place_namdaemun.png')}
+                      />
+                    </RecommendPlace>
+                    <Text style={TextStyles.recommend}>남대문</Text>
+                  </RecommendWrapper>
+                </View>
               </View>
             </SectionCuration>
             <SectionCuration style={{ marginBottom: 30 }}>
@@ -235,7 +216,6 @@ export default function CurationHome({ navigation, route }: StackScreenProps<Hom
                 data={storyData}
                 offset={10}
                 pageWidth={width * 0.4}
-                height={height * 0.25}
                 dot={false}
                 renderItem={({ item }: any) => (
                   <SearchItemCard
@@ -247,35 +227,47 @@ export default function CurationHome({ navigation, route }: StackScreenProps<Hom
               ></CardView>
             </SectionCuration>
           </ScrollView>
-          <CurationPlusButton />
+          <PlusButton
+            onPress={() => {
+              if (!isLogin) {
+                Alert.alert('로그인이 필요합니다', "",
+                  [
+                    {
+                      text: "로그인",
+                      onPress: () => navigationToTab.navigate('마이페이지'),
+                      style: "cancel"
+                    },
+                    {
+                      text: "ok",
+                      style: "cancel"
+                    },
+                  ])
+                return;
+              }
+              navigation.navigate('Form')
+            }}
+            position='rightbottom'
+          />
         </>
       }
     </SafeAreaView>
   )
 }
 
-export const CurationPlusButton = () => {
-  const navigation = useNavigation<StackNavigationProp<HomeStackParams>>();
-  return (
-    <PlusButton onPress={() => { navigation.navigate('Form') }}>
-      <AddColor width={25} height={25} color={'#FFFFFF'} />
-    </PlusButton>
-  )
-}
 const TextStyles = StyleSheet.create({
   Title: {
     // fontFamily:"Inter",
     fontWeight: "600",
-    fontSize: 16,
-    lineHeight: 19,
-    widht: '70%',
+    fontSize: 20,
+    lineHeight: 28,
+    width: '100%'
   },
   Sub: {
+    width: '70%',
     fontWeight: "400",
     fontSize: 10,
     lineHeight: 12,
     color: '#595959',
-    width: width,
   },
   SubBlack: {
     fontWeight: "400",
@@ -284,7 +276,7 @@ const TextStyles = StyleSheet.create({
   },
   recommend: {
     color: '#FFFFFF',
-    backgroundColor: '#3B3B3B',
+    backgroundColor: '#67D393',
     fontSize: 12,
     paddingHorizontal: 6,
     paddingVertical: 3,

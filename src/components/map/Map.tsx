@@ -1,10 +1,10 @@
 import BottomSheet from "@gorhom/bottom-sheet";
-import React, { useEffect, useRef, useState, useMemo, SetStateAction, Dispatch, useCallback, memo, RefObject } from 'react';
-import { TouchableOpacity, View, Button, StyleSheet, SafeAreaView, Dimensions, ActivityIndicator, Modal, } from "react-native";
+import React, { useEffect, useRef, useState, useMemo, SetStateAction, Dispatch, useCallback, memo, useContext } from 'react';
+import { TouchableOpacity, View, Button, StyleSheet, SafeAreaView, Dimensions, ActivityIndicator, Modal, Alert } from "react-native";
 import NaverMapView, { Align, Marker } from './NaverMap';
 import styled from "styled-components/native";
 import SearchBar from '../../common/SearchBar';
-import Category from '../../common/Category';
+import Category, { MatchCategory } from '../../common/Category';
 import MapList from './SpotList';
 import SpotDetail from './SpotDetail';
 import { Request } from '../../common/requests';
@@ -16,6 +16,8 @@ import { StackScreenProps } from "@react-navigation/stack";
 import { TabProps } from "../../../App";
 import { useFocusEffect } from "@react-navigation/native";
 import SearchHere from "../../assets/img/Map/SearchHere.svg";
+import { LoginContext } from "../../common/Context";
+import PlusButton from "../../common/PlusButton";
 
 const { width, height } = Dimensions.get('window');
 
@@ -37,21 +39,12 @@ const MoveToCenterButton = styled(Circle)`
 	display: flex;
 	align-items: center;
 	justify-content: center;
-	position: relative;
-	right: -90%;
+	position: absolute;
+  z-index: 0;
+  top: ${height / 2};
+  right: 15;
 `
-const PlusButton = styled.TouchableOpacity`
-  width: 45px;
-  height: 45px;
-  border-radius: 22.5px;
-  position: absolute;
-  top: 40px;
-  right: 20px;
-  background-color: #75E59B;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-`
+
 
 // 최소 단위 interface
 export interface DataTypes {
@@ -106,9 +99,10 @@ interface MapProps {
   center: Coord;
   setCenter: Dispatch<SetStateAction<Coord>>;
   setTempCoor: Dispatch<SetStateAction<Coord>>;
+  nowCoor: Coord;
 }
 
-const Map = ({ mapView, setSheetMode, placeData, setTempCoor, setDetailData, center, setCenter }: MapProps) => {
+const Map = ({ mapView, setSheetMode, placeData, setTempCoor, setDetailData, center, setCenter, nowCoor }: MapProps) => {
   const request = new Request();
   //지도가 이동할때마다 지도의 중심 좌표를 임시로 저장
   const onChangeCenter = (event: any) => {
@@ -139,14 +133,41 @@ const Map = ({ mapView, setSheetMode, placeData, setTempCoor, setDetailData, cen
         zoomControl={false}
         zoomGesturesEnabled={true}
       >
+        <Marker
+          key={0}
+          coordinate={nowCoor}
+          image={require(`../../assets/img/Map/Markers/MarkerNow.png`)}
+          width={20} height={30} />
         {
           placeData.map((data: placeDataProps, index: number) => {
             const coor: Coord = { latitude: data.latitude, longitude: data.longitude }
+            const category = MatchCategory(data.category);
+            let image;
+            switch (category) {
+              case 0:
+                image = require(`../../assets/img/Map/Markers/Marker0.png`);
+                break;
+              case 1:
+                image = require(`../../assets/img/Map/Markers/Marker1.png`);
+                break;
+              case 2:
+                image = require(`../../assets/img/Map/Markers/Marker2.png`);
+                break;
+              case 3:
+                image = require(`../../assets/img/Map/Markers/Marker3.png`);
+                break;
+              case 4:
+                image = require(`../../assets/img/Map/Markers/Marker4.png`);
+                break;
+              case 5:
+                image = require(`../../assets/img/Map/Markers/Marker5.png`);
+                break;
+            }
             return (
               <Marker
                 key={index}
                 coordinate={coor}
-                image={require(`../../assets/img/marker.png`)}
+                image={image}
                 onClick={() => { getDetail(data.id) }}
                 width={20} height={30}
                 caption={{
@@ -164,6 +185,7 @@ interface MapContainerProps extends StackScreenProps<TabProps, '맵'> {
 }
 
 export default function MapContainer({ nowCoor, navigation, route }: MapContainerProps): JSX.Element {
+  const {isLogin, setLogin} = useContext(LoginContext);
   //지도의 Ref
   const mapView = useRef<any>(null);
   const [loading, setLoading] = useState<boolean>(true);
@@ -261,7 +283,7 @@ export default function MapContainer({ nowCoor, navigation, route }: MapContaine
     mapView?.current.animateToCoordinate(nowCoor);
   }
 
-  useFocusEffect(useCallback(()=>{
+  useFocusEffect(useCallback(() => {
     setSheetMode(true);
   }, []))
 
@@ -275,7 +297,14 @@ export default function MapContainer({ nowCoor, navigation, route }: MapContaine
         setSheetMode={setSheetMode}
         setCenter={setCenter}
         setTempCoor={setTempCoor}
+        nowCoor={nowCoor}
       />
+
+      <MoveToCenterButton width={29}
+        onPress={handleToCenter}>
+        <Circle width={9}
+          onPress={handleToCenter} />
+      </MoveToCenterButton>
       <BottomSheetMemo
         sheetMode={sheetMode}
         setSheetMode={setSheetMode}
@@ -289,28 +318,33 @@ export default function MapContainer({ nowCoor, navigation, route }: MapContaine
         total={total}
         detailData={detailData}
       />
+
       <Animated.View style={buttonAnimatedStyle}>
         {
           (searchHere.latitude.toFixed(8) != tempCoor.latitude.toFixed(8) || searchHere.longitude.toFixed(8) != tempCoor.longitude.toFixed(8)) &&
           <SearchHereButton onPress={() => { setSearchHere(tempCoor) }}><SearchHere /></SearchHereButton>
         }
-        <Category checkedList={checkedList} setCheckedList={setCheckedList} />
+        <Category
+          setPage={setPage}
+          checkedList={checkedList}
+          setCheckedList={setCheckedList} />
         <SearchBar
           search={search}
           setSearch={setSearch}
-          style={{ backgroundColor: "#FFFFFF", width: '95%', marginBottom:10 }}
+          style={{ backgroundColor: "#FFFFFF", width: '95%', marginBottom: 10 }}
           placeholder="장소를 검색해주세요"
           setPage={setPage}
         />
-        <MoveToCenterButton width={29}
-          onPress={handleToCenter}>
-          <Circle width={9}
-            onPress={handleToCenter} />
-        </MoveToCenterButton>
       </Animated.View>
-      <PlusButton onPress={() => { setPlaceformModal(true) }}>
-        <AddColor width={25} height={25} color={'#FFFFFF'} />
-      </PlusButton>
+      <PlusButton
+        position="rightbottom"
+        onPress={() => {
+        if (!isLogin) {
+          Alert.alert('로그인이 필요합니다', '', [{ text: '로그인', onPress: () => { navigation.navigate('마이페이지') }, style: 'cancel' }, { text: 'ok' }]);
+          return;
+        }
+        setPlaceformModal(true);
+      }}/>
       <Modal visible={placeformModal}>
         <PlaceForm setPlaceformModal={setPlaceformModal} />
       </Modal>
@@ -321,8 +355,8 @@ export default function MapContainer({ nowCoor, navigation, route }: MapContaine
 const CustomHandle = ({ mode }: { mode: boolean }) => {
 
   return (
-    <View style={{ backgroundColor: mode ? '#FFFFFF' : 'none', position: 'absolute', width: width, height: 15, borderTopEndRadius: 10, borderTopStartRadius: 10, display: 'flex', justifyContent: 'center' }}>
-      <View style={{ width: 60, height: 5, alignSelf: 'center', backgroundColor: '#D9D9D9', borderRadius: 2.5 }}></View>
+    <View style={{ backgroundColor: mode ? '#FFFFFF' : 'none', position: 'absolute', width: width, height: 39, borderTopEndRadius: 10, borderTopStartRadius: 10, display: 'flex', justifyContent: 'flex-start' }}>
+      <View style={{ width: 60, height: 5, alignSelf: 'center', backgroundColor: '#D9D9D9', borderRadius: 2.5, marginTop: 5 }}></View>
     </View>
   );
 };
@@ -371,7 +405,7 @@ const BottomSheetMemo = memo(
       >
         {
           loading ?
-            <ActivityIndicator /> :
+            <ActivityIndicator style={{ flex: 1 }} /> :
             <>
               {
                 sheetMode ?

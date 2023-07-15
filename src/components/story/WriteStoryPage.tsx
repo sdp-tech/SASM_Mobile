@@ -4,20 +4,12 @@ import { TextPretendard as Text } from '../../common/CustomText';
 import { RichEditor, RichToolbar, actions } from 'react-native-pell-rich-editor';
 import { ImageLibraryOptions, launchCamera, launchImageLibrary } from 'react-native-image-picker';
 import { Request } from '../../common/requests';
-import styled from 'styled-components/native';
-import PhotoOptions from '../../common/PhotoOptions';
+import FormHeader from '../../common/FormHeader';
+import FinishModal from '../../common/FinishModal';
 import ModalSelector from 'react-native-modal-selector';
-import Check from '../../assets/img/common/Check.svg';
 import { StoryProps } from '../../pages/Story';
 
 const { width, height } = Dimensions.get('window');
-const ReppicBox = styled.TouchableOpacity`
-  position: relative;
-  height: 30;
-  display: flex;
-  justify-content: center;
-  background: #FFFFFF;
-`
 
 export default function WriteStoryPage({ navigation, route }: StoryProps) {
   const editor = useRef<RichEditor>(null);
@@ -29,6 +21,7 @@ export default function WriteStoryPage({ navigation, route }: StoryProps) {
   const [story, setStory] = useState({ title: "", tag: "", preview: "", place: 0, story_review: "", html_content: "", photoList: [], rep_pic: "" });
   const [photoList, setPhotoList] = useState([] as any);
   const [modalVisible, setModalVisible] = useState(false);
+  const [storyId, setStoryId] = useState<number>(0);
 
   const options: ImageLibraryOptions = {
     mediaType: "photo",
@@ -71,11 +64,15 @@ export default function WriteStoryPage({ navigation, route }: StoryProps) {
     Alert.alert('대표 사진 선택', '', [
       {
         text: '카메라',
-        onPress: () => { launchCamera({ mediaType: 'photo', maxHeight: height / 2, maxWidth: width }, response => setRepPic(response.assets)) }
+        onPress: () => { launchCamera({ mediaType: 'photo', maxHeight: height / 2, maxWidth: width }, response => {
+          if (response && response.assets) setRepPic(response.assets)})
+        }
       },
       {
         text: '앨범',
-        onPress: () => { launchImageLibrary({ mediaType: 'photo', selectionLimit: 1, maxHeight: height / 2, maxWidth: width }, response => setRepPic(response.assets)) }
+        onPress: () => { launchImageLibrary({ mediaType: 'photo', selectionLimit: 1, maxHeight: height / 2, maxWidth: width }, response => {
+          if (response && response.assets) setRepPic(response.assets)})
+        }
       }
     ])
   }
@@ -92,7 +89,7 @@ export default function WriteStoryPage({ navigation, route }: StoryProps) {
     formData.append('image', {
       uri: image.uri,
       name: image.fileName,
-      type: 'image/jpeg/png',
+      type: image.uri.endsWith('.jpg') ? 'image/jpeg' : 'image/png',
     });
     const response = await request.post("/stories/story_photos/create/", formData, { "Content-Type": "multipart/form-data" });
     editor.current?.insertImage(response.data.data.location, 'width: 100%; height: auto;');
@@ -109,7 +106,7 @@ export default function WriteStoryPage({ navigation, route }: StoryProps) {
         formData.append(`${key}`, {
           uri: repPic[0].uri,
           name: repPic[0].fileName,
-          type: 'image/jpeg/png',
+          type: repPic[0].uri.endsWith('.jpg') ? 'image/jpeg' : 'image/png',
         });
       } else {
         //문자열의 경우 변환
@@ -117,7 +114,7 @@ export default function WriteStoryPage({ navigation, route }: StoryProps) {
       }
     }
     const response = await request.post("/stories/create/", formData, { "Content-Type": "multipart/form-data" });
-    showModal(response.data.data.id);
+    setStoryId(response.data.data.id);
   };
 
   const updateStory = async () => {
@@ -130,7 +127,7 @@ export default function WriteStoryPage({ navigation, route }: StoryProps) {
         formData.append(`${key}`, {
           uri: repPic.uri,
           name: repPic.fileName,
-          type: 'image/jpeg/png',
+          type: repPic.uri.endsWith('.jpg') ? 'image/jpeg' : 'image/png',
         });
       } else {
         //문자열의 경우 변환
@@ -138,15 +135,7 @@ export default function WriteStoryPage({ navigation, route }: StoryProps) {
       }
     }
     const response = await request.put(`/stories/${id}/update/`, formData, { "Content-Type": "multipart/form-data" });
-    showModal(id);
-  }
-
-  const showModal = (id: number) => {
-    setModalVisible(true);
-    setTimeout(() => {
-      setModalVisible(false);
-      navigation.replace('StoryDetail', {id: id})
-    }, 3000)
+    setStoryId(id);
   }
 
   const handleCursorPosition = useCallback((scrollY: number) => {
@@ -155,33 +144,29 @@ export default function WriteStoryPage({ navigation, route }: StoryProps) {
   }, []);
   
   return (
-    <SafeAreaView>
-      <Modal animationType='slide' visible={modalVisible}>
-        <View style={{width: width, height: height, backgroundColor: 'white', alignItems: 'center', justifyContent: 'center'}}>
-          <Check color={"#75E59B"}/>
-          <Text style={{fontSize: 20, fontWeight: '700', marginVertical: 10}}>{ id ? '수정 완료 !' : '작성 완료 !'}</Text>
-          <Text>작성한 스토리는</Text>
-          <Text>마이페이지 {'>'} 스토리 {'>'} 내가 쓴 스토리</Text>
-          <Text>에서 확인할 수 있어요</Text>
-        </View>
+    <View style={{flex: 1, backgroundColor: 'white'}}>
+      <Modal visible={modalVisible}>
+        <FinishModal
+          navigation={()=>navigation.replace('StoryDetail', {id: storyId})}
+          setModal={setModalVisible}
+          title={ id ? '수정 완료 !' : '작성 완료 !'}
+          subtitle={['작성한 스토리는', '마이페이지 > 스토리 > 내가 쓴 스토리', '에서 확인할 수 있어요']}
+        />
       </Modal>
-      <View style={{flexDirection: 'row', borderBottomColor: '#D9D9D9', borderBottomWidth: 1}}>
-        <Text style={{fontSize: 20, fontWeight: '700', textAlign: 'center', marginLeft: 150, marginBottom: 10}}>스토리 작성</Text>
-        <TouchableOpacity style={{marginLeft: 100, marginTop: 5}} onPress={id ? updateStory : saveStory}>
-          <Text>{ id ? '수정' : '등록'}</Text>
-        </TouchableOpacity>
-      </View>
+      <FormHeader title='스토리 작성' onLeft={() => navigation.goBack()} onRight={id ? updateStory : saveStory} />
       <ScrollView>
         <TextInput
           value={story.title}
           onChangeText={(title) => { setStory({ ...story, title: title }) }}
           placeholder='제목 *'
+          placeholderTextColor={'#bcbcbe'}
           style={{borderBottomColor: '#D9D9D9', borderBottomWidth: 1, padding: 10}}
         />
         <TextInput
           value={story.story_review}
           onChangeText={(story_review) => { setStory({ ...story, story_review: story_review }) }}
           placeholder='소제목'
+          placeholderTextColor={'#bcbcbe'}
           style={{padding: 10}}
         />
         <ModalSelector
@@ -199,7 +184,7 @@ export default function WriteStoryPage({ navigation, route }: StoryProps) {
           story.place != 0 &&
           <>
             <View style={{flexDirection: 'row'}}>
-              <Text style={{padding: 10, color: (story.rep_pic == '' && repPic.length == 0) ? '#bcbcbe' : 'black'}}>대표 사진</Text>
+              <Text style={{padding: 10, color: (story.rep_pic == '' && repPic.length === 0) ? '#bcbcbe' : 'black'}}>대표 사진</Text>
               <TouchableOpacity style={{alignItems: 'center', justifyContent: 'center'}} onPress={handleRepPic}>
                 { story.rep_pic == '' && repPic.length == 0 ? (
                   <Text style={{color: '#bcbcbe'}}>업로드</Text>
@@ -212,12 +197,14 @@ export default function WriteStoryPage({ navigation, route }: StoryProps) {
               value={story.preview}
               onChangeText={(preview) => { setStory({ ...story, preview: preview }) }}
               placeholder='프리뷰'
+              placeholderTextColor={'#bcbcbe'}
               style={{padding: 10, borderTopColor: '#D9D9D9', borderBottomColor: '#D9D9D9', borderTopWidth: 1, borderBottomWidth: 1}}
             />
             <TextInput
               value={story.tag}
               onChangeText={(tag) => { setStory({ ...story, tag: tag }) }}
-              placeholder='해시태그를 입력해주세요'
+              placeholder='#해시태그를 #작성해주세요'
+              placeholderTextColor={'#bcbcbe'}
               style={{padding: 10, borderBottomColor: '#D9D9D9', borderBottomWidth: 1}}
             />
             <RichToolbar
@@ -248,6 +235,6 @@ export default function WriteStoryPage({ navigation, route }: StoryProps) {
           </>
         }
       </ScrollView>
-    </SafeAreaView>
+    </View>
   )
 }

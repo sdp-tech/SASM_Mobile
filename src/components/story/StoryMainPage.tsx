@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useContext } from "react";
 import { SafeAreaView, View, StyleSheet, TouchableOpacity, Dimensions } from "react-native";
 import { TextPretendard as Text } from '../../common/CustomText';
 import SearchBar from "../../common/SearchBar";
@@ -6,11 +6,13 @@ import { Request } from "../../common/requests";
 import { useFocusEffect } from "@react-navigation/native";
 import { StoryProps } from "../../pages/Story";
 import CardView from "../../common/CardView";
-import Add from "../../assets/img/Story/Add.svg";
+import CustomHeader from "../../common/CustomHeader";
 import StorySearch from "./components/StorySearch";
 import Category from "../../common/Category";
 import MainCard from "./components/MainCard";
-import Arrow from "../../assets/img/common/Arrow.svg";
+import Reload from "../../assets/img/Story/Reload.svg";
+import PlusButton from "../../common/PlusButton";
+import { LoginContext } from "../../common/Context";
 
 export interface StoryListProps {
   id: number;
@@ -31,6 +33,7 @@ const StoryMainPage = ({ navigation, route }: StoryProps) => {
     { label: '최신 순', value: 1, title: '방금 올라온 스토리', subtitle: '가장 생생한 장소의 이야기가 궁금하다면?', order: 'latest' },
     { label: '인기 순', value: 2, title: '이번 달 인기 스토리', subtitle: '5월, 가장 많은 사람들의 관심을 받은 이야기를 둘러보세요.', order: 'hot' },
   ]
+  const {isLogin, setLogin} = useContext(LoginContext);
   const [item, setItem] = useState([] as any);
   const [orderList, setOrderList] = useState(0);
   const [order, setOrder] = useState<string>(toggleItems[orderList].order);
@@ -50,33 +53,19 @@ const StoryMainPage = ({ navigation, route }: StoryProps) => {
 
   useFocusEffect(
     useCallback(() => {
-      handleSearchToggle();
       getStories();
-    }, [page, search, checkedList, order])
+    }, [page, checkedList, order])
   );
-
-  const handleSearchToggle = async () => {
-    if (search.length === 0) {
-      setPage(1);
-      setItem([]);
-    }
-  };
-
+  
   const getStories = async () => {
-    let category;
-    if (checkedList.length > 0){
-      category = checkedList.toString()
-    } else {
-      category = null
+    let params = new URLSearchParams();
+    for (const category of checkedList){
+      params.append('filter', category);
     }
-
-    const response = await request.get("/stories/story_search/", {
-      page: page,
-      search: search,
-      order: order,
-      filter: category
-    }, null);
-
+    params.append('search', search);
+    params.append('page', page.toString());
+    params.append('order', order);
+    const response = await request.get(`/stories/story_search/?${params.toString()}`,null, null)
     if (page === 1) {
       setItem(response.data.data.results);
     } else {
@@ -84,25 +73,6 @@ const StoryMainPage = ({ navigation, route }: StoryProps) => {
     }
     setCount(response.data.data.count);
     setNextPage(response.data.data.next);
-    console.log(orderList, order);
-    console.log(item);
-  };
-  
-  const onRefresh = async () => {
-    if (!refreshing || page !== 1) {
-      setRefreshing(true);
-      setPage(1);
-      setRefreshing(false);
-    }
-  };
-
-  const onEndReached = async () => {
-    if(search.length > 0 && nextPage !== null){
-      setPage(page + 1);
-    }
-    else {
-      return;
-    }
   };
 
   const onChangeOrder = async () => {
@@ -110,50 +80,31 @@ const StoryMainPage = ({ navigation, route }: StoryProps) => {
   }
 
   return (
-    <SafeAreaView style={{ flex: 1, backgroundColor: "white", }}>
-      <SearchBar
-        setPage={setPage}
-        search={search}
-        setSearch={setSearch}
-        style={{ backgroundColor: "#D9D9D9", opacity: 0.3, marginTop: 20, borderRadius: 10, height: 30, width: 350 }}
-        placeholder="궁금한 내용을 검색해보세요"
-        placeholderTextColor={"black"}
+    <SafeAreaView style={{ flex: 1, backgroundColor: "white" }}>
+      <CustomHeader
+        onSearch={() => {
+          navigation.navigate("StorySearch");
+        }}
       />
-      {search.length > 0 ? (
-        <StorySearch
-          item={item}
-          order={toggleItems}
-          count={count}
-          navigation={navigation}
-          checkedList={checkedList}
-          setCheckedList={setCheckedList}
-          onEndReached={onEndReached}
-          refreshing={refreshing}
-          value={orderList}
-          setValue={setOrderList}
-          onRefresh={onRefresh}
-        />
-      ) : (
-        <View>
-          <View style={{ flexDirection: "row", paddingHorizontal: 30, paddingTop: 20, paddingBottom: 10 }}>
-            <View style={{flex: 1}}>
+          <View style={{ flexDirection: "row", paddingHorizontal: 30, paddingVertical: 20 }}>
+            <View style={{ flex: 1 }}>
               <Text style={textStyles.title}>{toggleItems[orderList].title}</Text>
               <Text style={textStyles.subtitle}>{toggleItems[orderList].subtitle}</Text>
             </View>
-            <TouchableOpacity onPress={() => setOrderList((orderList+1)%3)} style={{marginTop: 10}}>
-              <Arrow transform={[{rotate: '90deg'}]}/>
+            <TouchableOpacity onPress={() => setOrderList((orderList + 1) % 3)} style={{ marginTop: 10 }}>
+              <Reload />
             </TouchableOpacity>
           </View>
-          <View style={{backgroundColor: "white", width: width, marginVertical: 10, shadowOffset: { width: 0, height: 1 }, shadowColor: "black", shadowOpacity: 0.1}}>
+          <View style={{ borderTopColor: 'rgba(203, 203, 203, 1)', borderTopWidth: 1, paddingTop: 10}}>
             <Category
               checkedList={checkedList}
               setCheckedList={setCheckedList}
               story={true}
             />
           </View>
-          <View style={{paddingVertical: 20}}>
-            <CardView data={item} gap={0} offset={0} pageWidth={width} height={width*0.84+160} dot={true}
-              renderItem={({item}: any) => {
+          <View style={{ paddingVertical: 5 }}>
+            <CardView data={item} gap={0} offset={0} pageWidth={width} dot={true}
+              renderItem={({ item }: any) => {
                 return (
                   <MainCard
                     id={item.id}
@@ -167,17 +118,15 @@ const StoryMainPage = ({ navigation, route }: StoryProps) => {
                     nickname={item.nickname}
                     profile={item.profile}
                     writer_is_verified={item.writer_is_verified}
+                    isLogin={isLogin}
                     navigation={navigation}
                     width={width}
                   />
                 )
-              }}/>
+              }} />
           </View>
-          <TouchableOpacity onPress={() => {navigation.navigate("WriteStory")}} style={{position: "absolute", top: height * 0.7, left: width * 0.85, shadowColor: 'black', shadowOffset: { width: 0, height: 5 }, shadowOpacity: 0.3}}>
-            <Add />
-          </TouchableOpacity>
-        </View>
-      )}
+          {isLogin && <PlusButton onPress={() => navigation.navigate('WriteStory')}
+            position="rightbottom" />}
     </SafeAreaView>
   );
 };

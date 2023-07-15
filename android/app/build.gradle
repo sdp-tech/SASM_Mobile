@@ -1,11 +1,13 @@
 apply plugin: "com.android.application"
 apply plugin: "com.facebook.react"
+apply plugin: "com.google.gms.google-services"
 
 import com.android.build.OutputFile
 
 Properties properties = new Properties()
 properties.load(project.rootProject.file('local.properties').newDataInputStream())
 def naverMapClientId = properties.getProperty('NAVER_MAP_CLIENT_ID')
+def kakaoNativeAppKey = properties.getProperty('KAKAO_NATIVE_APP_KEY')
 
 /**
  * This is the configuration block to customize your React Native Android app.
@@ -105,7 +107,7 @@ android {
         versionCode 1
         versionName "1.0"
 
-        manifestPlaceholders = [naverMapClientId: naverMapClientId]
+        manifestPlaceholders = [naverMapClientId: naverMapClientId, kakaoNativeAppKey: kakaoNativeAppKey]
     }
 
     splits {
@@ -173,6 +175,15 @@ dependencies {
     } else {
         implementation jscFlavor
     }
+
+    // Import the Firebase BoM
+    implementation platform('com.google.firebase:firebase-bom:32.1.1')
+    // Add the dependency for the Firebase Authentication library
+    // When using the BoM, you don't specify versions in Firebase library dependencies
+    implementation 'com.google.firebase:firebase-auth'
+    // Also add the dependency for the Google Play services library and specify its version
+    implementation 'com.google.android.gms:play-services-auth:20.5.0'
+
 }
 
 apply from: file("../../node_modules/@react-native-community/cli-platform-android/native_modules.gradle"); applyNativeModulesAppBuildGradle(project)

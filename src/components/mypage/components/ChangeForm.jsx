@@ -8,7 +8,7 @@ import PhotoOptions, { PhotoSelector } from '../../../common/PhotoOptions';
 import { Request } from '../../../common/requests';
 import { TextInput } from 'react-native-gesture-handler';
 import styled, { css } from 'styled-components/native';
-
+           
 const { width } = Dimensions.get('window');
 const percentUnit = width / 100; 
 

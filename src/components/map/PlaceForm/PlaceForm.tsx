@@ -20,9 +20,8 @@ export const HeaderPlaceForm = styled.View<{ color: string }>`
 `
 const Section = styled.View`
   height: 87.5%;
-  padding-horizontal: 35px;
   display: flex;
-  justify-content: center;
+  align-items: center;
 `
 const Link = styled.TouchableOpacity`
   width: 100%;
@@ -34,7 +33,13 @@ const Link = styled.TouchableOpacity`
   flex-direction: row;
   align-items: center;
   justify-content: space-between;
-
+`
+const MenuWrapper = styled.View`
+  width: 85%;
+  margin: 40% auto;
+  height: 40%;
+  display: flex;
+  justify-content: space-around;
 `
 interface PlaceFormProps {
   setPlaceformModal: Dispatch<SetStateAction<boolean>>;
@@ -54,7 +59,7 @@ export default function PlaceForm({ setPlaceformModal }: PlaceFormProps): JSX.El
 
   const getSNSList = async () => {
     const response_sns_list = await request.get('/places/sns_types/');
-    setSNSList([...response_sns_list.data.data.results.filter((el: SNSListProps) => el.name != ''), {id: 0, name:'기타'}]);
+    setSNSList([...response_sns_list.data.data.results.filter((el: SNSListProps) => el.name != ''), { id: 0, name: '기타' }]);
   }
 
   useEffect(() => {
@@ -65,7 +70,7 @@ export default function PlaceForm({ setPlaceformModal }: PlaceFormProps): JSX.El
     <View>
       <HeaderPlaceForm color={tab == 1 ? '#75E59B' : '#FFFFFF'}>
         <Text style={{ ...TextStyles.Link, fontSize: 24 }}>장소 제보하기</Text>
-        <TouchableOpacity onPress={() => { tab==0 ? setPlaceformModal(false) : setClosePopup(true)}}>
+        <TouchableOpacity onPress={() => { tab == 0 ? setPlaceformModal(false) : setClosePopup(true) }}>
           <Close color={tab == 1 ? '#FFFFFF' : '#000000'} />
         </TouchableOpacity>
       </HeaderPlaceForm>
@@ -73,26 +78,28 @@ export default function PlaceForm({ setPlaceformModal }: PlaceFormProps): JSX.El
         {
           {
             0:
-              <>
-                <Text style={TextStyles.title}>SASM에 없는</Text>
-                <Text style={TextStyles.title}>장소를 제보해주세요</Text>
+              <MenuWrapper>
+                <View>
+                  <Text style={TextStyles.title}>SASM에 없는</Text>
+                  <Text style={TextStyles.title}>장소를 제보해주세요</Text>
+                </View>
                 <Link onPress={() => { setTab(1) }}>
-                  <Text style={TextStyles.Link}>이미지로 제보하기</Text>
+                  <Text style={{...TextStyles.title, color:'#FFFFFF', marginLeft:0 }}>이미지로 제보하기</Text>
                   <PlaceUser />
                 </Link>
-                <Link onPress={() => { setTab(2) }}>
+                {/* <Link onPress={() => { setTab(2) }}>
                   <Text style={TextStyles.Link}>사업주입니다!</Text>
                   <PlaceUser />
-                </Link>
-              </>
+                </Link> */}
+              </MenuWrapper>
             ,
             1: <PlaceFormUser snsType={snsList} setPlaceformModal={setPlaceformModal} />,
-            2: <PlaceFormOwner setPlaceformModal={setPlaceformModal} />
+            // 2: <PlaceFormOwner setPlaceformModal={setPlaceformModal} />
           }[tab]
         }
 
       </Section>
-      <Popup visible={closePopup} setVisible={setClosePopup} setModal={setPlaceformModal}/>
+      <Popup visible={closePopup} setVisible={setClosePopup} setModal={setPlaceformModal} />
     </View >
   )
 }
@@ -105,9 +112,11 @@ const TextStyles = StyleSheet.create({
     lineHeight: 35
   },
   title: {
-    fontSize: 24,
+    fontSize: 20,
     fontWeight: '700',
-    lineHeight: 35,
+    lineHeight: 28,
     color: '#000000',
+    letterSpacing:-0.6,
+    marginLeft: 25
   }
 })
