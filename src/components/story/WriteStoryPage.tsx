@@ -4,21 +4,12 @@ import { TextPretendard as Text } from '../../common/CustomText';
 import { RichEditor, RichToolbar, actions } from 'react-native-pell-rich-editor';
 import { ImageLibraryOptions, launchCamera, launchImageLibrary } from 'react-native-image-picker';
 import { Request } from '../../common/requests';
-import styled from 'styled-components/native';
 import FormHeader from '../../common/FormHeader';
 import FinishModal from '../../common/FinishModal';
 import ModalSelector from 'react-native-modal-selector';
-import Check from '../../assets/img/common/Check.svg';
 import { StoryProps } from '../../pages/Story';
 
 const { width, height } = Dimensions.get('window');
-const ReppicBox = styled.TouchableOpacity`
-  position: relative;
-  height: 30;
-  display: flex;
-  justify-content: center;
-  background: #FFFFFF;
-`
 
 export default function WriteStoryPage({ navigation, route }: StoryProps) {
   const editor = useRef<RichEditor>(null);
@@ -73,11 +64,15 @@ export default function WriteStoryPage({ navigation, route }: StoryProps) {
     Alert.alert('대표 사진 선택', '', [
       {
         text: '카메라',
-        onPress: () => { launchCamera({ mediaType: 'photo', maxHeight: height / 2, maxWidth: width }, response => setRepPic(response.assets)) }
+        onPress: () => { launchCamera({ mediaType: 'photo', maxHeight: height / 2, maxWidth: width }, response => {
+          if (response && response.assets) setRepPic(response.assets)})
+        }
       },
       {
         text: '앨범',
-        onPress: () => { launchImageLibrary({ mediaType: 'photo', selectionLimit: 1, maxHeight: height / 2, maxWidth: width }, response => setRepPic(response.assets)) }
+        onPress: () => { launchImageLibrary({ mediaType: 'photo', selectionLimit: 1, maxHeight: height / 2, maxWidth: width }, response => {
+          if (response && response.assets) setRepPic(response.assets)})
+        }
       }
     ])
   }
@@ -94,7 +89,7 @@ export default function WriteStoryPage({ navigation, route }: StoryProps) {
     formData.append('image', {
       uri: image.uri,
       name: image.fileName,
-      type: 'image/jpeg/png',
+      type: image.uri.endsWith('.jpg') ? 'image/jpeg' : 'image/png',
     });
     const response = await request.post("/stories/story_photos/create/", formData, { "Content-Type": "multipart/form-data" });
     editor.current?.insertImage(response.data.data.location, 'width: 100%; height: auto;');
@@ -111,7 +106,7 @@ export default function WriteStoryPage({ navigation, route }: StoryProps) {
         formData.append(`${key}`, {
           uri: repPic[0].uri,
           name: repPic[0].fileName,
-          type: 'image/jpeg/png',
+          type: repPic[0].uri.endsWith('.jpg') ? 'image/jpeg' : 'image/png',
         });
       } else {
         //문자열의 경우 변환
@@ -132,7 +127,7 @@ export default function WriteStoryPage({ navigation, route }: StoryProps) {
         formData.append(`${key}`, {
           uri: repPic.uri,
           name: repPic.fileName,
-          type: 'image/jpeg/png',
+          type: repPic.uri.endsWith('.jpg') ? 'image/jpeg' : 'image/png',
         });
       } else {
         //문자열의 경우 변환
@@ -164,12 +159,14 @@ export default function WriteStoryPage({ navigation, route }: StoryProps) {
           value={story.title}
           onChangeText={(title) => { setStory({ ...story, title: title }) }}
           placeholder='제목 *'
+          placeholderTextColor={'#bcbcbe'}
           style={{borderBottomColor: '#D9D9D9', borderBottomWidth: 1, padding: 10}}
         />
         <TextInput
           value={story.story_review}
           onChangeText={(story_review) => { setStory({ ...story, story_review: story_review }) }}
           placeholder='소제목'
+          placeholderTextColor={'#bcbcbe'}
           style={{padding: 10}}
         />
         <ModalSelector
@@ -187,7 +184,7 @@ export default function WriteStoryPage({ navigation, route }: StoryProps) {
           story.place != 0 &&
           <>
             <View style={{flexDirection: 'row'}}>
-              <Text style={{padding: 10, color: (story.rep_pic == '' && repPic.length == 0) ? '#bcbcbe' : 'black'}}>대표 사진</Text>
+              <Text style={{padding: 10, color: (story.rep_pic == '' && repPic.length === 0) ? '#bcbcbe' : 'black'}}>대표 사진</Text>
               <TouchableOpacity style={{alignItems: 'center', justifyContent: 'center'}} onPress={handleRepPic}>
                 { story.rep_pic == '' && repPic.length == 0 ? (
                   <Text style={{color: '#bcbcbe'}}>업로드</Text>
@@ -200,12 +197,14 @@ export default function WriteStoryPage({ navigation, route }: StoryProps) {
               value={story.preview}
               onChangeText={(preview) => { setStory({ ...story, preview: preview }) }}
               placeholder='프리뷰'
+              placeholderTextColor={'#bcbcbe'}
               style={{padding: 10, borderTopColor: '#D9D9D9', borderBottomColor: '#D9D9D9', borderTopWidth: 1, borderBottomWidth: 1}}
             />
             <TextInput
               value={story.tag}
               onChangeText={(tag) => { setStory({ ...story, tag: tag }) }}
-              placeholder='해시태그를 입력해주세요'
+              placeholder='#해시태그를 #작성해주세요'
+              placeholderTextColor={'#bcbcbe'}
               style={{padding: 10, borderBottomColor: '#D9D9D9', borderBottomWidth: 1}}
             />
             <RichToolbar
