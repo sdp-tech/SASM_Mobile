@@ -14,7 +14,6 @@ import { Request } from "../../../../common/requests";
 import Category from "../../../../common/Category";
 import SearchBar from "../../../../common/SearchBar";
 import Search from "../../../../assets/img/common/Search.svg";
-import Map from "../../../../assets/img/MyPage/Map.svg";
 import Menu from "../../../../assets/img/MyPage/Menu.svg";
 import Arrow from "../../../../assets/img/common/Arrow.svg";
 import { MyPageParams } from "../../../../pages/MyPage";
@@ -94,13 +93,6 @@ const MyPlace = ({ navigation }: MyPageParams) => {
 
   return (
     <View style={styles().Container}>
-      <View style={styles().Title}>
-        <Text style={{ fontSize: 14, flex: 1, marginLeft: 20 }}>플레이스 리스트</Text>
-        <TouchableOpacity style={{ flexDirection: 'row', marginRight: 20 }} onPress={() => navigation.navigate('place_list')}>
-          <Text style={{ fontSize: 10, marginRight: 10 }}>모두 보기</Text>
-          <Arrow width={12} height={12} />
-        </TouchableOpacity>
-      </View>
       {
         isLogin ?
           <>
@@ -117,9 +109,6 @@ const MyPlace = ({ navigation }: MyPageParams) => {
               }
               <TouchableOpacity style={{ marginHorizontal: 10 }} onPress={() => { setIsSearch(!isSearch); setIsCategory(false); }}>
                 <Search width={18} height={18} />
-              </TouchableOpacity>
-              <TouchableOpacity style={{ marginHorizontal: 10 }} onPress={() => { setIsSearch(false); setIsCategory(false) }}>
-                <Map width={18} height={18} />
               </TouchableOpacity>
               {!isCategory &&
                 <TouchableOpacity style={{ marginHorizontal: 10 }} onPress={() => { setIsSearch(false); setIsCategory(!isCategory) }}>

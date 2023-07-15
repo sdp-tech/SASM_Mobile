@@ -13,7 +13,6 @@ import { StackNavigationProp } from '@react-navigation/stack';
 import Following from '../components/mypage/components/Following_List';
 import Follower from '../components/mypage/components/Follower_List';
 import Options from '../components/mypage/components/OptionPage';
-import PlaceList from '../components/mypage/components/myplace/PlaceList';
 
 export interface MyPageParams {
     navigation: any;
@@ -22,7 +21,6 @@ export interface MyPageParams {
 
 export type MyPageProps = {
     'mypage': any;
-    'place_list': any;
     'login': any;
     'register': any;
     'user': {
@@ -51,7 +49,6 @@ const MyPageScreen = () => {
                 headerShown: false,
             })} >
             <MyPageStack.Screen name="mypage" component={MyPageTabView} />
-            <MyPageStack.Screen name="place_list" component={PlaceList} />
             <MyPageStack.Screen name="user" component={UserInfoBox} />
             <MyPageStack.Screen name="login" component={LoginScreen} />
             <MyPageStack.Screen name="register" component={RegisterScreen} />
