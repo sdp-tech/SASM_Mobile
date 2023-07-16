@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useContext, useRef } from "react";
+import React, { useState, useEffect, useContext, useRef, useMemo, useCallback } from "react";
 import { TextPretendard as Text } from "../../common/CustomText";
 import {
   View,
@@ -23,10 +23,12 @@ import Comment from "./components/Comment";
 import CommentIcon from '../../assets/img/Story/Comment.svg';
 import Share from '../../assets/img/common/Share.svg';
 import Scrap from '../../assets/img/Forest/Scrap.svg';
+import Check from '../../assets/img/common/Check.svg';
 import { LoginContext } from "../../common/Context";
 import { ForestStackParams } from "../../pages/Forest";
 import { Request } from "../../common/requests";
 import CardView from "../../common/CardView";
+import { BottomSheetModal, BottomSheetModalProvider, BottomSheetBackdrop } from "@gorhom/bottom-sheet";
 
 interface Post {
   id: number;
@@ -52,6 +54,7 @@ interface Post {
 interface PostDetailSectionProps {
   post: Post;
   navigation: any;
+  onReport: () => void;
 }
 
 interface UserInfoSectionProps {
@@ -70,7 +73,8 @@ const { width, height } = Dimensions.get('screen');
 
 const PostDetailSection = ({
   post,
-  navigation
+  navigation,
+  onReport
 }: PostDetailSectionProps) => {
   const markup = {
     html: `${post?.content}`
@@ -160,7 +164,7 @@ const PostDetailSection = ({
               })
             )}
           </View>
-          <TouchableOpacity>
+          <TouchableOpacity onPress={onReport}>
             <Report />
           </TouchableOpacity>
         </View>
@@ -417,10 +421,31 @@ const PostDetailScreen = ({
     );
   };
 
-  const onReport = async () => {
+  // 신고하기
+  const reportLists = [
+    "지나친 광고성 컨텐츠입니다.(상업적 홍보)",
+    "욕설이 포함된 컨텐츠입니다.",
+    "성희롱이 포함된 컨텐츠입니다.",
+  ]
+
+  const bottomSheetModalRef = useRef<BottomSheetModal>(null);
+  const [reported, setReported] = useState<string>('');
+  const snapPoints = useMemo(() => [reported.length > 0 ? "30%" : "40%"], []);
+
+  const openModal = () => {
+    bottomSheetModalRef.current?.present();
+  };
+
+  const renderBackdrop = useCallback(
+    (props: any) => <BottomSheetBackdrop {...props} pressBehavior="close" appearsOnIndex={0} disappearsOnIndex={-1} />,
+    [],
+  );
+
+  const onReport = async (item: any) => {
     const response = await request.post(`/forest/${post_id}/report/`, {
-      category: 1
+      category: item
     }, {});
+    setReported(item);
   }
 
   const callback = (text: string, id: number) => {
@@ -451,6 +476,7 @@ const PostDetailScreen = ({
   }, [refreshing]);
 
   return (
+    <BottomSheetModalProvider>
     <View style={styles.container}>
       {loading || post == undefined ? (
         <ActivityIndicator />
@@ -464,7 +490,7 @@ const PostDetailScreen = ({
             refreshing={refreshing}
             ListHeaderComponent={
               <>
-                <PostDetailSection post={post} navigation={navigation} />
+                <PostDetailSection post={post} navigation={navigation} onReport={openModal}/>
                 <UserInfoSection user={post.writer} posts={writerPosts} isLogin={isLogin} navigation={navigation} onRefresh={reRenderScreen}/>
                 <View style={{ flexDirection: 'row' }}>
                   <Text style={{ fontSize: 14, fontWeight: '500', margin: 15 }}>한줄평</Text>
@@ -494,9 +520,44 @@ const PostDetailScreen = ({
             }}
           />
           <BottomBarSection post={post} email={user.email} navigation={navigation} onDelete={deletePost} onUpdate={() => { navigation.navigate('CategoryForm', { post: post }) }} onRefresh={reRenderScreen} />
+          <BottomSheetModal
+            ref={bottomSheetModalRef}
+            index={0}
+            snapPoints={snapPoints}
+            backdropComponent={renderBackdrop}
+            handleIndicatorStyle={{backgroundColor: '#D9D9D9'}}
+          >
+            {reported.length == 0 ? (  
+            <>         
+            <View style={{alignItems: 'center', marginTop: 35, marginBottom: 15}}>
+              <View style={{flexDirection: 'row', justifyContent: 'center'}}>
+                <Report width={20} height={20} />
+                <Text style={{marginLeft: 8, fontSize: 16, fontWeight: '700',  letterSpacing: -0.6}}>이 글을 신고하는 이유가 무엇인가요?</Text>
+              </View>
+              <Text style={{textAlign: 'center', marginTop: 10, fontSize: 12, lineHeight: 18, letterSpacing: -0.6, color: '#848484'}}>지적재산권 침해를 신고하는 경우를 제외하고{"\n"}회원님의 신고는 익명으로 처리됩니다.</Text>
+            </View>
+            <FlatList data={reportLists} renderItem={({item}) => {
+              return (
+                <TouchableOpacity onPress={() => {onReport(item);}} style={{flexDirection: 'row', padding: 15, borderTopColor: '#E3E3E3', borderTopWidth: 1, alignItems: 'center'}}>
+                  <Text style={{color: '#202020', fontSize: 14, fontWeight: '500', flex: 1}}>{item}</Text>
+                  <Arrow width={18} height={18} />
+                </TouchableOpacity>
+              )
+            }}
+            />
+            </>) : (
+            <View style={{alignItems: 'center', margin: 30}}>
+              <Check color={'#67D393'} width={37} height={37} />
+              <Text style={{marginTop: 15, fontSize: 16, fontWeight: '700',  letterSpacing: -0.6, color: '#FF4C00'}}>{reported}</Text>
+              <Text style={{marginLeft: 8, fontSize: 16, fontWeight: '700',  letterSpacing: -0.6}}>이 글을 신고해주셔서 감사합니다.</Text>
+              <Text style={{textAlign: 'center', marginTop: 10, fontSize: 12, lineHeight: 18, letterSpacing: -0.6, color: '#848484'}}>글을 검토한 후 결과를 알려드리겠습니다.{'\n'}안전한 SASM 환경을 만들 수 있도록 도와주셔서 감사합니다.</Text>
+            </View>
+            )}
+          </BottomSheetModal>
         </>
       )}
     </View>
+    </BottomSheetModalProvider>
   );
 };
 
