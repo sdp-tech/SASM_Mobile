@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState, useCallback } from 'react';
-import { SafeAreaView, ScrollView, TextInput, TouchableOpacity, View, Modal, Dimensions, Alert, Image } from 'react-native';
+import { ScrollView, TextInput, TouchableOpacity, View, Modal, Dimensions, Alert, Image, KeyboardAvoidingView, TouchableWithoutFeedback, Keyboard } from 'react-native';
 import { TextPretendard as Text } from '../../common/CustomText';
 import { RichEditor, RichToolbar, actions } from 'react-native-pell-rich-editor';
 import { ImageLibraryOptions, launchCamera, launchImageLibrary } from 'react-native-image-picker';
@@ -22,6 +22,7 @@ export default function WriteStoryPage({ navigation, route }: StoryProps) {
   const [photoList, setPhotoList] = useState([] as any);
   const [modalVisible, setModalVisible] = useState(false);
   const [storyId, setStoryId] = useState<number>(0);
+  const hasUnsavedChanges = Boolean(story.title.length > 0 || story.tag.length > 0 || story.preview.length > 0 || story.place > 0 || story.html_content.length > 0 || story.photoList.length > 0 || story.rep_pic.length > 0);
 
   const options: ImageLibraryOptions = {
     mediaType: "photo",
@@ -142,6 +143,35 @@ export default function WriteStoryPage({ navigation, route }: StoryProps) {
     // Positioning scroll bar
     scrollRef.current!.scrollTo({y: scrollY - 30, animated: true});
   }, []);
+
+  useEffect(
+    () =>
+      navigation.addListener('beforeRemove', (e: any) => {
+        if (!hasUnsavedChanges) {
+          return;
+        }
+
+        // Prevent default behavior of leaving the screen
+        e.preventDefault();
+
+        // Prompt the user before leaving the screen
+        Alert.alert(
+          '나가시겠습니까?',
+          '입력하신 정보는 저장되지 않습니다.',
+          [
+            { text: "머무르기", style: 'cancel', onPress: () => {} },
+            {
+              text: '나가기',
+              style: 'destructive',
+              // If the user confirmed, then we dispatch the action we blocked earlier
+              // This will continue the action that had triggered the removal of the screen
+              onPress: () => navigation.dispatch(e.data.action),
+            },
+          ]
+        );
+      }),
+    [navigation, hasUnsavedChanges]
+  );
   
   return (
     <View style={{flex: 1, backgroundColor: 'white'}}>
@@ -153,6 +183,8 @@ export default function WriteStoryPage({ navigation, route }: StoryProps) {
           subtitle={['작성한 스토리는', '마이페이지 > 스토리 > 내가 쓴 스토리', '에서 확인할 수 있어요']}
         />
       </Modal>
+      <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
+      <>
       <FormHeader title='스토리 작성' onLeft={() => navigation.goBack()} onRight={id ? updateStory : saveStory} />
       <ScrollView>
         <TextInput
@@ -235,6 +267,8 @@ export default function WriteStoryPage({ navigation, route }: StoryProps) {
           </>
         }
       </ScrollView>
+      </>
+      </TouchableWithoutFeedback>
     </View>
   )
 }
