@@ -22,7 +22,7 @@ export default function WriteStoryPage({ navigation, route }: StoryProps) {
   const [photoList, setPhotoList] = useState([] as any);
   const [modalVisible, setModalVisible] = useState(false);
   const [storyId, setStoryId] = useState<number>(0);
-  const hasUnsavedChanges = Boolean(story.title.length > 0 || story.tag.length > 0 || story.preview.length > 0 || story.place > 0 || story.html_content.length > 0 || story.photoList.length > 0 || story.rep_pic.length > 0);
+  const hasUnsavedChanges = Boolean(story.title.length > 0 || story.tag.length > 0 || story.preview.length > 0 || story.place != 0 || story.html_content.length > 0 || photoList.length > 0 || repPic.length > 0);
 
   const options: ImageLibraryOptions = {
     mediaType: "photo",
@@ -98,6 +98,18 @@ export default function WriteStoryPage({ navigation, route }: StoryProps) {
   };
 
   const saveStory = async () => {
+    if(story.place == 0){
+      Alert.alert('장소를 설정해주세요.');
+      return;
+    }
+    if(story.title.length == 0 || story.tag.length == 0 || story.preview.length == 0 || story.html_content.length == 0){
+      Alert.alert('빈 칸을 전부 채워주세요.');
+      return;
+    }
+    if(repPic.length == 0){
+      Alert.alert('대표 사진을 설정해주세요.');
+      return;
+    }
     const formData = new FormData();
     for (const photo of photoList){
       formData.append('photoList', photo);
@@ -119,6 +131,18 @@ export default function WriteStoryPage({ navigation, route }: StoryProps) {
   };
 
   const updateStory = async () => {
+    if(story.place == 0){
+      Alert.alert('장소를 설정해주세요.');
+      return;
+    }
+    if(story.title.length == 0 || story.tag.length == 0 || story.preview.length == 0 || story.html_content.length == 0){
+      Alert.alert('빈 칸을 전부 채워주세요.');
+      return;
+    }
+    if(repPic.uri.length == 0){
+      Alert.alert('대표 사진을 설정해주세요.');
+      return;
+    }
     const formData = new FormData();
     for (const photo of photoList){
       formData.append('photoList', photo);
@@ -183,10 +207,13 @@ export default function WriteStoryPage({ navigation, route }: StoryProps) {
           subtitle={['작성한 스토리는', '마이페이지 > 스토리 > 내가 쓴 스토리', '에서 확인할 수 있어요']}
         />
       </Modal>
-      <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
-      <>
       <FormHeader title='스토리 작성' onLeft={() => navigation.goBack()} onRight={id ? updateStory : saveStory} />
       <ScrollView>
+      <TouchableWithoutFeedback onPress={() => {
+        Keyboard.dismiss();
+        editor.current?.dismissKeyboard();
+      }}>
+      <>
         <TextInput
           value={story.title}
           onChangeText={(title) => { setStory({ ...story, title: title }) }}
@@ -197,7 +224,7 @@ export default function WriteStoryPage({ navigation, route }: StoryProps) {
         <TextInput
           value={story.story_review}
           onChangeText={(story_review) => { setStory({ ...story, story_review: story_review }) }}
-          placeholder='소제목'
+          placeholder='소제목 *'
           placeholderTextColor={'#bcbcbe'}
           style={{padding: 10}}
         />
@@ -212,11 +239,18 @@ export default function WriteStoryPage({ navigation, route }: StoryProps) {
           selectStyle={{borderRadius: 0, borderTopColor: '#D9D9D9', borderBottomColor: '#D9D9D9', borderLeftWidth:0, borderRightWidth:0, borderBottomWidth: 1, alignItems: 'flex-start', padding: 10}}
           selectTextStyle={{fontSize: 14, color: 'black'}}
         />
+          </>
+        </TouchableWithoutFeedback>
         {
           story.place != 0 &&
           <>
+          <TouchableWithoutFeedback onPress={() => {
+            Keyboard.dismiss();
+            editor.current?.dismissKeyboard();
+          }}>
+          <>
             <View style={{flexDirection: 'row'}}>
-              <Text style={{padding: 10, color: (story.rep_pic == '' && repPic.length === 0) ? '#bcbcbe' : 'black'}}>대표 사진</Text>
+              <Text style={{padding: 10, color: (story.rep_pic == '' && repPic.length === 0) ? '#bcbcbe' : 'black'}}>대표 사진 *</Text>
               <TouchableOpacity style={{alignItems: 'center', justifyContent: 'center'}} onPress={handleRepPic}>
                 { story.rep_pic == '' && repPic.length == 0 ? (
                   <Text style={{color: '#bcbcbe'}}>업로드</Text>
@@ -228,17 +262,19 @@ export default function WriteStoryPage({ navigation, route }: StoryProps) {
             <TextInput
               value={story.preview}
               onChangeText={(preview) => { setStory({ ...story, preview: preview }) }}
-              placeholder='프리뷰'
+              placeholder='프리뷰 *'
               placeholderTextColor={'#bcbcbe'}
               style={{padding: 10, borderTopColor: '#D9D9D9', borderBottomColor: '#D9D9D9', borderTopWidth: 1, borderBottomWidth: 1}}
             />
             <TextInput
               value={story.tag}
               onChangeText={(tag) => { setStory({ ...story, tag: tag }) }}
-              placeholder='#해시태그를 #작성해주세요'
+              placeholder='#해시태그를 #작성해주세요 *'
               placeholderTextColor={'#bcbcbe'}
               style={{padding: 10, borderBottomColor: '#D9D9D9', borderBottomWidth: 1}}
             />
+                </>
+          </TouchableWithoutFeedback>
             <RichToolbar
               editor={editor}
               actions={[
@@ -267,8 +303,6 @@ export default function WriteStoryPage({ navigation, route }: StoryProps) {
           </>
         }
       </ScrollView>
-      </>
-      </TouchableWithoutFeedback>
     </View>
   )
 }

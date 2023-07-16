@@ -91,6 +91,14 @@ const ForestForm = ({ navigation, route }: NativeStackScreenProps<ForestStackPar
   };
 
   const saveForest = async () => {
+    if(forest.title.length == 0 || forest.subtitle.length == 0 || forest.content.length == 0){
+      Alert.alert('빈 칸을 전부 채워주세요.');
+      return;
+    }
+    if(repPic.length == 0){
+      Alert.alert('대표 사진을 설정해주세요.');
+      return;
+    }
     const formData = new FormData();
     for (const photo of photoList){
       formData.append('photos', "add,"+photo);
