@@ -30,7 +30,7 @@ const SemiCategoryForm = ({ navigation, route }: NativeStackScreenProps<ForestSt
   }, [category])
   return (
     <View style={{flex: 1, backgroundColor: 'white'}}>
-      <FormHeader title='포레스트 작성' onLeft={() => navigation.navigate('CategoryForm', {post: post})} onRight={() => {}} />
+      <FormHeader title='포레스트 작성' onLeft={() => navigation.navigate('CategoryForm', {post: post})} onRight={() => {navigation.navigate('ForestForm', { category: category, semi_categories: semiCategories, post: post })}} />
       <View style={{alignItems: 'center', justifyContent: 'center', paddingVertical: 150}}>
         <Text style={{fontSize: 16, color: '#202020', marginBottom: 80}}>세부 카테고리를 선택해 주세요</Text>
         <FlatList

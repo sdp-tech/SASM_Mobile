@@ -37,6 +37,9 @@ const BoardDetailScreen = ({
   const [loading, setLoading] = useState(false);
   const [refreshing, setRefreshing] = useState(false);
   const [nickname, setNickname] = useState('');
+  const [semiCategories, setSemiCategories] = useState([] as any);
+  const [checkedList, setCheckedList] = useState([] as any);
+  const [selectedIds, setSelectedIds] = useState<number[]>([]);
   const [posts, setPosts] = useState([] as any);
   const [hotPosts, setHotPosts] = useState([] as any);
   const [newPosts, setNewPosts] = useState([] as any);
@@ -50,15 +53,24 @@ const BoardDetailScreen = ({
     setNickname(response.data.data.nickname);
   }
 
+  const getSemiCategories = async () => {
+    const response = await request.get(`/forest/semi_categories/`, {category: board_category.id}, {});
+    setSemiCategories(response.data.data.results);
+  }
+
   const getPosts = async () => {
-    const response = await request.get('/forest/', {
-      category_filter: board_category.id
+    let params = new URLSearchParams();
+    for (const category of checkedList){
+      params.append('semi_category_filters', category.id);
+    }
+    const response = await request.get(`/forest/?${params.toString()}`, {
+      category_filter: board_category.id,
     }, null);
-    const response_hot = await request.get('/forest/', {
+    const response_hot = await request.get(`/forest/?${params.toString()}`, {
       category_filter: board_category.id,
       order: 'hot'
     }, null);
-    const response_new = await request.get('/forest/', {
+    const response_new = await request.get(`/forest/?${params.toString()}`, {
       category_filter: board_category.id,
       order: 'latest'
     }, null);
@@ -86,17 +98,13 @@ const BoardDetailScreen = ({
     if(isLogin) getUserInfo();
   }, [isLogin]))
 
+  useEffect(() => {
+    getSemiCategories();
+  }, [refreshing])
+
   useFocusEffect(useCallback(() => {
     getPosts();
-  }, [refreshing]))
-
-  const hashtags = [
-    { name: "비건" },
-    { name: "비건" },
-    { name: "비건" },
-    { name: "비건" },
-    { name: "비건" },
-  ];
+  }, [refreshing, checkedList]))
 
   return (
     <SafeAreaView style={styles.container}>
@@ -106,22 +114,27 @@ const BoardDetailScreen = ({
         <ActivityIndicator />
       ) : (
         <>
-          <View style={{padding: 15, backgroundColor: '#F1FCF5', borderTopColor: '#EDF8F2', borderBottomColor: '#EDF8F2', borderTopWidth: 1, borderBottomWidth: 1}}>
-            <CardView gap={0} offset={0} pageWidth={windowWidth} dot={false} data={hashtags} renderItem={({item}: any) => {
+          <View style={{padding: 15, backgroundColor: '#F1FCF5'}}>
+            <CardView gap={0} offset={0} pageWidth={windowWidth} dot={false} data={semiCategories} renderItem={({item}: any) => {
               return (
-              <TouchableOpacity
-                style={{height:30, borderRadius: 16, borderColor: '#67D393', borderWidth: 1, backgroundColor: 'white', paddingVertical: 4, paddingHorizontal: 16, marginHorizontal: 8}}>
-                <Text style={{color: '#202020', fontSize: 14, lineHeight: 20}}>{item.name}</Text>
+                <TouchableOpacity style={{borderRadius: 16, borderColor: '#67D393', borderWidth: 1, paddingVertical: 4, paddingHorizontal: 16, margin: 4, backgroundColor: selectedIds.includes(item.id) ? '#67D393' : 'white'}}
+                onPress={() => {
+                  if (selectedIds.includes(item.id)) {
+                    setSelectedIds(selectedIds.filter(id => id !== item.id));
+                    setCheckedList(checkedList.filter((category: any) => category.id !== item.id));
+                  } else {
+                    setSelectedIds([...selectedIds, item.id]);
+                    setCheckedList([...checkedList, item]);
+                  }
+                }}
+              >
+                <Text style={{color: selectedIds.includes(item.id) ? 'white' : '#202020', fontSize: 14, fontWeight: selectedIds.includes(item.id) ? '600' : '400'}}># {item.name}</Text>
               </TouchableOpacity>
               )}}
             />
           </View>
           <View
               style={{
-                borderTopWidth: 2,
-                borderBottomWidth: 1,
-                borderTopColor: "#E3E3E3",
-                borderBottomColor: "#E3E3E3",
                 paddingVertical: 15,
               }}
             >
@@ -143,7 +156,6 @@ const BoardDetailScreen = ({
                   사슴의 추천글
                 </Text>
               </TouchableOpacity>
-              {/* <CategoriesList /> */}
               <CardView
                 gap={0}
                 offset={0}
@@ -192,10 +204,6 @@ const BoardDetailScreen = ({
             <View
               style={{
                 backgroundColor: "#F1FCF5",
-                borderTopWidth: 1,
-                borderBottomWidth: 1,
-                borderTopColor: "#E3E3E3",
-                borderBottomColor: "#E3E3E3",
                 padding: 20
               }}
             >
@@ -215,10 +223,6 @@ const BoardDetailScreen = ({
             </View>
             <View
               style={{
-                borderTopWidth: 1,
-                borderBottomWidth: 1,
-                borderTopColor: "#E3E3E3",
-                borderBottomColor: "#E3E3E3",
                 paddingVertical: 15,
               }}
             >
@@ -288,8 +292,6 @@ const BoardDetailScreen = ({
             </View>
             <View
               style={{
-                borderTopWidth: 2,
-                borderTopColor: "#E3E3E3",
                 paddingVertical: 15,
               }}
             >

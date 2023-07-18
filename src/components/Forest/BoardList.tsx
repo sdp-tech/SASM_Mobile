@@ -178,10 +178,6 @@ const BoardListScreen = ({
         </View>
         <View
           style={{
-            borderTopWidth: 2,
-            borderBottomWidth: 1,
-            borderTopColor: "#E3E3E3",
-            borderBottomColor: "#E3E3E3",
             paddingVertical: 15,
           }}
         >
@@ -251,15 +247,10 @@ const BoardListScreen = ({
         <View
           style={{
             backgroundColor: "#F1FCF5",
-            borderTopWidth: 1,
-            borderBottomWidth: 1,
-            borderTopColor: "#E3E3E3",
-            borderBottomColor: "#E3E3E3",
             padding: 20
           }}
         >
-          {isLogin && (<>
-          <Text style={{color: '#3C3C3C', fontWeight: '700', fontSize: 16, lineHeight: 22}}>{nickname}님 이 정보들은 어떠신가요?</Text>
+          <Text style={{color: '#3C3C3C', fontWeight: '700', fontSize: 16, lineHeight: 22}}>{isLogin ? `${nickname}님 이 정보들은 어떠신가요?` : '이 정보들은 어떠신가요?'}</Text>
           <FlatList
             data={posts.slice(0,3)}
             scrollEnabled={false}
@@ -273,14 +264,9 @@ const BoardListScreen = ({
               </TouchableOpacity>
             )}
           />
-          </>)}
         </View>
         <View
           style={{
-            borderTopWidth: 1,
-            borderBottomWidth: 1,
-            borderTopColor: "#E3E3E3",
-            borderBottomColor: "#E3E3E3",
             paddingVertical: 15,
           }}
         >
@@ -350,8 +336,6 @@ const BoardListScreen = ({
         </View>
         <View
           style={{
-            borderTopWidth: 2,
-            borderTopColor: "#E3E3E3",
             paddingVertical: 15,
           }}
         >

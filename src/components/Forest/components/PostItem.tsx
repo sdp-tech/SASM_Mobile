@@ -1,12 +1,10 @@
 import { useState, useEffect } from 'react';
 import { TextPretendard as Text } from "../../../common/CustomText";
 import { View, ImageBackground, TouchableOpacity, Dimensions, Image, Alert } from 'react-native';
-import Scrap from "../../../assets/img/Forest/Scrap.svg";
 import Arrow from "../../../assets/img/common/Arrow.svg";
 import CommentIcon from '../../../assets/img/Story/Comment.svg';
 import Heart from '../../../common/Heart';
 import { Request } from '../../../common/requests';
-import { LoginContext } from '../../../common/Context';
 
 interface PostItemProps {
   post_id: number;
@@ -131,16 +129,10 @@ const PostItem = ({
                 style={{
                   width: 90,
                   height: 90,
-                  alignItems: "flex-end",
-                  justifyContent: "flex-end",
                   padding: 5,
                 }}
                 source={{ uri: rep_pic }}
-              >
-                <TouchableOpacity onPress={() => console.log("저장")}>
-                  <Scrap />
-                </TouchableOpacity>
-              </ImageBackground>
+              />
               {photos.map((uri: string, index: number) => {
                 return (
                   <Image style={{width: 90, height: 90}} key={index} source={{uri: uri}} />
@@ -175,16 +167,10 @@ const PostItem = ({
               style={{
                 width: 90,
                 height: 90,
-                alignItems: "flex-end",
-                justifyContent: "flex-end",
                 padding: 5,
               }}
               source={{ uri: rep_pic }}
-            >
-              <TouchableOpacity onPress={() => console.log("저장")}>
-                <Scrap />
-              </TouchableOpacity>
-            </ImageBackground>
+            />
             <TouchableOpacity onPress={() => setPressed(true)}
               style={{ position: "absolute", top: 110, left: (width-30) / 2 }}
             >
@@ -263,10 +249,7 @@ export const HotPostItem = ({
               <Heart like={like} onPress={toggleLike} white={true} />
               <Text style={{ color: "white", lineHeight: 18, marginLeft: 3 }}>{like_cnt}</Text>
             </View>
-            <View style={{flexDirection: "row", alignSelf: "flex-end"}}>
-              <Text style={{ color: "#67D393", fontWeight: "600", marginRight: 5}}>{writer.nickname}</Text>
-              <Scrap width={16} height={16} />
-            </View>
+            <Text style={{ color: "#67D393", fontWeight: "600", marginRight: 5}}>{writer.nickname}</Text>
           </View>
           <TouchableOpacity
             style={{ position: "absolute", top: 85, left: (width-40) / 2 }}

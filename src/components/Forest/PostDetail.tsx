@@ -10,7 +10,8 @@ import {
   Image,
   Alert,
   ImageBackground,
-  Dimensions
+  Dimensions,
+  Share
 } from "react-native";
 import type { NativeStackScreenProps } from "@react-navigation/native-stack";
 import RenderHTML from 'react-native-render-html';
@@ -21,8 +22,7 @@ import Report from '../../assets/img/Forest/Report.svg';
 import WriteComment from "./components/WriteComment";
 import Comment from "./components/Comment";
 import CommentIcon from '../../assets/img/Story/Comment.svg';
-import Share from '../../assets/img/common/Share.svg';
-import Scrap from '../../assets/img/Forest/Scrap.svg';
+import ShareIcon from '../../assets/img/common/Share.svg';
 import Check from '../../assets/img/common/Check.svg';
 import { LoginContext } from "../../common/Context";
 import { ForestStackParams } from "../../pages/Forest";
@@ -257,6 +257,7 @@ const UserInfoSection = ({
 const PostRecommendSection = ({ data }: PostRecommendSectionProps) => {
   return (
     <View style={{
+      marginVertical: 20,
       padding: 20,
       borderTopWidth: 2,
       borderBottomWidth: 2,
@@ -297,11 +298,12 @@ interface BottomBarSectionProps {
   email: string;
   onUpdate: () => void;
   onDelete: () => void;
+  onShare: () => void;
   onRefresh: any;
   navigation: any;
 }
 
-const BottomBarSection = ({ post, email, onUpdate, onDelete, onRefresh, navigation }: BottomBarSectionProps) => {
+const BottomBarSection = ({ post, email, onUpdate, onDelete, onShare, onRefresh, navigation }: BottomBarSectionProps) => {
   const [like, setLike] = useState<boolean>(post.user_likes)
   const request = new Request();
 
@@ -332,17 +334,14 @@ const BottomBarSection = ({ post, email, onUpdate, onDelete, onRefresh, navigati
   };
   return (
     <View style={{ flexDirection: "row", padding: 10 }}>
-      <View style={{ flexDirection: 'row', flex: 1 }}>
-        <Heart like={like} onPress={toggleLike}></Heart>
-        <Text>{post.like_cnt}</Text>
-        <CommentIcon />
-        <Text>{post.comment_cnt}</Text>
+      <View style={{ flexDirection: 'row', flex: 1, alignItems: 'center' }}>
+        <Heart color={'black'} like={like} onPress={toggleLike} size={18} ></Heart>
+        <Text style={{fontSize: 14, color: '#202020', lineHeight: 20, marginLeft: 3, marginRight: 10}}>{post.like_cnt}</Text>
+        <CommentIcon stroke={'#202020'} />
+        <Text style={{fontSize: 14, color: '#202020', lineHeight: 20, marginLeft: 3}}>{post.comment_cnt}</Text>
       </View>
-      <TouchableOpacity>
-        <Scrap fill={'black'} />
-      </TouchableOpacity>
-      <TouchableOpacity>
-        <Share />
+      <TouchableOpacity style={{marginRight: 5}} onPress={onShare}>
+        <ShareIcon />
       </TouchableOpacity>
       {post.writer.email === email && (
         <>
@@ -421,6 +420,26 @@ const PostDetailScreen = ({
     );
   };
 
+  const onShare = async () => {
+    try {
+      const result = await Share.share({
+        message:
+          'React Native | A framework for building native apps using React',
+      });
+      if (result.action === Share.sharedAction) {
+        if (result.activityType) {
+          // shared with activity type of result.activityType
+        } else {
+          // shared
+        }
+      } else if (result.action === Share.dismissedAction) {
+        // dismissed
+      }
+    } catch (error: any) {
+      Alert.alert(error.message);
+    }
+};
+
   // 신고하기
   const reportLists = [
     "지나친 광고성 컨텐츠입니다.(상업적 홍보)",
@@ -430,7 +449,7 @@ const PostDetailScreen = ({
 
   const bottomSheetModalRef = useRef<BottomSheetModal>(null);
   const [reported, setReported] = useState<string>('');
-  const snapPoints = useMemo(() => [reported.length > 0 ? "30%" : "40%"], []);
+  const snapPoints = useMemo(() => ["40%"], []);
 
   const openModal = () => {
     bottomSheetModalRef.current?.present();
@@ -492,11 +511,14 @@ const PostDetailScreen = ({
               <>
                 <PostDetailSection post={post} navigation={navigation} onReport={openModal}/>
                 <UserInfoSection user={post.writer} posts={writerPosts} isLogin={isLogin} navigation={navigation} onRefresh={reRenderScreen}/>
-                <View style={{ flexDirection: 'row' }}>
-                  <Text style={{ fontSize: 14, fontWeight: '500', margin: 15 }}>한줄평</Text>
-                  <View style={{ marginTop: 15 }}><CommentIcon /></View>
-                  <TouchableOpacity style={{ marginLeft: 260, marginTop: 15 }} onPress={() => { navigation.navigate('PostComments', { id: post_id, email: user.email }) }}>
-                    <Text style={{ fontSize: 10 }}>더보기{'>'}</Text>
+                <View style={{ flexDirection: 'row', padding: 20, alignItems: 'center' }}>
+                  <View style={{flexDirection: 'row', flex: 1}}>
+                    <Text style={{ fontSize: 16, fontWeight: '700', marginRight: 10 }}>한줄평</Text>
+                    <CommentIcon />
+                  </View>
+                  <TouchableOpacity style={{flexDirection: 'row', alignItems: 'center'}} onPress={() => { navigation.navigate('PostComments', { id: post_id, email: user.email }) }}>
+                    <Text style={{ fontSize: 12, fontWeight: '500', marginRight: 5 }}>더보기</Text>
+                    <Arrow width={12} height={12} />
                   </TouchableOpacity>
                 </View>
                 <WriteComment id={post_id} reRenderScreen={reRenderScreen} data={updateText} commentId={commentId} isLogin={isLogin} navigation={navigation} />
@@ -519,7 +541,7 @@ const PostDetailScreen = ({
               )
             }}
           />
-          <BottomBarSection post={post} email={user.email} navigation={navigation} onDelete={deletePost} onUpdate={() => { navigation.navigate('CategoryForm', { post: post }) }} onRefresh={reRenderScreen} />
+          <BottomBarSection post={post} email={user.email} navigation={navigation} onShare={onShare} onDelete={deletePost} onUpdate={() => { navigation.navigate('CategoryForm', { post: post }) }} onRefresh={reRenderScreen} />
           <BottomSheetModal
             ref={bottomSheetModalRef}
             index={0}
@@ -546,7 +568,7 @@ const PostDetailScreen = ({
             }}
             />
             </>) : (
-            <View style={{alignItems: 'center', margin: 30}}>
+            <View style={{alignItems: 'center', justifyContent: 'center', margin: 50}}>
               <Check color={'#67D393'} width={37} height={37} />
               <Text style={{marginTop: 15, fontSize: 16, fontWeight: '700',  letterSpacing: -0.6, color: '#FF4C00'}}>{reported}</Text>
               <Text style={{marginLeft: 8, fontSize: 16, fontWeight: '700',  letterSpacing: -0.6}}>이 글을 신고해주셔서 감사합니다.</Text>
