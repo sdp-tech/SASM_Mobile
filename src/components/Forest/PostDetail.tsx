@@ -335,9 +335,9 @@ const BottomBarSection = ({ post, email, onUpdate, onDelete, onShare, onRefresh,
   return (
     <View style={{ flexDirection: "row", padding: 10 }}>
       <View style={{ flexDirection: 'row', flex: 1, alignItems: 'center' }}>
-        <Heart color={'black'} like={like} onPress={toggleLike} size={18} ></Heart>
+        <Heart color={'#202020'} like={like} onPress={toggleLike} size={18} ></Heart>
         <Text style={{fontSize: 14, color: '#202020', lineHeight: 20, marginLeft: 3, marginRight: 10}}>{post.like_cnt}</Text>
-        <CommentIcon stroke={'#202020'} />
+        <CommentIcon color={'#202020'} />
         <Text style={{fontSize: 14, color: '#202020', lineHeight: 20, marginLeft: 3}}>{post.comment_cnt}</Text>
       </View>
       <TouchableOpacity style={{marginRight: 5}} onPress={onShare}>
@@ -514,7 +514,7 @@ const PostDetailScreen = ({
                 <View style={{ flexDirection: 'row', padding: 20, alignItems: 'center' }}>
                   <View style={{flexDirection: 'row', flex: 1}}>
                     <Text style={{ fontSize: 16, fontWeight: '700', marginRight: 10 }}>한줄평</Text>
-                    <CommentIcon />
+                    <CommentIcon color={'black'}/>
                   </View>
                   <TouchableOpacity style={{flexDirection: 'row', alignItems: 'center'}} onPress={() => { navigation.navigate('PostComments', { id: post_id, email: user.email }) }}>
                     <Text style={{ fontSize: 12, fontWeight: '500', marginRight: 5 }}>더보기</Text>

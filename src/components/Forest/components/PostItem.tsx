@@ -90,7 +90,7 @@ const PostItem = ({
       >
         {pressed ? (
           <>
-            <View style={{ flex: 1, paddingTop: 10}}>
+            <View style={{ flex: 1, paddingTop: 10, paddingRight: 5}}>
               <View style={{flex: 1}}>
                 <Text
                   style={{ fontSize: 16, fontWeight: "600", marginBottom: 8 }}
@@ -111,12 +111,12 @@ const PostItem = ({
                   {preview}
                 </Text>
               </View>
-              <View style={{flexDirection: 'row', }}>
+              <View style={{flexDirection: 'row', alignItems: 'center'}}>
                 <Text style={{ color: '#67D393', fontSize: 12, fontWeight: "600", opacity: 0.6, lineHeight: 18, flex: 1 }}>{writer.nickname}</Text>
-                <Heart like={like} onPress={toggleLike} />
-                <Text style={{color: '#209DF5', fontSize: 12, lineHeight: 18}}>{like_cnt}</Text>
-                <CommentIcon width={15} height={15} />
-                <Text style={{color: '#209DF5', fontSize: 12, lineHeight: 18}}>{comment_cnt}</Text>
+                <Heart like={like} color={'#209DF5'} size={12} onPress={toggleLike} />
+                <Text style={{marginLeft: 3, marginRight: 10, color: '#209DF5', fontSize: 12, lineHeight: 18}}>{like_cnt}</Text>
+                <CommentIcon color={'#209DF5'} width={15} height={15} />
+                <Text style={{marginLeft: 3, color: '#209DF5', fontSize: 12, lineHeight: 18}}>{comment_cnt}</Text>
               </View>
               <TouchableOpacity onPress={() => setPressed(false)}
                 style={{ marginLeft: (width-30) / 2 }}
@@ -142,7 +142,7 @@ const PostItem = ({
           </>
         ) : (
           <>
-            <View style={{ flex: 1, paddingTop: 10}}>
+            <View style={{ flex: 1, paddingTop: 10, paddingRight: 5}}>
               <Text
                 style={{ fontSize: 16, fontWeight: "600", marginBottom: 8 }}
               >
