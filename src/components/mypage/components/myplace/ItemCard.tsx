@@ -10,20 +10,20 @@ import Selector2 from "../../../../assets/img/Category/Selector2.svg";
 import Selector3 from "../../../../assets/img/Category/Selector3.svg";
 import Selector4 from "../../../../assets/img/Category/Selector4.svg";
 import Selector5 from "../../../../assets/img/Category/Selector5.svg";
-import { MyPageParams } from "../../../../pages/MyPage";
+import { MyPlaceItemCard } from "./MyPlace";
+import { useNavigation } from "@react-navigation/native";
+import { StackNavigationProp } from "@react-navigation/stack";
+import { TabProps } from "../../../../../App";
 
-interface ItemCardProps extends MyPageParams {
-  props: any;
-}
-
-const ItemCard = ({ props, navigation }: ItemCardProps) => {
+const ItemCard = ({ data }: {data: MyPlaceItemCard}) => {
+  const navigationToTab = useNavigation<StackNavigationProp<TabProps>>();
   const [like, setLike] = useState(false);
   const request = new Request();
   // 좋아요 클릭 이벤트
   const toggleLike = async () => {
     const response = await request.post(
       "/places/place_like/",
-      { id: props.place_id },
+      { id: data.id },
       null
     );
     //색상 채우기
@@ -31,14 +31,14 @@ const ItemCard = ({ props, navigation }: ItemCardProps) => {
   };
 
   const category = () => {
-    let idx = MatchCategory(props.category);
+    let idx = MatchCategory(data.category);
     let list = [
-      <Selector0 color={CATEGORY_LIST[0].color} width={15} height={15}/>,
-      <Selector1 color={CATEGORY_LIST[1].color} width={15} height={15}/>,
-      <Selector2 color={CATEGORY_LIST[2].color} width={15} height={15}/>,
-      <Selector3 color={CATEGORY_LIST[3].color} width={15} height={15}/>,
-      <Selector4 color={CATEGORY_LIST[4].color} width={15} height={15}/>,
-      <Selector5 color={CATEGORY_LIST[5].color} width={15} height={15}/>
+      <Selector0 color={CATEGORY_LIST[0].color} width={24} height={24}/>,
+      <Selector1 color={CATEGORY_LIST[1].color} width={24} height={24}/>,
+      <Selector2 color={CATEGORY_LIST[2].color} width={24} height={24}/>,
+      <Selector3 color={CATEGORY_LIST[3].color} width={24} height={24}/>,
+      <Selector4 color={CATEGORY_LIST[4].color} width={24} height={24}/>,
+      <Selector5 color={CATEGORY_LIST[5].color} width={24} height={24}/>
     ]
     return list[idx];
   }
@@ -47,25 +47,25 @@ const ItemCard = ({ props, navigation }: ItemCardProps) => {
     let coor = {latitude: 0, longitude: 0};
     const places = await request.get('/places/map_info/', {}, {});
     for (const place of places.data.data){
-      if (place.id === props.id){
+      if (place.id === data.id){
         coor = {latitude: place.latitude, longitude: place.longitude}
       }
     }
-    navigation.navigate('맵', { coor: {latitude: coor.latitude, longitude: coor.longitude}})
+    navigationToTab.navigate('맵', { coor: {latitude: coor.latitude, longitude: coor.longitude}})
   }
 
   return (
     <TouchableOpacity style={{marginHorizontal: 6, marginBottom: 20}} onPress={handlePageGoToMap}>
       <ImageBackground
-        source={{ uri: props.rep_pic }}
-        style={{width: 110, height: 150}}
+        source={{ uri: data.rep_pic }}
+        style={{width: 170, height: 230}}
       >
-        <View style={{width: 110, height: 150, backgroundColor: 'rgba(0,0,0,0.3)', padding: 5, justifyContent: 'flex-end'}}>
-          <View style={{flexDirection: 'row'}}>
+        <View style={{width: '100%', height: '100%', backgroundColor: 'rgba(0,0,0,0.3)', padding: 10, justifyContent: 'flex-end'}}>
+          <View style={{flexDirection: 'row', alignItems:'center'}}>
             {category()}
-            <Text style={textStyles.address}>서대문구, 신촌</Text>
+            <Text style={textStyles.address}>{data.address.split(' ')[1]}, {data.address.split(' ')[0]}</Text>
           </View>
-          <Text numberOfLines={1} style={textStyles.place_name}>{props.place_name}</Text>
+          <Text numberOfLines={1} style={textStyles.place_name}>{data.place_name}</Text>
         </View>
       </ImageBackground>
     </TouchableOpacity>
@@ -74,16 +74,17 @@ const ItemCard = ({ props, navigation }: ItemCardProps) => {
 
 const textStyles = StyleSheet.create({
   place_name: {
-    fontSize: 12,
+    fontSize: 16,
     color: "#F4F4F4",
-    fontWeight: "600",
-    lineHeight: 18,
+    fontWeight: "700",
+    lineHeight: 24,
+    letterSpacing: -0.6
   },
   address: {
-    fontSize: 10,
-    lineHeight: 15,
+    fontSize: 12,
+    lineHeight: 18,
     color: "#F4F4F4",
-    marginLeft: 3
+    marginLeft: 10,
   }
 })
 

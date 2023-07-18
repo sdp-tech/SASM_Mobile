@@ -47,7 +47,7 @@ const styles = (isCategory?: boolean) => StyleSheet.create({
   },
 });
 
-interface PlaceItemCard {
+export interface MyPlaceItemCard {
   id: number;
   place_name: string;
   category: string;
@@ -57,7 +57,7 @@ interface PlaceItemCard {
 
 const MyPlace = ({ navigation }: MyPageParams) => {
   const { isLogin, setLogin } = useContext(LoginContext);
-  const [info, setInfo] = useState([]);
+  const [info, setInfo] = useState<MyPlaceItemCard[]>([]);
   const [page, setPage] = useState(1);
   const [checkedList, setCheckedList] = useState([] as any);
   const [search, setSearch] = useState<string>("");
@@ -65,16 +65,9 @@ const MyPlace = ({ navigation }: MyPageParams) => {
   const [isSearch, setIsSearch] = useState<boolean>(false);
   const request = new Request();
   const [type, setType] = useState<boolean>(true);
-  const [written, setWritten] = useState<PlaceItemCard[]>([]);
+  const [written, setWritten] = useState<MyPlaceItemCard[]>([]);
   const getPlaces = async () => {
-    const response = await request.get(
-      "/users/like_place/",
-      {
-        page: page,
-        filter: checkedList,
-      },
-      null
-    );
+    const response = await request.get("/users/like_place/",{page: page,filter: checkedList});
     setInfo(response.data.data.results);
   };
 
@@ -139,11 +132,10 @@ const MyPlace = ({ navigation }: MyPageParams) => {
                   data={type ? info : written}
                   renderItem={({ item }: any) => (
                     <ItemCard
-                      props={item}
-                      navigation={navigation}
+                      data={item}
                     />
                   )}
-                  numColumns={3}
+                  numColumns={2}
                   style={{ alignContent: 'space-between' }}
                 />
               )}
