@@ -15,20 +15,18 @@ import {
 } from "react-native";
 import type { NativeStackScreenProps } from "@react-navigation/native-stack";
 import RenderHTML from 'react-native-render-html';
-import styled from "styled-components/native";
 import Heart from "../../common/Heart";
 import Arrow from "../../assets/img/common/Arrow.svg";
-import Report from '../../assets/img/Forest/Report.svg';
+import ReportIcon from '../../assets/img/common/Report.svg';
 import WriteComment from "./components/WriteComment";
 import Comment from "./components/Comment";
 import CommentIcon from '../../assets/img/Story/Comment.svg';
 import ShareIcon from '../../assets/img/common/Share.svg';
-import Check from '../../assets/img/common/Check.svg';
 import { LoginContext } from "../../common/Context";
 import { ForestStackParams } from "../../pages/Forest";
 import { Request } from "../../common/requests";
 import CardView from "../../common/CardView";
-import { BottomSheetModal, BottomSheetModalProvider, BottomSheetBackdrop } from "@gorhom/bottom-sheet";
+import Report from "../../common/Report";
 
 interface Post {
   id: number;
@@ -74,7 +72,7 @@ const { width, height } = Dimensions.get('screen');
 const PostDetailSection = ({
   post,
   navigation,
-  onReport
+  onReport,
 }: PostDetailSectionProps) => {
   const markup = {
     html: `${post?.content}`
@@ -165,7 +163,7 @@ const PostDetailSection = ({
             )}
           </View>
           <TouchableOpacity onPress={onReport}>
-            <Report />
+            <ReportIcon color={'#202020'} />
           </TouchableOpacity>
         </View>
         <View style={{ alignItems: 'flex-start' }}>
@@ -370,6 +368,8 @@ const PostDetailScreen = ({
   const [user, setUser] = useState([] as any);
   const [updateText, setUpdateText] = useState<string>('');
   const [writerPosts, setWriterPosts] = useState([] as any);
+  const [reported, setReported] = useState<string>('');
+  const [modalVisible, setModalVisible] = useState<boolean>(false);
   const {isLogin, setLogin} = useContext(LoginContext);
 
   const request = new Request();
@@ -440,31 +440,12 @@ const PostDetailScreen = ({
     }
 };
 
-  // 신고하기
-  const reportLists = [
-    "지나친 광고성 컨텐츠입니다.(상업적 홍보)",
-    "욕설이 포함된 컨텐츠입니다.",
-    "성희롱이 포함된 컨텐츠입니다.",
-  ]
-
-  const bottomSheetModalRef = useRef<BottomSheetModal>(null);
-  const [reported, setReported] = useState<string>('');
-  const snapPoints = useMemo(() => ["40%"], []);
-
-  const openModal = () => {
-    bottomSheetModalRef.current?.present();
-  };
-
-  const renderBackdrop = useCallback(
-    (props: any) => <BottomSheetBackdrop {...props} pressBehavior="close" appearsOnIndex={0} disappearsOnIndex={-1} />,
-    [],
-  );
-
   const onReport = async (item: any) => {
-    const response = await request.post(`/forest/${post_id}/report/`, {
-      category: item
+    const response = await request.post('/report/create/', {
+      target: `forest:post:${post_id}`,
+      reason: item
     }, {});
-    setReported(item);
+    setReported(item)
   }
 
   const callback = (text: string, id: number) => {
@@ -495,7 +476,6 @@ const PostDetailScreen = ({
   }, [refreshing]);
 
   return (
-    <BottomSheetModalProvider>
     <View style={styles.container}>
       {loading || post == undefined ? (
         <ActivityIndicator />
@@ -509,7 +489,7 @@ const PostDetailScreen = ({
             refreshing={refreshing}
             ListHeaderComponent={
               <>
-                <PostDetailSection post={post} navigation={navigation} onReport={openModal}/>
+                <PostDetailSection post={post} navigation={navigation} onReport={() => setModalVisible(true)}/>
                 <UserInfoSection user={post.writer} posts={writerPosts} isLogin={isLogin} navigation={navigation} onRefresh={reRenderScreen}/>
                 <View style={{ flexDirection: 'row', padding: 20, alignItems: 'center' }}>
                   <View style={{flexDirection: 'row', flex: 1}}>
@@ -542,44 +522,10 @@ const PostDetailScreen = ({
             }}
           />
           <BottomBarSection post={post} email={user.email} navigation={navigation} onShare={onShare} onDelete={deletePost} onUpdate={() => { navigation.navigate('CategoryForm', { post: post }) }} onRefresh={reRenderScreen} />
-          <BottomSheetModal
-            ref={bottomSheetModalRef}
-            index={0}
-            snapPoints={snapPoints}
-            backdropComponent={renderBackdrop}
-            handleIndicatorStyle={{backgroundColor: '#D9D9D9'}}
-          >
-            {reported.length == 0 ? (  
-            <>         
-            <View style={{alignItems: 'center', marginTop: 35, marginBottom: 15}}>
-              <View style={{flexDirection: 'row', justifyContent: 'center'}}>
-                <Report width={20} height={20} />
-                <Text style={{marginLeft: 8, fontSize: 16, fontWeight: '700',  letterSpacing: -0.6}}>이 글을 신고하는 이유가 무엇인가요?</Text>
-              </View>
-              <Text style={{textAlign: 'center', marginTop: 10, fontSize: 12, lineHeight: 18, letterSpacing: -0.6, color: '#848484'}}>지적재산권 침해를 신고하는 경우를 제외하고{"\n"}회원님의 신고는 익명으로 처리됩니다.</Text>
-            </View>
-            <FlatList data={reportLists} renderItem={({item}) => {
-              return (
-                <TouchableOpacity onPress={() => {onReport(item);}} style={{flexDirection: 'row', padding: 15, borderTopColor: '#E3E3E3', borderTopWidth: 1, alignItems: 'center'}}>
-                  <Text style={{color: '#202020', fontSize: 14, fontWeight: '500', flex: 1}}>{item}</Text>
-                  <Arrow width={18} height={18} />
-                </TouchableOpacity>
-              )
-            }}
-            />
-            </>) : (
-            <View style={{alignItems: 'center', justifyContent: 'center', margin: 50}}>
-              <Check color={'#67D393'} width={37} height={37} />
-              <Text style={{marginTop: 15, fontSize: 16, fontWeight: '700',  letterSpacing: -0.6, color: '#FF4C00'}}>{reported}</Text>
-              <Text style={{marginLeft: 8, fontSize: 16, fontWeight: '700',  letterSpacing: -0.6}}>이 글을 신고해주셔서 감사합니다.</Text>
-              <Text style={{textAlign: 'center', marginTop: 10, fontSize: 12, lineHeight: 18, letterSpacing: -0.6, color: '#848484'}}>글을 검토한 후 결과를 알려드리겠습니다.{'\n'}안전한 SASM 환경을 만들 수 있도록 도와주셔서 감사합니다.</Text>
-            </View>
-            )}
-          </BottomSheetModal>
+          <Report reported={reported} modalVisible={modalVisible} setModalVisible={setModalVisible} onReport={onReport} />
         </>
       )}
     </View>
-    </BottomSheetModalProvider>
   );
 };
 
