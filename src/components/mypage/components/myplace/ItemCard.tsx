@@ -33,12 +33,12 @@ const ItemCard = ({ data }: {data: MyPlaceItemCard}) => {
   const category = () => {
     let idx = MatchCategory(data.category);
     let list = [
-      <Selector0 color={CATEGORY_LIST[0].color} width={24} height={24}/>,
-      <Selector1 color={CATEGORY_LIST[1].color} width={24} height={24}/>,
-      <Selector2 color={CATEGORY_LIST[2].color} width={24} height={24}/>,
-      <Selector3 color={CATEGORY_LIST[3].color} width={24} height={24}/>,
-      <Selector4 color={CATEGORY_LIST[4].color} width={24} height={24}/>,
-      <Selector5 color={CATEGORY_LIST[5].color} width={24} height={24}/>
+      <Selector0 color={CATEGORY_LIST[0].color} width={15} height={15}/>,
+      <Selector1 color={CATEGORY_LIST[1].color} width={15} height={15}/>,
+      <Selector2 color={CATEGORY_LIST[2].color} width={15} height={15}/>,
+      <Selector3 color={CATEGORY_LIST[3].color} width={15} height={15}/>,
+      <Selector4 color={CATEGORY_LIST[4].color} width={15} height={15}/>,
+      <Selector5 color={CATEGORY_LIST[5].color} width={15} height={15}/>
     ]
     return list[idx];
   }
@@ -58,9 +58,9 @@ const ItemCard = ({ data }: {data: MyPlaceItemCard}) => {
     <TouchableOpacity style={{marginHorizontal: 6, marginBottom: 20}} onPress={handlePageGoToMap}>
       <ImageBackground
         source={{ uri: data.rep_pic }}
-        style={{width: 170, height: 230}}
+        style={{width: 110, height: 150}}
       >
-        <View style={{width: '100%', height: '100%', backgroundColor: 'rgba(0,0,0,0.3)', padding: 10, justifyContent: 'flex-end'}}>
+        <View style={{width: '100%', height: '100%', backgroundColor: 'rgba(0,0,0,0.3)', padding: 5, justifyContent: 'flex-end'}}>
           <View style={{flexDirection: 'row', alignItems:'center'}}>
             {category()}
             <Text style={textStyles.address}>{data.address.split(' ')[1]}, {data.address.split(' ')[0]}</Text>
@@ -74,17 +74,17 @@ const ItemCard = ({ data }: {data: MyPlaceItemCard}) => {
 
 const textStyles = StyleSheet.create({
   place_name: {
-    fontSize: 16,
+    fontSize: 12,
     color: "#F4F4F4",
     fontWeight: "700",
-    lineHeight: 24,
+    lineHeight: 18,
     letterSpacing: -0.6
   },
   address: {
-    fontSize: 12,
+    fontSize: 10,
     lineHeight: 18,
     color: "#F4F4F4",
-    marginLeft: 10,
+    marginLeft: 5,
   }
 })
 

@@ -135,7 +135,7 @@ const MyPlace = ({ navigation }: MyPageParams) => {
                       data={item}
                     />
                   )}
-                  numColumns={2}
+                  numColumns={3}
                   style={{ alignContent: 'space-between' }}
                 />
               )}
