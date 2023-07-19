@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useContext, useRef } from "react";
+import React, { useState, useEffect, useContext, useRef, useMemo, useCallback } from "react";
 import { TextPretendard as Text } from "../../common/CustomText";
 import {
   View,
@@ -10,23 +10,23 @@ import {
   Image,
   Alert,
   ImageBackground,
-  Dimensions
+  Dimensions,
+  Share
 } from "react-native";
 import type { NativeStackScreenProps } from "@react-navigation/native-stack";
 import RenderHTML from 'react-native-render-html';
-import styled from "styled-components/native";
 import Heart from "../../common/Heart";
 import Arrow from "../../assets/img/common/Arrow.svg";
-import Report from '../../assets/img/Forest/Report.svg';
+import ReportIcon from '../../assets/img/common/Report.svg';
 import WriteComment from "./components/WriteComment";
 import Comment from "./components/Comment";
 import CommentIcon from '../../assets/img/Story/Comment.svg';
-import Share from '../../assets/img/common/Share.svg';
-import Scrap from '../../assets/img/Forest/Scrap.svg';
+import ShareIcon from '../../assets/img/common/Share.svg';
 import { LoginContext } from "../../common/Context";
 import { ForestStackParams } from "../../pages/Forest";
 import { Request } from "../../common/requests";
 import CardView from "../../common/CardView";
+import Report from "../../common/Report";
 
 interface Post {
   id: number;
@@ -52,6 +52,7 @@ interface Post {
 interface PostDetailSectionProps {
   post: Post;
   navigation: any;
+  onReport: () => void;
 }
 
 interface UserInfoSectionProps {
@@ -70,7 +71,8 @@ const { width, height } = Dimensions.get('screen');
 
 const PostDetailSection = ({
   post,
-  navigation
+  navigation,
+  onReport,
 }: PostDetailSectionProps) => {
   const markup = {
     html: `${post?.content}`
@@ -160,8 +162,8 @@ const PostDetailSection = ({
               })
             )}
           </View>
-          <TouchableOpacity>
-            <Report />
+          <TouchableOpacity onPress={onReport}>
+            <ReportIcon color={'#202020'} />
           </TouchableOpacity>
         </View>
         <View style={{ alignItems: 'flex-start' }}>
@@ -253,6 +255,7 @@ const UserInfoSection = ({
 const PostRecommendSection = ({ data }: PostRecommendSectionProps) => {
   return (
     <View style={{
+      marginVertical: 20,
       padding: 20,
       borderTopWidth: 2,
       borderBottomWidth: 2,
@@ -293,11 +296,12 @@ interface BottomBarSectionProps {
   email: string;
   onUpdate: () => void;
   onDelete: () => void;
+  onShare: () => void;
   onRefresh: any;
   navigation: any;
 }
 
-const BottomBarSection = ({ post, email, onUpdate, onDelete, onRefresh, navigation }: BottomBarSectionProps) => {
+const BottomBarSection = ({ post, email, onUpdate, onDelete, onShare, onRefresh, navigation }: BottomBarSectionProps) => {
   const [like, setLike] = useState<boolean>(post.user_likes)
   const request = new Request();
 
@@ -328,17 +332,14 @@ const BottomBarSection = ({ post, email, onUpdate, onDelete, onRefresh, navigati
   };
   return (
     <View style={{ flexDirection: "row", padding: 10 }}>
-      <View style={{ flexDirection: 'row', flex: 1 }}>
-        <Heart like={like} onPress={toggleLike}></Heart>
-        <Text>{post.like_cnt}</Text>
-        <CommentIcon />
-        <Text>{post.comment_cnt}</Text>
+      <View style={{ flexDirection: 'row', flex: 1, alignItems: 'center' }}>
+        <Heart color={'#202020'} like={like} onPress={toggleLike} size={18} ></Heart>
+        <Text style={{fontSize: 14, color: '#202020', lineHeight: 20, marginLeft: 3, marginRight: 10}}>{post.like_cnt}</Text>
+        <CommentIcon color={'#202020'} />
+        <Text style={{fontSize: 14, color: '#202020', lineHeight: 20, marginLeft: 3}}>{post.comment_cnt}</Text>
       </View>
-      <TouchableOpacity>
-        <Scrap fill={'black'} />
-      </TouchableOpacity>
-      <TouchableOpacity>
-        <Share />
+      <TouchableOpacity style={{marginRight: 5}} onPress={onShare}>
+        <ShareIcon />
       </TouchableOpacity>
       {post.writer.email === email && (
         <>
@@ -367,6 +368,8 @@ const PostDetailScreen = ({
   const [user, setUser] = useState([] as any);
   const [updateText, setUpdateText] = useState<string>('');
   const [writerPosts, setWriterPosts] = useState([] as any);
+  const [reported, setReported] = useState<string>('');
+  const [modalVisible, setModalVisible] = useState<boolean>(false);
   const {isLogin, setLogin} = useContext(LoginContext);
 
   const request = new Request();
@@ -417,10 +420,32 @@ const PostDetailScreen = ({
     );
   };
 
-  const onReport = async () => {
-    const response = await request.post(`/forest/${post_id}/report/`, {
-      category: 1
+  const onShare = async () => {
+    try {
+      const result = await Share.share({
+        message:
+          'React Native | A framework for building native apps using React',
+      });
+      if (result.action === Share.sharedAction) {
+        if (result.activityType) {
+          // shared with activity type of result.activityType
+        } else {
+          // shared
+        }
+      } else if (result.action === Share.dismissedAction) {
+        // dismissed
+      }
+    } catch (error: any) {
+      Alert.alert(error.message);
+    }
+};
+
+  const onReport = async (item: any) => {
+    const response = await request.post('/report/create/', {
+      target: `forest:post:${post_id}`,
+      reason: item
     }, {});
+    setReported(item)
   }
 
   const callback = (text: string, id: number) => {
@@ -464,13 +489,16 @@ const PostDetailScreen = ({
             refreshing={refreshing}
             ListHeaderComponent={
               <>
-                <PostDetailSection post={post} navigation={navigation} />
+                <PostDetailSection post={post} navigation={navigation} onReport={() => setModalVisible(true)}/>
                 <UserInfoSection user={post.writer} posts={writerPosts} isLogin={isLogin} navigation={navigation} onRefresh={reRenderScreen}/>
-                <View style={{ flexDirection: 'row' }}>
-                  <Text style={{ fontSize: 14, fontWeight: '500', margin: 15 }}>한줄평</Text>
-                  <View style={{ marginTop: 15 }}><CommentIcon /></View>
-                  <TouchableOpacity style={{ marginLeft: 260, marginTop: 15 }} onPress={() => { navigation.navigate('PostComments', { id: post_id, email: user.email }) }}>
-                    <Text style={{ fontSize: 10 }}>더보기{'>'}</Text>
+                <View style={{ flexDirection: 'row', padding: 20, alignItems: 'center' }}>
+                  <View style={{flexDirection: 'row', flex: 1}}>
+                    <Text style={{ fontSize: 16, fontWeight: '700', marginRight: 10 }}>한줄평</Text>
+                    <CommentIcon color={'black'}/>
+                  </View>
+                  <TouchableOpacity style={{flexDirection: 'row', alignItems: 'center'}} onPress={() => { navigation.navigate('PostComments', { id: post_id, email: user.email }) }}>
+                    <Text style={{ fontSize: 12, fontWeight: '500', marginRight: 5 }}>더보기</Text>
+                    <Arrow width={12} height={12} />
                   </TouchableOpacity>
                 </View>
                 <WriteComment id={post_id} reRenderScreen={reRenderScreen} data={updateText} commentId={commentId} isLogin={isLogin} navigation={navigation} />
@@ -493,7 +521,8 @@ const PostDetailScreen = ({
               )
             }}
           />
-          <BottomBarSection post={post} email={user.email} navigation={navigation} onDelete={deletePost} onUpdate={() => { navigation.navigate('CategoryForm', { post: post }) }} onRefresh={reRenderScreen} />
+          <BottomBarSection post={post} email={user.email} navigation={navigation} onShare={onShare} onDelete={deletePost} onUpdate={() => { navigation.navigate('CategoryForm', { post: post }) }} onRefresh={reRenderScreen} />
+          <Report reported={reported} modalVisible={modalVisible} setModalVisible={setModalVisible} onReport={onReport} />
         </>
       )}
     </View>

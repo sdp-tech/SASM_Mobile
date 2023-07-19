@@ -8,16 +8,18 @@ interface HeartProps {
   like: boolean;
   onPress: () => void;
   white?: boolean;
+  size?: number;
+  color?: string;
 }
 
-export default function Heart({ like, onPress, white }: HeartProps): JSX.Element {
+export default function Heart({ like, onPress, white, size, color }: HeartProps): JSX.Element {
   return (
     <TouchableOpacity onPress={onPress}>
       {
         like ?
-          white ? <FilledLike width={18} height={18} /> : <FilledLike width={25} height={25} /> 
+          white ? <FilledLike width={size? size : 18} height={size? size : 18} /> : <FilledLike width={size? size : 25} height={size? size : 25} /> 
           :
-          white ? <WhiteLike width={18} height={18} /> : <UnFilledLike width={25} height={25} />
+          white ? <WhiteLike width={size? size : 18} height={size? size : 18} /> : <UnFilledLike color={color ? color : "#686868"} width={size? size : 25} height={size? size : 25} />
       }
     </TouchableOpacity>
   )

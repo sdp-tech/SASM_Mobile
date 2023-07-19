@@ -99,6 +99,7 @@ const PostSearchScreen = ({
         setSearch={setSearch}
         style={{ backgroundColor: "#F4F4F4", width: 330 }}
         placeholder={"무엇을 검색하시겠습니까"}
+        placeholderTextColor={'#848484'}
       />
       </View>
       {search.length > 0 ? (
