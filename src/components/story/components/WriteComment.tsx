@@ -15,6 +15,7 @@ interface WriteCommentParams {
 const WriteComment = ({ id, reRenderScreen, data, isLogin, navigation, commentId }: WriteCommentParams) => {
     const { width, height } = Dimensions.get('screen');
     const [comment, setComment] = useState<string>('');
+    const hasUnsavedChanges = Boolean(comment);
     const request = new Request();
     
     const uploadComment = async () => {
@@ -63,6 +64,35 @@ const WriteComment = ({ id, reRenderScreen, data, isLogin, navigation, commentId
             setComment(data);
         }
     }, [data])
+
+    useEffect(
+        () =>
+          navigation.addListener('beforeRemove', (e: any) => {
+            if (!hasUnsavedChanges) {
+              return;
+            }
+    
+            // Prevent default behavior of leaving the screen
+            e.preventDefault();
+    
+            // Prompt the user before leaving the screen
+            Alert.alert(
+              '나가시겠습니까?',
+              '입력하신 정보는 저장되지 않습니다.',
+              [
+                { text: "머무르기", style: 'cancel', onPress: () => {} },
+                {
+                  text: '나가기',
+                  style: 'destructive',
+                  // If the user confirmed, then we dispatch the action we blocked earlier
+                  // This will continue the action that had triggered the removal of the screen
+                  onPress: () => navigation.dispatch(e.data.action),
+                },
+              ]
+            );
+          }),
+        [navigation, hasUnsavedChanges]
+      );
 
     return (
         <View style={{backgroundColor: 'rgba(217, 217, 217, 0.2)', width: width, height: 100, padding: 10}}>

@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef, useCallback } from 'react';
-import { View, FlatList, TouchableOpacity, Dimensions, ImageBackground, TextInput, ScrollView, Modal, Alert } from 'react-native';
+import { View, TouchableOpacity, Dimensions, ImageBackground, TextInput, ScrollView, Modal, Alert, KeyboardAvoidingView, TouchableWithoutFeedback, Keyboard } from 'react-native';
 import { TextPretendard as Text } from '../../../common/CustomText';
 import { RichEditor, RichToolbar, actions } from 'react-native-pell-rich-editor';
 import { ImageLibraryOptions, launchCamera, launchImageLibrary } from 'react-native-image-picker';
@@ -91,6 +91,14 @@ const ForestForm = ({ navigation, route }: NativeStackScreenProps<ForestStackPar
   };
 
   const saveForest = async () => {
+    if(forest.title.length == 0 || forest.subtitle.length == 0 || forest.content.length == 0){
+      Alert.alert('빈 칸을 전부 채워주세요.');
+      return;
+    }
+    if(repPic.length == 0){
+      Alert.alert('대표 사진을 설정해주세요.');
+      return;
+    }
     const formData = new FormData();
     for (const photo of photoList){
       formData.append('photos', "add,"+photo);
@@ -197,6 +205,8 @@ const ForestForm = ({ navigation, route }: NativeStackScreenProps<ForestStackPar
           subtitle={['작성한 포레스트는', '마이페이지 > 포레스트 > 내가 쓴 포레스트', '에서 확인할 수 있어요']}
         />
       </Modal>
+      <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
+      <>
       <FormHeader title='포레스트 작성' onLeft={() => navigation.goBack()} onRight={post ? updateForest : saveForest} />
       <ScrollView>
       <ImageBackground source={{ uri: (repPic && repPic.length > 0) ? repPic[0].uri : forest.rep_pic != '' ? forest.rep_pic : "https://reactnative.dev/img/logo-og.png"}} style={{width: width, height: width}}>
@@ -260,14 +270,18 @@ const ForestForm = ({ navigation, route }: NativeStackScreenProps<ForestStackPar
       </ScrollView>
       <View style={{flexDirection: 'row', borderBottomColor: '#D9D9D9', borderTopColor: '#D9D9D9', borderBottomWidth: 1, borderTopWidth: 1, padding: 10, alignItems: 'center'}}>
         <Text style={{color: '#848484', marginRight: 5}}>해시태그</Text>
-        <TextInput
-          value={forest.hashtags}
-          onChangeText={(hashtags) => { setForest({ ...forest, hashtags: hashtags }) }}
-          placeholder='#해시태그를 #작성해주세요'
-          placeholderTextColor={'#848484'}
-        />
+        <KeyboardAvoidingView behavior='padding' keyboardVerticalOffset={10}>
+          <TextInput
+            value={forest.hashtags}
+            onChangeText={(hashtags) => { setForest({ ...forest, hashtags: hashtags }) }}
+            placeholder='#해시태그를 #작성해주세요'
+            placeholderTextColor={'#848484'}
+          />
+        </KeyboardAvoidingView>
       </View>
       </ScrollView>
+      </>
+      </TouchableWithoutFeedback>
     </View>
   )
 }
