@@ -14,14 +14,7 @@ import { getAccessToken } from '../../common/storage';
 import { useFocusEffect } from '@react-navigation/native';
 import { StackScreenProps } from '@react-navigation/stack';
 import { LoginContext } from '../../common/Context';
-
-const MyCommunity = () => {
-  return (
-    <View>
-      <Text>정보글</Text>
-    </View>
-  )
-}
+import MyForest from './components/myforest/MyForest';
 
 export interface IUserInfo {
   id: number;
@@ -91,7 +84,7 @@ const MyPageTabView = ({ navigation }: StackScreenProps<MyPageProps, 'mypage'>) 
       case "curation":
         return <MyCuration navigation={navigation} />;
       case "community":
-        return <MyCommunity />;
+        return <MyForest/>
     }
   }
 
