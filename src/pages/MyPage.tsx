@@ -28,7 +28,9 @@ export type MyPageProps = {
         follower: number;
         following: number;
     }
-    'change': any;
+    'change': {
+        info: IUserInfo;
+    };
     'changepw': any;
     'feedback': any;
     'findidpw': any;
@@ -38,7 +40,9 @@ export type MyPageProps = {
     'follower': {
         email: string;
     }
-    'options': any;
+    'options': {
+        info: IUserInfo;
+    };
 }
 const MyPageStack = createNativeStackNavigator<MyPageProps>();
 

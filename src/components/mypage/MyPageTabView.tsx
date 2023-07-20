@@ -33,6 +33,8 @@ export interface IUserInfo {
   address: string;
   is_sdp_admin: boolean;
   is_verifed: boolean;
+  introduction: string;
+  [key:string]:string | boolean | number;
 }
 
 const MyPageTabView = ({ navigation }: StackScreenProps<MyPageProps, 'mypage'>) => {
@@ -47,6 +49,7 @@ const MyPageTabView = ({ navigation }: StackScreenProps<MyPageProps, 'mypage'>) 
     address: '',
     is_sdp_admin: false,
     is_verifed: false,
+    introduction: ''
   });
   const [follower, setFollower] = useState<{ num: number, list: any[] }>({ num: 0, list: [] });
   const [following, setFollowing] = useState<{ num: number, list: any[] }>({ num: 0, list: [] });
@@ -146,7 +149,7 @@ const MyPageTabView = ({ navigation }: StackScreenProps<MyPageProps, 'mypage'>) 
         <TouchableOpacity onPress={() => { navigation.navigate('user', { info: info, follower: follower.num, following: following.num }) }}>
           <Profile />
         </TouchableOpacity>
-        <TouchableOpacity style={{ marginLeft: 300 }} onPress={() => { navigation.navigate('options') }}>
+        <TouchableOpacity style={{ marginLeft: 300 }} onPress={() => { navigation.navigate('options', {info: info}) }}>
           <Settings />
         </TouchableOpacity>
       </View>

@@ -20,7 +20,7 @@ const StyledButton = styled.TouchableOpacity`
     margin: 12px 16px;
 `
 
-export default function Options({ navigation }: StackScreenProps<MyPageProps, 'options'>) {
+export default function Options({ navigation, route }: StackScreenProps<MyPageProps, 'options'>) {
     const {isLogin, setLogin} = useContext(LoginContext);
     const request = new Request();
 
@@ -31,11 +31,11 @@ export default function Options({ navigation }: StackScreenProps<MyPageProps, 'o
         setLogin(false);
         navigation.navigate('mypage');
     }
-
+    
     const buttonAction: { label: string, onPress?: () => void }[] = [
         {
             label: '프로필 수정',
-            onPress: () => { navigation.navigate('change') }
+            onPress: () => { navigation.navigate('change', {info: route.params.info}) }
         },
         {
             label: '비밀번호 변경',
