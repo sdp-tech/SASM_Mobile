@@ -4,6 +4,8 @@ import { View, TouchableOpacity, Image, TextInput, Alert, StyleSheet, FlatList, 
 import { Request } from '../../../common/requests';
 import Edit from '../../../assets/img/Story/Edit.svg';
 import Heart from '../../../common/Heart';
+import ReportIcon from '../../../assets/img/common/Report.svg';
+import Report from '../../../common/Report';
 
 interface CommentProps {
     data: any;
@@ -19,8 +21,18 @@ const Comment = ({ data, story_id, reRenderScreen, email, isLogin, navigation, c
     const date = data.created_at.slice(0, 10);
     const { width, height } = Dimensions.get('screen');
     const [modalVisible, setModalVisible] = useState<boolean>(false);
+    const [reported, setReported] = useState<string>('');
+    const [reportVisible, setReportVisible] = useState<boolean>(false);
     const [like, setLike] = useState<boolean>(data.user_likes);
     const request = new Request();
+
+    const onReport = async (item: any) => {
+        const response = await request.post('/report/create/', {
+          target: `story:comment:${data.id}`,
+          reason: item
+        }, {});
+        setReported(item)
+    }
 
     const toggleLike = async () => {
         if(isLogin){
@@ -90,9 +102,13 @@ const Comment = ({ data, story_id, reRenderScreen, email, isLogin, navigation, c
                             <Text style={textStyles.date}>{date} 작성</Text>
                         </View>
                         <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'flex-end'}}>
-                            {isWriter &&
+                            {isWriter ?
                                 <TouchableOpacity style={{marginRight: 5}} onPress={() => setModalVisible(!modalVisible)}>
                                     <Edit width={12} height={12} />
+                                </TouchableOpacity>
+                            : 
+                                <TouchableOpacity style={{marginRight: 5}} onPress={() => setReportVisible(true)}>
+                                    <ReportIcon width={12} height={12} color={'#666666'} />
                                 </TouchableOpacity>
                             }
                             <Heart like={like} onPress={toggleLike} size={10} />
@@ -113,6 +129,7 @@ const Comment = ({ data, story_id, reRenderScreen, email, isLogin, navigation, c
                     </TouchableOpacity>
                     </View>
                 </Modal>
+                <Report reported={reported} modalVisible={reportVisible} setModalVisible={setReportVisible} onReport={onReport} />
             </View>
         </View>
     )
