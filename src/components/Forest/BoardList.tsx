@@ -160,7 +160,7 @@ const BoardListScreen = ({
               renderItem={({ item }: any) => (
                 <BoardItem
                   key={item.id}
-                  name={item.name}
+                  data={item}
                   onPress={() => {
                     navigation.navigate("BoardDetail", { board_category: item });
                   }}

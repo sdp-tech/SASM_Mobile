@@ -108,8 +108,8 @@ const BoardDetailScreen = ({
 
   return (
     <SafeAreaView style={styles.container}>
+    <ListHeader board_name={board_category.name} navigation={navigation} />
     <ScrollView>
-      <ListHeader board_name={board_category.name} navigation={navigation} />
       {loading ? (
         <ActivityIndicator />
       ) : (

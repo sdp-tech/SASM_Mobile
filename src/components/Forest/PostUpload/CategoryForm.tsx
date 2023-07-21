@@ -39,7 +39,7 @@ const CategoryForm = ({ navigation, route }: NativeStackScreenProps<ForestStackP
           renderItem={({ item }: any) => (
             <BoardItem
               id={item.id}
-              name={item.name}
+              data={item}
               onPress={(id: number) => {
                 if (selectedId === id) {
                   setSelectedId(null); // 선택 상태를 해제합니다.
