@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useCallback, useRef, useContext } from 'react';
-import { Dimensions, Image, View, TouchableOpacity, StyleSheet, Button, Linking, Modal, SafeAreaView, Alert } from 'react-native';
+import { Dimensions, Image, View, TouchableOpacity, StyleSheet, Button, Linking, Modal, SafeAreaView, Alert, Share } from 'react-native';
 import { TextPretendard as Text } from '../../../common/CustomText';
 import { ScrollView } from 'react-native-gesture-handler';
 import styled from 'styled-components/native';
@@ -10,7 +10,6 @@ import Heart from '../../../common/Heart';
 import { Request } from '../../../common/requests';
 import WriteReview from './WriteReview';
 import UserReviews from './UserReviews';
-import SharePlace from "../../../assets/img/Map/SharePlace.svg";
 import LikePlace from "../../../assets/img/Map/LikePlace.svg";
 import FilledLikePlace from "../../../assets/img/Map/FilledLikePlace.svg";
 import PlusWhite from "../../../assets/img/Map/PlusWhite.svg";
@@ -22,6 +21,7 @@ import { useNavigation } from '@react-navigation/native';
 import { StackNavigationProp } from '@react-navigation/stack';
 import { TabProps } from '../../../../App';
 import { LoginContext } from '../../../common/Context';
+import ShareButton from "../../../common/ShareButton";
 
 const { width, height } = Dimensions.get('window');
 
@@ -225,9 +225,7 @@ export default function DetailCard({ detailData }: DetailCardProps): JSX.Element
                 <LikePlace />
             }
           </TouchableOpacity>
-          <TouchableOpacity>
-            <SharePlace />
-          </TouchableOpacity>
+          <ShareButton message={`[SASM Map] ${detailData.place_name}(${detailData.category}) - ${detailData.place_review}`} />
         </ButtonBox>
         <TextBox>
           <Text style={TextStyles.info}>{detailData.category}</Text>
