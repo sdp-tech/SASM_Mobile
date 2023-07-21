@@ -21,7 +21,7 @@ const StyledButton = styled.TouchableOpacity`
 `
 
 export default function Options({ navigation }: StackScreenProps<MyPageProps, 'options'>) {
-    const {isLogin, setLogin} = useContext(LoginContext);
+    const { isLogin, setLogin } = useContext(LoginContext);
     const request = new Request();
 
     const logOut = () => {
@@ -42,15 +42,16 @@ export default function Options({ navigation }: StackScreenProps<MyPageProps, 'o
             onPress: () => { navigation.navigate('changepw') }
         },
         {
-            label: '맞춤정보 설정',
-        },
-        {
             label: '의견 보내기',
             onPress: () => { navigation.navigate('feedback') }
         },
         {
             label: '로그아웃',
             onPress: logOut
+        },
+        {
+            label: '회원 탈퇴',
+            onPress: () => { navigation.navigate('withdraw') }
         }
     ]
 
@@ -82,6 +83,6 @@ const styles = StyleSheet.create({
         fontSize: 14,
         lineHeight: 20,
         color: '#000000',
-        borderColor:'red',
+        borderColor: 'red',
     },
 })
