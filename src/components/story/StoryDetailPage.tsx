@@ -12,7 +12,8 @@ import StoryDetailBox, { StoryDetail } from './components/StoryDetailBox';
 import { StoryProps } from '../../pages/Story';
 import { LoginContext } from '../../common/Context';
 import ShareButton from "../../common/ShareButton";
-
+import Report from '../../common/Report';
+import { BottomSheetModalProvider } from '@gorhom/bottom-sheet';
 
 interface PostRecommendSectionProps {
   item: any;
@@ -152,12 +153,12 @@ const StoryDetailPage = ({ navigation, route }: StoryProps) => {
   const { isLogin, setLogin } = useContext(LoginContext);
   const [data, setData] = useState<StoryDetail>();
   const [comment, setComment] = useState([] as any);
-  const [like, setLike] = useState<boolean>(false);
-  const [loading, setLoading] = useState<boolean>(true);
   const [refreshing, setRefreshing] = useState<boolean>(false);
   const [email, setEmail] = useState<string>('');
   const [updateText, setUpdateText] = useState<string>('');
   const [commentId, setCommentId] = useState<number>(0);
+  const [reported, setReported] = useState<string>('');
+  const [modalVisible, setModalVisible] = useState<boolean>(false);
   const request = new Request();
 
   const checkUser = async () => {
@@ -166,10 +167,10 @@ const StoryDetailPage = ({ navigation, route }: StoryProps) => {
   }
 
   const loadItem = async () => {
-      const response_detail = await request.get(`/stories/story_detail/${id}/`);
-      const response_comment = await request.get("/stories/comments/", { story: id }, null);
-      setData(response_detail.data.data);
-      setComment(response_comment.data.data.results);
+    const response_detail = await request.get(`/stories/story_detail/${id}/`);
+    const response_comment = await request.get("/stories/comments/", { story: id }, null);
+    setData(response_detail.data.data);
+    setComment(response_comment.data.data.results);
   };
 
   const reRenderScreen = () => {
@@ -200,6 +201,14 @@ const StoryDetailPage = ({ navigation, route }: StoryProps) => {
       ],
       { cancelable: false }
     );
+  }
+
+  const onReport = async (item: any) => {
+    const response = await request.post('/report/create/', {
+      target: `story:post:${id}`,
+      reason: item
+    }, {});
+    setReported(item)
   }
 
   const callback = (text: string, id: number) => {
@@ -233,17 +242,18 @@ const StoryDetailPage = ({ navigation, route }: StoryProps) => {
   }
 
   return (
-    <>
+    <BottomSheetModalProvider>
+    <View style={{flex: 1, backgroundColor: 'white'}}>
         {data == undefined ? (
             <ActivityIndicator />
         ) : (
-            <View style={{flex: 1, backgroundColor: 'white'}}>
+            <>
             <FlatList
                 ref={scrollRef}
                 data = {comment}
                 onRefresh = {reRenderScreen}
                 refreshing = {refreshing}
-                disableVirtualization = {false}
+                keyExtractor={(item, index) => item.id.toString()}
                 ListHeaderComponent={
                 <>
                     <StoryDetailBox data={data} navigation={navigation} isLogin={isLogin} />
@@ -277,10 +287,11 @@ const StoryDetailPage = ({ navigation, route }: StoryProps) => {
                 </>}
             />
             <BottomBarSection post={data} email={email} navigation={navigation} onDelete={deleteStory} onUpdate={() => { navigation.navigate('WriteStoryPage', { id: data!.id }) }} onRefresh={reRenderScreen} />
-            </View>
+            <Report reported={reported} modalVisible={modalVisible} setModalVisible={setModalVisible} onReport={onReport} />
+            </>
         )}
-    </>
-  )
-}
+    </View>
+    </BottomSheetModalProvider>
+)}
 
 export default StoryDetailPage;
