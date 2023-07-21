@@ -11,14 +11,18 @@ import Selector3 from "../../../../assets/img/Category/Selector3.svg";
 import Selector4 from "../../../../assets/img/Category/Selector4.svg";
 import Selector5 from "../../../../assets/img/Category/Selector5.svg";
 import Heart from '../../../../common/Heart';
+import { StackNavigationProp } from "@react-navigation/stack";
+import { useNavigation } from "@react-navigation/native";
+import { TabProps } from "../../../../../App";
 
 interface ItemCardProps extends MyPageParams {
   props: any;
 }
 
-const ItemCard = ({props, navigation}: ItemCardProps) => {
+const ItemCard = ({props}: ItemCardProps) => {
   const { width, height } = Dimensions.get("window");
   const [like, setLike] = useState(false);
+  const navigationToTab = useNavigation<StackNavigationProp<TabProps>>();
   const request = new Request();
 
   // 좋아요 클릭 이벤트
@@ -42,7 +46,7 @@ const ItemCard = ({props, navigation}: ItemCardProps) => {
   }
 
   return (
-    <TouchableOpacity style={{marginHorizontal: 10, marginBottom: 10}} onPress={() => { navigation.navigate('스토리', { id: props.id })}}>
+    <TouchableOpacity style={{marginHorizontal: 10, marginBottom: 10}} onPress={() => { navigationToTab.navigate('스토리', { id: props.id })}}>
       <ImageBackground
         source={{ uri: props.rep_pic }}
         style={{width: 170, height: 220}}
