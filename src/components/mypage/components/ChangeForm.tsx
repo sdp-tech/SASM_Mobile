@@ -59,7 +59,8 @@ interface InfoFormProps {
 export default function ChangeForm({ navigation, route }: StackScreenProps<MyPageProps, 'change'>) {
   const request = new Request();
   const [loading, setLoading] = useState<boolean>(true);
-  const [check, setCheck] = useState<boolean>(true);
+  const [alert, setAlert] = useState<boolean>(false);
+  const [check, setCheck] = useState<boolean>(false);
   const [form, setForm] = useState<InfoFormProps>({
     gender: '',
     nickname: '',
@@ -95,7 +96,8 @@ export default function ChangeForm({ navigation, route }: StackScreenProps<MyPag
       setCheck(true);
     }
     else {
-      setCheck(false);
+      setAlert(true);
+      setTimeout(()=>{setAlert(false)}, 3000);
     }
     Alert.alert(response_check.data.data);
   }
@@ -113,21 +115,31 @@ export default function ChangeForm({ navigation, route }: StackScreenProps<MyPag
   ]
 
   const updateInfo = async () => {
-    const body: { [key: string]: any } = {};
+    const formData = new FormData()
     for (let key of Object.keys(form)) {
       if (form[key] != route.params.info[key]) {
         if (key == 'profile_image' && form.profile_image) {
-          body[key] = {
+          formData.append(key,  {
             uri: form.profile_image.uri,
             name: form.profile_image.fileName,
             type: 'image/jpeg/png',
-          }
+          })
         }
-        body[key] = form[key]
+        else if(key == 'nickname') {
+          if(!check) {
+            Alert.alert('닉네임 중복체크를 해주세요');
+            return;
+          }
+          else formData.append(key, form[key]);
+        }
+        else {
+          console.log(key)
+          formData.append(key, form[key])
+        }
       }
     }
-    if(Object.keys(body).length==0) return;
-    const response = await request.patch('/mypage/me/update/', body, {"Content-Type": "multipart/form-data"});
+    if(formData.getParts().length==0) return;
+    const response = await request.patch('/mypage/me/update/', formData, {"Content-Type": "multipart/form-data"});
     if (response.data.status == 'success') {
       navigation.navigate('mypage');
     }
@@ -160,9 +172,9 @@ export default function ChangeForm({ navigation, route }: StackScreenProps<MyPag
               value={form.nickname}
               label='닉네임'
               alertLabel='이미 사용중인 이메일입니다'
-              isAlert={!check}
+              isAlert={alert}
               placeholder='닉네임을 입력해주세요'
-              onChangeText={(e) => { setCheck(true); setForm({ ...form, nickname: e }) }}
+              onChangeText={(e) => { setCheck(false); setForm({ ...form, nickname: e }) }}
               onBlur={() => { }}>
               <CheckButton onPress={checkRepetition}><Text>중복 체크</Text></CheckButton>
             </InputWithLabel>
