@@ -72,7 +72,7 @@ const CommentListPage = ({ navigation, route }: StoryProps) => {
         </>}
         renderItem={({item}) => { 
           return (
-            <Comment data={item} reRenderScreen={reRenderScreen} email={email} callback={callback} isLogin={isLogin} />
+            <Comment data={item} story_id={id} reRenderScreen={reRenderScreen} email={email} callback={callback} isLogin={isLogin} navigation={navigation}/>
           )
         }}
         keyExtractor={(item: any)=>item.id}
