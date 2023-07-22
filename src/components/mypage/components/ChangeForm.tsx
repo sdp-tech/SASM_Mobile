@@ -99,7 +99,6 @@ export default function ChangeForm({ navigation, route }: StackScreenProps<MyPag
       setAlert(true);
       setTimeout(()=>{setAlert(false)}, 3000);
     }
-    Alert.alert(response_check.data.data);
   }
 
   const genderOption = [
