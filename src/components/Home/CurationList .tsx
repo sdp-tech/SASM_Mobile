@@ -1,6 +1,6 @@
 import { StackScreenProps } from '@react-navigation/stack';
 import React, { useCallback, useEffect, useReducer, useRef, useState } from 'react';
-import { Dimensions, Platform, SafeAreaView, ScrollView, StatusBar, TouchableOpacity, View } from 'react-native';
+import { ActivityIndicator, Dimensions, Platform, SafeAreaView, ScrollView, StatusBar, TouchableOpacity, View } from 'react-native';
 import { TextPretendard as Text } from '../../common/CustomText';
 import { FlatList } from 'react-native-gesture-handler';
 import { HomeStackParams } from '../../pages/Home';
@@ -24,27 +24,51 @@ const useDidMountEffect = (func: any, deps: any[]) => {
 }
 
 export default function CurationList({ navigation, route }: StackScreenProps<HomeStackParams, 'List'>): JSX.Element {
+  const [loading, setLoading] = useState<boolean>(false);
+  const [max, setMax] = useState<number>(0);
   const [search, setSearch] = useState<string>("");
   const [page, setPage] = useState<number>(1);
   const [list, setList] = useState<CurationProps[]>([]);
   const request = new Request();
 
-  const searchCuration = async () => {
-    if (search != '' || route.params.data.length == 0) {
-      const response_search = await request.get('/curations/curation_search/', { search: search });
-      setList(response_search.data.data);
+  const getList = async () => {
+    setLoading(true);
+    switch (route.params.from) {
+      case ('search'):
+        const response_search = await request.get('/curations/curation_search/', { search: search });
+        if (page === 1) {
+          setList(response_search.data.data.results);
+          setMax(Math.ceil(response_search.data.data.count / 10));
+        } else {
+          setList([...list, ...response_search.data.data.results]);
+        }
+        break;
+      case ('admin'):
+        const response_admin = await request.get('/curations/admin_curations/', { page: page });
+        if (page === 1) {
+          setList(response_admin.data.data.results);
+          setMax(Math.ceil(response_admin.data.data.count / 4));
+        } else {
+          setList([...list, ...response_admin.data.data.results]);
+        }
+        break;
+      case ('verify'):
+        const response_verifed = await request.get('/curations/verified_user_curations/', { page: page });
+        if (page === 1) {
+          setList(response_verifed.data.data.results);
+          setMax(Math.ceil(response_verifed.data.data.count / 4));
+        } else {
+          setList([...list, ...response_verifed.data.data.results]);
+        }
+        break;
     }
-    else {
-      setList(route.params.data);
-    }
+    setLoading(false);
   }
 
   useFocusEffect(useCallback(() => {
-    setList(route.params.data);
-  }, []))
+    getList();
+  }, [page, search]))
 
-  useDidMountEffect(searchCuration, [search])
-  
   return (
     <SafeAreaView style={{ backgroundColor: "#FFFFFF", flex: 1 }}>
       <View style={{ display: 'flex', flexDirection: 'row', alignItems: 'center', marginTop: Platform.OS == 'android' ? 10 : 0 }}>
@@ -60,16 +84,25 @@ export default function CurationList({ navigation, route }: StackScreenProps<Hom
           style={{ width: '80%', backgroundColor: '#F1F1F1' }}
         />
       </View>
-      <FlatList
-        contentContainerStyle={{ padding: 5 }}
-        numColumns={2}
-        data={list}
-        renderItem={({ item }) => <SearchItemCard style={{ width: width / 2 - 15, height: height / 3, margin: 5 }} data={item} />}
-        ListHeaderComponent={<>{list.length == 0 && <View style={{ marginLeft: 15 }}><Text style={{ fontSize: 16, fontWeight: '600' }}>큐레이션이 없습니다.</Text></View>}</>}
-      />
+      {
+        loading ? <ActivityIndicator />
+          : <FlatList
+            contentContainerStyle={{ padding: 5 }}
+            numColumns={2}
+            data={list}
+            onEndReached={() => {
+              if (page < max) {
+                setPage(page + 1);
+              }
+            }}
+            renderItem={({ item }) => <SearchItemCard style={{ width: width / 2 - 15, height: height / 3, margin: 5 }} data={item} />}
+            ListFooterComponent={<>{loading && <ActivityIndicator />}</>}
+            ListHeaderComponent={<>{list.length == 0 && <View style={{ marginLeft: 15 }}><Text style={{ fontSize: 16, fontWeight: '600' }}>큐레이션이 없습니다.</Text></View>}</>}
+          />
+      }
       <PlusButton
         position='rightbottom'
-        onPress={()=>{navigation.navigate('Form')}}
+        onPress={() => { navigation.navigate('Form') }}
       />
     </SafeAreaView >
   )
