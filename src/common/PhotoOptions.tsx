@@ -140,3 +140,45 @@ export const PhotoSelector = ({ width, height, children, max, setPhoto }: PhotoS
     </Container>
   )
 }
+
+export const CameraSelector = (callback: (res: ImagePicker.Asset[]) => void, max: number): void => {
+  const options: CameraOptions[] | ImageLibraryOptions[] = [
+    //카메라 & 갤러리 세팅
+    {
+      mediaType: 'photo',
+      includeBase64: false,
+      maxHeight: 300,
+      maxWidth: 300,
+    },
+    {
+      selectionLimit: max,
+      mediaType: 'photo',
+      includeBase64: false,
+      maxHeight: 300,
+      maxWidth: 300,
+    }
+  ];
+
+  return Alert.alert('사진 선택', '',
+    [
+      {
+        text: '카메라', onPress: () => {
+          ImagePicker.launchCamera(options[0], response => {
+            if (!response.didCancel && response.assets) {
+              callback(response.assets)
+            }
+          })
+        }
+      },
+      {
+        text: '앨범', onPress: () => {
+          ImagePicker.launchImageLibrary(options[1], response => {
+            if (!response.didCancel && response.assets) {
+              callback(response.assets)
+            }
+          })
+        }
+      },
+      { text: '취소', style: 'destructive' }
+    ])
+}

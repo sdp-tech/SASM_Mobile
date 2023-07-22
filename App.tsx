@@ -63,7 +63,9 @@ export type TabProps = {
   스토리: {
     id: number | undefined;
   };
-  포레스트: undefined;
+  포레스트:{
+    id: number | undefined;
+  }
   마이페이지: undefined;
 };
 
@@ -71,7 +73,7 @@ const CustomTab = ({ state, descriptors, navigation }: BottomTabBarProps) => {
   return (
     <View
       style={{
-        height: 75,
+        height: 88,
         display: "flex",
         flexDirection: "row",
         justifyContent: "space-around",
@@ -105,7 +107,15 @@ const CustomTab = ({ state, descriptors, navigation }: BottomTabBarProps) => {
                 routes: [{ name: route.name, params: { id: undefined } }],
               });
             else navigation.navigate(route.name, { id: undefined });
-          } else {
+          }
+          else if (route.name == "포레스트") {
+            if (isFocused)
+              navigation.reset({
+                routes: [{ name: route.name, params: { id: undefined } }],
+              });
+            else navigation.navigate(route.name, { id: undefined });
+          }
+          else {
             if (isFocused) navigation.reset({ routes: [{ name: route.name }] });
             else navigation.navigate(route.name);
           }

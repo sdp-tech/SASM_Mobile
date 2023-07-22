@@ -8,7 +8,6 @@ import { Request } from "../../../../common/requests";
 import Category from '../../../../common/Category';
 import SearchBar from '../../../../common/SearchBar';
 import { useFocusEffect } from '@react-navigation/native';
-import Map from "../../../../assets/img/MyPage/Map.svg";
 import Menu from "../../../../assets/img/MyPage/Menu.svg";
 import { MyPageParams } from '../../../../pages/MyPage';
 import { LoginContext } from '../../../../common/Context';
@@ -93,9 +92,6 @@ const MyStory = ({ navigation, route }: MyPageParams) => {
               }
               <TouchableOpacity style={{ marginHorizontal: 10 }} onPress={() => { setIsSearch(!isSearch); setIsCategory(false); }}>
                 <Search width={18} height={18} />
-              </TouchableOpacity>
-              <TouchableOpacity style={{ marginHorizontal: 10 }} onPress={() => { setIsSearch(false); setIsCategory(false) }}>
-                <Map width={18} height={18} />
               </TouchableOpacity>
               {!isCategory &&
                 <TouchableOpacity style={{ marginHorizontal: 10 }} onPress={() => { setIsSearch(false); setIsCategory(!isCategory) }}>

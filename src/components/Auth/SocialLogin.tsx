@@ -33,7 +33,7 @@ const Button = styled.TouchableOpacity`
 `
 const request = new Request();
 
-export const processLoginResponse = (response: any, navigation:any, setLogin: (value:boolean)=>void) => {
+export const processLoginResponse = (response: any, navigation: any, setLogin: (value: boolean) => void) => {
   // const navigation = useNavigation<StackNavigationProp<MyPageProps>>();
   if (response.status == 200) {
     const nickname = response.data.data.nickname
@@ -45,9 +45,7 @@ export const processLoginResponse = (response: any, navigation:any, setLogin: (v
     setLogin(true);
     navigation.navigate('mypage');
   } else if (response.status == 400) {
-    Alert.alert('올바른 이메일과 비밀번호를 입력해주세요')
-  } else if (response.status == 404) {
-    Alert.alert('존재하지 않는 이메일입니다');
+    Alert.alert(response.data.extra.fields !== undefined ? response.data.extra.fields.detail : response.data.message)
   }
   else {
     Alert.alert('예상치 못한 오류가 발생하였습니다.')
@@ -59,7 +57,7 @@ export const processLoginResponse = (response: any, navigation:any, setLogin: (v
 export default function SocialLogin({ type }: { type: string }) {
   const navigation = useNavigation<StackNavigationProp<MyPageProps>>();
   const navigationRegister = useNavigation<StackNavigationProp<RegisterParams>>();
-  const {isLogin, setLogin} = useContext(LoginContext);
+  const { isLogin, setLogin } = useContext(LoginContext);
   const google_configure = () => {
     GoogleSignin.configure({
       webClientId: GOOGLE_WEB_CLIENT_ID,
@@ -79,7 +77,7 @@ export default function SocialLogin({ type }: { type: string }) {
       Alert.alert('카카오 로그인이 실패하였습니다.')
     });
   };
-  
+
   const naver_login = async () => {
     NaverLogin.login({
       appName: 'SASM',
@@ -102,7 +100,7 @@ export default function SocialLogin({ type }: { type: string }) {
       Alert.alert('네이버 로그인이 실패하였습니다.');
     });
   };
-  
+
   const google_login = () => {
     GoogleSignin.signIn().then(({ idToken }) => {
       console.log("구글 로그인 성공", idToken);
@@ -119,27 +117,27 @@ export default function SocialLogin({ type }: { type: string }) {
     });
   }
 
-  useEffect(()=>{
+  useEffect(() => {
     google_configure();
-  },[])
+  }, [])
 
   return (
     <View>
-      <Button style={{borderColor:'#000000', borderWidth: 1}} onPress={()=>google_login()}>
+      <Button style={{ borderColor: '#000000', borderWidth: 1 }} onPress={() => google_login()}>
         <Google width={15} height={16} style={{ position: 'absolute', top: 16, left: 16 }} />
         <Text style={TextStyles.button}>구글로 {{
           'register': '회원가입',
           'login': '로그인'
         }[type]}</Text>
       </Button>
-      <Button style={{backgroundColor:'#03C75A'}} onPress={()=>naver_login()}>
+      <Button style={{ backgroundColor: '#03C75A' }} onPress={() => naver_login()}>
         <Naver width={16} height={16} style={{ position: 'absolute', top: 16, left: 16 }} />
-        <Text style={{...TextStyles.button, color:'#FFFFFF'}}>네이버로 {{
+        <Text style={{ ...TextStyles.button, color: '#FFFFFF' }}>네이버로 {{
           'register': '회원가입',
           'login': '로그인'
         }[type]}</Text>
       </Button>
-      <Button style={{backgroundColor:'#FEE500'}} onPress={()=>kakao_login()}>
+      <Button style={{ backgroundColor: '#FEE500' }} onPress={() => kakao_login()}>
         <Kakao width={18} height={16} style={{ position: 'absolute', top: 16, left: 16 }} />
         <Text style={TextStyles.button}>카카오로 {{
           'register': '회원가입',
@@ -147,10 +145,10 @@ export default function SocialLogin({ type }: { type: string }) {
         }[type]}</Text>
       </Button>
       {
-        (type=='register') &&
-        <Button style={{borderColor:'#67D393', borderWidth: 1}} onPress={()=>navigationRegister.navigate('email')}>
-        <Text style={TextStyles.button}>이메일로 회원가입</Text>
-      </Button>
+        (type == 'register') &&
+        <Button style={{ borderColor: '#67D393', borderWidth: 1 }} onPress={() => navigationRegister.navigate('email')}>
+          <Text style={TextStyles.button}>이메일로 회원가입</Text>
+        </Button>
       }
     </View>
   )

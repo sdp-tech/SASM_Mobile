@@ -14,7 +14,6 @@ import { Request } from "../../../../common/requests";
 import Category from "../../../../common/Category";
 import SearchBar from "../../../../common/SearchBar";
 import Search from "../../../../assets/img/common/Search.svg";
-import Map from "../../../../assets/img/MyPage/Map.svg";
 import Menu from "../../../../assets/img/MyPage/Menu.svg";
 import Arrow from "../../../../assets/img/common/Arrow.svg";
 import { MyPageParams } from "../../../../pages/MyPage";
@@ -48,7 +47,7 @@ const styles = (isCategory?: boolean) => StyleSheet.create({
   },
 });
 
-interface PlaceItemCard {
+export interface MyPlaceItemCard {
   id: number;
   place_name: string;
   category: string;
@@ -58,7 +57,7 @@ interface PlaceItemCard {
 
 const MyPlace = ({ navigation }: MyPageParams) => {
   const { isLogin, setLogin } = useContext(LoginContext);
-  const [info, setInfo] = useState([]);
+  const [info, setInfo] = useState<MyPlaceItemCard[]>([]);
   const [page, setPage] = useState(1);
   const [checkedList, setCheckedList] = useState([] as any);
   const [search, setSearch] = useState<string>("");
@@ -66,16 +65,14 @@ const MyPlace = ({ navigation }: MyPageParams) => {
   const [isSearch, setIsSearch] = useState<boolean>(false);
   const request = new Request();
   const [type, setType] = useState<boolean>(true);
-  const [written, setWritten] = useState<PlaceItemCard[]>([]);
+  const [written, setWritten] = useState<MyPlaceItemCard[]>([]);
   const getPlaces = async () => {
-    const response = await request.get(
-      "/users/like_place/",
-      {
-        page: page,
-        filter: checkedList,
-      },
-      null
-    );
+    let params = new URLSearchParams();
+    for (const category of checkedList){
+      params.append('filter', category);
+    }
+    params.append('search', search);
+    const response = await request.get(`/mypage/myplace_search/?${params.toString()}`,null, null)
     setInfo(response.data.data.results);
   };
 
@@ -94,13 +91,6 @@ const MyPlace = ({ navigation }: MyPageParams) => {
 
   return (
     <View style={styles().Container}>
-      <View style={styles().Title}>
-        <Text style={{ fontSize: 14, flex: 1, marginLeft: 20 }}>플레이스 리스트</Text>
-        <TouchableOpacity style={{ flexDirection: 'row', marginRight: 20 }} onPress={() => navigation.navigate('place_list')}>
-          <Text style={{ fontSize: 10, marginRight: 10 }}>모두 보기</Text>
-          <Arrow width={12} height={12} />
-        </TouchableOpacity>
-      </View>
       {
         isLogin ?
           <>
@@ -117,9 +107,6 @@ const MyPlace = ({ navigation }: MyPageParams) => {
               }
               <TouchableOpacity style={{ marginHorizontal: 10 }} onPress={() => { setIsSearch(!isSearch); setIsCategory(false); }}>
                 <Search width={18} height={18} />
-              </TouchableOpacity>
-              <TouchableOpacity style={{ marginHorizontal: 10 }} onPress={() => { setIsSearch(false); setIsCategory(false) }}>
-                <Map width={18} height={18} />
               </TouchableOpacity>
               {!isCategory &&
                 <TouchableOpacity style={{ marginHorizontal: 10 }} onPress={() => { setIsSearch(false); setIsCategory(!isCategory) }}>
@@ -150,8 +137,7 @@ const MyPlace = ({ navigation }: MyPageParams) => {
                   data={type ? info : written}
                   renderItem={({ item }: any) => (
                     <ItemCard
-                      props={item}
-                      navigation={navigation}
+                      data={item}
                     />
                   )}
                   numColumns={3}

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { Dispatch, SetStateAction } from 'react';
 import { Image, View, Dimensions, TouchableOpacity } from 'react-native';
 import { TextPretendard as Text } from './CustomText';
 import { FlatList } from 'react-native-gesture-handler';
@@ -13,13 +13,14 @@ import Selector5 from "../assets/img/Category/Selector5.svg";
 const CategoryWrapper = styled.TouchableOpacity<{ selected: boolean, color: string, story: boolean }>`
   display: flex;
   flex-direction: row;
-  align-items: ${props => props.story ? `flex-start` : `center`}
+  align-items: center;
   background-color: ${props => props.selected ? props.color : '#FFFFFF'};
-  height: ${props => props.story ? `25px` : `28px`}
-  border-radius: ${props => props.story ? `0px` : `12px`}
-  padding-horizontal: ${props => props.story ? `0px` : `10px`};
+  height: 28px;
+  border-radius: 12px;
+  padding-horizontal: 10px;
   margin: 0 10px;
-  border-bottom-width: ${props => props.selected && props.story ? 2 : 0};
+  border-color: 'rgba(203, 203, 203, 1)';
+  border-width: ${props => props.story ? 1 : 0};
 `
 
 interface ListProps {
@@ -53,10 +54,12 @@ interface CategoryProps {
   checkedList: string[];
   setCheckedList: (list: string[]) => void;
   story?: boolean;
+  setPage?: Dispatch<SetStateAction<number>>;
 }
 
-export default function Category({ checkedList, setCheckedList, story }: CategoryProps): JSX.Element {
+export default function Category({ checkedList, setCheckedList, story, setPage }: CategoryProps): JSX.Element {
   const handleCheckedList = (data: string): void => {
+    if(setPage) setPage(1);
     if (checkedList.includes(data)) {
       setCheckedList(checkedList.filter(element => element != data));
     }
@@ -67,7 +70,7 @@ export default function Category({ checkedList, setCheckedList, story }: Categor
 
   return (
     <FlatList
-      style={{ marginTop: 10, marginBottom: story ? 0 : 10 }}
+      style={{ marginVertical: 10 }}
       showsHorizontalScrollIndicator={false}
       data={CATEGORY_LIST}
       horizontal
@@ -76,22 +79,10 @@ export default function Category({ checkedList, setCheckedList, story }: Categor
         return (
           <CategoryWrapper
             selected={isSelected}
-            color={story ? 'white': item.color}
+            color={item.color}
             story={story ? true : false}
             onPress={() => { handleCheckedList(item.data) }}>
-            {
-              story ?
-              ({
-                0: <Selector0 color={item.color}/>,
-                1: <Selector1 color={item.color}/>,
-                2: <Selector2 color={item.color}/>,
-                3: <Selector3 color={item.color}/>,
-                4: <Selector4 color={item.color}/>,
-                5: <Selector0 color={item.color}/>
-
-              }[item.id])
-              :
-              ({
+            {{
                 0: <Selector0 width={18} height={18} color={isSelected ? '#FFFFFF' : item.color}/>,
                 1: <Selector1 width={18} height={18} color={isSelected ? '#FFFFFF' : item.color}/>,
                 2: <Selector2 width={18} height={18} color={isSelected ? '#FFFFFF' : item.color}/>,
@@ -99,9 +90,9 @@ export default function Category({ checkedList, setCheckedList, story }: Categor
                 4: <Selector4 width={18} height={18} color={isSelected ? '#FFFFFF' : item.color}/>,
                 5: <Selector5 width={18} height={18} color={isSelected ? '#FFFFFF' : item.color}/>
 
-              }[item.id])
+              }[item.id]
             }
-            <Text style={{ fontSize: story ? 10 : 14, color: story ? '#444444' : (isSelected ? '#FFFFFF' : '#000000'), marginHorizontal: 5, lineHeight: 14 }}>{item.name}</Text>
+            <Text style={{ fontSize: 14, color: (isSelected ? '#FFFFFF' : '#000000'), marginHorizontal: 5, lineHeight: 14 }}>{item.name}</Text>
           </CategoryWrapper>
         )
       }}

@@ -1,7 +1,8 @@
-import React, { Dispatch, SetStateAction, useEffect, useState } from 'react';
+import React, { Dispatch, SetStateAction, useCallback, useEffect, useState } from 'react';
 import { View, ViewStyle } from 'react-native';
 import DropDown from './DropDown';
 import { TextPretendard as Text } from './CustomText';
+import { useFocusEffect } from '@react-navigation/native';
 
 interface DatePickerProps {
   //callback
@@ -10,6 +11,7 @@ interface DatePickerProps {
   isBorder?: boolean;
   label?: boolean;
   containerStyle?: ViewStyle;
+  defaultDate?: string;
 }
 
 export interface dateProps {
@@ -18,7 +20,7 @@ export interface dateProps {
   date: number;
 }
 
-export default function DatePicker({ callback, isBorder, label, containerStyle }: DatePickerProps) {
+export default function DatePicker({ callback, isBorder, label, containerStyle, defaultDate }: DatePickerProps) {
   const [year, setYear] = useState<number>(new Date().getFullYear() - 99);
   const [month, setMonth] = useState<number>(1);
   const [date, setDate] = useState<number>(1);
@@ -30,6 +32,16 @@ export default function DatePicker({ callback, isBorder, label, containerStyle }
   for (let i = new Date().getFullYear() - 99; i <= new Date().getFullYear(); i++) yearArray.push({ label: i, value: i })
   for (let i = 1; i <= 12; i++) monthArray.push({ label: i, value: i })
   for (let i = 1; i <= 31; i++) dateArray.push({ label: i, value: i })
+
+  useEffect(()=>{
+    if (defaultDate) {
+      console.error(defaultDate)
+      const [_y, _m, _d] = defaultDate.split('-');
+      setYear(Number(_y));
+      setMonth(Number(_m));
+      setDate(Number(_d))
+    }
+  },[])
 
   useEffect(() => {
     if (callback) {

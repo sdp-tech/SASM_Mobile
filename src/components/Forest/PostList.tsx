@@ -85,9 +85,6 @@ const PostListScreen = ({
       />
       <View style={{flexDirection: 'row', zIndex: 1, alignItems: 'center', padding: 15, backgroundColor: '#F1FCF5'}}>
         <Text style={{fontSize: 12, fontWeight: '400', flex: 1}}>전체 검색결과 {count}개</Text>
-        <View style={{width: 100, zIndex: 2000}}>
-          <DropDown value={orderList} setValue={setOrderList} isBorder={false} items={toggleItems} />
-        </View>
       </View>
       <FlatList
         data={posts}

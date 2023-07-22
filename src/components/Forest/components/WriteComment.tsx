@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { Request } from '../../../common/requests';
 import { View, TouchableOpacity, TextInput, StyleSheet, Alert, Dimensions } from 'react-native';
 import { TextPretendard as Text } from '../../../common/CustomText';
@@ -13,8 +13,10 @@ interface WriteCommentParams {
 }
 
 const WriteComment = ({ id, reRenderScreen, isLogin, data, commentId, navigation }: WriteCommentParams) => {
+    const textInputRef = useRef<TextInput>(null);
     const { width, height } = Dimensions.get('screen');
     const [comment, setComment] = useState<string>('');
+    const hasUnsavedChanges = Boolean(comment);
     const request = new Request();
     
     const uploadComment = async () => {
@@ -64,29 +66,76 @@ const WriteComment = ({ id, reRenderScreen, isLogin, data, commentId, navigation
         }
     }, [data])
 
+    useEffect(
+        () =>
+          navigation.addListener('beforeRemove', (e: any) => {
+            if (!hasUnsavedChanges) {
+              return;
+            }
+    
+            // Prevent default behavior of leaving the screen
+            e.preventDefault();
+    
+            // Prompt the user before leaving the screen
+            Alert.alert(
+              '나가시겠습니까?',
+              '입력하신 정보는 저장되지 않습니다.',
+              [
+                { text: "머무르기", style: 'cancel', onPress: () => {} },
+                {
+                  text: '나가기',
+                  style: 'destructive',
+                  // If the user confirmed, then we dispatch the action we blocked earlier
+                  // This will continue the action that had triggered the removal of the screen
+                  onPress: () => navigation.dispatch(e.data.action),
+                },
+              ]
+            );
+          }),
+        [navigation, hasUnsavedChanges]
+      );
+    const [inputWidth, setInputWidth] = useState(width-50)
+    const handleContentSizeChange = (e: any) => {
+    const { contentSize } = e.nativeEvent;
+    const { height } = contentSize;
+
+    // 3/4 지점의 높이 계산
+    const threeFourthHeight = 70;
+
+    // 커서가 3/4 지점보다 아래에 있는 경우 width 조정
+    if (height > threeFourthHeight) {
+      const currentWidth = inputWidth;
+      const reducedWidth = currentWidth - 50; // width를 원하는 만큼 줄여주세요
+
+      // 최소 width를 100으로 설정하려면 아래 코드를 사용합니다
+      // const reducedWidth = Math.max(currentWidth - 50, 100);
+
+      setInputWidth(reducedWidth);
+    }
+    };
+
     return (
-        <View style={{backgroundColor: 'rgba(217, 217, 217, 0.2)', width: width, height: 100, padding: 10}}>
+        <View style={{backgroundColor: 'rgba(217, 217, 217, 0.2)', width: width-40, height: 100, padding: 10, alignSelf: 'center'}}>
             <TextInput
                 value = {comment}
                 onChangeText = {setComment}
-                // placeholder = '댓글을 달아주세요.'
                 multiline = {true}
-                style = {{ maxHeight: 90, includeFontPadding: true, width: width-50}}
+                style = {{ flex: 1, maxHeight: 70, includeFontPadding: true, width: width-60}}
+                onContentSizeChange={handleContentSizeChange}
             />
-            <View style={{ position: 'absolute', marginTop: 60, marginLeft: width - 50}}>
             <TouchableOpacity
                 onPress = {uploadComment}
                 style = {{
                     backgroundColor: '#209DF5',
-                    width: 40,
-                    height: 24,
+                    width: 30,
+                    height: 20,
                     borderRadius: 24,
                     alignItems: 'center',
-                    justifyContent: 'space-around'
+                    justifyContent: 'space-around',
+                    position: 'absolute', marginTop: 70, marginLeft: width - 80
                 }}>
-                <Text style = {{ fontSize: 12, fontWeight: '600', color: '#FFFFFF' }}>작성</Text>
+                <Text style = {{ fontSize: 10, fontWeight: '600', color: '#FFFFFF' }}>등록</Text>
             </TouchableOpacity>
-            </View>
         </View>
     )
 }

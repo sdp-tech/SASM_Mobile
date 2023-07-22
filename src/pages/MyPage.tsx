@@ -14,6 +14,7 @@ import Following from '../components/mypage/components/Following_List';
 import Follower from '../components/mypage/components/Follower_List';
 import Options from '../components/mypage/components/OptionPage';
 import PlaceList from '../components/mypage/components/myplace/PlaceList';
+import Withdraw from '../components/mypage/components/Withdraw';
 
 export interface MyPageParams {
     navigation: any;
@@ -22,7 +23,6 @@ export interface MyPageParams {
 
 export type MyPageProps = {
     'mypage': any;
-    'place_list': any;
     'login': any;
     'register': any;
     'user': {
@@ -30,7 +30,9 @@ export type MyPageProps = {
         follower: number;
         following: number;
     }
-    'change': any;
+    'change': {
+        info: IUserInfo;
+    };
     'changepw': any;
     'feedback': any;
     'findidpw': any;
@@ -41,6 +43,7 @@ export type MyPageProps = {
         email: string;
     }
     'options': any;
+    'withdraw': any;
 }
 const MyPageStack = createNativeStackNavigator<MyPageProps>();
 
@@ -51,7 +54,6 @@ const MyPageScreen = () => {
                 headerShown: false,
             })} >
             <MyPageStack.Screen name="mypage" component={MyPageTabView} />
-            <MyPageStack.Screen name="place_list" component={PlaceList} />
             <MyPageStack.Screen name="user" component={UserInfoBox} />
             <MyPageStack.Screen name="login" component={LoginScreen} />
             <MyPageStack.Screen name="register" component={RegisterScreen} />
@@ -62,6 +64,7 @@ const MyPageScreen = () => {
             <MyPageStack.Screen name="following" component={Following} />
             <MyPageStack.Screen name="follower" component={Follower} />
             <MyPageStack.Screen name="options" component={Options} />
+            <MyPageStack.Screen name="withdraw" component={Withdraw} />
         </MyPageStack.Navigator>
     )
 }

@@ -8,24 +8,11 @@ interface CommentProps {
     data: any;
     reRenderScreen: any;
     email: string;
+    isLogin: boolean;
     callback?: any;
 }
 
-interface TextButtonProps {
-    text: string;
-    onPress: any;
-}
-
-const TextButton = ({text, onPress}: TextButtonProps) => {
-    return (
-        <TouchableOpacity
-            onPress = {onPress}>
-            <Text>{text}</Text>
-        </TouchableOpacity>
-    )
-}
-
-const Comment = ({ data, reRenderScreen, email, callback }: CommentProps) => {
+const Comment = ({ data, reRenderScreen, email, isLogin, callback }: CommentProps) => {
     const date = data.created_at.slice(0, 10);
     const [update, setUpdate] = useState<boolean>(false);
     const [updateText, setUpdateText] = useState(data.content);
@@ -69,26 +56,13 @@ const Comment = ({ data, reRenderScreen, email, callback }: CommentProps) => {
                 </View>
                 <View style={{ marginLeft: 10}}>
                     <View style={{flexDirection: 'row', justifyContent: 'flex-start'}}>
-                        <Text style={[textStyles.nickname, {color: data!.writer_is_verified ? '#209DF5' : '#89C77F'}]}>{data!.writer_is_verified ? ('Editor') : ('User')}</Text>
+                        <Text style={[textStyles.nickname, {color: data!.writer_is_verified ? '#209DF5' : '#67D393'}]}>{data!.writer_is_verified ? ('Editor') : ('User')}</Text>
                         <Text style={textStyles.nickname}> {data!.nickname}</Text>
                         <Text style={textStyles.date}>{date} 작성</Text>
                         {isWriter ?
-                            <>
                             <TouchableOpacity onPress={() => setModalVisible(!modalVisible)} style={{marginLeft: 120, marginTop: 5}}>
                                 <Edit width={10} height={10} />
                             </TouchableOpacity>
-                            {/* {update ?
-                                <>
-                                    <TextButton onPress = {updateComment} text = '저장' />
-                                    <TextButton onPress = {handleUpdate} text = '취소' />
-                                </>
-                                :
-                                <>
-                                    <TextButton onPress = {() => {handleUpdate()}} text = '수정' />
-                                    <TextButton onPress = {deleteComment} text = '삭제' />
-                                </>
-                            } */}
-                            </>
                         : <></>}
                     </View>
                     <Text style={textStyles.content}>{data.content}</Text>
