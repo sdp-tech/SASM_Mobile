@@ -1,7 +1,6 @@
 import { useState, useEffect } from 'react';
-// import { TextPretendard as Text } from "../../../common/CustomText";
-import { View, ImageBackground, TouchableOpacity, Dimensions, Text, Image } from 'react-native';
-import Scrap from "../../../assets/img/Forest/Scrap.svg";
+import { TextPretendard as Text } from "../../../common/CustomText";
+import { View, ImageBackground, TouchableOpacity, Dimensions, Image, Alert } from 'react-native';
 import Arrow from "../../../assets/img/common/Arrow.svg";
 import CommentIcon from '../../../assets/img/Story/Comment.svg';
 import Heart from '../../../common/Heart';
@@ -17,6 +16,8 @@ interface PostItemProps {
   comment_cnt: number;
   like_cnt: number;
   user_likes: boolean;
+  onRefresh: any;
+  isLogin: boolean;
   navigation: any;
 }
 
@@ -32,15 +33,41 @@ const PostItem = ({
   comment_cnt,
   like_cnt,
   user_likes,
+  onRefresh,
+  isLogin,
   navigation,
 }: PostItemProps) => {
   const [pressed, setPressed] = useState<boolean>(false);
   const [like, setLike] = useState<boolean>(false);
   const request = new Request();
+  useEffect(() => {
+    user_likes && setLike(true);
+  }, [user_likes])
 
   const toggleLike = async () => {
-    const response = await request.post(`/forest/${post_id}/like/`);
-    setLike(!like);
+    if(isLogin){
+      const response = await request.post(`/forest/${post_id}/like/`);
+      setLike(!like);
+      onRefresh();
+    } else {
+      Alert.alert(
+        "로그인이 필요합니다.",
+        "로그인 항목으로 이동하시겠습니까?",
+        [
+            {
+                text: "이동",
+                onPress: () => navigation.navigate('Login'),
+
+            },
+            {
+                text: "취소",
+                onPress: () => { },
+                style: "cancel"
+            },
+        ],
+        { cancelable: false }
+      );
+    }
   };
   return (
     <TouchableOpacity
@@ -54,7 +81,7 @@ const PostItem = ({
         style={{
           width: width - 30,
           paddingTop: 20,
-          paddingBottom: pressed ? 40 : 20,
+          paddingBottom: 20,
           borderBottomWidth: 1,
           borderBottomColor: "#373737",
           flexDirection: "row",
@@ -63,7 +90,7 @@ const PostItem = ({
       >
         {pressed ? (
           <>
-            <View style={{ flex: 1, paddingTop: 10}}>
+            <View style={{ flex: 1, paddingTop: 10, paddingRight: 5}}>
               <View style={{flex: 1}}>
                 <Text
                   style={{ fontSize: 16, fontWeight: "600", marginBottom: 8 }}
@@ -84,50 +111,38 @@ const PostItem = ({
                   {preview}
                 </Text>
               </View>
-              <View style={{flexDirection: 'row', }}>
+              <View style={{flexDirection: 'row', alignItems: 'center'}}>
                 <Text style={{ color: '#67D393', fontSize: 12, fontWeight: "600", opacity: 0.6, lineHeight: 18, flex: 1 }}>{writer.nickname}</Text>
-                {user_likes ? (
-                  <Heart like={!like} onPress={toggleLike} />
-                ) : (
-                  <Heart like={like} onPress={toggleLike} />
-                )}
-                <Text style={{color: '#209DF5', fontSize: 12, lineHeight: 18}}>{like_cnt}</Text>
-                <CommentIcon width={15} height={15} />
-                <Text style={{color: '#209DF5', fontSize: 12, lineHeight: 18}}>{comment_cnt}</Text>
+                <Heart like={like} color={'#209DF5'} size={12} onPress={toggleLike} />
+                <Text style={{marginLeft: 3, marginRight: 10, color: '#209DF5', fontSize: 12, lineHeight: 18}}>{like_cnt}</Text>
+                <CommentIcon color={'#209DF5'} width={15} height={15} />
+                <Text style={{marginLeft: 3, color: '#209DF5', fontSize: 12, lineHeight: 18}}>{comment_cnt}</Text>
               </View>
+              <TouchableOpacity onPress={() => setPressed(false)}
+                style={{ marginLeft: (width-30) / 2 }}
+              >
+                <Arrow transform={[{ rotate: "270deg" }]} width={15} height={15} />
+              </TouchableOpacity>
             </View>
             <View>
               <ImageBackground
                 style={{
                   width: 90,
                   height: 90,
-                  alignItems: "flex-end",
-                  justifyContent: "flex-end",
                   padding: 5,
                 }}
                 source={{ uri: rep_pic }}
-              >
-                <TouchableOpacity onPress={() => console.log("저장")}>
-                  <Scrap />
-                </TouchableOpacity>
-              </ImageBackground>
+              />
               {photos.map((uri: string, index: number) => {
                 return (
                   <Image style={{width: 90, height: 90}} key={index} source={{uri: uri}} />
                 )
               })}
-              {/* <Image style={{width: 90, height: 90}} source={{uri: photos[1]}} />
-              <Image style={{width: 90, height: 90}} source={{uri: photos[2]}} /> */}
             </View>
-            <TouchableOpacity onPress={() => setPressed(false)}
-              style={{ position: "absolute", top: 300, left: (width-30) / 2 }}
-            >
-              <Arrow transform={[{ rotate: "270deg" }]} width={15} height={15} />
-            </TouchableOpacity>
           </>
         ) : (
           <>
-            <View style={{ flex: 1, paddingTop: 10}}>
+            <View style={{ flex: 1, paddingTop: 10, paddingRight: 5}}>
               <Text
                 style={{ fontSize: 16, fontWeight: "600", marginBottom: 8 }}
               >
@@ -152,16 +167,10 @@ const PostItem = ({
               style={{
                 width: 90,
                 height: 90,
-                alignItems: "flex-end",
-                justifyContent: "flex-end",
                 padding: 5,
               }}
               source={{ uri: rep_pic }}
-            >
-              <TouchableOpacity onPress={() => console.log("저장")}>
-                <Scrap />
-              </TouchableOpacity>
-            </ImageBackground>
+            />
             <TouchableOpacity onPress={() => setPressed(true)}
               style={{ position: "absolute", top: 110, left: (width-30) / 2 }}
             >
@@ -184,14 +193,41 @@ export const HotPostItem = ({
   comment_cnt,
   like_cnt,
   user_likes,
+  onRefresh,
+  isLogin,
   navigation,
 }: PostItemProps) => {
   const [like, setLike] = useState<boolean>(false);
   const request = new Request();
 
+  useEffect(() => {
+    user_likes && setLike(true);
+  }, [user_likes])
+
   const toggleLike = async () => {
-    const response = await request.post(`/forest/${post_id}/like/`);
-    setLike(!like);
+    if(isLogin){
+      const response = await request.post(`/forest/${post_id}/like/`);
+      setLike(!like);
+      onRefresh();
+    } else {
+      Alert.alert(
+        "로그인이 필요합니다.",
+        "로그인 항목으로 이동하시겠습니까?",
+        [
+            {
+                text: "이동",
+                onPress: () => navigation.navigate('Login'),
+
+            },
+            {
+                text: "취소",
+                onPress: () => { },
+                style: "cancel"
+            },
+        ],
+        { cancelable: false }
+      );
+    }
   };
 
   return (
@@ -210,17 +246,10 @@ export const HotPostItem = ({
           </View>
           <View style={{flexDirection: "row", padding: 10}}>
             <View style={{flexDirection: "row", alignSelf: "flex-start", flex: 1}}>
-              {user_likes ? (
-                <Heart like={!like} onPress={toggleLike} white={true} />
-              ) : (
-                <Heart like={like} onPress={toggleLike} white={true} />
-              )}
+              <Heart like={like} onPress={toggleLike} white={true} />
               <Text style={{ color: "white", lineHeight: 18, marginLeft: 3 }}>{like_cnt}</Text>
             </View>
-            <View style={{flexDirection: "row", alignSelf: "flex-end"}}>
-              <Text style={{ color: "#67D393", fontWeight: "600", marginRight: 5}}>{writer.nickname}</Text>
-              <Scrap width={16} height={16} />
-            </View>
+            <Text style={{ color: "#67D393", fontWeight: "600", marginRight: 5}}>{writer.nickname}</Text>
           </View>
           <TouchableOpacity
             style={{ position: "absolute", top: 85, left: (width-40) / 2 }}

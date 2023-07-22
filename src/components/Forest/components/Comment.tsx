@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
-// import { TextPretendard as Text } from '../../../common/CustomText';
-import { View, TouchableOpacity, Image, Text, Alert, StyleSheet, FlatList, Dimensions, Modal, Pressable } from 'react-native';
+import { TextPretendard as Text } from '../../../common/CustomText';
+import { View, TouchableOpacity, Image, Alert, StyleSheet, FlatList, Dimensions, Modal, Pressable } from 'react-native';
 import { Request } from '../../../common/requests';
 import Edit from '../../../assets/img/Story/Edit.svg';
 import Heart from '../../../common/Heart';
@@ -10,20 +10,42 @@ interface CommentProps {
     reRenderScreen: any;
     post_id: number;
     email: string;
+    isLogin: boolean;
+    navigation: any;
     callback?: any;
 }
 
-const Comment = ({ data, reRenderScreen, post_id, email, callback }: CommentProps) => {
+const Comment = ({ data, reRenderScreen, post_id, email, isLogin, navigation, callback }: CommentProps) => {
     const date = data.created.slice(0, 10);
     const { width, height } = Dimensions.get('screen');
     const [modalVisible, setModalVisible] = useState<boolean>(false);
-    const [like, setLike] = useState<boolean>(false);
+    const [like, setLike] = useState<boolean>(data.user_likes);
     const request = new Request();
 
     const toggleLike = async () => {
+        if(isLogin){
         const response = await request.post(`/forest/${post_id}/comments/${data.id}/like/`, {}, {});
-        console.log(response)
         setLike(!like);
+        reRenderScreen();
+        } else {
+            Alert.alert(
+              "로그인이 필요합니다.",
+              "로그인 항목으로 이동하시겠습니까?",
+              [
+                  {
+                      text: "이동",
+                      onPress: () => navigation.navigate('Login')
+      
+                  },
+                  {
+                      text: "취소",
+                      onPress: () => { },
+                      style: "cancel"
+                  },
+              ],
+              { cancelable: false }
+            );
+          }
     };
 
     const deleteComment = async () => {
@@ -56,23 +78,27 @@ const Comment = ({ data, reRenderScreen, post_id, email, callback }: CommentProp
     }
 
     return (
-        <View style={{borderBottomColor: '#D9D9D9', borderBottomWidth: 1, height: 90}}>
-            <View style = {{ flexDirection: 'row', padding: 20}}>
+        <View style={{borderBottomColor: '#D9D9D9', borderBottomWidth: 1, height: 90, width: width-40, alignSelf: 'center', flex: 1}}>
+            <View style = {{ flexDirection: 'row', paddingTop: 20}}>
                 <View style = {{alignSelf: 'center'}}>
                     <Image source={{uri: data.writer.profile}} style={{width:50,height:50,borderRadius:60}} />
                 </View>
-                <View style={{ marginLeft: 10}}>
-                    <View style={{flexDirection: 'row', justifyContent: 'flex-start'}}>
-                        <Text style={[textStyles.nickname, {color: data!.writer_is_verified ? '#209DF5' : '#89C77F'}]}>{data!.writer_is_verified ? ('Editor') : ('User')}</Text>
-                        <Text style={textStyles.nickname}> {data!.writer.nickname}</Text>
-                        <Text style={textStyles.date}>{date} 작성</Text>
-                        {isWriter ?
-                            <TouchableOpacity onPress={() => setModalVisible(!modalVisible)} style={{marginLeft: 120, marginTop: 5}}>
-                                <Edit width={10} height={10} />
-                            </TouchableOpacity>
-                        : <></>}
-                        <Heart like={like} onPress={toggleLike} />
-                        <Text style={{fontSize: 10, color: '#676767', marginRight: 10}}>{data!.like_cnt}</Text>
+                <View style={{ marginLeft: 10, flex: 1}}>
+                    <View style={{flexDirection: 'row', justifyContent: 'space-between'}}>
+                        <View style={{flexDirection: 'row',}}>
+                            <Text style={[textStyles.nickname, {color: data!.writer_is_verified ? '#209DF5' : '#89C77F'}]}>{data!.writer_is_verified ? ('Editor') : ('User')}</Text>
+                            <Text style={textStyles.nickname}> {data!.writer.nickname}</Text>
+                            <Text style={textStyles.date}>{date} 작성</Text>
+                        </View>
+                        <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'flex-end'}}>
+                            {isWriter &&
+                                <TouchableOpacity style={{marginRight: 5}} onPress={() => setModalVisible(!modalVisible)}>
+                                    <Edit width={12} height={12} />
+                                </TouchableOpacity>
+                            }
+                            <Heart like={like} onPress={toggleLike} size={10} />
+                            <Text style={{fontSize: 10, color: '#676767', marginHorizontal: 5}}>{data!.like_cnt}</Text>
+                        </View>
                     </View>
                     <Text style={textStyles.content}>{data.content}</Text>
                 </View>

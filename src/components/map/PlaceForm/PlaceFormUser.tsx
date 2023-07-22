@@ -1,5 +1,5 @@
 import React, { Dispatch, ReactElement, ReactNode, SetStateAction, useEffect, useState, useRef, RefObject } from 'react';
-import { Alert, Dimensions, Image, Modal, SafeAreaView, StyleSheet,  TextInput, TextInputProps, TouchableOpacity, View } from 'react-native';
+import { Alert, Dimensions, Image, Modal, SafeAreaView, StyleSheet, TextInput, TextInputProps, TouchableOpacity, View } from 'react-native';
 import { TextPretendard as Text } from '../../../common/CustomText';
 import styled from 'styled-components/native';
 import { PhotoResultProps, PhotoSelector } from '../../../common/PhotoOptions';
@@ -14,23 +14,10 @@ import ModalSelector from 'react-native-modal-selector';
 import SNSModal from './Modals/SNSModal';
 import HourModal from './Modals/HourModal';
 import FinishModal from '../../../common/FinishModal';
+import InputWithLabel, { InputTouchWithLabel } from '../../../common/InputWithLabel';
 
 const { width, height } = Dimensions.get('window');
 
-const Input = styled.TextInput`
-  border: 1px solid #BFBFBF;
-  height: 45px;
-  margin-vertical: 5px;
-  padding-horizontal: 10px;
-`
-const InputTouch = styled.TouchableOpacity`
-  border: 1px solid #BFBFBF;
-  height: 45px;
-  margin-vertical: 5px;
-  padding-horizontal: 10px;
-  display: flex;
-  justify-content: center;
-`
 const Submit = styled.TouchableOpacity`
   width: 65%;
   margin: 40px auto;
@@ -57,37 +44,12 @@ const Service = styled.TouchableOpacity<{ selected: boolean | null }>`
   padding-horizontal: 10px;
   background-color: ${props => props.selected ? '#75E59B' : '#FFFFFF'};
 `
-interface InputProps extends TextInputProps {
-  label: string;
-  onChangeText: (e: string) => void;
-}
-
-const InputWithLabel = ({ label, onChangeText, placeholder, value, ...rest }: InputProps) => {
-  return (
-    <View style={{ marginVertical: 5 }}>
-      <Text style={TextStyles.label}>{label}</Text>
-      <Input value={value} placeholder={placeholder} onChangeText={(e) => { onChangeText(e) }} {...rest} />
-    </View>
-  )
-}
-
-
-interface InputTouchProps {
-  label: string;
-  onPress: () => void;
-  children?: ReactNode | JSX.Element | ReactElement;
-}
-
-const InputTouchWithLabel = ({ label, onPress, children }: InputTouchProps) => {
-  return (
-    <View style={{ marginVertical: 5 }}>
-      <Text style={TextStyles.label}>{label}</Text>
-      <InputTouch onPress={onPress}>
-        {children}
-      </InputTouch>
-    </View>
-  )
-}
+const InputWrapper = styled.View`
+  width: 85%;
+  display: flex;
+  align-items: center;
+  margin: 10px auto;
+`
 
 export interface InputSNSProps {
   type: string;
@@ -189,7 +151,7 @@ export default function PlaceFormUser({ setPlaceformModal, snsType }: { setPlace
   const uploadPlace = async () => {
     const formData = new FormData();
     for (let i of Object.keys(form)) {
-      if(i=='snsList') continue;
+      if (i == 'snsList') continue;
       formData.append(`${i}`, `${form[i]}`);
     }
     formData.append(`rep_pic`, {
@@ -204,8 +166,8 @@ export default function PlaceFormUser({ setPlaceformModal, snsType }: { setPlace
         type: 'image/jpeg/png',
       })
     }
-    for (let i =0; i< snsList.length; i++) {
-      formData.append('snsList', `${i+1},${snsList[i].link}`)
+    for (let i = 0; i < snsList.length; i++) {
+      formData.append('snsList', `${i + 1},${snsList[i].link}`)
     }
     const response = await request.post("/places/create/", formData, { "Content-Type": "multipart/form-data" });
     setFinishModal(true);
@@ -220,40 +182,55 @@ export default function PlaceFormUser({ setPlaceformModal, snsType }: { setPlace
       <Modal visible={finishModal}>
         <FinishModal
           setModal={setFinishModal}
-          timeout={()=>{setPlaceformModal(false)}}
+          timeout={() => { setPlaceformModal(false) }}
           title='제보 완료 !'
           subtitle={['제보해주신 장소는', 'SASM에서 검토한 후', '최종 등록됩니다']}
         />
       </Modal>
-      <Text style={{ ...TextStyles.label, marginTop: 40, marginBottom: 20 }}>이미지 등록하기 *</Text>
-      <Text style={TextStyles.label}>대표 사진 *</Text>
-      <PhotoSelector max={1} setPhoto={setRep_pic} width={width - 70} height={width - 120}>
-        <Image style={{ width: width - 70, height: ((width - 70) / rep_pic[0].width) * rep_pic[0].height, maxHeight: width - 120 }}
-          source={{ uri: rep_pic[0].uri }}
-          alt='대표 사진'
-          resizeMode='contain' />
+      <Text style={{ ...TextStyles.label, marginTop: 40, marginBottom: 20, width: '85%', alignSelf: 'center' }}>이미지 등록하기 *</Text>
+      <InputWrapper>
+        <Text style={TextStyles.label}>대표 사진 *</Text>
+        <PhotoSelector max={1} setPhoto={setRep_pic} width={width * 0.85} height={width - 120}>
+          <Image style={{ width: width - 70, height: ((width - 70) / rep_pic[0].width) * rep_pic[0].height, maxHeight: width - 120 }}
+            source={{ uri: rep_pic[0].uri }}
+            alt='대표 사진'
+            resizeMode='contain' />
 
-      </PhotoSelector>
-      <Text style={TextStyles.label}>장소 사진 *</Text>
-      <PhotoSelector max={3} width={width - 70} height={(width - 70) / 3} setPhoto={setPhotos}>
-        {
-          photos.map((data, index) => <Image source={{ uri: data.uri }} alt={`장소 사진 ${index}`} style={{ width: (width - 70) / 3, height: (width - 70) / 3 }} resizeMode='contain' />)
-        }
-      </PhotoSelector>
-      <InputWithLabel label="장소명 *"
+        </PhotoSelector>
+      </InputWrapper>
+      <InputWrapper>
+        <Text style={TextStyles.label}>장소 사진 *</Text>
+        <PhotoSelector max={3} width={width * 0.85} height={(width - 70) / 3} setPhoto={setPhotos}>
+          {
+            photos.map((data, index) => <Image source={{ uri: data.uri }} alt={`장소 사진 ${index}`} style={{ width: (width - 70) / 3, height: (width - 70) / 3 }} resizeMode='contain' />)
+          }
+        </PhotoSelector></InputWrapper>
+      <InputWithLabel
+        label="장소명"
+        isRequired={true}
         onChangeText={(e) => { setForm({ ...form, place_name: e }) }} />
-      <InputTouchWithLabel label='장소 등록 *'
+      <InputTouchWithLabel
+        label='장소 등록'
+        isRequired={true}
         onPress={() => { setPostModal(true) }}>
         {
           form.address != '' && <Text>{form.address}</Text>
         }
       </InputTouchWithLabel>
-      <Text style={TextStyles.label}>카테고리 선택 *</Text>
-      <Category checkedList={checkedList} setCheckedList={setCheckedList} />
-      <InputWithLabel label="전화번호 *" placeholder='02-0000-0000'
+      <InputWrapper>
+        <Text style={TextStyles.label}>카테고리 선택 *</Text>
+        <Category checkedList={checkedList} setCheckedList={setCheckedList} />
+      </InputWrapper>
+      <InputWithLabel
+        isRequired={true}
+        label="전화번호"
+        placeholder='02-0000-0000'
         onChangeText={(e) => { setForm({ ...form, phone_num: e }) }}
         inputMode='tel' />
-      <InputTouchWithLabel label='영업시간 *' onPress={() => { setHourModal(true) }}>
+      <InputTouchWithLabel
+        isRequired={true}
+        label='영업시간'
+        onPress={() => { setHourModal(true) }}>
         <View style={{ display: 'flex', flexDirection: 'row' }}>
           {
             open_hours.map(data => <Text>{data.day} {form[data.name]} / </Text>
@@ -262,11 +239,16 @@ export default function PlaceFormUser({ setPlaceformModal, snsType }: { setPlace
           <Text>브레이크타임 {form.etc_hours}</Text>
         </View>
       </InputTouchWithLabel>
-      <InputWithLabel label="한 줄평 *"
+      <InputWithLabel
+        label="한 줄평"
+        isRequired={true}
         onChangeText={(e) => { setForm({ ...form, place_review: e }) }} />
-      <InputWithLabel style={{ height: 100 }} label="장소 리뷰 *"
+      <InputWithLabel style={{ height: 100 }} label="장소 리뷰"
+        isRequired={true}
         onChangeText={(e) => { setForm({ ...form, short_cur: e }) }} />
-      <InputTouchWithLabel label='SNS' onPress={() => { setSNSModal(true) }}>
+      <InputTouchWithLabel
+        label='SNS'
+        onPress={() => { setSNSModal(true) }}>
         {snsList.map(data => <Text>{data.type != undefined ? data.type : '기타'}:{data.link}</Text>)}
       </InputTouchWithLabel>
       <Text style={TextStyles.labelBold}>제공 서비스</Text>
@@ -320,15 +302,18 @@ export default function PlaceFormUser({ setPlaceformModal, snsType }: { setPlace
 }
 const TextStyles = StyleSheet.create({
   label: {
-    fontSize: 15,
+    fontSize: 16,
     marginTop: 5,
-    lineHeight: 35,
-    color: '#000000'
+    lineHeight: 24,
+    letterSpacing: -0.6,
+    width: '100%'
   },
   labelBold: {
     fontSize: 15,
     marginTop: 5,
     fontWeight: "700",
+    width: '85%',
+    alignSelf: 'center'
   },
   header: {
     fontSize: 24,

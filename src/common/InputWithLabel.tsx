@@ -1,13 +1,15 @@
 import React, { ReactNode } from 'react';
-import { View, TextInputProps, ViewStyle } from 'react-native';
+import { View, TextInputProps, ViewStyle, TouchableOpacityProps } from 'react-native';
 import { TextPretendard as Text } from './CustomText';
 import styled from 'styled-components/native';
+import { TouchableOpacity } from 'react-native-gesture-handler';
 
 const Input = styled.TextInput<{ isAlert: boolean | undefined }>`
     width: 85%;
     border-bottom-width: 1px;
     border-color: ${props => props.isAlert ? '#FF4D00' : '#C0C0C0'};
     font-size: 16px;
+    height: 44px;
     padding-vertical: 10px;
 `;
 
@@ -28,7 +30,7 @@ export default function InputWithLabel({ isAlert, alertLabel, isRequired, contai
     <View style={{ ...containerStyle, height: 80, display: 'flex', alignItems: 'center', position: 'relative' }}>
       <Text style={{ width: '85%', textAlign: 'left', fontSize: 12, lineHeight: 18, letterSpacing: -0.6 }}>
         {label}
-        <Text style={{ color: '#FF4D00', lineHeight: 18 }}>{isRequired && '*'}</Text>
+        <Text style={{ color: '#FF4D00', lineHeight: 18 }}>{isRequired && ' *'}</Text>
       </Text>
       <Input
         placeholderTextColor={'#848484'}
@@ -40,6 +42,38 @@ export default function InputWithLabel({ isAlert, alertLabel, isRequired, contai
         onChangeText={onChangeText} {...rest} />
       <Text style={{ width: '85%', fontSize: 10, lineHeight: 18, color: '#FF4D00' }}>{isAlert && alertLabel}</Text>
       {children}
+    </View>
+  )
+}
+
+const InputTouch = styled.TouchableOpacity`
+    width: 85%;
+    border-bottom-width: 1px;
+    border-color: #C0C0C0;
+    padding-vertical: 10px;
+    height: 44px;
+`;
+
+interface InputTouchProps extends TouchableOpacityProps {
+  label?: string;
+  containerStyle?: ViewStyle;
+  //필수 입력 사항 * 추가
+  isRequired?: boolean;
+  onPress: () => void;
+  children: ReactNode;
+}
+
+
+export function InputTouchWithLabel({ label, onPress, children, isRequired, containerStyle }: InputTouchProps) {
+  return (
+    <View style={{ ...containerStyle, height: 80, display: 'flex', alignItems: 'center' }}>
+      <Text style={{ width: '85%', textAlign: 'left', fontSize: 12, lineHeight: 18, letterSpacing: -0.6 }}>
+        {label}
+        <Text style={{ color: '#FF4D00', lineHeight: 18 }}>{isRequired && ' *'}</Text>
+      </Text>
+      <InputTouch onPress={onPress}>
+        {children}
+      </InputTouch>
     </View>
   )
 }

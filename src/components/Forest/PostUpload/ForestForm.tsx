@@ -1,10 +1,10 @@
 import { useState, useEffect, useRef, useCallback } from 'react';
-import { Text, View, FlatList, TouchableOpacity, Dimensions, ImageBackground, TextInput, ScrollView, Modal, Alert } from 'react-native';
-// import { TextPretendard as Text } from '../../../common/CustomText';
+import { View, TouchableOpacity, Dimensions, ImageBackground, TextInput, ScrollView, Modal, Alert, KeyboardAvoidingView, TouchableWithoutFeedback, Keyboard } from 'react-native';
+import { TextPretendard as Text } from '../../../common/CustomText';
 import { RichEditor, RichToolbar, actions } from 'react-native-pell-rich-editor';
 import { ImageLibraryOptions, launchCamera, launchImageLibrary } from 'react-native-image-picker';
 import FormHeader from '../../../common/FormHeader';
-import Check from '../../../assets/img/common/Check.svg';
+import CardView from '../../../common/CardView';
 import Camera from '../../../assets/img/Forest/Camera.svg';
 import FinishModal from '../../../common/FinishModal';
 
@@ -65,11 +65,15 @@ const ForestForm = ({ navigation, route }: NativeStackScreenProps<ForestStackPar
     Alert.alert('대표 사진 선택', '', [
       {
         text: '카메라',
-        onPress: () => { launchCamera({ mediaType: 'photo', maxHeight: height / 2, maxWidth: width }, (response: any) => setRepPic(response.assets)) }
+        onPress: () => { launchCamera({ mediaType: 'photo', maxHeight: height / 2, maxWidth: width }, response => {
+          if (response && response.assets) setRepPic(response.assets)})
+        }
       },
       {
         text: '앨범',
-        onPress: () => { launchImageLibrary({ mediaType: 'photo', selectionLimit: 1, maxHeight: height / 2, maxWidth: width }, (response: any) => setRepPic(response.assets)) }
+        onPress: () => { launchImageLibrary({ mediaType: 'photo', selectionLimit: 1, maxHeight: height / 2, maxWidth: width }, response => {
+          if (response && response.assets) setRepPic(response.assets)})
+        }
       }
     ])
   }
@@ -87,6 +91,14 @@ const ForestForm = ({ navigation, route }: NativeStackScreenProps<ForestStackPar
   };
 
   const saveForest = async () => {
+    if(forest.title.length == 0 || forest.subtitle.length == 0 || forest.content.length == 0){
+      Alert.alert('빈 칸을 전부 채워주세요.');
+      return;
+    }
+    if(repPic.length == 0){
+      Alert.alert('대표 사진을 설정해주세요.');
+      return;
+    }
     const formData = new FormData();
     for (const photo of photoList){
       formData.append('photos', "add,"+photo);
@@ -133,16 +145,15 @@ const ForestForm = ({ navigation, route }: NativeStackScreenProps<ForestStackPar
       } else if (key === 'hashtags') {
         let hashtags = value.split('#');
         hashtags = hashtags.splice(1);
-        // 추가된 데이터 찾기
-        for (const item of hashtags) {
-          if (!hashtag.includes(item)) {
-            formData.append('hashtags', `add,${item.trim()}`);
-          }
-        };
-        // 삭제된 데이터 찾기
+        
         for (const item of hashtag) {
           if (!hashtags.includes(item)) {
             formData.append('hashtags', `remove,${item.trim()}`);
+          }
+        };
+        for (const item of hashtags) {
+          if (!hashtag.includes(item)) {
+            formData.append('hashtags', `add,${item.trim()}`);
           }
         };
       } else if (key === 'photos') {
@@ -152,7 +163,7 @@ const ForestForm = ({ navigation, route }: NativeStackScreenProps<ForestStackPar
           }
         }
         for (const photo of forest.photos){
-          if (forest.content.includes(photo)===false){
+          if (!forest.content.includes(photo)){
             formData.append('photos', `remove,${photo}`);
           }
         }
@@ -194,22 +205,17 @@ const ForestForm = ({ navigation, route }: NativeStackScreenProps<ForestStackPar
           subtitle={['작성한 포레스트는', '마이페이지 > 포레스트 > 내가 쓴 포레스트', '에서 확인할 수 있어요']}
         />
       </Modal>
+      <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
+      <>
       <FormHeader title='포레스트 작성' onLeft={() => navigation.goBack()} onRight={post ? updateForest : saveForest} />
       <ScrollView>
-      <ImageBackground source={{ uri: repPic.length > 0 ? repPic[0].uri : forest.rep_pic != '' ? forest.rep_pic : "https://reactnative.dev/img/logo-og.png"}} style={{width: width, height: width}}>
-        <Text style={{fontSize: 20, fontWeight: '700', marginLeft: 10, marginTop: 10}}>{post_category.name}</Text>
-        <FlatList data={post_semi_categories} renderItem={({item}: any) => { return (
-            <View style={{borderRadius: 16, backgroundColor: '#67D393', paddingVertical: 4, paddingHorizontal: 16, marginHorizontal: 8}}>
+      <ImageBackground source={{ uri: (repPic && repPic.length > 0) ? repPic[0].uri : forest.rep_pic != '' ? forest.rep_pic : "https://reactnative.dev/img/logo-og.png"}} style={{width: width, height: width}}>
+        <Text style={{fontSize: 20, fontWeight: '700', marginLeft: 10, marginVertical: 10}}>{post_category.name}</Text>
+        <CardView data={post_semi_categories} offset={10} gap={0} pageWidth={100} dot={false} renderItem={({item}: any) => { return (
+            <View style={{height: 25, borderRadius: 16, backgroundColor: '#67D393', paddingVertical: 4, paddingHorizontal: 16, margin: 4}}>
               <Text style={{color: 'white', fontSize: 14}}># {item.name}</Text>
             </View>
           )}}
-          keyExtractor={(item) => item.name}
-          columnWrapperStyle={{
-            justifyContent: "flex-start",
-            margin: 10,
-          }}
-          numColumns={3}
-          scrollEnabled={false}
         />
         <TextInput
           value={forest.title}
@@ -262,17 +268,20 @@ const ForestForm = ({ navigation, route }: NativeStackScreenProps<ForestStackPar
           onCursorPosition={handleCursorPosition}
         />
       </ScrollView>
-      <View style={{flexDirection: 'row', borderBottomColor: '#D9D9D9', borderTopColor: '#D9D9D9', borderBottomWidth: 1, borderTopWidth: 1, padding: 10}}>
-        <Text style={{color: '#848484', lineHeight: 20}}>해시태그</Text>
-        <TextInput
-          value={forest.hashtags}
-          onChangeText={(hashtags) => { setForest({ ...forest, hashtags: hashtags }) }}
-          placeholder='추가'
-          placeholderTextColor={'#848484'}
-          style={{lineHeight: 20}}
-        />
+      <View style={{flexDirection: 'row', borderBottomColor: '#D9D9D9', borderTopColor: '#D9D9D9', borderBottomWidth: 1, borderTopWidth: 1, padding: 10, alignItems: 'center'}}>
+        <Text style={{color: '#848484', marginRight: 5}}>해시태그</Text>
+        <KeyboardAvoidingView behavior='padding' keyboardVerticalOffset={10}>
+          <TextInput
+            value={forest.hashtags}
+            onChangeText={(hashtags) => { setForest({ ...forest, hashtags: hashtags }) }}
+            placeholder='#해시태그를 #작성해주세요'
+            placeholderTextColor={'#848484'}
+          />
+        </KeyboardAvoidingView>
       </View>
       </ScrollView>
+      </>
+      </TouchableWithoutFeedback>
     </View>
   )
 }

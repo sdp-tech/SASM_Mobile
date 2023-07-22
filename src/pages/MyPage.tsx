@@ -13,6 +13,8 @@ import { StackNavigationProp } from '@react-navigation/stack';
 import Following from '../components/mypage/components/Following_List';
 import Follower from '../components/mypage/components/Follower_List';
 import Options from '../components/mypage/components/OptionPage';
+import PlaceList from '../components/mypage/components/myplace/PlaceList';
+import Withdraw from '../components/mypage/components/Withdraw';
 
 export interface MyPageParams {
     navigation: any;
@@ -40,9 +42,8 @@ export type MyPageProps = {
     'follower': {
         email: string;
     }
-    'options': {
-        info: IUserInfo;
-    };
+    'options': any;
+    'withdraw': any;
 }
 const MyPageStack = createNativeStackNavigator<MyPageProps>();
 
@@ -63,6 +64,7 @@ const MyPageScreen = () => {
             <MyPageStack.Screen name="following" component={Following} />
             <MyPageStack.Screen name="follower" component={Follower} />
             <MyPageStack.Screen name="options" component={Options} />
+            <MyPageStack.Screen name="withdraw" component={Withdraw} />
         </MyPageStack.Navigator>
     )
 }

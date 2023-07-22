@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useCallback, useContext } from "react";
 import { TextPretendard as Text } from "../../common/CustomText";
 import {
   View,
@@ -12,14 +12,16 @@ import {
   ImageBackground,
 } from "react-native";
 import type { NativeStackScreenProps } from "@react-navigation/native-stack";
-import styled from "styled-components/native";
+import { useFocusEffect } from "@react-navigation/native";
 import ListHeader from "./components/ListHeader";
 import Add from "../../assets/img/common/Add.svg";
+import { LoginContext } from "../../common/Context";
 
 import { ForestStackParams } from "../../pages/Forest";
 import { Request } from "../../common/requests";
 import DropDown from "../../common/DropDown";
 import PostItem from "./components/PostItem";
+import PlusButton from "../../common/PlusButton";
 
 const { width, height } = Dimensions.get('window');
 
@@ -39,6 +41,7 @@ const PostListScreen = ({
   const [order, setOrder] = useState<string>(toggleItems[orderList].order);
   const [count, setCount] = useState(0);
   const [posts, setPosts] = useState([]);
+  const {isLogin, setLogin} = useContext(LoginContext);
 
   const request = new Request();
 
@@ -49,42 +52,29 @@ const PostListScreen = ({
     setLoading(true);
     const response = await request.get('/forest/', {
       order: order,
-      category_filter: board_category.id
+      category_filter: board_category?.id
     }, null);
     setPosts(response.data.data.results);
     setCount(response.data.data.count);
     setLoading(false);
-    console.log(response)
   }
 
   const onChangeOrder = async () => {
     setOrder(toggleItems[orderList].order);
   }
 
+  const onRefresh = () => {
+    setRefreshing(true);
+    setRefreshing(false);
+  }
+
   useEffect(() => {
     onChangeOrder();
   }, [orderList]);
 
-  useEffect(() => {
+  useFocusEffect(useCallback(() => {
     getPosts();
-  }, [order]);
-
-  // const onRefresh = async () => {
-  //   if (!refreshing) {
-  //     setPage(1);
-  //     setRefreshing(true);
-  //     setPosts(await getPosts(searchQuery, "default", 1));
-  //     setRefreshing(false);
-  //   }
-  // };
-
-  // const onEndReached = async () => {
-  //   if (!loading) {
-  //     const newPosts = await getPosts(searchQuery, searchType, page + 1);
-  //     setPosts([...posts, ...(newPosts as never)]);
-  //     setPage(page + 1);
-  //   }
-  // };
+  }, [order, refreshing]));
 
   return (
     <SafeAreaView style={styles.container}>
@@ -95,60 +85,50 @@ const PostListScreen = ({
       />
       <View style={{flexDirection: 'row', zIndex: 1, alignItems: 'center', padding: 15, backgroundColor: '#F1FCF5'}}>
         <Text style={{fontSize: 12, fontWeight: '400', flex: 1}}>전체 검색결과 {count}개</Text>
-        <View style={{width: 100, zIndex: 2000}}>
-          <DropDown value={orderList} setValue={setOrderList} isBorder={false} items={toggleItems} />
-        </View>
       </View>
-      {loading ? (
-        <ActivityIndicator />
-      ) : (
-        <>
-              <FlatList
-                data={posts}
-                // keyExtractor={(_) => _.title}
-                style={{ flexGrow: 1 }}
-                // ListHeaderComponent={<StorySection />}
-                // onRefresh={onRefresh}
-                refreshing={refreshing}
-                // onEndReached={onEndReached}
-                onEndReachedThreshold={0}
-                ListFooterComponent={loading ? <ActivityIndicator /> : <></>}
-                renderItem={({ item }) => {
-                  const {
-                    id,
-                    title,
-                    preview,
-                    writer,
-                    photos,
-                    rep_pic,
-                    comment_cnt,
-                    like_cnt,
-                    user_likes
-                  } = item;
-                  return (
-                    <PostItem
-                          key={id}
-                          post_id={id}
-                          title={title}
-                          preview={preview}
-                          writer={writer}
-                          photos={photos}
-                          rep_pic={rep_pic}
-                          comment_cnt={comment_cnt}
-                          like_cnt={like_cnt}
-                          user_likes={user_likes}
-                          navigation={navigation}
-                        />
-                  );
-                }}
-              />
-            </>
-      )}
-      <TouchableOpacity onPress={() => {navigation.navigate('CategoryForm', {})}}
-            style={{position: "absolute", top: height * 0.85, left: width * 0.85, shadowColor: 'black', shadowOffset: { width: 0, height: 5 }, shadowOpacity: 0.3}}
-          >
-            <Add />
-          </TouchableOpacity>
+      <FlatList
+        data={posts}
+        style={{ flexGrow: 1 }}
+        onRefresh={onRefresh}
+        refreshing={refreshing}
+        onEndReachedThreshold={0}
+        ListFooterComponent={loading ? <ActivityIndicator /> : <></>}
+        renderItem={({ item }) => {
+          const {
+            id,
+            title,
+            preview,
+            writer,
+            photos,
+            rep_pic,
+            comment_cnt,
+            like_cnt,
+            user_likes
+          } = item;
+          return (
+            <PostItem
+                  key={id}
+                  post_id={id}
+                  title={title}
+                  preview={preview}
+                  writer={writer}
+                  photos={photos}
+                  rep_pic={rep_pic}
+                  comment_cnt={comment_cnt}
+                  like_cnt={like_cnt}
+                  user_likes={user_likes}
+                  onRefresh={onRefresh}
+                  isLogin={isLogin}
+                  navigation={navigation}
+                />
+          );
+        }}
+      />
+      {isLogin &&
+        <PlusButton
+          onPress={() => navigation.navigate('CategoryForm', {})}
+          position="rightbottom" />
+      }
     </SafeAreaView>
   );
 };
@@ -160,21 +140,5 @@ const styles = StyleSheet.create({
     backgroundColor: "white",
   },
 });
-
-const Header = styled.View`
-  height: 40px;
-  padding: 10px;
-  flex-direction: row;
-`;
-const SearchBarInput = styled.TextInput`
-  width: 80%;
-  height: 32px;
-  marginright: 10px;
-  padding: 5px;
-  borderwidth: 1px;
-  background: #ffffff;
-  border-radius: 3px;
-  box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
-`;
 
 export default PostListScreen;

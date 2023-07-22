@@ -67,7 +67,12 @@ const MyPlace = ({ navigation }: MyPageParams) => {
   const [type, setType] = useState<boolean>(true);
   const [written, setWritten] = useState<MyPlaceItemCard[]>([]);
   const getPlaces = async () => {
-    const response = await request.get("/users/like_place/",{page: page,filter: checkedList});
+    let params = new URLSearchParams();
+    for (const category of checkedList){
+      params.append('filter', category);
+    }
+    params.append('search', search);
+    const response = await request.get(`/mypage/myplace_search/?${params.toString()}`,null, null)
     setInfo(response.data.data.results);
   };
 

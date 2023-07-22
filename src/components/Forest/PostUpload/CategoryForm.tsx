@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { View, FlatList, TouchableOpacity, Dimensions } from 'react-native';
+import { View, FlatList, TouchableOpacity, Dimensions, Alert } from 'react-native';
 import { TextPretendard as Text } from '../../../common/CustomText';
 import FormHeader from '../../../common/FormHeader';
 import BoardItem from '../components/BoardItem';
@@ -27,10 +27,11 @@ const CategoryForm = ({ navigation, route }: NativeStackScreenProps<ForestStackP
       setCategory(post.category);
       setSelectedId(post.category.id)
     }
-  }, [route])
+  }, [route]);
+
   return (
     <View style={{flex: 1, backgroundColor: 'white'}}>
-      <FormHeader title='포레스트 작성' onLeft={() => navigation.goBack()} onRight={() => {}} />
+      <FormHeader title='포레스트 작성' onLeft={() => navigation.goBack()} onRight={() => navigation.navigate('SemiCategoryForm', { post: post, category: category })} />
       <View style={{alignItems: 'center', justifyContent: 'center', paddingVertical: 150}}>
         <Text style={{fontSize: 16, color: '#202020', marginBottom: 30}}>카테고리를 선택해 주세요</Text>
         <FlatList

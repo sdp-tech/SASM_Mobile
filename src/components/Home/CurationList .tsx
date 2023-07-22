@@ -10,7 +10,7 @@ import styled from 'styled-components/native';
 import Arrow from "../../assets/img/common/Arrow.svg";
 import PlusButton from '../../common/PlusButton';
 import { useFocusEffect } from '@react-navigation/native';
-import { CurationPlusButton, CurationProps } from './CurationHome';
+import { CurationProps } from './CurationHome';
 import { Request } from '../../common/requests';
 
 const { width, height } = Dimensions.get('window');
@@ -67,7 +67,10 @@ export default function CurationList({ navigation, route }: StackScreenProps<Hom
         renderItem={({ item }) => <SearchItemCard style={{ width: width / 2 - 15, height: height / 3, margin: 5 }} data={item} />}
         ListHeaderComponent={<>{list.length == 0 && <View style={{ marginLeft: 15 }}><Text style={{ fontSize: 16, fontWeight: '600' }}>큐레이션이 없습니다.</Text></View>}</>}
       />
-      <CurationPlusButton />
+      <PlusButton
+        position='rightbottom'
+        onPress={()=>{navigation.navigate('Form')}}
+      />
     </SafeAreaView >
   )
 }

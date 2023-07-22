@@ -1,4 +1,5 @@
-import { View,Text,TouchableOpacity } from "react-native";
+import { View, TouchableOpacity } from "react-native";
+import { TextPretendard as Text } from "../../../common/CustomText";
 import Arrow from '../../../assets/img/common/Arrow.svg';
 import Search from '../../../assets/img/common/Search.svg';
 
@@ -9,7 +10,7 @@ interface ListHeaderProps {
 }
 const ListHeader = ({ board_name,board_category,navigation }: ListHeaderProps) => {
   return (
-    <View style={{flexDirection: 'row', alignItems: 'center', padding: 15}}>
+    <View style={{flexDirection: 'row', alignItems: 'center', padding: 15, borderBottomWidth: 1, borderBottomColor: '#E3E3E3'}}>
       <TouchableOpacity onPress={()=>{navigation.goBack();}}>
         <Arrow width={18} height={18} transform={[{rotate: '180deg'}]} />
       </TouchableOpacity>
