@@ -354,7 +354,7 @@ const BoardDetailScreen = ({
     </ScrollView>
     {isLogin &&
       <PlusButton
-        onPress={() => navigation.navigate('CategoryForm', {})}
+        onPress={() => navigation.navigate('PostUpload', {})}
         position="rightbottom" />
     }
     </SafeAreaView>

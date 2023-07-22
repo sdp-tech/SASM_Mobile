@@ -1,18 +1,20 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useContext } from 'react';
 import { View, FlatList, TouchableOpacity, Dimensions, Alert } from 'react-native';
 import { TextPretendard as Text } from '../../../common/CustomText';
 import FormHeader from '../../../common/FormHeader';
 import BoardItem from '../components/BoardItem';
 import type { NativeStackScreenProps } from "@react-navigation/native-stack";
+import { ForestContext } from './ForestContext';
 
 import { Request } from '../../../common/requests';
-import { ForestStackParams } from '../../../pages/Forest';
+import { PostUploadParams } from '../PostUpload';
 
-const CategoryForm = ({ navigation, route }: NativeStackScreenProps<ForestStackParams, "CategoryForm">) => {
+const CategoryForm = ({ tab, setTab, navigation, post }: PostUploadParams) => {
   const request = new Request();
-  const post = route.params?.post;
+  const { category, setCategory, } = useContext(ForestContext);
+  // const post = route.params?.post;
   const [boardLists, setBoardLists] = useState([] as any);
-  const [category, setCategory] = useState({id: 0, name: ''});
+  // const [category, setCategory] = useState({id: 0, name: ''});
   const [selectedId, setSelectedId] = useState<number | null>(null);
   const { width, height } = Dimensions.get('window');
 
@@ -23,15 +25,24 @@ const CategoryForm = ({ navigation, route }: NativeStackScreenProps<ForestStackP
 
   useEffect(() => {
     getBoardItems();
-    if (post) {
-      setCategory(post.category);
-      setSelectedId(post.category.id)
+    if (category) {
+      setSelectedId(category.id)
+      console.log('원래')
+      console.log(category)
     }
-  }, [route]);
+  }, [category]);
+
+  // useEffect(() => {
+  //   if (post.id != 0) {
+  //     setCategory(post.category);
+  //     setSelectedId(post.category.id)
+  //     console.log('new')
+  //   }
+  // }, [post])
 
   return (
-    <View style={{flex: 1, backgroundColor: 'white'}}>
-      <FormHeader title='포레스트 작성' onLeft={() => navigation.goBack()} onRight={() => navigation.navigate('SemiCategoryForm', { post: post, category: category })} />
+    <View>
+      <FormHeader title='포레스트 작성' onLeft={() => navigation.goBack()} onRight={() => setTab(tab+1)} />
       <View style={{alignItems: 'center', justifyContent: 'center', paddingVertical: 150}}>
         <Text style={{fontSize: 16, color: '#202020', marginBottom: 30}}>카테고리를 선택해 주세요</Text>
         <FlatList
@@ -61,7 +72,7 @@ const CategoryForm = ({ navigation, route }: NativeStackScreenProps<ForestStackP
         />
         { category.id > 0 &&
           <TouchableOpacity style={{backgroundColor: '#67D393', width: 180, height: 40, alignItems: 'center', justifyContent: 'center', borderRadius: 20, position: 'absolute', top: height-350 }} 
-            onPress={() => navigation.navigate('SemiCategoryForm', { post: post, category: category })}
+            onPress={() => setTab(1)}
           >
             <Text style={{fontWeight: '700', fontSize: 16, color: 'white'}}>다음</Text>
           </TouchableOpacity>

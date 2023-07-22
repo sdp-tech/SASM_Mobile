@@ -27,8 +27,9 @@ import CardView from "../../common/CardView";
 import Report from "../../common/Report";
 import ShareButton from "../../common/ShareButton";
 import { BottomSheetModalProvider } from "@gorhom/bottom-sheet";
+import { ForestContext } from "./PostUpload/ForestContext";
 
-interface Post {
+interface Forest {
   id: number;
   board: number;
   title: string;
@@ -50,7 +51,7 @@ interface Post {
 }
 
 interface PostDetailSectionProps {
-  post: Post;
+  post: Forest;
   navigation: any;
   onReport: () => void;
 }
@@ -292,7 +293,7 @@ const PostRecommendSection = ({ data }: PostRecommendSectionProps) => {
 };
 
 interface BottomBarSectionProps {
-  post: Post;
+  post: Forest;
   email: string;
   onUpdate: () => void;
   onDelete: () => void;
@@ -358,7 +359,7 @@ const PostDetailScreen = ({
 }: NativeStackScreenProps<ForestStackParams, "PostDetail">) => {
   const scrollRef = useRef<FlatList>(null);
   const [refreshing, setRefreshing] = useState(false);
-  const [post, setPost] = useState<Post>();
+  const [forest, setForest] = useState<Forest>();
   const [comment, setComment] = useState([] as any);
   const [commentId, setCommentId] = useState<number>(0);
   const [user, setUser] = useState([] as any);
@@ -366,7 +367,8 @@ const PostDetailScreen = ({
   const [writerPosts, setWriterPosts] = useState([] as any);
   const [reported, setReported] = useState<string>('');
   const [modalVisible, setModalVisible] = useState<boolean>(false);
-  const { isLogin, setLogin } = useContext(LoginContext);
+  const {isLogin, setLogin} = useContext(LoginContext);
+  const {setPost} = useContext(ForestContext);
 
   const request = new Request();
   const post_id = route.params.post_id;
@@ -378,7 +380,7 @@ const PostDetailScreen = ({
 
   const loadItem = async () => {
     const response_detail = await request.get(`/forest/${post_id}/`, {}, {});
-    setPost(response_detail.data.data);
+    setForest(response_detail.data.data);
     const response_comment = await request.get(`/forest/${post_id}/comments/`, {}, {});
     setComment(response_comment.data.data.results);
     const response_writer = await request.get('/forest/', { writer_filter: response_detail.data.data.writer.email })
@@ -453,7 +455,7 @@ const PostDetailScreen = ({
   return (
     <BottomSheetModalProvider>
     <View style={styles.container}>
-      {post == undefined ? (
+      {forest == undefined ? (
         <ActivityIndicator />
       ) : (
         <>
@@ -465,8 +467,8 @@ const PostDetailScreen = ({
             refreshing={refreshing}
             ListHeaderComponent={
               <>
-                <PostDetailSection post={post} navigation={navigation} onReport={() => setModalVisible(true)} />
-                <UserInfoSection user={post.writer} posts={writerPosts} isLogin={isLogin} navigation={navigation} onRefresh={reRenderScreen} />
+                <PostDetailSection post={forest} navigation={navigation} onReport={() => setModalVisible(true)}/>
+                <UserInfoSection user={forest.writer} posts={writerPosts} isLogin={isLogin} navigation={navigation} onRefresh={reRenderScreen}/>
                 <View style={{ flexDirection: 'row', padding: 20, alignItems: 'center' }}>
                   <View style={{ flexDirection: 'row', flex: 1 }}>
                     <Text style={{ fontSize: 16, fontWeight: '700', marginRight: 10 }}>한줄평</Text>
@@ -497,7 +499,12 @@ const PostDetailScreen = ({
               )
             }}
           />
-          <BottomBarSection post={post} email={user.email} navigation={navigation} onDelete={deletePost} onUpdate={() => { navigation.navigate('CategoryForm', { post: post }) }} onRefresh={reRenderScreen} />
+          <BottomBarSection post={forest} email={user.email} navigation={navigation} onDelete={deletePost} onRefresh={reRenderScreen}
+            onUpdate={() => {
+              navigation.navigate('PostUpload', {post: forest})
+              // const {id, title, subtitle, content, category, semi_categories, hashtags, photos, rep_pic} = forest;
+              // setPost({ id: id, title: title, subtitle: subtitle, content: content, category: category, semi_categories: semi_categories, hashtags: hashtags, photos: photos, rep_pic: rep_pic }); navigation.navigate('PostUpload', {})}
+            }}/>
           <Report reported={reported} modalVisible={modalVisible} setModalVisible={setModalVisible} onReport={onReport} />
         </>
       )}
