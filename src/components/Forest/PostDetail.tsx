@@ -26,6 +26,7 @@ import { Request } from "../../common/requests";
 import CardView from "../../common/CardView";
 import Report from "../../common/Report";
 import ShareButton from "../../common/ShareButton";
+import { BottomSheetModalProvider } from "@gorhom/bottom-sheet";
 
 interface Post {
   id: number;
@@ -356,7 +357,6 @@ const PostDetailScreen = ({
   route,
 }: NativeStackScreenProps<ForestStackParams, "PostDetail">) => {
   const scrollRef = useRef<FlatList>(null);
-  const [loading, setLoading] = useState(false);
   const [refreshing, setRefreshing] = useState(false);
   const [post, setPost] = useState<Post>();
   const [comment, setComment] = useState([] as any);
@@ -377,14 +377,12 @@ const PostDetailScreen = ({
   }
 
   const loadItem = async () => {
-    setLoading(true);
     const response_detail = await request.get(`/forest/${post_id}/`, {}, {});
     setPost(response_detail.data.data);
     const response_comment = await request.get(`/forest/${post_id}/comments/`, {}, {});
     setComment(response_comment.data.data.results);
     const response_writer = await request.get('/forest/', { writer_filter: response_detail.data.data.writer.email })
     setWriterPosts(response_writer.data.data.results);
-    setLoading(false);
   };
 
   const reRenderScreen = () => {
@@ -453,8 +451,9 @@ const PostDetailScreen = ({
   }, [refreshing]);
 
   return (
+    <BottomSheetModalProvider>
     <View style={styles.container}>
-      {loading || post == undefined ? (
+      {post == undefined ? (
         <ActivityIndicator />
       ) : (
         <>
@@ -503,6 +502,7 @@ const PostDetailScreen = ({
         </>
       )}
     </View>
+    </BottomSheetModalProvider>
   );
 };
 

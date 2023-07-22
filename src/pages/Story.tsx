@@ -28,8 +28,8 @@ const Stack = createNativeStackNavigator<StoryStackParams>();
 const StoryScreen = ({ navigation, route }: StoryProps) => {
   useFocusEffect(useCallback(()=>{
     if(route.params.id) {
-      // navigation.reset({routes: [{name: "StoryDetail", params: { id:route.params.id }}]});
-      navigation.navigate('StoryDetail', {id: route.params.id});
+      navigation.reset({routes: [{name: "StoryDetail", params: { id:route.params.id }}]});
+      // navigation.navigate('StoryDetail', {id: route.params.id});
     }
     else{
       navigation.navigate('StoryMain');

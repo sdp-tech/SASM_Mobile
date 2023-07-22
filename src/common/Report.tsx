@@ -29,7 +29,7 @@ const Report = ({ modalVisible, setModalVisible, reported, onReport }: ReportPro
   };
 
   const renderBackdrop = useCallback(
-    (props: any) => <BottomSheetBackdrop {...props} onPress={() => setModalVisible(false)} pressBehavior="close" appearsOnIndex={0} disappearsOnIndex={-1} />,
+    (props: any) => <BottomSheetBackdrop style={{flex: 1}} {...props} onPress={() => setModalVisible(false)} pressBehavior="close" appearsOnIndex={0} disappearsOnIndex={-1} />,
     [],
   );
 
@@ -40,7 +40,7 @@ const Report = ({ modalVisible, setModalVisible, reported, onReport }: ReportPro
   }, [modalVisible])
 
   return (
-    <BottomSheetModalProvider>
+    // <BottomSheetModalProvider>
       <BottomSheetModal
         ref={bottomSheetModalRef}
         index={0}
@@ -75,7 +75,7 @@ const Report = ({ modalVisible, setModalVisible, reported, onReport }: ReportPro
         </View>
         )}
       </BottomSheetModal>
-    </BottomSheetModalProvider>
+    // </BottomSheetModalProvider>
   )
 }
 
