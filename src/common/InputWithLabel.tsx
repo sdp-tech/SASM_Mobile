@@ -21,12 +21,13 @@ interface InputProps extends TextInputProps {
   //잘못 입력되거나 잘못된 양식일 경우 보여주는 빨간 텍스트
   alertLabel?: string;
   isAlert?: boolean;
+  children?: ReactNode;
 }
 
 
-export default function InputWithLabel({ isAlert, alertLabel, isRequired, containerStyle, label, onChangeText, placeholder, value, ...rest }: InputProps): JSX.Element {
+export default function InputWithLabel({ isAlert, alertLabel, isRequired, containerStyle, label, onChangeText, placeholder, value, children, ...rest }: InputProps): JSX.Element {
   return (
-    <View style={{ ...containerStyle, height: 80, display: 'flex', alignItems: 'center' }}>
+    <View style={{ ...containerStyle, height: 80, display: 'flex', alignItems: 'center', position: 'relative' }}>
       <Text style={{ width: '85%', textAlign: 'left', fontSize: 12, lineHeight: 18, letterSpacing: -0.6 }}>
         {label}
         <Text style={{ color: '#FF4D00', lineHeight: 18 }}>{isRequired && ' *'}</Text>
@@ -40,6 +41,7 @@ export default function InputWithLabel({ isAlert, alertLabel, isRequired, contai
         spellCheck={false}
         onChangeText={onChangeText} {...rest} />
       <Text style={{ width: '85%', fontSize: 10, lineHeight: 18, color: '#FF4D00' }}>{isAlert && alertLabel}</Text>
+      {children}
     </View>
   )
 }

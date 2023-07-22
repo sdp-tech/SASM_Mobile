@@ -1,6 +1,6 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { FlatList, StyleSheet, Text, SafeAreaView } from 'react-native';
-import { NavigationContainer } from '@react-navigation/native';
+import { NavigationContainer, useFocusEffect, useNavigation } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 
 import CategoryForm from '../components/Forest/PostUpload/CategoryForm';
@@ -14,6 +14,8 @@ import PostSearchScreen from '../components/Forest/PostSearch';
 import PostDetailScreen from '../components/Forest/PostDetail';
 import PostCommentsScreen from '../components/Forest/PostComments';
 import PhotoPreviewScreen from '../components/Forest/PhotoPreview';
+import { StackNavigationProp, StackScreenProps } from '@react-navigation/stack';
+import { TabProps } from '../../App';
 
 export interface BoardFormat {
   name: string;
@@ -61,8 +63,14 @@ export type ForestStackParams = {
 
 const Stack = createNativeStackNavigator<ForestStackParams>();
 
-const Forest = () => {
-
+const Forest = ({navigation, route}:StackScreenProps<TabProps, '포레스트'>) => {
+  const navigationToForest = useNavigation<StackNavigationProp<ForestStackParams>>();
+  useFocusEffect(useCallback(()=>{
+    console.error(route.params)
+    if(route.params.id) {
+      navigationToForest.navigate('PostDetail', {post_id: route.params.id})
+    }
+  },[]))
   return (
     <Stack.Navigator
       screenOptions={() => ({

@@ -23,7 +23,6 @@ export interface MyPageParams {
 
 export type MyPageProps = {
     'mypage': any;
-    'place_list': any;
     'login': any;
     'register': any;
     'user': {
@@ -31,7 +30,9 @@ export type MyPageProps = {
         follower: number;
         following: number;
     }
-    'change': any;
+    'change': {
+        info: IUserInfo;
+    };
     'changepw': any;
     'feedback': any;
     'findidpw': any;
@@ -53,7 +54,6 @@ const MyPageScreen = () => {
                 headerShown: false,
             })} >
             <MyPageStack.Screen name="mypage" component={MyPageTabView} />
-            <MyPageStack.Screen name="place_list" component={PlaceList} />
             <MyPageStack.Screen name="user" component={UserInfoBox} />
             <MyPageStack.Screen name="login" component={LoginScreen} />
             <MyPageStack.Screen name="register" component={RegisterScreen} />
