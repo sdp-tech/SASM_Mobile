@@ -1,16 +1,11 @@
-import { useState, useEffect, useRef, useCallback, useContext, SetStateAction, Dispatch } from 'react';
-import { View, TouchableOpacity, Dimensions, ImageBackground, TextInput, ScrollView, Modal, Alert, KeyboardAvoidingView, TouchableWithoutFeedback, Keyboard } from 'react-native';
-import { TextPretendard as Text } from '../../common/CustomText';
-import FormHeader from '../../common/FormHeader';
-import FinishModal from '../../common/FinishModal';
-
-import { Request } from '../../common/requests';
+import { useState, useEffect, SetStateAction, Dispatch } from 'react';
+import { View } from 'react-native';
 import { ForestStackParams } from '../../pages/Forest';
 import type { NativeStackScreenProps } from "@react-navigation/native-stack";
 import CategoryForm from './PostUpload/CategoryForm';
 import SemiCategoryForm from './PostUpload/SemiCategoryForm';
 import ForestForm from './PostUpload/ForestForm';
-import { ForestContext, ForestProvider } from './PostUpload/ForestContext';
+import { ForestProvider } from './PostUpload/ForestContext';
 
 export interface PostUploadParams {
   tab: number;
@@ -21,20 +16,19 @@ export interface PostUploadParams {
 
 const PostUploadScreen = ({navigation, route}: NativeStackScreenProps<ForestStackParams, "PostUpload">) => {
   const [tab, setTab] = useState<number>(0);
-  const forest = route.params?.post;
   const [post, setPost] = useState({ id: 0, title: "", subtitle: "", content: "", category: {id: 0, name: ''}, semi_categories: [], hashtags: [], photos: [], rep_pic: "" })
+
   useEffect(() => {
-    if(forest){
-      const {id, title, subtitle, content, category, semi_categories, hashtags, photos, rep_pic} = forest;
+    if(route.params?.post){
+      const {id, title, subtitle, content, category, semi_categories, hashtags, photos, rep_pic} = route.params?.post;
       setPost({ id: id, title: title, subtitle: subtitle, content: content, category: category, semi_categories: semi_categories, hashtags: hashtags, photos: photos, rep_pic: rep_pic });
       setTab(2);
     }
-  }, [forest])
+  }, [route.params?.post])
 
   return (
     <ForestProvider>
     <View style={{flex: 1, backgroundColor: 'white'}}>
-      {/* <FormHeader title='포레스트 작성' onLeft={() => tab === 0 ? navigation.goBack() : setTab(tab-1)} onRight={() => setTab(tab+1)} /> */}
       {
         {
           0:

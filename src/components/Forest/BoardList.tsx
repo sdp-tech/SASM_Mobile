@@ -360,6 +360,7 @@ const BoardListScreen = ({
           <FlatList
             data={newPosts}
             scrollEnabled={false}
+            keyExtractor={(item, index) => item.id.toString()}
             renderItem={({ item }: any) => {
               const {
                 id,

@@ -13,16 +13,12 @@ import { Request } from '../../../common/requests';
 import { PostUploadParams } from '../PostUpload';
 
 const ForestForm = ({ tab, setTab, navigation, post }: PostUploadParams) => {
-  // const post_category = route.params.category;
-  // const post_semi_categories = route.params.semi_categories;
-  // const post = route.params?.post;
-  const { category, setCategory, semiCategories, setSemiCategories } = useContext(ForestContext);
+  const { category, setCategory, semiCategories, setSemiCategories, forest, setForest } = useContext(ForestContext);
   const editor = useRef<RichEditor>(null);
   const scrollRef = useRef<ScrollView>(null);
   const { width, height } = Dimensions.get('window');
   const [nickname, setNickname] = useState<string>('');
   const [repPic, setRepPic] = useState([] as any);
-  const [forest, setForest] = useState({ title: "", subtitle: "", content: "", category: category.id, semi_categories: [] as any, hashtags: "", photos: [] as any, rep_pic: "" });
   const [photoList, setPhotoList] = useState([] as any);
   const [modalVisible, setModalVisible] = useState(false);
   const [hashtag, setHashtag] = useState([] as any);
@@ -33,22 +29,25 @@ const ForestForm = ({ tab, setTab, navigation, post }: PostUploadParams) => {
     const response = await request.get('/mypage/me/', {}, {});
     setNickname(response.data.data.nickname);
     if (post.id == 0) {
-      setForest({...forest, semi_categories: semiCategories})
+      setForest({...forest, category: category, semi_categories: semiCategories})
     }
     else {
-      const {title, subtitle, content, category, semi_categories, hashtags, photos, rep_pic} = post;
+      const {title, subtitle, content, semi_categories, hashtags, photos, rep_pic} = post;
       const _hashtags = '#'+hashtags.join('#');
       setHashtag(hashtags)
       setForest({
         ...forest,
         title: title, subtitle: subtitle, content: content, semi_categories: semi_categories, hashtags: _hashtags, photos: photos, rep_pic: rep_pic
       });
+      if(category.id == 0 && semiCategories.length == 0){
+        setCategory(post.category)
+        setSemiCategories(post.semi_categories)
+      }
     }
   }
 
   useEffect(() => {
     loadInfo();
-    console.log(category, semiCategories)
   }, [post])
 
   const options: ImageLibraryOptions = {
@@ -120,6 +119,8 @@ const ForestForm = ({ tab, setTab, navigation, post }: PostUploadParams) => {
         for (const _hashtag of hashtags){
           formData.append('hashtags', "add,"+_hashtag.trim());
         }
+      } else if (key === 'category') {
+        formData.append('category', category.id.toString())
       } else if (key === 'photos' || key === 'semi_categories') {
         continue;
       } else {
@@ -181,6 +182,8 @@ const ForestForm = ({ tab, setTab, navigation, post }: PostUploadParams) => {
             formData.append('semi_categories', `add,${item.id}`);
           }
         }
+      } else if (key === 'category') {
+        formData.append('category', category.id.toString())
       } else {
         formData.append(`${key}`, `${value}`);
       }
@@ -196,6 +199,15 @@ const ForestForm = ({ tab, setTab, navigation, post }: PostUploadParams) => {
     scrollRef.current!.scrollTo({y: scrollY - 30, animated: true});
   }, []);
 
+  const images = [
+    require('../../../assets/img/Forest/Category01.png'),
+    require('../../../assets/img/Forest/Category02.png'),
+    require('../../../assets/img/Forest/Category03.png'),
+    require('../../../assets/img/Forest/Category04.png'),
+    require('../../../assets/img/Forest/Category05.png'),
+    require('../../../assets/img/Forest/Category06.png'),
+  ]
+
   return (
     <View>
       <Modal visible={modalVisible}>
@@ -210,7 +222,7 @@ const ForestForm = ({ tab, setTab, navigation, post }: PostUploadParams) => {
       <>
       <FormHeader title='포레스트 작성' onLeft={() => setTab(tab-1)} onRight={post.id != 0 ? updateForest : saveForest} />
       <ScrollView contentContainerStyle={{paddingBottom: 100}}>
-      <ImageBackground source={{ uri: (repPic && repPic.length > 0) ? repPic[0].uri : forest.rep_pic != '' ? forest.rep_pic : "https://reactnative.dev/img/logo-og.png"}} style={{width: width, height: width}}>
+      <ImageBackground source={(repPic && repPic.length == 0 && forest.rep_pic == '') ? images[category.id-1] : { uri: (repPic && repPic.length > 0) ? repPic[0].uri : (forest.rep_pic != '' ? forest.rep_pic : 'none')}} imageStyle={{width: width+30}} style={{width: width, height: width}}>
         <Text style={{fontSize: 20, fontWeight: '700', marginLeft: 10, marginVertical: 10}}>{category.name}</Text>
         <CardView data={semiCategories} offset={10} gap={0} pageWidth={100} dot={false} renderItem={({item}: any) => { return (
             <View style={{height: 25, borderRadius: 16, backgroundColor: '#67D393', paddingVertical: 4, paddingHorizontal: 16, margin: 4}}>

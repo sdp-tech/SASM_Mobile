@@ -1,29 +1,28 @@
-import React, { createContext, useState } from 'react';
+import { createContext, useState, SetStateAction, Dispatch } from 'react';
 
 interface Category {
   id: number;
   name: string;
 }
 
-interface Post {
-  id: number;
+interface Forest {
   title: string;
   subtitle: string;
   content: string;
   category: Category;
   semi_categories: Array<string>;
-  hashtags: Array<string>;
+  hashtags: any;
   photos: Array<string>;
   rep_pic: string;
 }
 
 interface ForestContextType {
   category: Category;
-  setCategory: React.Dispatch<React.SetStateAction<Category>>;
+  setCategory: Dispatch<React.SetStateAction<Category>>;
   semiCategories: any[];
-  setSemiCategories: React.Dispatch<React.SetStateAction<any[]>>;
-  post: Post;
-  setPost: React.Dispatch<React.SetStateAction<Post>>;
+  setSemiCategories: Dispatch<React.SetStateAction<any[]>>;
+  forest: Forest;
+  setForest: Dispatch<React.SetStateAction<Forest>>;
 }
 
 const ForestContext = createContext<ForestContextType>({
@@ -31,17 +30,17 @@ const ForestContext = createContext<ForestContextType>({
   setCategory: () => {},
   semiCategories: [],
   setSemiCategories: () => {},
-  post: { id: 0, title: "", subtitle: "", content: "", category: {id: 0, name: ''}, semi_categories: [], hashtags: [], photos: [], rep_pic: "" },
-  setPost: () => {}
+  forest: { title: "", subtitle: "", content: "", category: {} as any, semi_categories: [] as any, hashtags: "", photos: [] as any, rep_pic: "" },
+  setForest: () => {},
 });
 
 const ForestProvider = ({ children }: any) => {
   const [category, setCategory] = useState<Category>({ id: 0, name: '' });
   const [semiCategories, setSemiCategories] = useState<any[]>([]);
-  const [post, setPost] = useState<Post>({ id: 0, title: "", subtitle: "", content: "", category: {id: 0, name: ''}, semi_categories: [], hashtags: [], photos: [], rep_pic: "" })
+  const [forest, setForest] = useState({ title: "", subtitle: "", content: "", category: {} as any, semi_categories: [] as any, hashtags: "", photos: [] as any, rep_pic: "" });
 
   return (
-    <ForestContext.Provider value={{ category, setCategory, semiCategories, setSemiCategories, post, setPost }}>
+    <ForestContext.Provider value={{ category, setCategory, semiCategories, setSemiCategories, forest, setForest }}>
       {children}
     </ForestContext.Provider>
   );

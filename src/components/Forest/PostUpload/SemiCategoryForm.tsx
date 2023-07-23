@@ -2,22 +2,12 @@ import { useState, useEffect, useContext } from 'react';
 import { View, FlatList, TouchableOpacity, Dimensions } from 'react-native';
 import { TextPretendard as Text } from '../../../common/CustomText';
 import FormHeader from '../../../common/FormHeader';
-import type { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { ForestContext } from './ForestContext';
 
 import { Request } from '../../../common/requests';
 import { PostUploadParams } from '../PostUpload';
 
-interface SemiCategoryFormParams extends PostUploadParams {
-  category: any;
-  semiCategories: any;
-  setSemiCategories: any;
-}
-
 const SemiCategoryForm = ({ tab, setTab, post }: PostUploadParams) => {
-  // const category = route.params.category;
-  // const post = route.params?.post;
-  // const [semiCategories, setSemiCategories] = useState([] as any);
   const { category, setCategory, semiCategories, setSemiCategories } = useContext(ForestContext);
   const { width, height } = Dimensions.get('window');
   const [items, setItems] = useState([] as any);
@@ -25,24 +15,16 @@ const SemiCategoryForm = ({ tab, setTab, post }: PostUploadParams) => {
   const request = new Request();
 
   const getSemiCategories = async () => {
-    const response = await request.get(`/forest/semi_categories/`, {category: category.id}, {});
+    const response = await request.get(`/forest/semi_categories/`, {category: category.id == 0 ? post.category.id : category.id}, {});
     setItems(response.data.data.results);
   }
 
   useEffect(() => {
     getSemiCategories();
-    if (semiCategories) {
-      setSelectedIds(semiCategories.map((category: any) => category.id))
-      console.log('여기?')
+    if (post.category.id !== 0 && post.category.id !== category.id) {
+      setSemiCategories([]);
     }
-    if (post.category.id === category.id) {
-      setSemiCategories([])
-    }
-    // if (post.id != 0 && post.category.id === category.id){
-    //   setSemiCategories(post.semi_categories);
-    //   setSelectedIds(post.semi_categories.map((category: any) => category.id));
-    //   console.log('ㄴㄴ 여기', post.semi_categories)
-    // }
+    setSelectedIds(semiCategories.map((category: any) => category.id))
   }, [category])
 
   return (
@@ -71,7 +53,7 @@ const SemiCategoryForm = ({ tab, setTab, post }: PostUploadParams) => {
           keyExtractor={(item) => item.id.toString()}
           scrollEnabled={false}
         />
-        { semiCategories.length > 0 &&
+        {(selectedIds.length > 0) &&
           <TouchableOpacity style={{backgroundColor: '#67D393', width: 180, paddingVertical: 10, alignItems: 'center', justifyContent: 'center', borderRadius: 20, position: 'absolute', top: height-350}}
             onPress={() => setTab(2)}
           >
