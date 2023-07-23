@@ -71,6 +71,7 @@ const CategoryForm = ({ tab, setTab, navigation, post }: PostUploadParams) => {
               onPress={(id: number) => {
                 if (selectedId === id) {
                   setSelectedId(null); // 선택 상태를 해제합니다.
+                  setCategory({ id: 0, name: ''})
                 } else {
                   setSelectedId(id); // 선택 상태를 토글합니다.
                   setCategory({ id: item.id, name: item.name });

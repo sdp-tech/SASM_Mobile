@@ -59,15 +59,29 @@ const BoardListScreen = ({
     setNewPosts(response_new.data.data.results);
   };
 
+  // const chunkArray = (array: any, size: number) => {
+  //   const chunkedArray = [];
+  //   let index = 0;
+  //   while (index < array.length) {
+  //     chunkedArray.push(array.slice(index, index + size));
+  //     index += size;
+  //   }
+  //   return chunkedArray;
+  // };
   const chunkArray = (array: any, size: number) => {
     const chunkedArray = [];
+    const length = array.length;
     let index = 0;
-    while (index < array.length) {
-      chunkedArray.push(array.slice(index, index + size));
+  
+    while (index < length && chunkedArray.length < size) {
+      const chunk = array.slice(index, index + size);
+      chunkedArray.push(chunk);
       index += size;
     }
+  
     return chunkedArray;
   };
+  
 
   const onRefresh = () => {
     setRefreshing(true);
@@ -94,54 +108,25 @@ const BoardListScreen = ({
         }}
       />
       <ScrollView nestedScrollEnabled={true}>
-        <View style={{ height: 400 }}>
           <View
             style={{ backgroundColor: "#C8F5D7", padding: 20, height: 100 }}
           >
-            <Text style={{ color: '#3C3C3C', fontWeight: '700', fontSize: 16 }}>{isLogin? (`${nickname}님 이 정보들은 어떠신가요?`):('로그인 후 추천 글을 받아보세요')}</Text>
-            <Text>
-              {posts[0]?.title}
-            </Text>
+            <Text style={{ color: '#3C3C3C', fontWeight: '700', fontSize: 16, lineHeight: 22, letterSpacing: -0.6 }}>{isLogin? (`${nickname}님 이 정보들은 어떠신가요?`):('로그인 후 추천 글을 받아보세요')}</Text>
+            <View style={{flexDirection: 'row', marginTop: 10}}>
+              <View style={{borderColor: '#67D393', borderWidth: 1, borderRadius: 8, paddingVertical: 2, paddingHorizontal: 4, backgroundColor: 'white'}}>
+                <Text style={{color: '#67D393', fontSize: 10, fontWeight: '600'}}>#ESG</Text>
+              </View>
+              <Text style={{color: '#3C3C3C', fontSize: 12, lineHeight: 18, marginLeft: 5}} numberOfLines={1}>{posts[0]?.title}</Text>
+            </View>
           </View>
           <View
             style={{
               backgroundColor: "#F1FCF5",
               alignItems: "center",
-              minHeight: 300,
+              height: 240,
               justifyContent: "flex-end",
             }}
-          >
-            <View
-              style={{
-                width: width - 30,
-                paddingVertical: 5,
-                backgroundColor: "white",
-                alignItems: "center",
-                justifyContent: "center",
-                flexDirection: "row",
-                borderColor: "#E3E3E3",
-                borderWidth: 1,
-                borderRadius: 4,
-                marginBottom: 25,
-              }}
-            >
-              {isLogin ? <>
-              <Text style={{ color: '#848484', fontWeight: '700', fontSize: 16 }}>{nickname}님의 카테고리를 추가해보세요.</Text>
-              <TouchableOpacity
-                style={{
-                  width: 25,
-                  height: 25,
-                  backgroundColor: "#E9E9E9",
-                  borderRadius: 60,
-                  alignItems: "center",
-                  justifyContent: "center",
-                }}
-              >
-                <Text>+</Text>
-              </TouchableOpacity>
-              </> : <Text style={{ color: '#848484', fontWeight: '700', fontSize: 16 }}>로그인 후 나만의 카테고리를 추가해보세요.</Text>}
-            </View>
-          </View>
+          />
           <View
             style={{
               position: "absolute",
@@ -175,7 +160,6 @@ const BoardListScreen = ({
               scrollEnabled={false}
             />
           </View>
-        </View>
         <View
           style={{
             paddingVertical: 15,
@@ -204,6 +188,7 @@ const BoardListScreen = ({
             data={chunkArray(posts, 3)}
             pageWidth={width}
             dot={true}
+            onEndDrag={() => posts.length >= 9 && navigation.navigate('PostList', { board_name: '사슴의 추천글'})} 
             renderItem={({ item }: any) => {
               return (
                 <FlatList
@@ -257,7 +242,7 @@ const BoardListScreen = ({
             keyExtractor={(item) => item.id.toString()}
             renderItem={({ item }: any) => (
               <TouchableOpacity style={{ flexDirection: "row", marginTop: 10}} onPress={() => {navigation.navigate('PostDetail', {post_id: item.id})}}>
-                <View style={{borderColor: '#67D393', borderWidth: 1, borderRadius: 8, paddingVertical: 2, paddingHorizontal: 4}}>
+                <View style={{borderColor: '#67D393', borderWidth: 1, borderRadius: 8, paddingVertical: 2, paddingHorizontal: 4, backgroundColor: 'white'}}>
                   <Text style={{color: '#67D393', fontSize: 10, fontWeight: '600'}}>#ESG</Text>
                 </View>
                 <Text style={{color: '#3C3C3C', fontSize: 12, lineHeight: 18, marginLeft: 5}} numberOfLines={1}>{item.title}</Text>
@@ -294,6 +279,7 @@ const BoardListScreen = ({
             data={chunkArray(hotPosts, 3)}
             pageWidth={width}
             dot={true}
+            onEndDrag={() => navigation.navigate('PostList', { board_name: '사슴의 인기글'})} 
             renderItem={({ item }: any) => {
               return (
                 <FlatList

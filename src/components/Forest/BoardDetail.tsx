@@ -81,11 +81,15 @@ const BoardDetailScreen = ({
 
   const chunkArray = (array: any, size: number) => {
     const chunkedArray = [];
+    const length = array.length;
     let index = 0;
-    while (index < array.length) {
-      chunkedArray.push(array.slice(index, index + size));
+  
+    while (index < length && chunkedArray.length < size) {
+      const chunk = array.slice(index, index + size);
+      chunkedArray.push(chunk);
       index += size;
     }
+  
     return chunkedArray;
   };
 
@@ -162,6 +166,7 @@ const BoardDetailScreen = ({
                 data={chunkArray(posts, 3)}
                 pageWidth={width}
                 dot={true}
+                onEndDrag={() => posts.length >= 9 && navigation.navigate('PostList', { board_name: '사슴의 추천글'})} 
                 renderItem={({ item }: any) => {
                   return (
                     <FlatList
@@ -251,6 +256,7 @@ const BoardDetailScreen = ({
                 data={chunkArray(hotPosts, 3)}
                 pageWidth={width}
                 dot={true}
+                onEndDrag={() => navigation.navigate('PostList', { board_name: '사슴의 인기글'})} 
                 renderItem={({ item }: any) => {
                   return (
                     <FlatList

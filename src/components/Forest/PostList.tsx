@@ -29,16 +29,10 @@ const PostListScreen = ({
   navigation,
   route,
 }: NativeStackScreenProps<ForestStackParams, "PostList">) => {
-  const toggleItems = [
-    { label: '최신순', value: 0, order: 'latest' },
-    { label: '인기순', value: 1, order: 'hot' },
-  ]
   const [loading, setLoading] = useState(false);
   const [refreshing, setRefreshing] = useState(false);
   const [page, setPage] = useState(1);
-  const [search, setSearch] = useState(false);
-  const [orderList, setOrderList] = useState(0);
-  const [order, setOrder] = useState<string>(toggleItems[orderList].order);
+  const [order, setOrder] = useState<string>('');
   const [count, setCount] = useState(0);
   const [posts, setPosts] = useState([]);
   const {isLogin, setLogin} = useContext(LoginContext);
@@ -49,6 +43,10 @@ const PostListScreen = ({
   const board_category = route.params?.board_category;
 
   const getPosts = async () => {
+    if(board_name === '추천글' || board_name === '사슴의 추천글') setOrder('latest')
+    else if(board_name === '인기글' || board_name === '사슴의 인기글') setOrder('hot')
+    else if(board_name === '최신글' || board_name === '사슴의 최신글') setOrder('latest')
+
     setLoading(true);
     const response = await request.get('/forest/', {
       order: order,
@@ -59,18 +57,10 @@ const PostListScreen = ({
     setLoading(false);
   }
 
-  const onChangeOrder = async () => {
-    setOrder(toggleItems[orderList].order);
-  }
-
   const onRefresh = () => {
     setRefreshing(true);
     setRefreshing(false);
   }
-
-  useEffect(() => {
-    onChangeOrder();
-  }, [orderList]);
 
   useFocusEffect(useCallback(() => {
     getPosts();
