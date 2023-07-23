@@ -43,10 +43,6 @@ const PostListScreen = ({
   const board_category = route.params?.board_category;
 
   const getPosts = async () => {
-    if(board_name === '추천글' || board_name === '사슴의 추천글') setOrder('latest')
-    else if(board_name === '인기글' || board_name === '사슴의 인기글') setOrder('hot')
-    else if(board_name === '최신글' || board_name === '사슴의 최신글') setOrder('latest')
-
     setLoading(true);
     const response = await request.get('/forest/', {
       order: order,
@@ -61,6 +57,12 @@ const PostListScreen = ({
     setRefreshing(true);
     setRefreshing(false);
   }
+
+  useEffect(() => {
+    if(board_name === '추천글' || board_name === '사슴의 추천글') setOrder('latest')
+    else if(board_name === '인기글' || board_name === '사슴의 인기글') setOrder('hot')
+    else if(board_name === '최신글' || board_name === '사슴의 최신글') setOrder('latest')
+  }, [route.params?.board_name])
 
   useFocusEffect(useCallback(() => {
     getPosts();

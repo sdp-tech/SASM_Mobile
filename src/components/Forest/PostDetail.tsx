@@ -91,6 +91,7 @@ const PostDetailSection = ({
           uri: post.rep_pic,
         }}
       >
+        <View style={{backgroundColor: 'rgba(0,0,0,0.2)', width: width, height: 400}}>
         <View
           style={{
             flexDirection: "row",
@@ -144,6 +145,7 @@ const PostDetailSection = ({
             <Text style={{ color: '#F4F4F4', fontSize: 12, fontWeight: '400' }}> / 마지막 수정: {post.updated.slice(0, 10)}</Text>
             <Text style={{ flex: 1, textAlign: 'right', color: '#67D393', fontSize: 14, fontWeight: '400' }}>{post.writer.nickname}</Text>
           </View>
+        </View>
         </View>
       </ImageBackground>
       <View style={{ padding: 15 }}>
