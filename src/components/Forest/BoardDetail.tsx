@@ -17,16 +17,12 @@ import styled from "styled-components/native";
 import ListHeader from "./components/ListHeader";
 import PostItem, { HotPostItem } from "./components/PostItem";
 import { useFocusEffect } from "@react-navigation/native";
-import Add from "../../assets/img/common/Add.svg";
 
 import { ForestStackParams } from "../../pages/Forest";
 import { Request } from "../../common/requests";
 import CardView from "../../common/CardView";
 import { LoginContext } from "../../common/Context";
 import PlusButton from "../../common/PlusButton";
-
-const windowWidth = Dimensions.get("window").width;
-const windowHeight = Dimensions.get("window").height;
 
 const { width, height } = Dimensions.get("window");
 
@@ -119,7 +115,7 @@ const BoardDetailScreen = ({
       ) : (
         <>
           <View style={{padding: 15, backgroundColor: '#F1FCF5'}}>
-            <CardView gap={0} offset={0} pageWidth={windowWidth} dot={false} data={semiCategories} renderItem={({item}: any) => {
+            <CardView gap={0} offset={0} pageWidth={width} dot={false} data={semiCategories} renderItem={({item}: any) => {
               return (
                 <TouchableOpacity style={{borderRadius: 16, borderColor: '#67D393', borderWidth: 1, paddingVertical: 4, paddingHorizontal: 16, margin: 4, backgroundColor: selectedIds.includes(item.id) ? '#67D393' : 'white'}}
                 onPress={() => {
@@ -374,21 +370,5 @@ const styles = StyleSheet.create({
     backgroundColor: "white",
   },
 });
-
-const Header = styled.View`
-  height: 40px;
-  padding: 10px;
-  flex-direction: row;
-`;
-const SearchBarInput = styled.TextInput`
-  width: 80%;
-  height: 32px;
-  marginright: 10px;
-  padding: 5px;
-  borderwidth: 1px;
-  background: #ffffff;
-  border-radius: 3px;
-  box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
-`;
 
 export default BoardDetailScreen;

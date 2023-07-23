@@ -14,12 +14,10 @@ import {
 import type { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { useFocusEffect } from "@react-navigation/native";
 import ListHeader from "./components/ListHeader";
-import Add from "../../assets/img/common/Add.svg";
 import { LoginContext } from "../../common/Context";
 
 import { ForestStackParams } from "../../pages/Forest";
 import { Request } from "../../common/requests";
-import DropDown from "../../common/DropDown";
 import PostItem from "./components/PostItem";
 import PlusButton from "../../common/PlusButton";
 

@@ -48,17 +48,9 @@ const CardView = ({ gap, offset, data, pageWidth, renderItem, dot, onEndReached,
     const maxScrollOffset = (data.length - 1) * (pageWidth + gap);
 
     const scrollDiff = currentScrollOffset - maxScrollOffset
-    // 스와이프 제스처가 화면 너비의 1/10 이상 넘는다면 navigate 함수 호출
     if (onEndDrag && currentPage === 2 && scrollDiff > (pageWidth / 4)) {
       onEndDrag();
-      // const scrollDiff = currentScrollOffset - prevScrollOffset.current; // 이전 스크롤 위치와 현재 스크롤 위치의 차이를 계산
-      // console.log(scrollDiff)
-      // if (scrollDiff > 0 && onMomentumScrollEnd) { // scrollDiff가 양수인 경우에만 스와이프 방향이 오른쪽임
-      //   console.log("Trying to scroll beyond the last item.");
-      //   onMomentumScrollEnd();
-      // }
     }
-    // prevScrollOffset.current = currentScrollOffset; // 현재 스크롤 위치를 이전 스크롤 위치로 저장
     console.log(currentScrollOffset, maxScrollOffset);
   };
 
@@ -72,7 +64,7 @@ const CardView = ({ gap, offset, data, pageWidth, renderItem, dot, onEndReached,
         pagingEnabled
         onScroll={onScroll}
         onScrollEndDrag={handleOnScrollEndDrag}
-        // onEndReached={handleOnScrollEndDrag}
+        onEndReached={onEndReached}
         snapToInterval={pageWidth + gap}
         snapToAlignment='start'
         decelerationRate='fast'

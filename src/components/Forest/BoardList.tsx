@@ -58,16 +58,7 @@ const BoardListScreen = ({
     setHotPosts(response_hot.data.data.results);
     setNewPosts(response_new.data.data.results);
   };
-
-  // const chunkArray = (array: any, size: number) => {
-  //   const chunkedArray = [];
-  //   let index = 0;
-  //   while (index < array.length) {
-  //     chunkedArray.push(array.slice(index, index + size));
-  //     index += size;
-  //   }
-  //   return chunkedArray;
-  // };
+  
   const chunkArray = (array: any, size: number) => {
     const chunkedArray = [];
     const length = array.length;
