@@ -55,10 +55,11 @@ const StorySearchPage = ({ navigation }: StoryProps) => {
     for (const category of checkedList){
       params.append('filter', category);
     }
-    params.append('search', search);
-    params.append('page', page.toString());
-    params.append('order', order);
-    const response = await request.get(`/stories/story_search/?${params.toString()}`,null, null)
+    const response = await request.get(`/stories/story_search/?${params.toString()}`,{
+      search: search,
+      page: page,
+      order: order
+    }, null)
     if (page === 1) {
       setItem(response.data.data.results);
     } else {

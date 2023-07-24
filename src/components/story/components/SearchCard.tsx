@@ -30,7 +30,7 @@ const SearchCard = ({id, place_name, title, rep_pic, extra_pics, story_like, cat
 
   const toggleLike = async () => {
     if(isLogin){
-      const response = await request.post(`/stories/story_like/`, {id: id}, {});
+      const response = await request.post(`/stories/${id}/story_like/`);
       setLike(!like);
     } else {
       Alert.alert(

@@ -13,7 +13,6 @@ import { StackNavigationProp } from '@react-navigation/stack';
 import Following from '../components/mypage/components/Following_List';
 import Follower from '../components/mypage/components/Follower_List';
 import Options from '../components/mypage/components/OptionPage';
-import PlaceList from '../components/mypage/components/myplace/PlaceList';
 import Withdraw from '../components/mypage/components/Withdraw';
 
 export interface MyPageParams {
