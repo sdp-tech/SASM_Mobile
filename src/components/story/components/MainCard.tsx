@@ -29,7 +29,7 @@ const MainCard = ({id, place_name, title, rep_pic, story_like, category, preview
 
   const toggleLike = async () => {
     if(isLogin){
-      const response = await request.post(`/stories/story_like/`, {id: id}, {});
+      const response = await request.post(`/stories/${id}/story_like/`);
       setLike(!like);
     } else {
       Alert.alert(
