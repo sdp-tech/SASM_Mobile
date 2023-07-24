@@ -44,6 +44,7 @@ const MyStory = ({ navigation, route }: MyPageParams) => {
   const [info, setInfo] = useState([] as any);
   const [page, setPage] = useState<number>(1);
   const [search, setSearch] = useState<string>("");
+  const [nextPage, setNextPage] = useState<any>(null);
   const [checkedList, setCheckedList] = useState([] as any);
   const [isCategory, setIsCategory] = useState<boolean>(false);
   const [isSearch, setIsSearch] = useState<boolean>(false);
@@ -51,14 +52,28 @@ const MyStory = ({ navigation, route }: MyPageParams) => {
   const [type, setType] = useState<boolean>(true);
   const [written, setWritten] = useState<any>([]);
 
-  const getStories = async () => {
+  const getStories = async (clearData = false) => {
     let params = new URLSearchParams();
-    for (const category of checkedList){
+    for (const category of checkedList) {
       params.append('filter', category);
     }
-    params.append('search', search);
-    const response = await request.get(`/mypage/mypick_story/?${params.toString()}`,null, null)
-    setInfo(response.data.data.results);
+  
+    if (clearData) {
+      setInfo([]);
+      setPage(1);
+    }
+  
+    const response = await request.get(`/mypage/mypick_story/?${params.toString()}`, {
+      search: search,
+      page: page
+    }, null);
+  
+    if (page === 1 || clearData) {
+      setInfo(response.data.data.results);
+    } else {
+      setInfo([...info, ...response.data.data.results]);
+    }
+    setNextPage(response.data.data.next);
   };
 
   const getWrittenStory = async () => {
@@ -66,9 +81,23 @@ const MyStory = ({ navigation, route }: MyPageParams) => {
     setWritten(response.data.data.results);
   }
 
+  const onEndReached = async () => {
+    if (nextPage !== null) {
+      setPage(page + 1);
+    } else {
+      return;
+    }
+  };
+  
   useFocusEffect(useCallback(() => {
-    if (isLogin) getStories();
-  }, [page, search, checkedList]));
+    if (isLogin) {
+      getStories();
+    }
+  }, [page]));
+
+  useEffect(() => {
+    getStories(true)
+  }, [search, checkedList])
 
   useEffect(() => {
     if (!type) getWrittenStory();
@@ -128,6 +157,8 @@ const MyStory = ({ navigation, route }: MyPageParams) => {
                   }
                   numColumns={2}
                   style={{ alignContent: 'space-between' }}
+                  onEndReached={onEndReached}
+                  onEndReachedThreshold={0.3}
                 />
               )}
             </View>
