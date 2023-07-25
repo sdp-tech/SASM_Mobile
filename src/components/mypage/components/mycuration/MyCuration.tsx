@@ -56,7 +56,6 @@ const MyStory = ({ navigation, route }: MyPageParams) => {
     const response = await request.get("/mypage/my_liked_curation/", {
       search: search,
     });
-    console.error(response.data.data);
     setCurationList(response.data.data);
   };
 

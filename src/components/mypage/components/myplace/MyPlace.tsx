@@ -66,7 +66,6 @@ const MyPlace = ({ navigation }: MyPageParams) => {
   };
 
   const getWrittenReview = async () => {
-    console.error(page);
     const response = await request.get('/mypage/my_reviewed_place/');
     setMax(Math.ceil(response.data.data.count / 6));
     setWritten(response.data.data.results);
