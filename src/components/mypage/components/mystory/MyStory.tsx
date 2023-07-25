@@ -1,7 +1,7 @@
 import { useState, useEffect, useCallback, useContext } from 'react';
 import { SafeAreaView, View, StyleSheet, TouchableOpacity, Image, FlatList, ScrollView, Dimensions, Pressable } from 'react-native';
 import { TextPretendard as Text } from '../../../../common/CustomText';
-import ItemCard from "./ItemCard";
+import MyStoryItemCard, { MyStroyItemCardProps } from "./MyStoryItemCard";
 import NothingIcon from "../../../../assets/img/nothing.svg";
 import Search from "../../../../assets/img/common/Search.svg";
 import { Request } from "../../../../common/requests";
@@ -11,7 +11,8 @@ import { useFocusEffect } from '@react-navigation/native';
 import Menu from "../../../../assets/img/MyPage/Menu.svg";
 import { MyPageParams } from '../../../../pages/MyPage';
 import { LoginContext } from '../../../../common/Context';
-import RequireLogin from '../RequiredLogin';
+import RequireLogin from '../common/RequiredLogin';
+import { SearchNCategory } from '../common/SearchNCategory';
 
 const styles = (isCategory?: boolean) => StyleSheet.create({
   Container: {
@@ -38,46 +39,39 @@ const styles = (isCategory?: boolean) => StyleSheet.create({
   },
 });
 
-const MyStory = ({ navigation, route }: MyPageParams) => {
+const MyStory = () => {
   const { isLogin, setLogin } = useContext(LoginContext);
-  const { width, height } = Dimensions.get('window');
-  const [info, setInfo] = useState([] as any);
+  const [edit, setEdit] = useState<boolean>(false);
+  const [refresh, setRefresh] = useState<boolean>(false);
+  const [storyList, setStoryList] = useState<MyStroyItemCardProps[]>([]);
   const [page, setPage] = useState<number>(1);
+  const [max, setMax] = useState<number>(1);
   const [search, setSearch] = useState<string>("");
   const [nextPage, setNextPage] = useState<any>(null);
   const [checkedList, setCheckedList] = useState([] as any);
-  const [isCategory, setIsCategory] = useState<boolean>(false);
-  const [isSearch, setIsSearch] = useState<boolean>(false);
   const request = new Request();
   const [type, setType] = useState<boolean>(true);
-  const [written, setWritten] = useState<any>([]);
+  const [written, setWritten] = useState<MyStroyItemCardProps[]>([]);
 
-  const getStories = async (clearData = false) => {
-    let params = new URLSearchParams();
-    for (const category of checkedList) {
-      params.append('filter', category);
-    }
-  
-    if (clearData) {
-      setInfo([]);
-      setPage(1);
-    }
-  
-    const response = await request.get(`/mypage/mypick_story/?${params.toString()}`, {
-      search: search,
-      page: page
-    }, null);
-  
-    if (page === 1 || clearData) {
-      setInfo(response.data.data.results);
-    } else {
-      setInfo([...info, ...response.data.data.results]);
-    }
-    setNextPage(response.data.data.next);
+  const rerender = () => {
+    setRefresh(!refresh);
+  }
+
+  const getStories = async () => {
+    const response = await request.get(`/mypage/mypick_story/`, {
+      search: search, filter: checkedList, page: page
+    });
+    setMax(Math.ceil(response.data.data.count / 6));
+    setStoryList(response.data.data.results);
   };
 
   const getWrittenStory = async () => {
-    const response = await request.get('/mypage/my_story/');
+    const response = await request.get('/mypage/my_story/', {
+      search: search,
+      filter: checkedList,
+      page: page
+    });
+    setMax(Math.ceil(response.data.data.count / 6));
     setWritten(response.data.data.results);
   }
 
@@ -91,70 +85,49 @@ const MyStory = ({ navigation, route }: MyPageParams) => {
   
   useFocusEffect(useCallback(() => {
     if (isLogin) {
-      getStories();
+      if (type) getStories();
+      else getWrittenStory();
     }
-  }, [page]));
+  }, [page, search, checkedList, refresh]));
 
-  useEffect(() => {
-    getStories(true)
-  }, [search, checkedList])
-
-  useEffect(() => {
-    if (!type) getWrittenStory();
-  }, [type])
 
   return (
     <View style={styles().Container}>
       {
         isLogin ?
           <>
-            <View style={styles(isCategory).Searchbox}>
-              {isSearch &&
-                <SearchBar
-                  setPage={setPage}
-                  search={search}
-                  setSearch={setSearch}
-                  style={{ backgroundColor: "#F4F4F4", borderRadius: 10, height: 35, width: 280, position: "absolute", right: 90, zIndex: 1 }}
-                  placeholder="내용 입력 전"
-                  placeholderTextColor={"#848484"}
-                />
-              }
-              <TouchableOpacity style={{ marginHorizontal: 10 }} onPress={() => { setIsSearch(!isSearch); setIsCategory(false); }}>
-                <Search width={18} height={18} />
-              </TouchableOpacity>
-              {!isCategory &&
-                <TouchableOpacity style={{ marginHorizontal: 10 }} onPress={() => { setIsSearch(false); setIsCategory(!isCategory) }}>
-                  <Menu width={18} height={18} />
-                </TouchableOpacity>
-              }
-              {isCategory &&
-                <View style={{ flexDirection: "row", marginLeft: 10, flex: 1, alignItems: 'center' }}>
-                  <TouchableOpacity style={{ borderRadius: 12, borderColor: "#D7D7D7", borderWidth: 0.25, justifyContent: "center", alignItems: "center", marginRight: 5, paddingHorizontal: 5, height: 25 }}>
-                    <Text style={{ fontSize: 12 }}>편집</Text>
-                  </TouchableOpacity>
-                  <TouchableOpacity style={{ backgroundColor: type ? '#FFFFFF' : '#D7D7D7', borderRadius: 20, borderColor: "#D7D7D7", borderWidth: 0.25, justifyContent: "center", alignItems: "center", marginRight: 5, paddingHorizontal: 5, height: 25 }}
-                    onPress={() => { setType(!type) }}>
-                    <Text style={{ fontSize: 12 }}>내 스토리</Text>
-                  </TouchableOpacity>
-                  <Category checkedList={checkedList} setCheckedList={setCheckedList} story={true} />
-                </View>
-              }
-            </View>
+            <SearchNCategory
+              edit={edit}
+              setEdit={setEdit}
+              setType={setType}
+              type={type}
+              setPage={setPage}
+              search={search}
+              setSearch={setSearch}
+              checkedList={checkedList}
+              setCheckedList={setCheckedList}
+              label='내 스토리'
+            />
             <View style={styles().Story}>
-              {(type ? info : written).length === 0 ? (
+              {(type ? storyList : written).length === 0 ? (
                 <View style={{ alignItems: 'center', marginVertical: 20 }}>
                   <NothingIcon />
                   <Text style={{ marginTop: 20 }}>해당하는 스토리가 없습니다</Text>
                 </View>
               ) : (
                 <FlatList
-                  data={type ? info : written}
+                  data={type ? storyList : written}
                   renderItem={({ item }: any) =>
-                    <ItemCard
-                      props={item}
-                      navigation={navigation}
+                    <MyStoryItemCard
+                    edit={edit}
+                    rerender={rerender}
+                      data={item}
                     />
                   }
+                  onEndReached={() => {
+                    if (page < max) setPage(page + 1);
+                  }}
+                  onEndReachedThreshold={0.3}
                   numColumns={2}
                   style={{ alignContent: 'space-between' }}
                   onEndReached={onEndReached}

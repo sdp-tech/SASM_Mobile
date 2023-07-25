@@ -1,7 +1,7 @@
 import { useState, useEffect, useCallback, useContext } from 'react';
 import { SafeAreaView, View, StyleSheet, TouchableOpacity, Image, FlatList, ScrollView, Dimensions, Pressable } from 'react-native';
 import { TextPretendard as Text } from '../../../../common/CustomText';
-import ItemCard from "./ItemCard";
+import MyCurationItemCard, { MyCurationItemCardProps } from "./MyCurationItemCard";
 import NothingIcon from "../../../../assets/img/nothing.svg";
 import Search from "../../../../assets/img/common/Search.svg";
 import { Request } from "../../../../common/requests";
@@ -10,7 +10,8 @@ import { useFocusEffect } from '@react-navigation/native';
 import Menu from "../../../../assets/img/MyPage/Menu.svg";
 import { MyPageParams } from '../../../../pages/MyPage';
 import { LoginContext } from '../../../../common/Context';
-import RequireLogin from '../RequiredLogin';
+import RequireLogin from '../common/RequiredLogin';
+import { SearchNoCategory } from '../common/SearchNCategory';
 
 const styles = StyleSheet.create({
   Container: {
@@ -36,31 +37,27 @@ const styles = StyleSheet.create({
   },
 });
 
-interface CurationItemCard {
-  id: number;
-  rep_pic: string;
-  writer_nickname: string;
-  title: string;
-}
-
 const MyStory = ({ navigation, route }: MyPageParams) => {
   const { isLogin, setLogin } = useContext(LoginContext);
-  const { width, height } = Dimensions.get("window");
-  const [info, setInfo] = useState([] as any);
-  const [page, setPage] = useState<number>(1);
+  const [refresh, setRefresh] = useState<boolean>(false);
+  const [curationList, setCurationList] = useState<MyCurationItemCardProps[]>([]);
   const [search, setSearch] = useState<string>("");
-  const [isSearch, setIsSearch] = useState<boolean>(false);
-  const [isMenu, setIsMenu] = useState<boolean>(false);
+  const [edit, setEdit] = useState<boolean>(false);
   const request = new Request();
-  const [written, setWritten] = useState<CurationItemCard[]>([]);
+  const [written, setWritten] = useState<MyCurationItemCardProps[]>([]);
   //true일 경우, 좋아요한 큐레이션 false일 경우, 작성한 큐레이션
   const [type, setType] = useState<boolean>(true);
+
+  const rerender = () => {
+    setRefresh(!refresh);
+  }
 
   const getCuration = async () => {
     const response = await request.get("/mypage/my_liked_curation/", {
       search: search,
-    }, null);
-    setInfo(response.data.data);
+    });
+    console.error(response.data.data);
+    setCurationList(response.data.data);
   };
 
   const getWrittenCuration = async () => {
@@ -69,66 +66,36 @@ const MyStory = ({ navigation, route }: MyPageParams) => {
   }
 
   useFocusEffect(useCallback(() => {
-    if (isLogin) getCuration();
-  }, [search]));
-
-  useEffect(() => {
-    if (!type) getWrittenCuration();
-  }, [type])
+    if (isLogin) {
+      if (type) getCuration();
+      else getWrittenCuration();
+    }
+  }, [type, search, refresh]))
 
   return (
     <View style={styles.Container}>
       {
         isLogin ?
           <>
-            <View style={styles.Searchbox}>
-              {isSearch &&
-                <SearchBar
-                  setPage={setPage}
-                  search={search}
-                  setSearch={setSearch}
-                  style={{ backgroundColor: "#F4F4F4", borderRadius: 10, height: 35, width: 320, position: "absolute", right: 50, zIndex: 1 }}
-                  placeholder="내용 입력 전"
-                  placeholderTextColor={"#848484"}
-                />
-              }
-              <TouchableOpacity style={{ marginHorizontal: 10 }} onPress={() => { setIsSearch(!isSearch); setIsMenu(false); }}>
-                <Search width={18} height={18} />
-              </TouchableOpacity>
-              {!isMenu &&
-                <TouchableOpacity style={{ marginHorizontal: 10 }} onPress={() => { setIsSearch(false); setIsMenu(!isMenu) }}>
-                  <Menu width={18} height={18} />
-                </TouchableOpacity>
-              }
-              {isMenu &&
-                <>
-                  <TouchableOpacity style={{ borderRadius: 12, borderColor: "#D7D7D7", borderWidth: 0.25, justifyContent: "center", alignItems: "center", marginHorizontal: 10, paddingHorizontal: 5, height: 25 }}>
-                    <Text style={{ fontSize: 12 }}>편집</Text>
-                  </TouchableOpacity>
-                  <TouchableOpacity style={{ backgroundColor: type ? '#FFFFFF' : '#D7D7D7', borderRadius: 20, borderColor: "#D7D7D7", borderWidth: 0.25, justifyContent: "center", alignItems: "center", marginRight: 15, paddingHorizontal: 5, height: 25 }}
-                    onPress={() => { setType(!type) }}>
-                    <Text style={{ fontSize: 12 }}>내 큐레이션</Text>
-                  </TouchableOpacity>
-                </>
-              }
-            </View>
+            <SearchNoCategory setEdit={setEdit} edit={edit} setSearch={setSearch} search={search} setType={setType} type={type} label='내 큐레이션' />
             <View style={styles.Curation}>
-              {(type ? info : written).length === 0 ? (
+              {(type ? curationList : written).length === 0 ? (
                 <View style={{ alignItems: 'center', marginVertical: 20 }}>
                   <NothingIcon />
                   <Text style={{ marginTop: 20 }}>해당하는 큐레이션이 없습니다</Text>
                 </View>
               ) : (
                 <FlatList
-                  data={type ? info : written}
-                  renderItem={({ item }: any) => (
-                    <ItemCard
+                  data={type ? curationList : written}
+                  renderItem={({ item }: { item: MyCurationItemCardProps }) => (
+                    <MyCurationItemCard
+                      rerender={rerender}
+                      edit={edit}
                       props={item}
-                      navigation={navigation}
                     />
                   )}
+
                   numColumns={2}
-                // style={{alignContent:'space-between'}}
                 />
               )}
             </View>

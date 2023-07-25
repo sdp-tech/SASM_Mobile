@@ -1,11 +1,10 @@
 import React, { useState } from 'react';
 import { Platform, TouchableOpacity, View, TextInput, StyleSheet, SafeAreaView, Alert } from "react-native";
-import { TextPretendard as Text } from '../../../common/CustomText';
+import { TextPretendard as Text } from '../../../../common/CustomText';
 import styled, { css } from 'styled-components/native';
 import { StackScreenProps } from '@react-navigation/stack';
-import { MyPageProps } from '../../../pages/MyPage';
-
-import { Request } from '../../../common/requests'
+import { MyPageProps } from '../../../../pages/MyPage';
+import { Request } from '../../../../common/requests';
 
 const SignUpButton = styled.View`
     width: 300px;
