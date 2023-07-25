@@ -12,7 +12,7 @@ const { width, height } = Dimensions.get('screen');
 export type HomeStackParams = {
   "Home": undefined;
   "List": {
-    data: CurationProps[];
+    from: 'search' | 'admin' | 'verify';
   };
   "Detail": {
     id: number;

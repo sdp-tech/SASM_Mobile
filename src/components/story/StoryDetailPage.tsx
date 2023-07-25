@@ -99,9 +99,7 @@ const BottomBarSection = ({ post, email, onUpdate, onDelete, onRefresh, navigati
 
   const toggleLike = async () => {
     if (email) {
-      const response = await request.post(`/stories/story_like/`, {
-        id: post.id
-      });
+      const response = await request.post(`/stories/${post.id}/story_like/`);
       setLike(!like);
       onRefresh();
     } else {

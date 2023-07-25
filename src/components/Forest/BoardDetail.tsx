@@ -17,16 +17,12 @@ import styled from "styled-components/native";
 import ListHeader from "./components/ListHeader";
 import PostItem, { HotPostItem } from "./components/PostItem";
 import { useFocusEffect } from "@react-navigation/native";
-import Add from "../../assets/img/common/Add.svg";
 
 import { ForestStackParams } from "../../pages/Forest";
 import { Request } from "../../common/requests";
 import CardView from "../../common/CardView";
 import { LoginContext } from "../../common/Context";
 import PlusButton from "../../common/PlusButton";
-
-const windowWidth = Dimensions.get("window").width;
-const windowHeight = Dimensions.get("window").height;
 
 const { width, height } = Dimensions.get("window");
 
@@ -81,11 +77,15 @@ const BoardDetailScreen = ({
 
   const chunkArray = (array: any, size: number) => {
     const chunkedArray = [];
+    const length = array.length;
     let index = 0;
-    while (index < array.length) {
-      chunkedArray.push(array.slice(index, index + size));
+  
+    while (index < length && chunkedArray.length < size) {
+      const chunk = array.slice(index, index + size);
+      chunkedArray.push(chunk);
       index += size;
     }
+  
     return chunkedArray;
   };
 
@@ -108,14 +108,14 @@ const BoardDetailScreen = ({
 
   return (
     <SafeAreaView style={styles.container}>
+    <ListHeader board_name={board_category.name} navigation={navigation} />
     <ScrollView>
-      <ListHeader board_name={board_category.name} navigation={navigation} />
       {loading ? (
         <ActivityIndicator />
       ) : (
         <>
           <View style={{padding: 15, backgroundColor: '#F1FCF5'}}>
-            <CardView gap={0} offset={0} pageWidth={windowWidth} dot={false} data={semiCategories} renderItem={({item}: any) => {
+            <CardView gap={0} offset={0} pageWidth={width} dot={false} data={semiCategories} renderItem={({item}: any) => {
               return (
                 <TouchableOpacity style={{borderRadius: 16, borderColor: '#67D393', borderWidth: 1, paddingVertical: 4, paddingHorizontal: 16, margin: 4, backgroundColor: selectedIds.includes(item.id) ? '#67D393' : 'white'}}
                 onPress={() => {
@@ -162,6 +162,7 @@ const BoardDetailScreen = ({
                 data={chunkArray(posts, 3)}
                 pageWidth={width}
                 dot={true}
+                onEndDrag={() => posts.length >= 9 && navigation.navigate('PostList', { board_name: '사슴의 추천글'})} 
                 renderItem={({ item }: any) => {
                   return (
                     <FlatList
@@ -251,6 +252,7 @@ const BoardDetailScreen = ({
                 data={chunkArray(hotPosts, 3)}
                 pageWidth={width}
                 dot={true}
+                onEndDrag={() => navigation.navigate('PostList', { board_name: '사슴의 인기글'})} 
                 renderItem={({ item }: any) => {
                   return (
                     <FlatList
@@ -354,7 +356,7 @@ const BoardDetailScreen = ({
     </ScrollView>
     {isLogin &&
       <PlusButton
-        onPress={() => navigation.navigate('CategoryForm', {})}
+        onPress={() => navigation.navigate('PostUpload', {})}
         position="rightbottom" />
     }
     </SafeAreaView>
@@ -368,21 +370,5 @@ const styles = StyleSheet.create({
     backgroundColor: "white",
   },
 });
-
-const Header = styled.View`
-  height: 40px;
-  padding: 10px;
-  flex-direction: row;
-`;
-const SearchBarInput = styled.TextInput`
-  width: 80%;
-  height: 32px;
-  marginright: 10px;
-  padding: 5px;
-  borderwidth: 1px;
-  background: #ffffff;
-  border-radius: 3px;
-  box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
-`;
 
 export default BoardDetailScreen;

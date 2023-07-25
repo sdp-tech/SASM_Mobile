@@ -29,6 +29,7 @@ const WriteComment = ({ id, reRenderScreen, data, isLogin, navigation, commentId
                         content: comment,
                     });
                     Alert.alert("댓글이 수정되었습니다.");
+                    setComment('')
                     reRenderScreen();
                 } else {
                     const response = await request.post("/stories/comments/create/", {
@@ -36,6 +37,7 @@ const WriteComment = ({ id, reRenderScreen, data, isLogin, navigation, commentId
                         content: comment,
                     }, null);
                     Alert.alert("댓글이 등록되었습니다.");
+                    setComment('')
                     reRenderScreen();
                 }
         }} else {

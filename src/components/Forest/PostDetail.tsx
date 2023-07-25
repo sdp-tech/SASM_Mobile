@@ -91,6 +91,7 @@ const PostDetailSection = ({
           uri: post.rep_pic,
         }}
       >
+        <View style={{backgroundColor: 'rgba(0,0,0,0.2)', width: width, height: 400}}>
         <View
           style={{
             flexDirection: "row",
@@ -144,6 +145,7 @@ const PostDetailSection = ({
             <Text style={{ color: '#F4F4F4', fontSize: 12, fontWeight: '400' }}> / 마지막 수정: {post.updated.slice(0, 10)}</Text>
             <Text style={{ flex: 1, textAlign: 'right', color: '#67D393', fontSize: 14, fontWeight: '400' }}>{post.writer.nickname}</Text>
           </View>
+        </View>
         </View>
       </ImageBackground>
       <View style={{ padding: 15 }}>
@@ -366,7 +368,7 @@ const PostDetailScreen = ({
   const [writerPosts, setWriterPosts] = useState([] as any);
   const [reported, setReported] = useState<string>('');
   const [modalVisible, setModalVisible] = useState<boolean>(false);
-  const { isLogin, setLogin } = useContext(LoginContext);
+  const {isLogin, setLogin} = useContext(LoginContext);
 
   const request = new Request();
   const post_id = route.params.post_id;
@@ -465,8 +467,8 @@ const PostDetailScreen = ({
             refreshing={refreshing}
             ListHeaderComponent={
               <>
-                <PostDetailSection post={post} navigation={navigation} onReport={() => setModalVisible(true)} />
-                <UserInfoSection user={post.writer} posts={writerPosts} isLogin={isLogin} navigation={navigation} onRefresh={reRenderScreen} />
+                <PostDetailSection post={post} navigation={navigation} onReport={() => setModalVisible(true)}/>
+                <UserInfoSection user={post.writer} posts={writerPosts} isLogin={isLogin} navigation={navigation} onRefresh={reRenderScreen}/>
                 <View style={{ flexDirection: 'row', padding: 20, alignItems: 'center' }}>
                   <View style={{ flexDirection: 'row', flex: 1 }}>
                     <Text style={{ fontSize: 16, fontWeight: '700', marginRight: 10 }}>한줄평</Text>
@@ -497,7 +499,10 @@ const PostDetailScreen = ({
               )
             }}
           />
-          <BottomBarSection post={post} email={user.email} navigation={navigation} onDelete={deletePost} onUpdate={() => { navigation.navigate('CategoryForm', { post: post }) }} onRefresh={reRenderScreen} />
+          <BottomBarSection post={post} email={user.email} navigation={navigation} onDelete={deletePost} onRefresh={reRenderScreen}
+            onUpdate={() => {
+              navigation.navigate('PostUpload', {post: post})
+            }}/>
           <Report reported={reported} modalVisible={modalVisible} setModalVisible={setModalVisible} onReport={onReport} />
         </>
       )}

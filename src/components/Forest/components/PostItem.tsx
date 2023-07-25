@@ -241,21 +241,23 @@ export const HotPostItem = ({
       >
         <ImageBackground source={{ uri: rep_pic }}
           style={{ width: width - 40, height: 100 }} imageStyle={{ borderRadius: 4 }}>
-          <View style={{ alignItems: "center", flex: 1, marginTop: 40 }}>
-            <Text style={{ color: "white", fontSize: 16, fontWeight: "700"}}>{title}</Text>
-          </View>
-          <View style={{flexDirection: "row", padding: 10}}>
-            <View style={{flexDirection: "row", alignSelf: "flex-start", flex: 1}}>
-              <Heart like={like} onPress={toggleLike} white={true} />
-              <Text style={{ color: "white", lineHeight: 18, marginLeft: 3 }}>{like_cnt}</Text>
+          <View style={{width: width - 40, height: 100, borderRadius: 4, backgroundColor: 'rgba(0,0,0,0.3)'}}>
+            <View style={{ alignItems: "center", flex: 1, marginTop: 40 }}>
+              <Text style={{ color: "white", fontSize: 16, fontWeight: "700"}}>{title}</Text>
             </View>
-            <Text style={{ color: "#67D393", fontWeight: "600", marginRight: 5}}>{writer.nickname}</Text>
+            <View style={{flexDirection: "row", padding: 10}}>
+              <View style={{flexDirection: "row", alignSelf: "flex-start", flex: 1}}>
+                <Heart like={like} onPress={toggleLike} white={true} />
+                <Text style={{ color: "white", lineHeight: 18, marginLeft: 3 }}>{like_cnt}</Text>
+              </View>
+              <Text style={{ color: "#67D393", fontWeight: "600", marginRight: 5}}>{writer.nickname}</Text>
+            </View>
+            <TouchableOpacity
+              style={{ position: "absolute", top: 85, left: (width-40) / 2 }}
+            >
+              <Arrow width={10} height={10} color={"#FFFFFF"} transform={[{ rotate: "90deg" }]} />
+            </TouchableOpacity>
           </View>
-          <TouchableOpacity
-            style={{ position: "absolute", top: 85, left: (width-40) / 2 }}
-          >
-            <Arrow width={10} height={10} color={"#FFFFFF"} transform={[{ rotate: "90deg" }]} />
-          </TouchableOpacity>
         </ImageBackground>
       </TouchableOpacity>
     </View>

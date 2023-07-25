@@ -47,6 +47,7 @@ const MyStory = () => {
   const [page, setPage] = useState<number>(1);
   const [max, setMax] = useState<number>(1);
   const [search, setSearch] = useState<string>("");
+  const [nextPage, setNextPage] = useState<any>(null);
   const [checkedList, setCheckedList] = useState([] as any);
   const request = new Request();
   const [type, setType] = useState<boolean>(true);
@@ -74,6 +75,14 @@ const MyStory = () => {
     setWritten(response.data.data.results);
   }
 
+  const onEndReached = async () => {
+    if (nextPage !== null) {
+      setPage(page + 1);
+    } else {
+      return;
+    }
+  };
+  
   useFocusEffect(useCallback(() => {
     if (isLogin) {
       if (type) getStories();
@@ -121,6 +130,8 @@ const MyStory = () => {
                   onEndReachedThreshold={0.3}
                   numColumns={2}
                   style={{ alignContent: 'space-between' }}
+                  onEndReached={onEndReached}
+                  onEndReachedThreshold={0.3}
                 />
               )}
             </View>

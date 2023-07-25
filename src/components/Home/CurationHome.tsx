@@ -75,11 +75,11 @@ export default function CurationHome({ navigation, route }: StackScreenProps<Hom
   const getCurration = async () => {
     setLoading(true);
     const response_admin = await request.get('/curations/admin_curations/');
-    setAdminCuration(response_admin.data.data);
+    setAdminCuration(response_admin.data.data.results);
     const response_rep = await request.get('/curations/rep_curations/');
-    setRepCuration(response_rep.data.data)
+    setRepCuration(response_rep.data.data.results);
     const response_verifed = await request.get('/curations/verified_user_curations/');
-    setVerifiedCuration(response_verifed.data.data)
+    setVerifiedCuration(response_verifed.data.data.results)
     setLoading(false);
   }
 
@@ -94,12 +94,12 @@ export default function CurationHome({ navigation, route }: StackScreenProps<Hom
   }, []))
 
   return (
-    <SafeAreaView style={{ backgroundColor: '#FFFFFF' }}>
+    <SafeAreaView style={{ backgroundColor: '#FFFFFF', flex: 1 }}>
       {loading ? <ActivityIndicator />
         : <>
           <ScrollView>
             <CustomHeader
-              onSearch={() => { navigation.navigate('List', { data: [] }) }}
+              onSearch={() => { navigation.navigate('List', { from: 'search' }) }}
               onAlarm={() => { }}
             />
             <CardView
@@ -120,7 +120,7 @@ export default function CurationHome({ navigation, route }: StackScreenProps<Hom
               <TextBox>
                 <Text style={TextStyles.Title}>큐레이션</Text>
                 <Text style={TextStyles.Sub}>장소를 모아 놓은 코스를 추천받아보세요.</Text>
-                <TouchableOpacity onPress={() => { navigation.navigate('List', { data: adminCuration }) }}><Text style={TextStyles.SubBlack}>모두보기 <Arrow /></Text></TouchableOpacity>
+                <TouchableOpacity onPress={() => { navigation.navigate('List', { from: 'admin' }) }}><Text style={TextStyles.SubBlack}>모두보기 <Arrow /></Text></TouchableOpacity>
               </TextBox>
               <CardView
                 gap={15}
@@ -140,7 +140,7 @@ export default function CurationHome({ navigation, route }: StackScreenProps<Hom
               <TextBox>
                 <Text style={TextStyles.Title}>이 큐레이션은 어때요?</Text>
                 <Text style={TextStyles.Sub}>유저가 직접 작성한 큐레이션</Text>
-                <TouchableOpacity onPress={() => { navigation.navigate('List', { data: verifedCuration }) }}><Text style={TextStyles.SubBlack}>모두보기 <Arrow /></Text></TouchableOpacity>
+                <TouchableOpacity onPress={() => { navigation.navigate('List', { from: 'verify' }) }}><Text style={TextStyles.SubBlack}>모두보기 <Arrow /></Text></TouchableOpacity>
               </TextBox>
               {
                 verifedList.map((data, index) =>
@@ -151,7 +151,7 @@ export default function CurationHome({ navigation, route }: StackScreenProps<Hom
               }
             </SectionCuration>
             <SectionCuration>
-              <View style={{backgroundColor:'#EDF8F2', paddingVertical: 25}}>
+              <View style={{ backgroundColor: '#EDF8F2', paddingVertical: 25 }}>
                 <TextBox>
                   <Text style={TextStyles.Title}>장소 추천</Text>
                 </TextBox>
