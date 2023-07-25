@@ -19,6 +19,7 @@ interface StoryDetailProps {
     data: any;
     navigation: any;
     isLogin: boolean;
+    onLayout: any;
 }
 
 export interface StoryDetail {
@@ -55,7 +56,7 @@ const CategoryWrapper = styled.View`
   border-width: 1;
 `
 
-const StoryDetailBox = ({navigation, data, isLogin}: StoryDetailProps) => {
+const StoryDetailBox = ({navigation, data, isLogin, onLayout}: StoryDetailProps) => {
     const { width, height } = Dimensions.get('screen');
     const [follow, setFollow] = useState<boolean>(false);
     const request = new Request();
@@ -126,7 +127,7 @@ const StoryDetailBox = ({navigation, data, isLogin}: StoryDetailProps) => {
     }
 
     return (
-        <>
+        <View onLayout={onLayout}>
             <View>
                     <TouchableOpacity style={{position: 'absolute', zIndex: 1, top: 50, left: 10}} onPress={() => {navigation.goBack()}}>
                         <Arrow width={20} height={20} transform={[{rotateY: '180deg'}]}/>
@@ -185,7 +186,7 @@ const StoryDetailBox = ({navigation, data, isLogin}: StoryDetailProps) => {
                 />
             </View>
             <Image source={{uri: data!.map_image}} style={{width: width, height: 120}} />
-        </>
+        </View>
     )
 }
 

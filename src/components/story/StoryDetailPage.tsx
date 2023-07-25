@@ -174,6 +174,7 @@ const StoryDetailPage = ({ navigation, route }: StoryProps) => {
   const [commentId, setCommentId] = useState<number>(0);
   const [reported, setReported] = useState<string>('');
   const [modalVisible, setModalVisible] = useState<boolean>(false);
+  const [headerHeight, setHeaderHeight] = useState<number>(0);
   const request = new Request();
 
   const checkUser = async () => {
@@ -241,9 +242,14 @@ const StoryDetailPage = ({ navigation, route }: StoryProps) => {
     }
   };
 
+  const onLayout = (e: any) => {
+    const { height } = e.nativeEvent.layout;
+    setHeaderHeight(height);
+  }
+
   const scrollToComment = () => {
     if (scrollRef.current) {
-      scrollRef.current.scrollToIndex({ animated: true, index: 0 })
+      scrollRef.current.scrollToOffset({ animated: true, offset: headerHeight })
     }
   }
 
@@ -271,7 +277,7 @@ const StoryDetailPage = ({ navigation, route }: StoryProps) => {
                 keyExtractor={(item, index) => item.id.toString()}
                 ListHeaderComponent={
                 <>
-                    <StoryDetailBox data={data} navigation={navigation} isLogin={isLogin} />
+                    <StoryDetailBox data={data} navigation={navigation} isLogin={isLogin} onLayout={onLayout}/>
                     <View style={{borderBottomColor: '#D9D9D9', width: width, borderBottomWidth: 1, marginTop: 40}} />
                     <View style={{ flexDirection: 'row', padding: 20, alignItems: 'center' }}>
                       <View style={{flexDirection: 'row', flex: 1}}>
