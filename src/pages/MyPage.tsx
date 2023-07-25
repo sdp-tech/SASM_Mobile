@@ -5,16 +5,15 @@ import MyPageTabView, { IUserInfo } from '../components/mypage/MyPageTabView';
 import UserInfoBox from '../components/mypage/components/UserInfoBox';
 import LoginScreen from '../components/Auth/Login';
 import RegisterScreen from '../components/Auth/Register';
-import ChangeForm from '../components/mypage/components/ChangeForm';
-import PasswordChange from '../components/mypage/components/ChangePassword';
-import Feedback from '../components/mypage/components/GetFeedback';
+import ChangeForm from '../components/mypage/components/option/ChangeForm';
+import PasswordChange from '../components/mypage/components/option/ChangePassword';
+import Feedback from '../components/mypage/components/option/GetFeedback';
 import FindIDPWScreen from '../components/Auth/FindIDPW';
 import { StackNavigationProp } from '@react-navigation/stack';
 import Following from '../components/mypage/components/Following_List';
 import Follower from '../components/mypage/components/Follower_List';
-import Options from '../components/mypage/components/OptionPage';
-import PlaceList from '../components/mypage/components/myplace/PlaceList';
-import Withdraw from '../components/mypage/components/Withdraw';
+import Options from '../components/mypage/components/option/OptionPage';
+import Withdraw from '../components/mypage/components/option/Withdraw';
 
 export interface MyPageParams {
     navigation: any;

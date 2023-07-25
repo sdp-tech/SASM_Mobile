@@ -1,5 +1,5 @@
 import React, { Dispatch, SetStateAction } from 'react';
-import { Image, View, Dimensions, TouchableOpacity } from 'react-native';
+import { Image, View, Dimensions, TouchableOpacity, ViewStyle } from 'react-native';
 import { TextPretendard as Text } from './CustomText';
 import { FlatList } from 'react-native-gesture-handler';
 import styled from 'styled-components/native';
@@ -55,9 +55,10 @@ interface CategoryProps {
   setCheckedList: (list: string[]) => void;
   story?: boolean;
   setPage?: Dispatch<SetStateAction<number>>;
+  style?: ViewStyle;
 }
 
-export default function Category({ checkedList, setCheckedList, story, setPage }: CategoryProps): JSX.Element {
+export default function Category({ checkedList, setCheckedList, story, setPage, style }: CategoryProps): JSX.Element {
   const handleCheckedList = (data: string): void => {
     if(setPage) setPage(1);
     if (checkedList.includes(data)) {
@@ -70,7 +71,7 @@ export default function Category({ checkedList, setCheckedList, story, setPage }
 
   return (
     <FlatList
-      style={{ marginVertical: 10 }}
+      style={{ marginVertical: 10, ...style }}
       showsHorizontalScrollIndicator={false}
       data={CATEGORY_LIST}
       horizontal

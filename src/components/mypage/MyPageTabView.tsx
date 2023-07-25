@@ -27,11 +27,11 @@ export interface IUserInfo {
   is_sdp_admin: boolean;
   is_verifed: boolean;
   introduction: string;
-  [key:string]:string | boolean | number;
+  [key: string]: string | boolean | number;
 }
 
 const MyPageTabView = ({ navigation }: StackScreenProps<MyPageProps, 'mypage'>) => {
-  const {isLogin, setLogin} = useContext(LoginContext);
+  const { isLogin, setLogin } = useContext(LoginContext);
   const [info, setInfo] = useState<IUserInfo>({
     id: 0,
     gender: '',
@@ -71,7 +71,7 @@ const MyPageTabView = ({ navigation }: StackScreenProps<MyPageProps, 'mypage'>) 
     { key: "place", title: "장소" },
     { key: "story", title: "스토리" },
     { key: "curation", title: "큐레이션" },
-    { key: "community", title: "정보글" }
+    { key: "forest", title: "포레스트" }
   ]);
   const request = new Request();
 
@@ -83,14 +83,14 @@ const MyPageTabView = ({ navigation }: StackScreenProps<MyPageProps, 'mypage'>) 
         return <MyStory navigation={navigation} />;
       case "curation":
         return <MyCuration navigation={navigation} />;
-      case "community":
-        return <MyForest/>
+      case "forest":
+        return <MyForest />
     }
   }
 
 
   useFocusEffect(useCallback(() => {
-    if(isLogin) getUserinfo();
+    if (isLogin) getUserinfo();
   }, [isLogin]))
 
   const ProfileSection = () => {
@@ -98,39 +98,39 @@ const MyPageTabView = ({ navigation }: StackScreenProps<MyPageProps, 'mypage'>) 
       <View style={{ flexDirection: "row", marginLeft: 15 }}>
         {
           isLogin ?
-          <View>
-          <Image source={{ uri: info?.profile_image }} style={{ width: 80, height: 80, borderRadius: 60 }} />
-          <View style={{ paddingVertical: 10, marginLeft: 10 }}>
-            <Text style={{ fontWeight: "700", fontSize: 16 }}>{info?.nickname}</Text>
-            <Text style={{ fontWeight: "400", fontSize: 12, marginTop: 10 }}>자기소개</Text>
-            <View style={{ flexDirection: "row" }}>
-              <TouchableOpacity onPress={() => { navigation.navigate('follower', { email: info.email }) }}>
-                <Text style={{ fontWeight: "400", fontSize: 10, color: "#848484", marginTop: 10 }}>팔로워 {follower.num}  |  </Text>
-              </TouchableOpacity>
-              <TouchableOpacity onPress={() => { navigation.navigate('following', { email: info.email }) }}>
-                <Text style={{ fontWeight: "400", fontSize: 10, color: "#848484", marginTop: 10 }}>팔로잉 {following.num}</Text>
-              </TouchableOpacity>
+            <View style={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
+              <Image source={{ uri: info?.profile_image }} style={{ width: 80, height: 80, borderRadius: 60 }} />
+              <View style={{ paddingVertical: 10, marginLeft: 10 }}>
+                <Text style={{ fontWeight: "700", fontSize: 16 }}>{info?.nickname}</Text>
+                <Text style={{ fontWeight: "400", fontSize: 12, marginTop: 10 }}>자기소개</Text>
+                <View style={{ flexDirection: "row" }}>
+                  <TouchableOpacity onPress={() => { navigation.navigate('follower', { email: info.email }) }}>
+                    <Text style={{ fontWeight: "400", fontSize: 10, color: "#848484", marginTop: 10 }}>팔로워 {follower.num}  |  </Text>
+                  </TouchableOpacity>
+                  <TouchableOpacity onPress={() => { navigation.navigate('following', { email: info.email }) }}>
+                    <Text style={{ fontWeight: "400", fontSize: 10, color: "#848484", marginTop: 10 }}>팔로잉 {following.num}</Text>
+                  </TouchableOpacity>
+                </View>
+              </View>
             </View>
-          </View>
-          </View>
-          :
-          <View>
-          <View style={{ width: 80, height: 80, borderRadius: 60, borderColor:'#4DB1F7', borderWidth: 1, display:'flex', justifyContent:'center', alignItems:'center'}}>
-            <Profile/>
-          </View>
-          <View style={{ paddingVertical: 10, marginLeft: 10 }}>
-            <Text style={{ fontWeight: "700", fontSize: 16 }}>SASM</Text>
-            <Text style={{ fontWeight: "400", fontSize: 12, marginTop: 10 }}>로그인해서 다른 사람들의 장소를 탐색해보세요</Text>
-            <View style={{ flexDirection: "row" }}>
-              <TouchableOpacity>
-                <Text style={{ fontWeight: "400", fontSize: 10, color: "#848484", marginTop: 10 }}>팔로워 {follower.num}  |  </Text>
-              </TouchableOpacity>
-              <TouchableOpacity>
-                <Text style={{ fontWeight: "400", fontSize: 10, color: "#848484", marginTop: 10 }}>팔로잉 {following.num}</Text>
-              </TouchableOpacity>
+            :
+            <View>
+              <View style={{ width: 80, height: 80, borderRadius: 60, borderColor: '#4DB1F7', borderWidth: 1, display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+                <Profile />
+              </View>
+              <View style={{ paddingVertical: 10, marginLeft: 10 }}>
+                <Text style={{ fontWeight: "700", fontSize: 16 }}>SASM</Text>
+                <Text style={{ fontWeight: "400", fontSize: 12, marginTop: 10 }}>로그인해서 다른 사람들의 장소를 탐색해보세요</Text>
+                <View style={{ flexDirection: "row" }}>
+                  <TouchableOpacity>
+                    <Text style={{ fontWeight: "400", fontSize: 10, color: "#848484", marginTop: 10 }}>팔로워 {follower.num}  |  </Text>
+                  </TouchableOpacity>
+                  <TouchableOpacity>
+                    <Text style={{ fontWeight: "400", fontSize: 10, color: "#848484", marginTop: 10 }}>팔로잉 {following.num}</Text>
+                  </TouchableOpacity>
+                </View>
+              </View>
             </View>
-          </View>
-          </View>
         }
       </View>
     )
@@ -138,11 +138,11 @@ const MyPageTabView = ({ navigation }: StackScreenProps<MyPageProps, 'mypage'>) 
 
   return (
     <SafeAreaView style={{ backgroundColor: 'white', flex: 1 }}>
-      <View style={{ flexDirection: "row", paddingHorizontal: 20, paddingVertical: 10 }}>
+      <View style={{ flexDirection: "row", paddingHorizontal: 20, paddingVertical: 10, justifyContent:'space-between' }}>
         <TouchableOpacity onPress={() => { navigation.navigate('user', { info: info, follower: follower.num, following: following.num }) }}>
           <Profile />
         </TouchableOpacity>
-        <TouchableOpacity style={{ marginLeft: 300 }} onPress={() => { navigation.navigate('options', {info: info}) }}>
+        <TouchableOpacity onPress={() => { navigation.navigate('options', { info: info }) }}>
           <Settings />
         </TouchableOpacity>
       </View>

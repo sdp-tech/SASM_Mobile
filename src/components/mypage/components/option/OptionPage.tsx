@@ -1,14 +1,14 @@
 import React, { useEffect, useState, useCallback, useContext } from 'react';
 import { View, TouchableOpacity, Alert, StyleSheet, SafeAreaView, Image, ImageBackground, Button, Dimensions } from "react-native";
 import { ScrollView } from 'react-native-gesture-handler';
-import { TextPretendard as Text } from '../../../common/CustomText';
-import { getNickname, removeNickname, removeAccessToken, removeRefreshToken, } from '../../../common/storage';
-import Arrow from '../../../assets/img/common/Arrow.svg';
-import { Request } from '../../../common/requests';
+import { TextPretendard as Text } from '../../../../common/CustomText';
+import { getNickname, removeNickname, removeAccessToken, removeRefreshToken, } from '../../../../common/storage';
+import Arrow from "../../../../assets/img/common/Arrow.svg";
+import { Request } from '../../../../common/requests';
 import { StackScreenProps } from '@react-navigation/stack';
-import { MyPageProps } from '../../../pages/MyPage';
+import { MyPageProps } from '../../../../pages/MyPage';
 import styled from 'styled-components/native';
-import { LoginContext } from '../../../common/Context';
+import { LoginContext } from '../../../../common/Context';
 
 const StyledButton = styled.TouchableOpacity`
     height: 40px;
@@ -35,7 +35,7 @@ export default function Options({ navigation, route }: StackScreenProps<MyPagePr
     const buttonAction: { label: string, onPress?: () => void }[] = [
         {
             label: '프로필 수정',
-            onPress: () => { navigation.navigate('change', {info: route.params.info}) }
+            onPress: () => { navigation.navigate('change', {info: route.params?.info}) }
         },
         {
             label: '비밀번호 변경',

@@ -1,13 +1,13 @@
 import React, { useState } from 'react';
 import { Platform, TouchableOpacity, View, TextInput, StyleSheet, SafeAreaView, Alert, Dimensions, Modal, Keyboard } from "react-native";
-import { TextPretendard as Text } from '../../../common/CustomText';
+import { TextPretendard as Text } from '../../../../common/CustomText';
 import styled, { css } from 'styled-components/native';
-import { setNickname, setAccessToken, setRefreshToken } from '../../../common/storage';
-import { Request } from '../../../common/requests';
-import Arrow from "../../../assets/img/common/Arrow.svg";
+import { setNickname, setAccessToken, setRefreshToken } from '../../../../common/storage';
+import { Request } from '../../../../common/requests';
+import Arrow from "../../../../assets/img/common/Arrow.svg";
 import { StackScreenProps } from '@react-navigation/stack';
-import { MyPageProps } from '../../../pages/MyPage';
-import FinishModal from '../../../common/FinishModal';
+import { MyPageProps } from '../../../../pages/MyPage';
+import FinishModal from '../../../../common/FinishModal';
 import { TouchableWithoutFeedback } from 'react-native-gesture-handler';
 
 const { width, height } = Dimensions.get('window');

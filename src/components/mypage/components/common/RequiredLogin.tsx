@@ -1,8 +1,8 @@
 import { StackNavigationProp, StackScreenProps } from '@react-navigation/stack';
 import React from 'react';
-import { MyPageProps } from '../../../pages/MyPage';
+import { MyPageProps } from '../../../../pages/MyPage';
 import { StyleSheet, TouchableOpacity, View } from 'react-native';
-import { TextPretendard as Text } from '../../../common/CustomText';
+import { TextPretendard as Text } from '../../../../common/CustomText';
 import { useNavigation } from '@react-navigation/native';
 import styled from 'styled-components/native';
 

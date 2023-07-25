@@ -1,16 +1,16 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import { SafeAreaView, Image, View, StyleSheet, TouchableOpacity, Touchable, ActivityIndicator, Alert } from 'react-native';
-import { TextPretendard as Text } from '../../../common/CustomText';
-import Arrow from '../../../assets/img/common/Arrow.svg';
+import { TextPretendard as Text } from '../../../../common/CustomText';
+import Arrow from '../../../../assets/img/common/Arrow.svg';
 import { StackScreenProps } from '@react-navigation/stack';
-import { MyPageProps } from '../../../pages/MyPage';
+import { MyPageProps } from '../../../../pages/MyPage';
 import styled from 'styled-components/native';
-import InputWithLabel from '../../../common/InputWithLabel';
-import DatePicker from '../../../common/DatePicker';
+import InputWithLabel from '../../../../common/InputWithLabel';
+import DatePicker from '../../../../common/DatePicker';
 import { useFocusEffect } from '@react-navigation/native';
-import ProfileImage from '../../../assets/img/MyPage/ProfileImage.svg';
-import { Request } from '../../../common/requests';
-import { CameraSelector } from '../../../common/PhotoOptions';
+import ProfileImage from '../../../../assets/img/MyPage/ProfileImage.svg';
+import { Request } from '../../../../common/requests';
+import { CameraSelector } from '../../../../common/PhotoOptions';
 import * as ImagePicker from "react-native-image-picker";
 
 const Section = styled.View`

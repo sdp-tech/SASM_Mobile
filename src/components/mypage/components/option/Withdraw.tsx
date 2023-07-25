@@ -1,13 +1,13 @@
 import React, { useState, useContext } from 'react';
 import { Platform, TouchableOpacity, View, TextInput, StyleSheet, SafeAreaView, Alert } from "react-native";
-import { TextPretendard as Text } from '../../../common/CustomText';
+import { TextPretendard as Text } from '../../../../common/CustomText';
 import styled, { css } from 'styled-components/native';
 import { StackScreenProps } from '@react-navigation/stack';
-import { MyPageProps } from '../../../pages/MyPage';
-import { removeNickname, removeAccessToken, removeRefreshToken, } from '../../../common/storage';
-import { LoginContext } from '../../../common/Context';
+import { MyPageProps } from '../../../../pages/MyPage';
+import { removeNickname, removeAccessToken, removeRefreshToken, } from '../../../../common/storage';
+import { LoginContext } from '../../../../common/Context';
 
-import { Request } from '../../../common/requests'
+import { Request } from '../../../../common/requests'
 
 
 const WithdrawButton = styled.View`
