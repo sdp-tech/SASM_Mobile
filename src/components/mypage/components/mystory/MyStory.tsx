@@ -1,7 +1,7 @@
 import { useState, useEffect, useCallback, useContext } from 'react';
 import { SafeAreaView, View, StyleSheet, TouchableOpacity, Image, FlatList, ScrollView, Dimensions, Pressable } from 'react-native';
 import { TextPretendard as Text } from '../../../../common/CustomText';
-import ItemCard from "./ItemCard";
+import MyStoryItemCard, { MyStroyItemCardProps } from "./MyStoryItemCard";
 import NothingIcon from "../../../../assets/img/nothing.svg";
 import Search from "../../../../assets/img/common/Search.svg";
 import { Request } from "../../../../common/requests";
@@ -39,17 +39,22 @@ const styles = (isCategory?: boolean) => StyleSheet.create({
   },
 });
 
-const MyStory = ({ navigation, route }: MyPageParams) => {
+const MyStory = () => {
   const { isLogin, setLogin } = useContext(LoginContext);
-  const { width, height } = Dimensions.get('window');
-  const [storyList, setStoryList] = useState([] as any);
+  const [edit, setEdit] = useState<boolean>(false);
+  const [refresh, setRefresh] = useState<boolean>(false);
+  const [storyList, setStoryList] = useState<MyStroyItemCardProps[]>([]);
   const [page, setPage] = useState<number>(1);
   const [max, setMax] = useState<number>(1);
   const [search, setSearch] = useState<string>("");
   const [checkedList, setCheckedList] = useState([] as any);
   const request = new Request();
   const [type, setType] = useState<boolean>(true);
-  const [written, setWritten] = useState<any>([]);
+  const [written, setWritten] = useState<MyStroyItemCardProps[]>([]);
+
+  const rerender = () => {
+    setRefresh(!refresh);
+  }
 
   const getStories = async () => {
     const response = await request.get(`/mypage/mypick_story/`, {
@@ -74,7 +79,7 @@ const MyStory = ({ navigation, route }: MyPageParams) => {
       if (type) getStories();
       else getWrittenStory();
     }
-  }, [page, search, checkedList]));
+  }, [page, search, checkedList, refresh]));
 
 
   return (
@@ -83,6 +88,8 @@ const MyStory = ({ navigation, route }: MyPageParams) => {
         isLogin ?
           <>
             <SearchNCategory
+              edit={edit}
+              setEdit={setEdit}
               setType={setType}
               type={type}
               setPage={setPage}
@@ -102,9 +109,10 @@ const MyStory = ({ navigation, route }: MyPageParams) => {
                 <FlatList
                   data={type ? storyList : written}
                   renderItem={({ item }: any) =>
-                    <ItemCard
-                      props={item}
-                      navigation={navigation}
+                    <MyStoryItemCard
+                    edit={edit}
+                    rerender={rerender}
+                      data={item}
                     />
                   }
                   onEndReached={() => {

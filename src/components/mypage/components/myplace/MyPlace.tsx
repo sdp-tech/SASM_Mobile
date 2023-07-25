@@ -1,26 +1,14 @@
 import { useState, useEffect, useCallback, useContext } from "react";
-import {
-  View,
-  StyleSheet,
-  TouchableOpacity,
-  Image,
-  FlatList,
-  Dimensions,
-} from "react-native";
+import { View, StyleSheet, FlatList, } from "react-native";
 import { TextPretendard as Text } from '../../../../common/CustomText';
-import ItemCard from "./ItemCard";
 import NothingIcon from "../../../../assets/img/nothing.svg";
 import { Request } from "../../../../common/requests";
-import Category from "../../../../common/Category";
-import SearchBar from "../../../../common/SearchBar";
-import Search from "../../../../assets/img/common/Search.svg";
-import Menu from "../../../../assets/img/MyPage/Menu.svg";
-import Arrow from "../../../../assets/img/common/Arrow.svg";
 import { MyPageParams } from "../../../../pages/MyPage";
 import { useFocusEffect } from "@react-navigation/native";
 import { LoginContext } from "../../../../common/Context";
 import RequireLogin from "../common/RequiredLogin";
 import { SearchNCategory } from "../common/SearchNCategory";
+import MyPlaceItemCard, { MyPlaceItemCardProps } from "./MyPlaceItemCard";
 
 const styles = (isCategory?: boolean) => StyleSheet.create({
   Container: {
@@ -48,48 +36,48 @@ const styles = (isCategory?: boolean) => StyleSheet.create({
   },
 });
 
-export interface MyPlaceItemCard {
-  id: number;
-  place_name: string;
-  category: string;
-  rep_pic: string;
-  address: string;
-}
-
 const MyPlace = ({ navigation }: MyPageParams) => {
   const { isLogin, setLogin } = useContext(LoginContext);
-  const [placeList, setPlaceList] = useState<MyPlaceItemCard[]>([]);
+  const [placeList, setPlaceList] = useState<MyPlaceItemCardProps[]>([]);
   const [page, setPage] = useState<number>(1);
   const [max, setMax] = useState<number>(1);
-  const [checkedList, setCheckedList] = useState([] as any);
+  const [checkedList, setCheckedList] = useState<string[]>([]);
   const [search, setSearch] = useState<string>("");
+  const [edit, setEdit] = useState<boolean>(false);
+  const [refresh, setRefresh] = useState<boolean>(false);
   const request = new Request();
   const [type, setType] = useState<boolean>(true);
-  const [written, setWritten] = useState<MyPlaceItemCard[]>([]);
+  const [written, setWritten] = useState<MyPlaceItemCardProps[]>([]);
+
+  const rerender = () => {
+    setRefresh(true);
+    setRefresh(false);
+  }
+
   const getPlaces = async () => {
     const response = await request.get(`/mypage/myplace_search/`, {
       search: search,
       filter: checkedList,
       page: page
     })
-    setMax(Math.ceil(response.data.data.count/6));
-    if(page == 1) setPlaceList(response.data.data.results);
+    setMax(Math.ceil(response.data.data.count / 6));
+    if (page == 1) setPlaceList(response.data.data.results);
     else setPlaceList([...placeList, ...response.data.data.results]);
   };
 
   const getWrittenReview = async () => {
     console.error(page);
     const response = await request.get('/mypage/my_reviewed_place/');
-    setMax(Math.ceil(response.data.data.count/6));
+    setMax(Math.ceil(response.data.data.count / 6));
     setWritten(response.data.data.results);
   }
 
-  useFocusEffect(useCallback(()=>{
-    if(isLogin) {
-      if(type) getPlaces();
+  useFocusEffect(useCallback(() => {
+    if (isLogin) {
+      if (type) getPlaces();
       else getWrittenReview();
     }
-  },[page, search, checkedList, type]))
+  }, [page, search, checkedList, type, refresh]))
 
   return (
     <View style={styles().Container}>
@@ -98,12 +86,10 @@ const MyPlace = ({ navigation }: MyPageParams) => {
           <>
             <SearchNCategory
               setPage={setPage}
-              type={type}
-              setType={setType}
-              search={search}
-              setSearch={setSearch}
-              checkedList={checkedList}
-              setCheckedList={setCheckedList}
+              type={type} setType={setType}
+              search={search} setSearch={setSearch}
+              checkedList={checkedList} setCheckedList={setCheckedList}
+              setEdit={setEdit} edit={edit}
               label="내 리뷰"
             />
             <View style={styles().Place}>
@@ -115,14 +101,16 @@ const MyPlace = ({ navigation }: MyPageParams) => {
               ) : (
                 <FlatList
                   data={type ? placeList : written}
-                  renderItem={({ item }: any) => (
-                    <ItemCard
+                  renderItem={({ item }: { item: MyPlaceItemCardProps }) => (
+                    <MyPlaceItemCard
                       data={item}
+                      edit={edit}
+                      rerender={rerender}
                     />
                   )}
-                  onEndReached={()=>{
-                    if(page < max) {
-                      setPage(page+1);
+                  onEndReached={() => {
+                    if (page < max) {
+                      setPage(page + 1);
                     }
                   }}
                   onEndReachedThreshold={0.3}

@@ -13,11 +13,17 @@ import NothingIcon from "../../../../assets/img/nothing.svg";
 export default function MyForest() {
   const { isLogin, setLogin } = useContext(LoginContext);
   const [forestList, setForestList] = useState<MyForestItemCardProps[]>([]);
+  const [edit, setEdit] = useState<boolean>(false);
   const [page, setPage] = useState<number>(1);
   const [max, setMax] = useState<number>(0);
   const [search, setSearch] = useState<string>('');
   const [type, setType] = useState<boolean>(true);
+  const [refresh, setRefresh] = useState<boolean>(false);
   const request = new Request();
+
+  const rerender = () => {
+    setRefresh(!refresh);
+  }
 
   const getForest = async () => {
     const response = await request.get('/mypage/mypick_forest/', { page: page, search: search, category_filter: [''] });
@@ -26,7 +32,7 @@ export default function MyForest() {
     else setForestList([...forestList, ...response.data.data.results]);
   }
   const getWrittenForest = async () => {
-    const response = await request.get('/mypage/my_forest/', { page: page, search: search, category_filter: ['']});
+    const response = await request.get('/mypage/my_forest/', { page: page, search: search, category_filter: [''] });
     setMax(Math.ceil(response.data.data.count / 4))
     if (page == 1) setForestList(response.data.data.results);
     else setForestList([...forestList, ...response.data.data.results]);
@@ -37,11 +43,13 @@ export default function MyForest() {
       if (type) getForest();
       else getWrittenForest();
     }
-  }, [page, type, search]))
+  }, [page, type, search, refresh]))
 
   return (
     <View style={{ flex: 1 }}>
       <SearchNoCategory
+        edit={edit}
+        setEdit={setEdit}
         setSearch={setSearch}
         search={search}
         setType={setType}
@@ -60,7 +68,7 @@ export default function MyForest() {
               data={forestList}
               contentContainerStyle={{ paddingHorizontal: 20, flex: 1 }}
               renderItem={({ item }: { item: MyForestItemCardProps }) => (
-                <MyForestItemCard props={item} />
+                <MyForestItemCard props={item} edit={edit} rerender={rerender}/>
               )}
               onEndReached={() => {
                 if (page < max) {

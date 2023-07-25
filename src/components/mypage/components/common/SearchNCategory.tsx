@@ -30,9 +30,11 @@ interface SearchNCategoryProps {
   type: boolean;
   setType: Dispatch<SetStateAction<boolean>>;
   setPage?:Dispatch<SetStateAction<number>>;
+  setEdit: Dispatch<SetStateAction<boolean>>;
+  edit: boolean;
 }
 
-export function SearchNCategory({ setSearch, search, checkedList, setCheckedList, label, setType, type, setPage }: SearchNCategoryProps) {
+export function SearchNCategory({ setSearch, search, checkedList, setCheckedList, label, setType, type, setPage, setEdit, edit}: SearchNCategoryProps) {
   const [mode, setMode] = useState<boolean>(true);
 
   return (
@@ -57,7 +59,8 @@ export function SearchNCategory({ setSearch, search, checkedList, setCheckedList
                 placeholder="내용 입력 전"
                 placeholderTextColor={"#848484"}
               />
-              <TouchableOpacity style={{ borderRadius: 12, borderColor: "#D7D7D7", borderWidth: 0.25, justifyContent: "center", alignItems: "center", marginRight: 5, paddingHorizontal: 5, height: 25 }}>
+              <TouchableOpacity style={{ borderRadius: 12, borderColor: "#D7D7D7", borderWidth: 0.25, justifyContent: "center", alignItems: "center", marginRight: 5, paddingHorizontal: 5, height: 25 }}
+              onPress={()=>{setEdit(!edit)}}>
                 <Text style={{ fontSize: 12 }}>편집</Text>
               </TouchableOpacity>
               <TouchableOpacity style={{ backgroundColor: type ? '#FFFFFF' : '#D7D7D7', borderRadius: 20, borderColor: "#D7D7D7", borderWidth: 0.25, justifyContent: "center", alignItems: "center", marginRight: 5, paddingHorizontal: 5, height: 25 }}
@@ -80,9 +83,11 @@ interface SearchNoCategoryProps {
   setType: Dispatch<SetStateAction<boolean>>;
   label: string;
   setPage?: Dispatch<SetStateAction<number>>;
+  edit: boolean;
+  setEdit: Dispatch<SetStateAction<boolean>>;
 }
 
-export function SearchNoCategory({ setSearch, search, type, setType, label, setPage }: SearchNoCategoryProps) {
+export function SearchNoCategory({ setSearch, search, type, setType, label, setPage, setEdit, edit }: SearchNoCategoryProps) {
   const [mode, setMode] = useState<boolean>(true);
 
   return (
@@ -107,7 +112,8 @@ export function SearchNoCategory({ setSearch, search, type, setType, label, setP
               <TouchableOpacity style={{ marginHorizontal: 10 }} onPress={() => { setMode(true); }}>
                 <Search width={18} height={18} />
               </TouchableOpacity>
-              <TouchableOpacity style={{ borderRadius: 12, borderColor: "#D7D7D7", borderWidth: 0.25, justifyContent: "center", alignItems: "center", marginRight: 5, paddingHorizontal: 5, height: 25 }}>
+              <TouchableOpacity style={{ borderRadius: 12, borderColor: "#D7D7D7", borderWidth: 0.25, justifyContent: "center", alignItems: "center", marginRight: 5, paddingHorizontal: 5, height: 25 }}
+                onPress={()=>{setEdit(!edit)}}>
                 <Text style={{ fontSize: 12 }}>편집</Text>
               </TouchableOpacity>
               <TouchableOpacity style={{ backgroundColor: type ? '#FFFFFF' : '#D7D7D7', borderRadius: 20, borderColor: "#D7D7D7", borderWidth: 0.25, justifyContent: "center", alignItems: "center", marginRight: 5, paddingHorizontal: 5, height: 25 }}
