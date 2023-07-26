@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef, useCallback } from 'react';
+import { useState, useEffect, useRef, useCallback, useContext } from 'react';
 import { View, TouchableOpacity, Dimensions, ImageBackground, TextInput, ScrollView, Modal, Alert, KeyboardAvoidingView, TouchableWithoutFeedback, Keyboard } from 'react-native';
 import { TextPretendard as Text } from '../../../common/CustomText';
 import { RichEditor, RichToolbar, actions } from 'react-native-pell-rich-editor';
@@ -7,21 +7,18 @@ import FormHeader from '../../../common/FormHeader';
 import CardView from '../../../common/CardView';
 import Camera from '../../../assets/img/Forest/Camera.svg';
 import FinishModal from '../../../common/FinishModal';
+import { ForestContext } from './ForestContext';
 
 import { Request } from '../../../common/requests';
-import { ForestStackParams } from '../../../pages/Forest';
-import type { NativeStackScreenProps } from "@react-navigation/native-stack";
+import { PostUploadParams } from '../PostUpload';
 
-const ForestForm = ({ navigation, route }: NativeStackScreenProps<ForestStackParams, "ForestForm">) => {
-  const post_category = route.params.category;
-  const post_semi_categories = route.params.semi_categories;
-  const post = route.params?.post;
+const ForestForm = ({ tab, setTab, navigation, post }: PostUploadParams) => {
+  const { category, setCategory, semiCategories, setSemiCategories, forest, setForest } = useContext(ForestContext);
   const editor = useRef<RichEditor>(null);
   const scrollRef = useRef<ScrollView>(null);
   const { width, height } = Dimensions.get('window');
   const [nickname, setNickname] = useState<string>('');
   const [repPic, setRepPic] = useState([] as any);
-  const [forest, setForest] = useState({ title: "", subtitle: "", content: "", category: post_category.id, semi_categories: [], hashtags: "", photos: [], rep_pic: "" });
   const [photoList, setPhotoList] = useState([] as any);
   const [modalVisible, setModalVisible] = useState(false);
   const [hashtag, setHashtag] = useState([] as any);
@@ -31,18 +28,21 @@ const ForestForm = ({ navigation, route }: NativeStackScreenProps<ForestStackPar
   const loadInfo = async () => {
     const response = await request.get('/mypage/me/', {}, {});
     setNickname(response.data.data.nickname);
-    if (!post) {
-      setForest({...forest, semi_categories: post_semi_categories})
+    if (post.id == 0) {
+      setForest({...forest, category: category, semi_categories: semiCategories})
     }
     else {
-      // const response_forest = await request.get(`/forest/${post.id}/`);
-      const {title, subtitle, content, category, semi_categories, hashtags, photos, rep_pic} = post;
+      const {title, subtitle, content, semi_categories, hashtags, photos, rep_pic} = post;
       const _hashtags = '#'+hashtags.join('#');
       setHashtag(hashtags)
       setForest({
         ...forest,
         title: title, subtitle: subtitle, content: content, semi_categories: semi_categories, hashtags: _hashtags, photos: photos, rep_pic: rep_pic
       });
+      if(category.id == 0 && semiCategories.length == 0){
+        setCategory(post.category)
+        setSemiCategories(post.semi_categories)
+      }
     }
   }
 
@@ -57,7 +57,7 @@ const ForestForm = ({ navigation, route }: NativeStackScreenProps<ForestStackPar
 
   const pickImage = () => {
     launchImageLibrary(options, (response: any) => {
-      uploadImage(response.assets[0]);
+      if (response && response.assets) uploadImage(response.assets[0]);
     });
   }
 
@@ -103,7 +103,7 @@ const ForestForm = ({ navigation, route }: NativeStackScreenProps<ForestStackPar
     for (const photo of photoList){
       formData.append('photos', "add,"+photo);
     }
-    for (const semi_category of post_semi_categories){
+    for (const semi_category of semiCategories){
       formData.append('semi_categories', "add,"+semi_category.id.toString());
     }
     for (let [key, value] of Object.entries(forest)) {
@@ -119,6 +119,8 @@ const ForestForm = ({ navigation, route }: NativeStackScreenProps<ForestStackPar
         for (const _hashtag of hashtags){
           formData.append('hashtags', "add,"+_hashtag.trim());
         }
+      } else if (key === 'category') {
+        formData.append('category', category.id.toString())
       } else if (key === 'photos' || key === 'semi_categories') {
         continue;
       } else {
@@ -169,17 +171,19 @@ const ForestForm = ({ navigation, route }: NativeStackScreenProps<ForestStackPar
         }
       } else if (key === 'semi_categories') {
         for (const item of value) {
-          const existingCategory = post_semi_categories.find((category: any) => category.id === item.id);
+          const existingCategory = semiCategories.find((category: any) => category.id === item.id);
           if (!existingCategory) {
             formData.append('semi_categories', `remove,${item.id}`);
           }
         }
-        for (const item of post_semi_categories) {
+        for (const item of semiCategories) {
           const existingCategory = value.find((category: any) => category.id === item.id);
           if (!existingCategory) {
             formData.append('semi_categories', `add,${item.id}`);
           }
         }
+      } else if (key === 'category') {
+        formData.append('category', category.id.toString())
       } else {
         formData.append(`${key}`, `${value}`);
       }
@@ -195,23 +199,32 @@ const ForestForm = ({ navigation, route }: NativeStackScreenProps<ForestStackPar
     scrollRef.current!.scrollTo({y: scrollY - 30, animated: true});
   }, []);
 
+  const images = [
+    require('../../../assets/img/Forest/Category01.png'),
+    require('../../../assets/img/Forest/Category02.png'),
+    require('../../../assets/img/Forest/Category03.png'),
+    require('../../../assets/img/Forest/Category04.png'),
+    require('../../../assets/img/Forest/Category05.png'),
+    require('../../../assets/img/Forest/Category06.png'),
+  ]
+
   return (
-    <View style={{flex: 1, backgroundColor: 'white'}}>
+    <View>
       <Modal visible={modalVisible}>
         <FinishModal
           navigation={()=>navigation.replace('PostDetail', {post_id: postId})}
           setModal={setModalVisible}
-          title={ post ? '수정 완료 !' : '작성 완료 !'}
+          title={ post.id != 0 ? '수정 완료 !' : '작성 완료 !'}
           subtitle={['작성한 포레스트는', '마이페이지 > 포레스트 > 내가 쓴 포레스트', '에서 확인할 수 있어요']}
         />
       </Modal>
       <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
       <>
-      <FormHeader title='포레스트 작성' onLeft={() => navigation.goBack()} onRight={post ? updateForest : saveForest} />
-      <ScrollView>
-      <ImageBackground source={{ uri: (repPic && repPic.length > 0) ? repPic[0].uri : forest.rep_pic != '' ? forest.rep_pic : "https://reactnative.dev/img/logo-og.png"}} style={{width: width, height: width}}>
-        <Text style={{fontSize: 20, fontWeight: '700', marginLeft: 10, marginVertical: 10}}>{post_category.name}</Text>
-        <CardView data={post_semi_categories} offset={10} gap={0} pageWidth={100} dot={false} renderItem={({item}: any) => { return (
+      <FormHeader title='포레스트 작성' onLeft={() => setTab(tab-1)} onRight={post.id != 0 ? updateForest : saveForest} />
+      <ScrollView contentContainerStyle={{paddingBottom: 100}}>
+      <ImageBackground source={(repPic && repPic.length == 0 && forest.rep_pic == '') ? images[category.id-1] : { uri: (repPic && repPic.length > 0) ? repPic[0].uri : (forest.rep_pic != '' ? forest.rep_pic : 'none')}} imageStyle={{width: width+30}} style={{width: width, height: width}}>
+        <Text style={{fontSize: 20, fontWeight: '700', marginLeft: 10, marginVertical: 10}}>{category.name}</Text>
+        <CardView data={semiCategories} offset={10} gap={0} pageWidth={100} dot={false} renderItem={({item}: any) => { return (
             <View style={{height: 25, borderRadius: 16, backgroundColor: '#67D393', paddingVertical: 4, paddingHorizontal: 16, margin: 4}}>
               <Text style={{color: 'white', fontSize: 14}}># {item.name}</Text>
             </View>

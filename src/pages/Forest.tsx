@@ -1,11 +1,6 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { FlatList, StyleSheet, Text, SafeAreaView } from 'react-native';
 import { NavigationContainer, useFocusEffect, useNavigation } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
-
-import CategoryForm from '../components/Forest/PostUpload/CategoryForm';
-import SemiCategoryForm from '../components/Forest/PostUpload/SemiCategoryForm';
-import ForestForm from '../components/Forest/PostUpload/ForestForm';
 
 import BoardListScreen from '../components/Forest/BoardList';
 import BoardDetailScreen from '../components/Forest/BoardDetail';
@@ -16,6 +11,7 @@ import PostCommentsScreen from '../components/Forest/PostComments';
 import PhotoPreviewScreen from '../components/Forest/PhotoPreview';
 import { StackNavigationProp, StackScreenProps } from '@react-navigation/stack';
 import { TabProps } from '../../App';
+import PostUploadScreen from '../components/Forest/PostUpload';
 
 export interface BoardFormat {
   name: string;
@@ -43,21 +39,11 @@ export type ForestStackParams = {
     id: number;
     email: string;
   }
-  PostUpload: any;
+  PostUpload: {
+    post?: any;
+  }
   PhotoPreview: {
     photoUri: any;
-  }
-  CategoryForm: {
-    post?: any;
-  }
-  SemiCategoryForm: {
-    category: any;
-    post?: any;
-  };
-  ForestForm: {
-    category: any;
-    semi_categories: any;
-    post?: any;
   }
 };
 
@@ -66,11 +52,10 @@ const Stack = createNativeStackNavigator<ForestStackParams>();
 const Forest = ({navigation, route}:StackScreenProps<TabProps, '포레스트'>) => {
   const navigationToForest = useNavigation<StackNavigationProp<ForestStackParams>>();
   useFocusEffect(useCallback(()=>{
-    console.error(route.params)
     if(route.params.id) {
-      navigationToForest.navigate('PostDetail', {post_id: route.params.id})
+      navigationToForest.reset({routes: [{name: "PostDetail", params: { post_id:route.params.id }}]});
     }
-  },[]))
+  },[route.params.id]))
   return (
     <Stack.Navigator
       screenOptions={() => ({
@@ -84,9 +69,7 @@ const Forest = ({navigation, route}:StackScreenProps<TabProps, '포레스트'>) 
       <Stack.Screen name="PostDetail" component={PostDetailScreen} />
       <Stack.Screen name="PostComments" component={PostCommentsScreen} />
       <Stack.Screen name="PhotoPreview" component={PhotoPreviewScreen} />
-      <Stack.Screen name='CategoryForm' component={CategoryForm} />
-      <Stack.Screen name='SemiCategoryForm' component={SemiCategoryForm} />
-      <Stack.Screen name='ForestForm' component={ForestForm} />
+      <Stack.Screen name="PostUpload" component={PostUploadScreen} />
     </Stack.Navigator>
   );
 };
