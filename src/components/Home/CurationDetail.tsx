@@ -66,6 +66,7 @@ interface CurationDetailProps {
   title: string;
   writer_email: string;
   writer_is_verified: boolean;
+  writer_is_followed: boolean;
 }
 
 interface CuratedStoryProps {
@@ -106,6 +107,7 @@ const following = async (target: string, isLogin: boolean, navigation:StackNavig
     {
       targetEmail: target
     })
+  if(response.data.status == 'fail') Alert.alert(response.data.message)
 }
 
 export default function CurationDetail({ navigation, route }: StackScreenProps<HomeStackParams, 'Detail'>): JSX.Element {
@@ -124,6 +126,7 @@ export default function CurationDetail({ navigation, route }: StackScreenProps<H
     profile_image: '',
     writer_email: '',
     writer_is_verified: false,
+    writer_is_followed: false,
   });
   const [reppicSize, setReppicSize] = useState<{ width: number; height: number; }>({
     width: 1, height: 1
@@ -133,13 +136,14 @@ export default function CurationDetail({ navigation, route }: StackScreenProps<H
   })
   const getCurationDetail = async () => {
     const response_detail = await request.get(`/curations/curation_detail/${route.params.id}/`);
+    console.error(response_detail.data.data)
     setCurationDetail(response_detail.data.data);
     Image.getSize(response_detail.data.data.rep_pic, (width, height) => { setReppicSize({ width: width, height: height }) });
     Image.getSize(response_detail.data.data.map_image, (width, height) => { setMapImageSize({ width: width, height: height }) })
   }
   const getCurationStoryDetail = async () => {
-    const reponse_story_detail = await request.get(`/curations/curated_story_detail/${route.params.id}/`);
-    setCuratedStory(reponse_story_detail.data.data);
+    const response_story_detail = await request.get(`/curations/curated_story_detail/${route.params.id}/`);
+    setCuratedStory(response_story_detail.data.data);
   }
 
   const handleLike = async () => {
@@ -185,7 +189,11 @@ export default function CurationDetail({ navigation, route }: StackScreenProps<H
           </View>
           <TouchableOpacity style={{ position: 'absolute', right: 25 }}
             onPress={() => { following(curationDetail.writer_email, isLogin, navigationTab) }}>
-            <Text style={TextStyles.following}>+ 팔로잉</Text>
+              {
+                curationDetail.writer_is_followed ? 
+                <Text style={TextStyles.unfollow}>취소</Text>:
+                <Text style={TextStyles.following}>+ 팔로잉</Text>
+              }
           </TouchableOpacity>
         </InfoBox>
         <ContentBox>
@@ -338,6 +346,18 @@ const TextStyles = StyleSheet.create({
     borderRadius: 14,
     color: '#FFFFFF',
     backgroundColor: '#4DB1F7',
+    letterSpacing: -0.6,
+    fontSize: 12,
+    lineHeight: 28,
+    textAlign: 'center',
+    overflow: 'hidden'
+  },
+  unfollow : {
+    width: 75,
+    height: 28,
+    borderRadius: 14,
+    borderColor: '#4DB1F7',
+    borderWidth:1,
     letterSpacing: -0.6,
     fontSize: 12,
     lineHeight: 28,
