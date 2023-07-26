@@ -79,7 +79,7 @@ export default function StoryListModal({ target, setStoryListModal, selectedStor
       setSelectedPlace(selectedPlace.filter(el => el != place_name))
     }
     else {
-      setSelectedStory([...selectedStory, { id: id, rep_pic: rep_pic }]);
+      setSelectedStory([...selectedStory, { id: id, rep_pic: rep_pic, place_name: place_name }]);
       setSelectedPlace([...selectedPlace, place_name]);
     }
   }
