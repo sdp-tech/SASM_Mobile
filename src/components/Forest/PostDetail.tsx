@@ -27,6 +27,7 @@ import CardView from "../../common/CardView";
 import Report from "../../common/Report";
 import ShareButton from "../../common/ShareButton";
 import { BottomSheetModalProvider } from "@gorhom/bottom-sheet";
+import Settings from '../../assets/img/MyPage/Settings.svg';
 
 interface Post {
   id: number;
@@ -36,7 +37,6 @@ interface Post {
   category: any;
   content: string;
   writer: any;
-  email: string;
   created: string;
   updated: string;
   like_cnt: number;
@@ -44,6 +44,7 @@ interface Post {
   viewCount: number;
   user_likes: boolean;
   rep_pic: string;
+  writer_is_followed: boolean;
   photos: Array<string>;
   hashtags: Array<string>;
   semi_categories: Array<string>;
@@ -52,7 +53,11 @@ interface Post {
 interface PostDetailSectionProps {
   post: Post;
   navigation: any;
+  email: string;
   onReport: () => void;
+  onUpdate: () => void;
+  onDelete: () => void;
+  onLayout: any;
 }
 
 interface UserInfoSectionProps {
@@ -61,6 +66,7 @@ interface UserInfoSectionProps {
   isLogin: boolean;
   navigation: any;
   onRefresh: any;
+  writer_is_followed: boolean;
 }
 
 interface PostRecommendSectionProps {
@@ -72,8 +78,14 @@ const { width, height } = Dimensions.get('screen');
 const PostDetailSection = ({
   post,
   navigation,
+  email,
+  onUpdate,
+  onDelete,
   onReport,
+  onLayout
 }: PostDetailSectionProps) => {
+  const [dot, setDot] = useState<boolean>(false);
+  const user = Boolean(post.writer.email === email)
   const markup = {
     html: `${post?.content}`
   }
@@ -84,7 +96,7 @@ const PostDetailSection = ({
     }
   };
   return (
-    <View>
+    <View onLayout={onLayout}>
       <ImageBackground
         style={{ height: 400 }}
         source={{
@@ -115,6 +127,21 @@ const PostDetailSection = ({
           >
             {post.category.name}
           </Text>
+          <TouchableOpacity style={{marginTop: 10, marginRight: 10}} onPress={() => setDot(!dot)}>
+            <Settings transform={[{ rotate: dot ? '90deg' : 'none'}]} />
+          </TouchableOpacity>
+          { dot &&
+          <View style={{position: 'absolute', backgroundColor: 'white', top: 40, left: width-140, borderRadius: 4}}>
+            <TouchableOpacity style={{borderColor: 'rgba(168, 168, 168, 0.20)', borderBottomWidth: 1, paddingHorizontal: 40, paddingVertical: 10}} onPress={onUpdate} disabled={!user}>
+              <Text style={{fontSize: 14, lineHeight: 20, letterSpacing: -0.6, opacity: user ? 1 : 0.4}}>수정하기</Text>
+            </TouchableOpacity>
+            <TouchableOpacity style={{borderColor: 'rgba(168, 168, 168, 0.20)', borderBottomWidth: 1, paddingHorizontal: 40, paddingVertical: 10}} onPress={onDelete} disabled={!user}>
+              <Text style={{fontSize: 14, lineHeight: 20, letterSpacing: -0.6, opacity: user ? 1 : 0.4}}>삭제하기</Text>
+            </TouchableOpacity>
+            <TouchableOpacity style={{paddingHorizontal: 40, paddingVertical: 10}} onPress={onReport} disabled={user}>
+              <Text style={{fontSize: 14, lineHeight: 20, letterSpacing: -0.6, opacity: !user ? 1 : 0.4}}>신고하기</Text>
+            </TouchableOpacity>
+          </View>}
         </View>
         <View style={{ flex: 1, padding: 20, justifyContent: 'flex-end' }}>
           <Text
@@ -164,9 +191,6 @@ const PostDetailSection = ({
               })
             )}
           </View>
-          <TouchableOpacity onPress={onReport}>
-            <ReportIcon color={'#202020'} />
-          </TouchableOpacity>
         </View>
         <View style={{ alignItems: 'flex-start' }}>
           <CardView data={post.semi_categories} offset={0} gap={0} pageWidth={100} dot={false} renderItem={({ item }: any) => {
@@ -183,16 +207,24 @@ const PostDetailSection = ({
 };
 
 const UserInfoSection = ({
-  user, posts, isLogin, navigation, onRefresh
+  user, posts, isLogin, navigation, onRefresh, writer_is_followed
 }: UserInfoSectionProps) => {
-  const [follow, setFollow] = useState<boolean>(false);
+  const [follow, setFollow] = useState<boolean>(writer_is_followed);
   const request = new Request();
   const onFollow = async () => {
     if (isLogin) {
       const response = await request.post('/mypage/follow/', {
         targetEmail: user.email
       }, {});
-      setFollow(response.data.data.follows);
+      if(response.data.status==='success'){
+        setFollow(response.data.data.follows);
+        onRefresh();
+      }
+      else{
+        Alert.alert(
+            `${response.data.message}`
+         )
+      }
     } else {
       Alert.alert(
         "로그인이 필요합니다.",
@@ -296,13 +328,12 @@ const PostRecommendSection = ({ data }: PostRecommendSectionProps) => {
 interface BottomBarSectionProps {
   post: Post;
   email: string;
-  onUpdate: () => void;
-  onDelete: () => void;
+  scrollToComment: () => void;
   onRefresh: any;
   navigation: any;
 }
 
-const BottomBarSection = ({ post, email, onUpdate, onDelete, onRefresh, navigation }: BottomBarSectionProps) => {
+const BottomBarSection = ({ post, email, scrollToComment, onRefresh, navigation }: BottomBarSectionProps) => {
   const [like, setLike] = useState<boolean>(post.user_likes)
   const request = new Request();
 
@@ -336,20 +367,12 @@ const BottomBarSection = ({ post, email, onUpdate, onDelete, onRefresh, navigati
       <View style={{ flexDirection: 'row', flex: 1, alignItems: 'center' }}>
         <Heart color={'#202020'} like={like} onPress={toggleLike} size={18} ></Heart>
         <Text style={{ fontSize: 14, color: '#202020', lineHeight: 20, marginLeft: 3, marginRight: 10 }}>{post.like_cnt}</Text>
-        <CommentIcon color={'#202020'} />
+        <TouchableOpacity onPress={scrollToComment}>
+          <CommentIcon color={'#202020'} />
+        </TouchableOpacity>
         <Text style={{ fontSize: 14, color: '#202020', lineHeight: 20, marginLeft: 3 }}>{post.comment_cnt}</Text>
       </View>
       <ShareButton message={`[SASM Forest] ${post.title} - ${post.content}`} />
-      {post.writer.email === email && (
-        <>
-          <TouchableOpacity onPress={onUpdate}>
-            <Text>수정</Text>
-          </TouchableOpacity>
-          <TouchableOpacity onPress={onDelete}>
-            <Text>삭제</Text>
-          </TouchableOpacity>
-        </>
-      )}
     </View>
   )
 }
@@ -368,6 +391,8 @@ const PostDetailScreen = ({
   const [writerPosts, setWriterPosts] = useState([] as any);
   const [reported, setReported] = useState<string>('');
   const [modalVisible, setModalVisible] = useState<boolean>(false);
+  const [headerHeight, setHeaderHeight] = useState<number>(0);
+  const [recommend, setRecommend] = useState([] as any);
   const {isLogin, setLogin} = useContext(LoginContext);
 
   const request = new Request();
@@ -385,6 +410,8 @@ const PostDetailScreen = ({
     setComment(response_comment.data.data.results);
     const response_writer = await request.get('/forest/', { writer_filter: response_detail.data.data.writer.email })
     setWriterPosts(response_writer.data.data.results);
+    const response_recommend = await request.get('/forest/', { category_filter: response_detail.data.data.category.id,})
+    setRecommend(response_recommend.data.data.results);
   };
 
   const reRenderScreen = () => {
@@ -436,13 +463,16 @@ const PostDetailScreen = ({
     }
   };
 
-  const data = [
-    { uri: "https://reactnative.dev/img/tiny_logo.png", title: "사슴" },
-    { uri: "https://reactnative.dev/img/tiny_logo.png", title: "사슴" },
-    { uri: "https://reactnative.dev/img/tiny_logo.png", title: "사슴" },
-    { uri: "https://reactnative.dev/img/tiny_logo.png", title: "사슴" },
-    { uri: "https://reactnative.dev/img/tiny_logo.png", title: "사슴" },
-  ];
+  const onLayout = (e: any) => {
+    const { height } = e.nativeEvent.layout;
+    setHeaderHeight(height);
+  }
+
+  const scrollToComment = () => {
+    if (scrollRef.current) {
+      scrollRef.current.scrollToOffset({ animated: true, offset: headerHeight })
+    }
+  }
 
   useEffect(() => {
     if (isLogin) checkUser();
@@ -467,8 +497,8 @@ const PostDetailScreen = ({
             refreshing={refreshing}
             ListHeaderComponent={
               <>
-                <PostDetailSection post={post} navigation={navigation} onReport={() => setModalVisible(true)}/>
-                <UserInfoSection user={post.writer} posts={writerPosts} isLogin={isLogin} navigation={navigation} onRefresh={reRenderScreen}/>
+                <PostDetailSection post={post} navigation={navigation} email={user.email} onReport={() => setModalVisible(true)} onDelete={deletePost} onUpdate={()=>navigation.navigate('PostUpload', {post: post})} onLayout={onLayout} />
+                <UserInfoSection user={post.writer} posts={writerPosts} isLogin={isLogin} navigation={navigation} onRefresh={reRenderScreen} writer_is_followed={post.writer_is_followed}/>
                 <View style={{ flexDirection: 'row', padding: 20, alignItems: 'center' }}>
                   <View style={{ flexDirection: 'row', flex: 1 }}>
                     <Text style={{ fontSize: 16, fontWeight: '700', marginRight: 10 }}>한줄평</Text>
@@ -484,7 +514,7 @@ const PostDetailScreen = ({
             }
             ListFooterComponent={
               <>
-                <PostRecommendSection data={data} />
+                <PostRecommendSection data={recommend} />
                 <View style={{ justifyContent: 'center', alignItems: 'center', paddingVertical: 20 }}>
                   <TouchableOpacity onPress={scrollToTop} style={{ flexDirection: 'row' }}>
                     <Arrow width={18} height={18} transform={[{ rotate: '270deg' }]} />
@@ -499,10 +529,7 @@ const PostDetailScreen = ({
               )
             }}
           />
-          <BottomBarSection post={post} email={user.email} navigation={navigation} onDelete={deletePost} onRefresh={reRenderScreen}
-            onUpdate={() => {
-              navigation.navigate('PostUpload', {post: post})
-            }}/>
+          <BottomBarSection post={post} email={user.email} navigation={navigation} onRefresh={reRenderScreen} scrollToComment={scrollToComment} />
           <Report reported={reported} modalVisible={modalVisible} setModalVisible={setModalVisible} onReport={onReport} />
         </>
       )}

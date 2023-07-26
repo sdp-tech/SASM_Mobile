@@ -15,9 +15,8 @@ import { StoryProps } from '../../../pages/Story';
 
 const StorySearchPage = ({ navigation }: StoryProps) => {
   const toggleItems = [
-    { label: '조회수 순', value: 0, title: '에디터의 추천 스토리', subtitle: '에디터가 직접 선정한 알찬 스토리를 둘러보세요.', order: 'oldest' },
-    { label: '최신 순', value: 1, title: '방금 올라온 스토리', subtitle: '가장 생생한 장소의 이야기가 궁금하다면?', order: 'latest' },
-    { label: '인기 순', value: 2, title: '이번 달 인기 스토리', subtitle: '5월, 가장 많은 사람들의 관심을 받은 이야기를 둘러보세요.', order: 'hot' },
+    { label: '최신 순', value: 0, order: 'latest' },
+    { label: '인기 순', value: 1, order: 'hot' },
   ]
   const [item, setItem] = useState([] as any);
   const [orderList, setOrderList] = useState(0);

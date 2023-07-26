@@ -51,7 +51,6 @@ const CardView = ({ gap, offset, data, pageWidth, renderItem, dot, onEndReached,
     if (onEndDrag && currentPage === 2 && scrollDiff > (pageWidth / 4)) {
       onEndDrag();
     }
-    console.log(currentScrollOffset, maxScrollOffset);
   };
 
   return (

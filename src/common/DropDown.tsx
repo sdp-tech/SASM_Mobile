@@ -17,8 +17,8 @@ const DropDown = ({ items, isBorder, value, setValue }: DropDownProps) => {
       items={items}
       setOpen={setOpen}
       setValue={setValue}
-      style={{ borderWidth: isBorder ? 1 : 0, justifyContent: 'flex-start', alignItems: 'center', minHeight: 20 }}
-      textStyle={{ fontSize: 10 }}
+      style={{ borderWidth: isBorder ? 1 : 0, justifyContent: 'flex-start', alignItems: 'center', minHeight: 20, backgroundColor: 'transparent'}}
+      textStyle={{ fontSize: 12 }}
       dropDownContainerStyle={{ borderWidth: isBorder ? 1 : 0 }}
       listItemContainerStyle={{ height: 20, borderTopWidth: isBorder ? 1 : 0, }}
       tickIconStyle={{ width: 10, height: 10 }}
