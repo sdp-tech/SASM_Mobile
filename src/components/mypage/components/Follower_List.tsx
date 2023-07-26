@@ -12,7 +12,7 @@ import Arrow from '../../../assets/img/common/Arrow.svg';
 const Follower = ({ navigation, route }: StackScreenProps<MyPageProps, 'follower'>) => {
   const request = new Request();
   const [followerList, setFollowerList] = useState<{ email: string, profile_image: string, nickname: string }[]>([]);
-  const [searchQuery, setSearchQuery] = useState('');
+  const [searchQuery, setSearchQuery] = useState<string>('');
 
   const GetFollower = async () => {
     const response = await request.get('/mypage/follower/', {
@@ -21,6 +21,7 @@ const Follower = ({ navigation, route }: StackScreenProps<MyPageProps, 'follower
     });
     setFollowerList(response.data.data.results)
   }
+
 
   useFocusEffect(
     useCallback(() => {
@@ -32,7 +33,7 @@ const Follower = ({ navigation, route }: StackScreenProps<MyPageProps, 'follower
     <SafeAreaView style={{ flex: 1, backgroundColor: 'white' }}>
       <TouchableOpacity style={{ left: 10, marginBottom: 18, display: 'flex', flexDirection: 'row', alignItems: 'center' }} onPress={() => { navigation.goBack() }}>
         <Arrow width={20} height={20} transform={[{ rotateY: '180deg' }]} style={{ marginRight: 16 }} />
-        <Text style={{ fontSize: 16, lineHeight: 24, letteringSpace: -0.6 }} >팔로잉</Text>
+        <Text style={{ fontSize: 16, lineHeight: 24, letteringSpace: -0.6 }} >팔로워</Text>
       </TouchableOpacity>
       <SearchBar
         search={searchQuery}
@@ -43,15 +44,24 @@ const Follower = ({ navigation, route }: StackScreenProps<MyPageProps, 'follower
       />
       <ScrollView contentContainerStyle={styles.container}>
         {
-          followerList.map((user) => (
-            <View style={styles.userContainer}>
-              <Image source={{ uri: user.profile_image }} style={styles.profileImage} />
-              <View style={styles.userInfo}>
-                <Text style={styles.username}>{user.nickname}</Text>
-                <Text style={styles.useremail}>{user.email}</Text>
-              </View>
-            </View>
-          ))
+          followerList.length == 0 ? 
+            <View>
+              <Text style={styles.alert}>당신을 팔로잉 중인 유저가 없습니다</Text>
+            </View> :
+            <>
+            {
+              followerList.map((user) => (
+                <View style={styles.userContainer}>
+                  <Image source={{ uri: user.profile_image }} style={styles.profileImage} />
+                  <View style={styles.userInfo}>
+                    <Text style={styles.username}>{user.nickname}</Text>
+                    <Text style={styles.useremail}>{user.email}</Text>
+                  </View>
+                  <TouchableOpacity onPress={()=>{}}></TouchableOpacity>
+                </View>
+              ))
+            }
+            </>
         }
       </ScrollView>
     </SafeAreaView>
@@ -120,6 +130,10 @@ const styles = StyleSheet.create({
   userInfo: {
     marginLeft: 10,
   },
+  alert: {
+    fontWeight: '700',
+    marginLeft: 20,
+  }
 });
 
 
