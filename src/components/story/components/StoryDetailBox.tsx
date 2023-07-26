@@ -14,12 +14,18 @@ import Selector2 from "../../../assets/img/Category/Selector2.svg";
 import Selector3 from "../../../assets/img/Category/Selector3.svg";
 import Selector4 from "../../../assets/img/Category/Selector4.svg";
 import Selector5 from "../../../assets/img/Category/Selector5.svg";
+import Settings from '../../../assets/img/MyPage/Settings.svg';
 
 interface StoryDetailProps {
     data: any;
     navigation: any;
     isLogin: boolean;
     onLayout: any;
+    email: string;
+    onRefresh: () => void;
+    onReport: () => void;
+    onUpdate: () => void;
+    onDelete: () => void;
 }
 
 export interface StoryDetail {
@@ -56,9 +62,11 @@ const CategoryWrapper = styled.View`
   border-width: 1;
 `
 
-const StoryDetailBox = ({navigation, data, isLogin, onLayout}: StoryDetailProps) => {
+const StoryDetailBox = ({navigation, data, isLogin, onLayout, email, onRefresh, onReport, onUpdate, onDelete}: StoryDetailProps) => {
     const { width, height } = Dimensions.get('screen');
-    const [follow, setFollow] = useState<boolean>(false);
+    const [follow, setFollow] = useState<boolean>(data.writer_is_followed);
+    const [dot, setDot] = useState<boolean>(false);
+    const user = Boolean(data.writer === email)
     const request = new Request();
 
     const onFollow = async () => {
@@ -66,7 +74,16 @@ const StoryDetailBox = ({navigation, data, isLogin, onLayout}: StoryDetailProps)
           const response = await request.post('/mypage/follow/', {
             targetEmail: data.writer
           }, {});
-          setFollow(response.data.data.follows);
+          console.log(response.data)
+          if(response.data.status==='success'){
+            setFollow(response.data.data.follows);
+            onRefresh();
+          }
+          else{
+            Alert.alert(
+                `${response.data.message}`
+            )
+          }
         } else {
           Alert.alert(
             "로그인이 필요합니다.",
@@ -129,27 +146,42 @@ const StoryDetailBox = ({navigation, data, isLogin, onLayout}: StoryDetailProps)
     return (
         <View onLayout={onLayout}>
             <View>
-                    <TouchableOpacity style={{position: 'absolute', zIndex: 1, top: 50, left: 10}} onPress={() => {navigation.goBack()}}>
-                        <Arrow width={20} height={20} transform={[{rotateY: '180deg'}]}/>
+                <TouchableOpacity style={{position: 'absolute', zIndex: 1, top: 50, left: 10}} onPress={() => {navigation.goBack()}}>
+                    <Arrow width={20} height={20} transform={[{rotateY: '180deg'}]}/>
+                </TouchableOpacity>
+                    {data!.extra_pics.length > 0 ? (
+                        <CardView 
+                            gap={0}
+                            offset={0}
+                            data={data!.extra_pics}
+                            pageWidth={width}
+                            dot={false}
+                            renderItem={({item}: any) => (
+                                <ImageBackground
+                                    style={{width: 280, height: 330, marginRight: 15}}
+                                    source={{uri: item}}
+                                    resizeMode='cover'
+                                />
+                            )}
+                        />
+                    ) : (
+                        <ImageBackground style={{width: width, height: 330}} source={{uri: data!.rep_pic}} />
+                    )}
+                <TouchableOpacity style={{position: 'absolute', zIndex: 1, top: 55, right: 20}} onPress={() => setDot(!dot)}>
+                    <Settings transform={[{ rotate: dot ? '90deg' : 'none'}]} />
+                </TouchableOpacity>
+                { dot &&
+                <View style={{position: 'absolute', backgroundColor: 'white', top: 75, left: width-140, borderRadius: 4}}>
+                    <TouchableOpacity style={{borderColor: 'rgba(168, 168, 168, 0.20)', borderBottomWidth: 1, paddingHorizontal: 40, paddingVertical: 10}} onPress={onUpdate} disabled={!user}>
+                        <Text style={{fontSize: 14, lineHeight: 20, letterSpacing: -0.6, opacity: user ? 1 : 0.4}}>수정하기</Text>
                     </TouchableOpacity>
-                        {data!.extra_pics.length > 0 ? (
-                            <CardView 
-                                gap={0}
-                                offset={0}
-                                data={data!.extra_pics}
-                                pageWidth={width}
-                                dot={false}
-                                renderItem={({item}: any) => (
-                                    <ImageBackground
-                                        style={{width: 280, height: 330, marginRight: 15}}
-                                        source={{uri: item}}
-                                        resizeMode='cover'
-                                    />
-                                )}
-                            />
-                        ) : (
-                            <ImageBackground style={{width: width, height: 330}} source={{uri: data!.rep_pic}} />
-                        )}
+                    <TouchableOpacity style={{borderColor: 'rgba(168, 168, 168, 0.20)', borderBottomWidth: 1, paddingHorizontal: 40, paddingVertical: 10}} onPress={onDelete} disabled={!user}>
+                        <Text style={{fontSize: 14, lineHeight: 20, letterSpacing: -0.6, opacity: user ? 1 : 0.4}}>삭제하기</Text>
+                    </TouchableOpacity>
+                    <TouchableOpacity style={{paddingHorizontal: 40, paddingVertical: 10}} onPress={onReport} disabled={user}>
+                        <Text style={{fontSize: 14, lineHeight: 20, letterSpacing: -0.6, opacity: !user ? 1 : 0.4}}>신고하기</Text>
+                    </TouchableOpacity>
+                </View>}
             </View>
             <View style={{borderBottomColor: '#D9D9D9', borderBottomWidth: 1, padding: 15}}>
                 <View style={{flexDirection: 'row'}}>

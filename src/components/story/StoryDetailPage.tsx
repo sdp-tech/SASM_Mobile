@@ -27,8 +27,6 @@ interface PostRecommendSectionProps {
 interface BottomBarSectionProps {
   post: any;
   email: string;
-  onUpdate: () => void;
-  onDelete: () => void;
   scrollToComment: () => void;
   onRefresh: any;
   navigation: any;
@@ -106,7 +104,7 @@ const PostRecommendSection = ({ curations, stories, navigation }: PostRecommendS
   )
 }
 
-const BottomBarSection = ({ post, email, onUpdate, onDelete, scrollToComment, onRefresh, navigation }: BottomBarSectionProps) => {
+const BottomBarSection = ({ post, email, scrollToComment, onRefresh, navigation }: BottomBarSectionProps) => {
   const [like, setLike] = useState<boolean>(post.story_like)
   const request = new Request();
 
@@ -146,16 +144,6 @@ const BottomBarSection = ({ post, email, onUpdate, onDelete, scrollToComment, on
         <Text style={{fontSize: 14, color: '#202020', lineHeight: 20, marginLeft: 3}}>{post.comment_cnt}</Text>
       </View>
       <ShareButton message={`[SASM Story] ${post.title} - ${post.html_content}`} />
-      {post.writer === email && (
-        <>
-          <TouchableOpacity onPress={onUpdate}>
-            <Text>수정</Text>
-          </TouchableOpacity>
-          <TouchableOpacity onPress={onDelete}>
-            <Text>삭제</Text>
-          </TouchableOpacity>
-        </>
-      )}
     </View>
   )
 }
@@ -259,6 +247,7 @@ const StoryDetailPage = ({ navigation, route }: StoryProps) => {
 
   useEffect(() => {
     loadItem();
+    console.log(data)
   }, [refreshing]);
 
 
@@ -277,7 +266,7 @@ const StoryDetailPage = ({ navigation, route }: StoryProps) => {
                 keyExtractor={(item, index) => item.id.toString()}
                 ListHeaderComponent={
                 <>
-                    <StoryDetailBox data={data} navigation={navigation} isLogin={isLogin} onLayout={onLayout}/>
+                    <StoryDetailBox data={data} navigation={navigation} isLogin={isLogin} email={email} onLayout={onLayout} onRefresh={reRenderScreen} onReport={() => setModalVisible(true)} onDelete={deleteStory} onUpdate={()=>navigation.navigate('WriteStoryPage', { id: data!.id })}/>
                     <View style={{borderBottomColor: '#D9D9D9', width: width, borderBottomWidth: 1, marginTop: 40}} />
                     <View style={{ flexDirection: 'row', padding: 20, alignItems: 'center' }}>
                       <View style={{flexDirection: 'row', flex: 1}}>
@@ -307,7 +296,7 @@ const StoryDetailPage = ({ navigation, route }: StoryProps) => {
                     </View>
                 </>}
             />
-            <BottomBarSection post={data} email={email} navigation={navigation} onDelete={deleteStory} scrollToComment={scrollToComment} onUpdate={() => { navigation.navigate('WriteStoryPage', { id: data!.id }) }} onRefresh={reRenderScreen} />
+            <BottomBarSection post={data} email={email} navigation={navigation} scrollToComment={scrollToComment} onRefresh={reRenderScreen} />
             <Report reported={reported} modalVisible={modalVisible} setModalVisible={setModalVisible} onReport={onReport} />
             </>
         )}
