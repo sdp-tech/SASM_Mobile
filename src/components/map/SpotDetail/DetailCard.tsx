@@ -196,6 +196,10 @@ export default function DetailCard({ detailData }: DetailCardProps): JSX.Element
     }
   }
 
+  useEffect(()=>{
+    if(detailData.place_like == 'ok') setLikePlace(true);
+  },[])
+
   useEffect(() => {
     getReview();
     getStory();
@@ -218,14 +222,8 @@ export default function DetailCard({ detailData }: DetailCardProps): JSX.Element
           }}>
             <PlusWhite />
           </TouchableOpacity>
-          <TouchableOpacity onPress={handlePlaceLike}>
-            {
-              likePlace ?
-                <FilledLikePlace /> :
-                <LikePlace />
-            }
-          </TouchableOpacity>
-          <ShareButton message={`[SASM Map] ${detailData.place_name}(${detailData.category}) - ${detailData.place_review}`} />
+          <Heart like={likePlace} onPress={handlePlaceLike} white/>
+          <ShareButton color='white' message={`[SASM Map] ${detailData.place_name}(${detailData.category}) - ${detailData.place_review}`} />
         </ButtonBox>
         <TextBox>
           <Text style={TextStyles.info}>{detailData.category}</Text>

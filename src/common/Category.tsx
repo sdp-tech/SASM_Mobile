@@ -15,9 +15,8 @@ const CategoryWrapper = styled.TouchableOpacity<{ selected: boolean, color: stri
   flex-direction: row;
   align-items: center;
   background-color: ${props => props.selected ? props.color : '#FFFFFF'};
-  height: 28px;
+  padding: 5px 10px;
   border-radius: 12px;
-  padding-horizontal: 10px;
   margin: 0 10px;
   border-color: 'rgba(203, 203, 203, 1)';
   border-width: ${props => props.story ? 1 : 0};
@@ -93,7 +92,7 @@ export default function Category({ checkedList, setCheckedList, story, setPage, 
 
               }[item.id]
             }
-            <Text style={{ fontSize: 14, color: (isSelected ? '#FFFFFF' : '#000000'), marginHorizontal: 5, lineHeight: 14 }}>{item.name}</Text>
+            <Text style={{ fontSize: 14, color: (isSelected ? '#FFFFFF' : '#000000'), marginHorizontal: 5, }}>{item.name}</Text>
           </CategoryWrapper>
         )
       }}
