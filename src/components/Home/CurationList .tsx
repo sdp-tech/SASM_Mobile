@@ -85,7 +85,7 @@ export default function CurationList({ navigation, route }: StackScreenProps<Hom
         />
       </View>
       {
-        loading ? <ActivityIndicator />
+        loading ? <ActivityIndicator style={{flex:1}}/>
           : <FlatList
             contentContainerStyle={{ padding: 5 }}
             numColumns={2}
