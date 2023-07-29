@@ -49,7 +49,8 @@ const MyStory = ({ navigation, route }: MyPageParams) => {
   const [type, setType] = useState<boolean>(true);
 
   const rerender = () => {
-    setRefresh(!refresh);
+    setRefresh(true);
+    setRefresh(false);
   }
 
   const getCuration = async () => {
