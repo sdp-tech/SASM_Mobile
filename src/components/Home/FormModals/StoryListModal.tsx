@@ -130,7 +130,7 @@ export default function StoryListModal({ target, setStoryListModal, selectedStor
             }
           }}
           ListHeaderComponent={<>{storyList.length == 0 && <Text style={{ ...ListTextStyles.place_name, margin: 15 }}>스토리가 존재하지 않습니다.</Text>}</>}
-          ListFooterComponent={<>{loading && <ActivityIndicator />}</>}
+          ListFooterComponent={<>{loading && <ActivityIndicator style={{flex:1}} />}</>}
         />
         <BottomSheetModalProvider>
           <BottomSheetModal

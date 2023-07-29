@@ -95,7 +95,7 @@ export default function CurationHome({ navigation, route }: StackScreenProps<Hom
 
   return (
     <SafeAreaView style={{ backgroundColor: '#FFFFFF', flex: 1 }}>
-      {loading ? <ActivityIndicator />
+      {loading ? <ActivityIndicator style={{flex:1}}/>
         : <>
           <ScrollView>
             <CustomHeader

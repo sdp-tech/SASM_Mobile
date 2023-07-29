@@ -6,7 +6,6 @@ import styled from "styled-components/native";
 import SearchBar from '../../common/SearchBar';
 import Category, { MatchCategory } from '../../common/Category';
 import MapList from './SpotList';
-import SpotDetail from './SpotDetail';
 import { Request } from '../../common/requests';
 import { Coord } from "react-native-nmap";
 import Animated, { SharedValue, useAnimatedStyle, useSharedValue, withTiming } from "react-native-reanimated";
@@ -18,6 +17,7 @@ import { useFocusEffect } from "@react-navigation/native";
 import SearchHere from "../../assets/img/Map/SearchHere.svg";
 import { LoginContext } from "../../common/Context";
 import PlusButton from "../../common/PlusButton";
+import DetailCard from "./SpotDetail/DetailCard";
 
 const { width, height } = Dimensions.get('window');
 
@@ -378,27 +378,32 @@ interface BottomSheetMemoProps {
 //좌표가 바뀌어서 바텀시트가 올라가는것을 방지
 const BottomSheetMemo = memo(
   ({ sheetMode, setSheetMode, buttonAnimatedPosition, loading, page, setPage, setCenter, setDetailData, placeData, total, detailData }: BottomSheetMemoProps) => {
+    const [index, setIndex] = useState(1);
+    const {width, height} = Dimensions.get('window');
     //modal의 ref
     const modalRef = useRef(null);
-    const idx = useRef<number>(1);
     //BottomSheet 중단점
-    const snapPoints = useMemo(() => [15, 500], []);
+    const snapPoints = useMemo(() => [15, 500, height-127], []);
+    useEffect(()=>{
+      if(sheetMode) setIndex(1)
+    },[sheetMode])
     return (
       <BottomSheet
         ref={modalRef}
         snapPoints={snapPoints}
-        index={1}
+        index={index}
         handleComponent={() => <CustomHandle mode={sheetMode} />}
         onAnimate={(fromIndex, toIndex) => {
-          if (fromIndex == 1 && toIndex == 0) {
+          setIndex(toIndex);
+          if ((fromIndex == 1 || fromIndex == 2) && toIndex == 0) {
             if (!sheetMode) setSheetMode(true);
             else buttonAnimatedPosition.value = 45;
-            idx.current = 0;
-            // setIdx(0);
+          }
+          else if (toIndex == 2){
+            buttonAnimatedPosition.value = 750;
           }
           else {
             buttonAnimatedPosition.value = 520;
-            idx.current = 1;
             // setIdx(1);
           }
         }}
@@ -410,6 +415,7 @@ const BottomSheetMemo = memo(
               {
                 sheetMode ?
                   <MapList
+                    setIndex={setIndex}
                     page={page}
                     setPage={setPage}
                     total={total}
@@ -418,8 +424,10 @@ const BottomSheetMemo = memo(
                     setSheetMode={setSheetMode}
                     setCenter={setCenter} />
                   :
-                  <SpotDetail
-                    detailData={detailData} />
+                  <DetailCard
+                  setIndex={setIndex}
+                  detailData={detailData}
+                  />
               }</>
         }
       </BottomSheet>

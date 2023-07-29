@@ -4,10 +4,11 @@ import ShareIcon from '../assets/img/common/Share.svg';
 
 interface ShareButtonProps {
     message: string;
+    color: 'black' | 'white';
 }
 
 // TODO: 카카오톡 공유하기 등 기능 확장 필요
-export default function ShareButton({ message }: ShareButtonProps): JSX.Element {
+export default function ShareButton({ message, color }: ShareButtonProps): JSX.Element {
     const getPreview = (message: string) => {
         return message
             .replace(/<.*?>/g, ' ') // 그외 html 태그 치환
@@ -24,7 +25,7 @@ export default function ShareButton({ message }: ShareButtonProps): JSX.Element 
 
     return (
         <TouchableOpacity style={{ marginLeft: 5, marginRight: 5 }} onPress={onShare}>
-            <ShareIcon />
+            <ShareIcon color={color}/>
         </TouchableOpacity>
     )
 }
