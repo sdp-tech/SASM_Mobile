@@ -10,9 +10,10 @@ import {
   TextInput,
   Dimensions,
   ImageBackground,
+  Alert
 } from "react-native";
 import type { NativeStackScreenProps } from "@react-navigation/native-stack";
-import { useFocusEffect } from "@react-navigation/native";
+import { useFocusEffect, useNavigation } from "@react-navigation/native";
 import ListHeader from "./components/ListHeader";
 import { LoginContext } from "../../common/Context";
 
@@ -20,6 +21,8 @@ import { ForestStackParams } from "../../pages/Forest";
 import { Request } from "../../common/requests";
 import PostItem from "./components/PostItem";
 import PlusButton from "../../common/PlusButton";
+import { StackNavigationProp } from "@react-navigation/stack";
+import { TabProps } from "../../../App";
 
 const { width, height } = Dimensions.get('window');
 
@@ -34,7 +37,7 @@ const PostListScreen = ({
   const [count, setCount] = useState(0);
   const [posts, setPosts] = useState([]);
   const {isLogin, setLogin} = useContext(LoginContext);
-
+  const navigationToTab = useNavigation<StackNavigationProp<TabProps>>();
   const request = new Request();
 
   const board_name = route.params?.board_name;
@@ -114,11 +117,32 @@ const PostListScreen = ({
           );
         }}
       />
-      {isLogin &&
-        <PlusButton
-          onPress={() => navigation.navigate('PostUpload', {})}
-          position="rightbottom" />
-      }
+      <PlusButton
+        onPress={() => {
+          if(!isLogin) {
+            Alert.alert(
+              "로그인이 필요합니다.",
+              "로그인 항목으로 이동하시겠습니까?",
+              [
+                {
+                  text: "이동",
+                  onPress: () => navigationToTab.navigate('마이페이지')
+      
+                },
+                {
+                  text: "취소",
+                  onPress: () => { },
+                  style: "cancel"
+                },
+              ],
+              { cancelable: false }
+            );
+          }
+          else {
+            navigation.navigate('PostUpload', {});
+          }
+        }}
+        position="rightbottom" />
     </SafeAreaView>
   );
 };

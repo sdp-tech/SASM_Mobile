@@ -10,19 +10,22 @@ import {
   Dimensions,
   ImageBackground,
   ScrollView,
+  Alert
 } from "react-native";
 import { TextPretendard as Text } from "../../common/CustomText";
 import type { NativeStackScreenProps } from "@react-navigation/native-stack";
 import styled from "styled-components/native";
 import ListHeader from "./components/ListHeader";
 import PostItem, { HotPostItem } from "./components/PostItem";
-import { useFocusEffect } from "@react-navigation/native";
+import { useFocusEffect, useNavigation } from "@react-navigation/native";
 
 import { ForestStackParams } from "../../pages/Forest";
 import { Request } from "../../common/requests";
 import CardView from "../../common/CardView";
 import { LoginContext } from "../../common/Context";
 import PlusButton from "../../common/PlusButton";
+import { StackNavigationProp } from "@react-navigation/stack";
+import { TabProps } from "../../../App";
 
 const { width, height } = Dimensions.get("window");
 
@@ -41,7 +44,7 @@ const BoardDetailScreen = ({
   const [newPosts, setNewPosts] = useState([] as any);
   const {isLogin, setLogin} = useContext(LoginContext);
   const request = new Request();
-
+  const navigationToTab = useNavigation<StackNavigationProp<TabProps>>();
   const board_category = route.params.board_category;
 
   const getUserInfo = async () => {
@@ -208,7 +211,7 @@ const BoardDetailScreen = ({
                 padding: 20
               }}
             >
-              <Text style={{color: '#3C3C3C', fontWeight: '700', fontSize: 16, lineHeight: 22}}>{nickname}님 이 정보들은 어떠신가요?</Text>
+              <Text style={{color: '#3C3C3C', fontWeight: '700', fontSize: 16, lineHeight: 22}}>{isLogin ? `${nickname}님 이 정보들은 어떠신가요?` : '이 정보들은 어떠신가요?'}</Text>
               <FlatList
                 data={posts.slice(0,3)}
                 scrollEnabled={false}
@@ -352,13 +355,34 @@ const BoardDetailScreen = ({
               />
             </View>
         </>
-      )}
+      )}    
     </ScrollView>
-    {isLogin &&
-      <PlusButton
-        onPress={() => navigation.navigate('PostUpload', {})}
+    <PlusButton
+        onPress={() => {
+          if(!isLogin) {
+            Alert.alert(
+              "로그인이 필요합니다.",
+              "로그인 항목으로 이동하시겠습니까?",
+              [
+                {
+                  text: "이동",
+                  onPress: () => navigationToTab.navigate('마이페이지')
+      
+                },
+                {
+                  text: "취소",
+                  onPress: () => { },
+                  style: "cancel"
+                },
+              ],
+              { cancelable: false }
+            );
+          }
+          else {
+            navigation.navigate('PostUpload', {});
+          }
+        }}
         position="rightbottom" />
-    }
     </SafeAreaView>
   );
 };
@@ -366,7 +390,6 @@ const BoardDetailScreen = ({
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    flexGrow: 1,
     backgroundColor: "white",
   },
 });

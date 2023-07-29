@@ -10,10 +10,11 @@ import {
   View,
   TouchableOpacity,
   Image,
+  Alert
 } from "react-native";
 import { TextPretendard as Text } from "../../common/CustomText";
 import type { NativeStackScreenProps } from "@react-navigation/native-stack";
-import { useFocusEffect } from "@react-navigation/native";
+import { useFocusEffect, useNavigation } from "@react-navigation/native";
 import CardView from "../../common/CardView";
 import CustomHeader from "../../common/CustomHeader";
 import PostItem, { HotPostItem } from "./components/PostItem";
@@ -22,6 +23,8 @@ import { LoginContext } from "../../common/Context";
 import { ForestStackParams } from "../../pages/Forest";
 import { Request } from "../../common/requests";
 import PlusButton from "../../common/PlusButton";
+import { StackNavigationProp } from "@react-navigation/stack";
+import { TabProps } from "../../../App";
 
 const { width, height } = Dimensions.get("window");
 
@@ -37,6 +40,8 @@ const BoardListScreen = ({
   const [hotPosts, setHotPosts] = useState([] as any);
   const [newPosts, setNewPosts] = useState([] as any);
   const {isLogin, setLogin} = useContext(LoginContext);
+
+  const navigationToTab = useNavigation<StackNavigationProp<TabProps>>();
 
   const request = new Request();
 
@@ -371,11 +376,32 @@ const BoardListScreen = ({
           />
         </View>
       </ScrollView>
-      {isLogin &&
-        <PlusButton
-          onPress={() => navigation.navigate('PostUpload', {})}
-          position="rightbottom" />
-      }
+      <PlusButton
+        onPress={() => {
+          if(!isLogin) {
+            Alert.alert(
+              "로그인이 필요합니다.",
+              "로그인 항목으로 이동하시겠습니까?",
+              [
+                {
+                  text: "이동",
+                  onPress: () => navigationToTab.navigate('마이페이지')
+      
+                },
+                {
+                  text: "취소",
+                  onPress: () => { },
+                  style: "cancel"
+                },
+              ],
+              { cancelable: false }
+            );
+          }
+          else {
+            navigation.navigate('PostUpload', {});
+          }
+        }}
+        position="rightbottom" />
     </SafeAreaView>
   );
 };
