@@ -39,12 +39,12 @@ export interface MyForestItemCardProps {
 
 export default function MyForestItemCard({ props, edit, rerender }: { props: MyForestItemCardProps, edit: boolean, rerender: () => void }) {
   const request = new Request();
-  const [like, setLike] = useState<boolean>(true);
   const navigationToTab = useNavigation<StackNavigationProp<TabProps>>();
   const { id, title, forest_like, preview, rep_pic, writer, writer_is_verified } = props;
+  const [like, setLike] = useState<boolean>(forest_like);
 
   const handlelike = async () => {
-    const response = await request.post('/mypage/forest_like/', { id: id });
+    const response = await request.post(`/forest/${id}/like/`);
     setLike(!like);
     rerender();
   }
@@ -62,7 +62,7 @@ export default function MyForestItemCard({ props, edit, rerender }: { props: MyF
       </TouchableWithoutFeedback>
       {
         edit &&
-        <View style={{ position: 'absolute', right: 10, top: 10 }}>
+        <View style={{ position: 'absolute', right: 10, top: 20 }}>
           <Heart like={like} onPress={handlelike} />
         </View>
       }

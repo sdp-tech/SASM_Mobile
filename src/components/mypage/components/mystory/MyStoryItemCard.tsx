@@ -32,13 +32,13 @@ export interface MyStroyItemCardProps {
 
 const MyStoryItemCard = ({ data, edit, rerender }: { data: MyStroyItemCardProps, edit: boolean, rerender: () => void }) => {
   const { category, extra_pics, id, nickname, place_name, preview, rep_pic, story_like, story_review, title, writer } = data;
-  const [like, setLike] = useState(true);
+  const [like, setLike] = useState(story_like);
   const navigationToTab = useNavigation<StackNavigationProp<TabProps>>();
   const request = new Request();
 
   // 좋아요 클릭 이벤트
   const handleLike = async () => {
-    const response = await request.post("/stories/story_like/", { id: id });
+    const response = await request.post(`/stories/${id}/story_like/`);
     setLike(!like);
     rerender();
   };
@@ -79,8 +79,8 @@ const MyStoryItemCard = ({ data, edit, rerender }: { data: MyStroyItemCardProps,
       </TouchableWithoutFeedback>
       {
         edit &&
-        <View style={{position:'absolute', top: 10, right: 10}}>
-          <Heart like={like} onPress={handleLike} />
+        <View style={{position:'absolute', top: 10, right: 15}}>
+          <Heart like={like} onPress={handleLike} size={20} />
         </View>
       }
     </View>

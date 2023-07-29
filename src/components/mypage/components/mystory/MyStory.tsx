@@ -45,6 +45,7 @@ const MyStory = () => {
   const [refresh, setRefresh] = useState<boolean>(false);
   const [storyList, setStoryList] = useState<MyStroyItemCardProps[]>([]);
   const [page, setPage] = useState<number>(1);
+  const [writtenPage, setWrittenPage] = useState<number>(1);
   const [max, setMax] = useState<number>(1);
   const [search, setSearch] = useState<string>("");
   const [nextPage, setNextPage] = useState<any>(null);
@@ -54,22 +55,29 @@ const MyStory = () => {
   const [written, setWritten] = useState<MyStroyItemCardProps[]>([]);
 
   const rerender = () => {
-    setRefresh(!refresh);
+    setRefresh(true);
+    setPage(1);
+    setRefresh(false);
   }
 
   const getStories = async () => {
-    const response = await request.get(`/mypage/mypick_story/`, {
-      search: search, filter: checkedList, page: page
+    let params = new URLSearchParams();
+    for (const category of checkedList){
+      params.append('filter', category);
+    }
+    const response = await request.get(`/mypage/mypick_story/?${params.toString()}`, {
+      search: search, page: page
     });
     setMax(Math.ceil(response.data.data.count / 6));
-    setStoryList(response.data.data.results);
+    if(page == 1) setStoryList(response.data.data.results);
+    else setStoryList([...storyList, ...response.data.data.results])
   };
 
   const getWrittenStory = async () => {
     const response = await request.get('/mypage/my_story/', {
       search: search,
       filter: checkedList,
-      page: page
+      page: writtenPage
     });
     setMax(Math.ceil(response.data.data.count / 6));
     setWritten(response.data.data.results);
@@ -88,7 +96,7 @@ const MyStory = () => {
       if (type) getStories();
       else getWrittenStory();
     }
-  }, [page, search, checkedList, refresh]));
+  }, [page, writtenPage, search, checkedList, refresh]));
 
 
   return (
@@ -126,12 +134,11 @@ const MyStory = () => {
                   }
                   onEndReached={() => {
                     if (page < max) setPage(page + 1);
+                    if (writtenPage < max) setWrittenPage(writtenPage + 1);
                   }}
                   onEndReachedThreshold={0.3}
                   numColumns={2}
                   style={{ alignContent: 'space-between' }}
-                  onEndReached={onEndReached}
-                  onEndReachedThreshold={0.3}
                 />
               )}
             </View>

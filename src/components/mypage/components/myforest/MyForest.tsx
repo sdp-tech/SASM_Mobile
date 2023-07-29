@@ -19,23 +19,26 @@ export default function MyForest() {
   const [search, setSearch] = useState<string>('');
   const [type, setType] = useState<boolean>(true);
   const [refresh, setRefresh] = useState<boolean>(false);
+  const [written, setWritten] = useState<MyForestItemCardProps[]>([]);
   const request = new Request();
 
   const rerender = () => {
-    setRefresh(!refresh);
+    setRefresh(true);
+    setPage(1)
+    setRefresh(false);
   }
 
   const getForest = async () => {
-    const response = await request.get('/mypage/mypick_forest/', { page: page, search: search, category_filter: [''] });
+    const response = await request.get('/mypage/mypick_forest/', { page: page, search: search });
     setMax(Math.ceil(response.data.data.count / 4))
     if (page == 1) setForestList(response.data.data.results);
     else setForestList([...forestList, ...response.data.data.results]);
   }
   const getWrittenForest = async () => {
-    const response = await request.get('/mypage/my_forest/', { page: page, search: search, category_filter: [''] });
+    const response = await request.get('/mypage/my_forest/', { page: page, search: search });
     setMax(Math.ceil(response.data.data.count / 4))
-    if (page == 1) setForestList(response.data.data.results);
-    else setForestList([...forestList, ...response.data.data.results]);
+    if (page == 1) setWritten(response.data.data.results);
+    else setWritten([...written, ...response.data.data.results]);
   }
 
   useFocusEffect(useCallback(() => {
@@ -58,15 +61,15 @@ export default function MyForest() {
       />
       {
         isLogin ?
-          forestList.length == 0 ?
+        (type ? forestList : written).length == 0 ?
             <View style={{ alignItems: 'center', marginVertical: 20 }}>
               <NothingIcon />
               <Text style={{ marginTop: 20 }}>해당하는 포레스트가 없습니다</Text>
             </View>
             :
             <FlatList
-              data={forestList}
-              contentContainerStyle={{ paddingHorizontal: 20, flex: 1 }}
+              data={type ? forestList : written}
+              contentContainerStyle={{ paddingHorizontal: 20 }}
               renderItem={({ item }: { item: MyForestItemCardProps }) => (
                 <MyForestItemCard props={item} edit={edit} rerender={rerender}/>
               )}
