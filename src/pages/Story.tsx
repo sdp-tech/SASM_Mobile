@@ -7,6 +7,7 @@ import StorySearchPage from '../components/story/components/StorySearch';
 import StoryDetailPage from '../components/story/StoryDetailPage';
 import WriteStoryPage from '../components/story/WriteStoryPage';
 import CommentListPage from '../components/story/CommentListPage';
+import RecommendListPage from '../components/story/RecommendListPage';
 
 export interface StoryProps {
   navigation: any;
@@ -21,6 +22,10 @@ export type StoryStackParams = {
   }
   WriteStory : undefined;
   CommentList: undefined;
+  RecommendList: {
+    data: any;
+    type: boolean;
+  }
 }
 
 const Stack = createNativeStackNavigator<StoryStackParams>();
@@ -46,6 +51,7 @@ const StoryScreen = ({ navigation, route }: StoryProps) => {
       <Stack.Screen name = "StoryDetail" component = {StoryDetailPage} />
       <Stack.Screen name = "WriteStory" component={WriteStoryPage} />
       <Stack.Screen name = "CommentList" component={CommentListPage} />
+      <Stack.Screen name = "RecommendList" component={RecommendListPage} />
     </Stack.Navigator>
   )
 }
