@@ -3,7 +3,7 @@ import { TextPretendard as Text } from '../../common/CustomText';
 import { SafeAreaView, View, TouchableOpacity, Dimensions, FlatList, Modal, Pressable } from 'react-native';
 import { Request } from '../../common/requests';
 import { StoryProps } from '../../pages/Story';
-import { SearchItemCard } from '../Home/ItemCard';
+import { SearchItemCard } from '../Home/CurationItemCard';
 import SearchCard from './components/SearchCard';
 import Arrow from '../../assets/img/common/Arrow.svg';
 import { LoginContext } from '../../common/Context';
@@ -55,6 +55,7 @@ const RecommendListPage = ({ navigation, route }: StoryProps) => {
         data={data}
         refreshing={refreshing}
         onRefresh={onRefresh}
+        contentContainerStyle={{padding: 10}}
         numColumns={type ? 1 : 2}
         ListHeaderComponent={<>
           <View style={{height: 50, alignItems: 'center', justifyContent: 'center'}}>

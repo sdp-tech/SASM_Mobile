@@ -78,7 +78,7 @@ const SearchCard = ({id, place_name, title, rep_pic, extra_pics, story_like, cat
             </View>
           </ImageBackground>
           <View style={{marginLeft: 8}}>
-            { extra_pics != null ? (
+            { extra_pics.length > 0 ? (
               <>
               <ImageBackground 
                 source={{uri: extra_pics[0]}}
