@@ -110,7 +110,7 @@ const BoardListScreen = ({
             <Text style={{ color: '#3C3C3C', fontWeight: '700', fontSize: 16, lineHeight: 22, letterSpacing: -0.6 }}>{isLogin? (`${nickname}님 이 정보들은 어떠신가요?`):('로그인 후 추천 글을 받아보세요')}</Text>
             <View style={{flexDirection: 'row', marginTop: 10}}>
               <View style={{borderColor: '#67D393', borderWidth: 1, borderRadius: 8, paddingVertical: 2, paddingHorizontal: 4, backgroundColor: 'white'}}>
-                <Text style={{color: '#67D393', fontSize: 10, fontWeight: '600'}}>#ESG</Text>
+                <Text style={{color: '#67D393', fontSize: 10, fontWeight: '600'}}>#{posts[0]?.semi_categories[0].name}</Text>
               </View>
               <Text style={{color: '#3C3C3C', fontSize: 12, lineHeight: 18, marginLeft: 5}} numberOfLines={1}>{posts[0]?.title}</Text>
             </View>
@@ -239,7 +239,7 @@ const BoardListScreen = ({
             renderItem={({ item }: any) => (
               <TouchableOpacity style={{ flexDirection: "row", marginTop: 10}} onPress={() => {navigation.navigate('PostDetail', {post_id: item.id})}}>
                 <View style={{borderColor: '#67D393', borderWidth: 1, borderRadius: 8, paddingVertical: 2, paddingHorizontal: 4, backgroundColor: 'white'}}>
-                  <Text style={{color: '#67D393', fontSize: 10, fontWeight: '600'}}>#ESG</Text>
+                  <Text style={{color: '#67D393', fontSize: 10, fontWeight: '600'}}>#{item.semi_categories[0].name}</Text>
                 </View>
                 <Text style={{color: '#3C3C3C', fontSize: 12, lineHeight: 18, marginLeft: 5}} numberOfLines={1}>{item.title}</Text>
               </TouchableOpacity>
