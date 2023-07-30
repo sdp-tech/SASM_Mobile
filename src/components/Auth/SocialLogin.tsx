@@ -4,6 +4,7 @@ import { TextPretendard as Text } from '../../common/CustomText';
 import Kakao from "../../assets/img/Auth/Social_Kakao.svg";
 import Naver from "../../assets/img/Auth/Social_Naver.svg";
 import Google from "../../assets/img/Auth/Social_Google.svg";
+import Apple from "../../assets/img/Auth/Social_Apple.svg";
 import styled from 'styled-components/native';
 // Social login
 // kakao
@@ -12,6 +13,8 @@ import * as KakaoLogin from '@react-native-seoul/kakao-login';
 import NaverLogin from '@react-native-seoul/naver-login';
 // google
 import { GoogleSignin } from '@react-native-google-signin/google-signin';
+// apple
+import { appleAuth } from '@invertase/react-native-apple-authentication';
 import { GOOGLE_WEB_CLIENT_ID, NAVER_APP_CLIENT_ID, NAVER_APP_CLIENT_SECRET, NAVER_APP_SERVICE_URL_SCHEME } from 'react-native-dotenv';
 import { setNickname, setAccessToken, setRefreshToken } from '../../common/storage';
 import { useNavigation } from '@react-navigation/native';
@@ -116,6 +119,25 @@ export default function SocialLogin({ type }: { type: string }) {
       Alert.alert('구글 로그인이 실패하였습니다.')
     });
   }
+  
+  const apple_login = async () => {
+    const appleAuthRequestResponse = await appleAuth.performRequest({
+      requestedOperation: appleAuth.Operation.LOGIN,
+      // Note: it appears putting FULL_NAME first is important, see issue #293
+      requestedScopes: [appleAuth.Scope.FULL_NAME, appleAuth.Scope.EMAIL],
+    });
+    console.log(appleAuthRequestResponse)
+  
+    // get current authentication state for user
+    // /!\ This method must be tested on a real device. On the iOS simulator it always throws an error.
+    const credentialState = await appleAuth.getCredentialStateForUser(appleAuthRequestResponse.user);
+  
+    // use credentialState response to ensure the user is authenticated
+    if (credentialState === appleAuth.State.AUTHORIZED) {
+      // user is authenticated
+      console.log('authenticated')
+    }
+  }
 
   useEffect(() => {
     google_configure();
@@ -140,6 +162,13 @@ export default function SocialLogin({ type }: { type: string }) {
       <Button style={{ backgroundColor: '#FEE500' }} onPress={() => kakao_login()}>
         <Kakao width={18} height={16} style={{ position: 'absolute', top: 16, left: 16 }} />
         <Text style={TextStyles.button}>카카오로 {{
+          'register': '회원가입',
+          'login': '로그인'
+        }[type]}</Text>
+      </Button>
+      <Button style={{ backgroundColor: '#000000' }} onPress={() => apple_login()}>
+        <Apple width={30} height={30} style={{ position: 'absolute', left: 10 }} />
+        <Text style={{ ...TextStyles.button, color: '#FFFFFF' }}>Apple로 {{
           'register': '회원가입',
           'login': '로그인'
         }[type]}</Text>
