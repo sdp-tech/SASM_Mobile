@@ -31,6 +31,7 @@ const RecommendListPage = ({ navigation, route }: StoryProps) => {
         created = {item.created}
         writer_is_verified = {item.writer_is_verified}
         isLogin = {isLogin}
+        sameStory = {true}
         navigation = {navigation}
       />
     )

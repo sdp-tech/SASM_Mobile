@@ -19,10 +19,11 @@ interface SearchCardProps {
   created: string;
   writer_is_verified: boolean;
   isLogin: boolean;
+  sameStory?: boolean;
   navigation: any;
 }
 
-const SearchCard = ({id, place_name, title, rep_pic, extra_pics, story_like, category, preview, writer, nickname, created, writer_is_verified, isLogin, navigation} : SearchCardProps) => {
+const SearchCard = ({id, place_name, title, rep_pic, extra_pics, story_like, category, preview, writer, nickname, created, writer_is_verified, isLogin, sameStory, navigation} : SearchCardProps) => {
   const { width, height } = Dimensions.get('screen');
   const [like, setLike] = useState<boolean>(false);
   const [verified, setVerified] = useState<boolean>(writer_is_verified);
@@ -54,7 +55,11 @@ const SearchCard = ({id, place_name, title, rep_pic, extra_pics, story_like, cat
   };
 
   const onPress = () => {
-    navigation.navigate('StoryDetail', { id: id });
+    if(sameStory){
+      navigation.replace('StoryDetail', { id: id });
+    } else {
+      navigation.navigate('StoryDetail', { id: id });
+    }
   }
     
   return (
