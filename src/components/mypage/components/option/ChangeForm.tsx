@@ -157,7 +157,7 @@ export default function ChangeForm({ navigation, route }: StackScreenProps<MyPag
       </View>
       {
         loading ?
-          <ActivityIndicator /> :
+          <ActivityIndicator style={{flex:1}}/> :
           <Section>
             <ImageSelector>
               <Image source={{ uri: profile_src }} style={{ width: 80, height: 80, borderRadius: 40 }} />

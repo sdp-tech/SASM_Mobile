@@ -5,7 +5,7 @@ import { TextPretendard as Text } from '../../common/CustomText';
 import { FlatList } from 'react-native-gesture-handler';
 import { HomeStackParams } from '../../pages/Home';
 import SearchBar from '../../common/SearchBar';
-import { SearchItemCard } from './ItemCard';
+import { SearchItemCard } from './CurationItemCard'
 import styled from 'styled-components/native';
 import Arrow from "../../assets/img/common/Arrow.svg";
 import PlusButton from '../../common/PlusButton';
@@ -85,7 +85,7 @@ export default function CurationList({ navigation, route }: StackScreenProps<Hom
         />
       </View>
       {
-        loading ? <ActivityIndicator />
+        loading ? <ActivityIndicator style={{flex:1}}/>
           : <FlatList
             contentContainerStyle={{ padding: 5 }}
             numColumns={2}

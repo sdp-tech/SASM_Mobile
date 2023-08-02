@@ -2,7 +2,7 @@ import React, { useState, useEffect, useCallback, useContext } from "react";
 import { SafeAreaView, View, TouchableOpacity, Dimensions, ActivityIndicator, StyleSheet, ImageBackground, Alert } from "react-native";
 import { TextPretendard as Text } from "../../common/CustomText";
 import { ScrollView } from "react-native-gesture-handler";
-import ItemCard, { SearchItemCard } from "./ItemCard";
+import CurationItemCard, { SearchItemCard } from "./CurationItemCard"
 import { Request } from "../../common/requests";
 import { StackScreenProps, StackNavigationProp } from "@react-navigation/stack";
 import { useFocusEffect, useNavigation } from '@react-navigation/native';
@@ -95,7 +95,7 @@ export default function CurationHome({ navigation, route }: StackScreenProps<Hom
 
   return (
     <SafeAreaView style={{ backgroundColor: '#FFFFFF', flex: 1 }}>
-      {loading ? <ActivityIndicator />
+      {loading ? <ActivityIndicator style={{flex:1}}/>
         : <>
           <ScrollView>
             <CustomHeader
@@ -107,9 +107,9 @@ export default function CurationHome({ navigation, route }: StackScreenProps<Hom
               offset={0}
               data={repCuration}
               pageWidth={width}
-              dot={false}
+              dot={true}
               renderItem={({ item }: any) => (
-                <ItemCard
+                <CurationItemCard
                   rep={true}
                   data={item}
                   style={{ width: width, height: height * 0.4 }}
@@ -129,7 +129,7 @@ export default function CurationHome({ navigation, route }: StackScreenProps<Hom
                 pageWidth={width * 0.6}
                 dot={false}
                 renderItem={({ item }: any) => (
-                  <ItemCard
+                  <CurationItemCard
                     style={{ width: width * 0.6, height: height * 0.4, marginHorizontal: 7.5 }}
                     data={item}
                   />
@@ -144,7 +144,7 @@ export default function CurationHome({ navigation, route }: StackScreenProps<Hom
               </TextBox>
               {
                 verifedList.map((data, index) =>
-                  <ItemCard
+                  <CurationItemCard
                     data={verifedCuration[index]}
                     style={{ width: width - 30, height: height * 0.2, marginHorizontal: 15, marginVertical: 7.5 }}
                   />)
