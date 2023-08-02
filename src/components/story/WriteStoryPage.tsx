@@ -128,6 +128,7 @@ export default function WriteStoryPage({ navigation, route }: StoryProps) {
     }
     const response = await request.post("/stories/create/", formData, { "Content-Type": "multipart/form-data" });
     setStoryId(response.data.data.id);
+    setModalVisible(true);
   };
 
   const updateStory = async () => {
@@ -161,6 +162,7 @@ export default function WriteStoryPage({ navigation, route }: StoryProps) {
     }
     const response = await request.put(`/stories/${id}/update/`, formData, { "Content-Type": "multipart/form-data" });
     setStoryId(id);
+    setModalVisible(true);
   }
 
   const handleCursorPosition = useCallback((scrollY: number) => {
