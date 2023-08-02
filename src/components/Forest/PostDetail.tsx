@@ -232,7 +232,7 @@ const UserInfoSection = ({
         [
           {
             text: "이동",
-            onPress: () => navigation.navigate('Login')
+            onPress: () => navigation.navigate('마이페이지')
 
           },
           {
@@ -296,7 +296,7 @@ const PostRecommendSection = ({ data }: PostRecommendSectionProps) => {
       borderTopColor: "#E3E3E3",
       borderBottomColor: "#E3E3E3",
     }}>
-      <Text>추천글</Text>
+      <Text style={{color: '#202020', fontSize: 16, fontWeight: '700', marginBottom: 10}}>추천글</Text>
       <CardView
         gap={0}
         offset={0}
@@ -305,17 +305,24 @@ const PostRecommendSection = ({ data }: PostRecommendSectionProps) => {
         data={data}
         renderItem={({ item }: any) => {
           return (
-            <TouchableOpacity style={{ marginLeft: 10 }}>
+            <TouchableOpacity style={{ marginRight: 10 }}>
               <ImageBackground
-                source={{ uri: item.uri }}
+                source={{ uri: item.rep_pic }}
                 style={{
                   width: 120,
                   height: 120,
-                  alignItems: "center",
-                  justifyContent: "center",
+                }}
+                imageStyle={{
+                  borderRadius: 4
                 }}
               >
-                <Text style={{ color: "white" }}>{item.title}</Text>
+                <View style={{backgroundColor: 'rgba(0,0,0,0.15)', borderRadius: 4, width: 120, height: 120, alignItems: "center", justifyContent: "center"}}>
+                <Text style={{ color: "white", fontSize: 14, lineHeight: 20, letterSpacing: -0.6, fontWeight: 400, overflow: 'hidden', textAlign: 'center' }}>{item.title}</Text>
+                <View style={{ flexDirection: 'row', position: 'absolute', bottom: 5, right: 5 }}>
+                  <Text style={{ fontSize: 12, fontWeight: '600', color: item.writer.is_verified ? '#209DF5' : '#67D393' }}>{item.writer.is_verified ? 'Editor' : 'User'}</Text>
+                  <Text style={{ color: 'white', fontSize: 12, fontWeight: '600' }}> {item.writer.nickname}</Text>
+                </View>
+                </View>
               </ImageBackground>
             </TouchableOpacity>
           );
@@ -372,7 +379,7 @@ const BottomBarSection = ({ post, email, scrollToComment, onRefresh, navigation 
         </TouchableOpacity>
         <Text style={{ fontSize: 14, color: '#202020', lineHeight: 20, marginLeft: 3 }}>{post.comment_cnt}</Text>
       </View>
-      <ShareButton message={`[SASM Forest] ${post.title} - ${post.content}`} />
+      <ShareButton color={'black'} message={`[SASM Forest] ${post.title} - ${post.content}`} />
     </View>
   )
 }

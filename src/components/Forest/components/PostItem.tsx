@@ -133,7 +133,7 @@ const PostItem = ({
                 }}
                 source={{ uri: rep_pic }}
               />
-              {photos.map((uri: string, index: number) => {
+              {photos.slice(0,2).map((uri: string, index: number) => {
                 return (
                   <Image style={{width: 90, height: 90}} key={index} source={{uri: uri}} />
                 )

@@ -143,7 +143,7 @@ const BottomBarSection = ({ post, email, scrollToComment, onRefresh, navigation 
         </TouchableOpacity>
         <Text style={{fontSize: 14, color: '#202020', lineHeight: 20, marginLeft: 3}}>{post.comment_cnt}</Text>
       </View>
-      <ShareButton message={`[SASM Story] ${post.title} - ${post.html_content}`} />
+      <ShareButton color={'black'} message={`[SASM Story] ${post.title} - ${post.html_content}`} />
     </View>
   )
 }
