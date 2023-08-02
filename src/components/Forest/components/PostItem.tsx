@@ -252,11 +252,11 @@ export const HotPostItem = ({
               </View>
               <Text style={{ color: "#67D393", fontWeight: "600", marginRight: 5}}>{writer.nickname}</Text>
             </View>
-            <TouchableOpacity
+            {/* <TouchableOpacity
               style={{ position: "absolute", top: 85, left: (width-40) / 2 }}
             >
               <Arrow width={10} height={10} color={"#FFFFFF"} transform={[{ rotate: "90deg" }]} />
-            </TouchableOpacity>
+            </TouchableOpacity> */}
           </View>
         </ImageBackground>
       </TouchableOpacity>
