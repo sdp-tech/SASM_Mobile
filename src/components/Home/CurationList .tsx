@@ -38,7 +38,7 @@ export default function CurationList({ navigation, route }: StackScreenProps<Hom
         const response_search = await request.get('/curations/curation_search/', { search: search });
         if (page === 1) {
           setList(response_search.data.data.results);
-          setMax(Math.ceil(response_search.data.data.count / 10));
+          setMax(Math.ceil(response_search.data.data.count / 8));
         } else {
           setList([...list, ...response_search.data.data.results]);
         }
