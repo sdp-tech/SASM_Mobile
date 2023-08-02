@@ -45,52 +45,56 @@ export default function MyForest() {
 
   useFocusEffect(useCallback(() => {
     if (isLogin) {
-      if (type) {setWrittenPage(1); getForest();}
-      else {setPage(1); getWrittenForest();}
+      if (type) { setWrittenPage(1); getForest(); }
+      else { setPage(1); getWrittenForest(); }
     }
   }, [page, writtenPage, type, search, refresh]))
 
   return (
     <View style={{ flex: 1 }}>
-      <SearchNoCategory
-        edit={edit}
-        setEdit={setEdit}
-        setSearch={setSearch}
-        search={search}
-        setType={setType}
-        type={type}
-        setPage={type ? setPage : setWrittenPage}
-        label='내 포레스트'
-      />
+
       {
         isLogin ?
-        (type ? forestList : written).length == 0 ?
+          (type ? forestList : written).length == 0 ?
             <View style={{ alignItems: 'center', marginVertical: 20 }}>
               <NothingIcon />
               <Text style={{ marginTop: 20 }}>해당하는 포레스트가 없습니다</Text>
             </View>
             :
-            <FlatList
-              data={type ? forestList : written}
-              contentContainerStyle={{ paddingHorizontal: 20 }}
-              keyExtractor={(item) => item.id.toString()}
-              renderItem={({ item }: { item: MyForestItemCardProps }) => (
-                <MyForestItemCard props={item} edit={edit} rerender={rerender}/>
-              )}
-              onEndReached={() => {
-                if(type){
-                  if (page < max) {
-                    setPage(page + 1);
+            <View>
+              <SearchNoCategory
+                edit={edit}
+                setEdit={setEdit}
+                setSearch={setSearch}
+                search={search}
+                setType={setType}
+                type={type}
+                setPage={type ? setPage : setWrittenPage}
+                label='내 포레스트'
+              />
+              <FlatList
+                data={type ? forestList : written}
+                contentContainerStyle={{ paddingHorizontal: 20 }}
+                keyExtractor={(item) => item.id.toString()}
+                renderItem={({ item }: { item: MyForestItemCardProps }) => (
+                  <MyForestItemCard props={item} edit={edit} rerender={rerender} />
+                )}
+                onEndReached={() => {
+                  if (type) {
+                    if (page < max) {
+                      setPage(page + 1);
+                    }
+                  } else {
+                    if (writtenPage < writtenMax) {
+                      setWrittenPage(writtenPage + 1);
+                    }
                   }
-                } else {
-                  if (writtenPage < writtenMax) {
-                    setWrittenPage(writtenPage + 1);
-                  }
-                }
-              }}
-              onEndReachedThreshold={0.3}
-              style={{ alignContent: 'space-between' }}
-            />
+                }}
+                onEndReachedThreshold={0.3}
+                style={{ alignContent: 'space-between' }}
+              />
+
+            </View>
           :
           <RequireLogin index={3} />
       }
