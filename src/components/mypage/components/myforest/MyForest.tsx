@@ -1,5 +1,5 @@
 import { useFocusEffect } from '@react-navigation/native';
-import React, { useCallback, useContext, useState } from 'react';
+import React, { useCallback, useContext, useState, useEffect } from 'react';
 import { View } from 'react-native';
 import { Request } from '../../../../common/requests';
 import { LoginContext } from '../../../../common/Context';
@@ -15,7 +15,9 @@ export default function MyForest() {
   const [forestList, setForestList] = useState<MyForestItemCardProps[]>([]);
   const [edit, setEdit] = useState<boolean>(false);
   const [page, setPage] = useState<number>(1);
+  const [writtenPage, setWrittenPage] = useState<number>(1);
   const [max, setMax] = useState<number>(0);
+  const [writtenMax, setWrittenMax] = useState<number>(0);
   const [search, setSearch] = useState<string>('');
   const [type, setType] = useState<boolean>(true);
   const [refresh, setRefresh] = useState<boolean>(false);
@@ -35,18 +37,18 @@ export default function MyForest() {
     else setForestList([...forestList, ...response.data.data.results]);
   }
   const getWrittenForest = async () => {
-    const response = await request.get('/mypage/my_forest/', { page: page, search: search });
-    setMax(Math.ceil(response.data.data.count / 4))
-    if (page == 1) setWritten(response.data.data.results);
-    else setWritten([...written, ...response.data.data.results]);
+    const response = await request.get('/mypage/my_forest/', { page: writtenPage, search: search });
+    setWrittenMax(Math.ceil(response.data.data.count / 4))
+    if (writtenPage == 1) setWritten(response.data.data.results);
+    else setForestList([...written, ...response.data.data.results]);
   }
 
   useFocusEffect(useCallback(() => {
     if (isLogin) {
-      if (type) getForest();
-      else getWrittenForest();
+      if (type) {setWrittenPage(1); getForest();}
+      else {setPage(1); getWrittenForest();}
     }
-  }, [page, type, search, refresh]))
+  }, [page, writtenPage, type, search, refresh]))
 
   return (
     <View style={{ flex: 1 }}>
@@ -57,6 +59,7 @@ export default function MyForest() {
         search={search}
         setType={setType}
         type={type}
+        setPage={type ? setPage : setWrittenPage}
         label='내 포레스트'
       />
       {
@@ -70,12 +73,19 @@ export default function MyForest() {
             <FlatList
               data={type ? forestList : written}
               contentContainerStyle={{ paddingHorizontal: 20 }}
+              keyExtractor={(item) => item.id.toString()}
               renderItem={({ item }: { item: MyForestItemCardProps }) => (
                 <MyForestItemCard props={item} edit={edit} rerender={rerender}/>
               )}
               onEndReached={() => {
-                if (page < max) {
-                  setPage(page + 1);
+                if(type){
+                  if (page < max) {
+                    setPage(page + 1);
+                  }
+                } else {
+                  if (writtenPage < writtenMax) {
+                    setWrittenPage(writtenPage + 1);
+                  }
                 }
               }}
               onEndReachedThreshold={0.3}

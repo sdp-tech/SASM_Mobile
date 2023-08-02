@@ -47,6 +47,7 @@ const MyStory = () => {
   const [page, setPage] = useState<number>(1);
   const [writtenPage, setWrittenPage] = useState<number>(1);
   const [max, setMax] = useState<number>(1);
+  const [writtenMax, setWrittenMax] = useState<number>(1);
   const [search, setSearch] = useState<string>("");
   const [nextPage, setNextPage] = useState<any>(null);
   const [checkedList, setCheckedList] = useState([] as any);
@@ -79,8 +80,9 @@ const MyStory = () => {
       filter: checkedList,
       page: writtenPage
     });
-    setMax(Math.ceil(response.data.data.count / 6));
-    setWritten(response.data.data.results);
+    setWrittenMax(Math.ceil(response.data.data.count / 6));
+    if(writtenPage == 1) setWritten(response.data.data.results);
+    else setWritten([...written, ...response.data.data.results])
   }
 
   const onEndReached = async () => {
@@ -96,7 +98,7 @@ const MyStory = () => {
       if (type) getStories();
       else getWrittenStory();
     }
-  }, [page, writtenPage, search, checkedList, refresh]));
+  }, [page, writtenPage, type, search, checkedList, refresh]));
 
 
   return (
@@ -125,6 +127,7 @@ const MyStory = () => {
               ) : (
                 <FlatList
                   data={type ? storyList : written}
+                  keyExtractor={(item) => item.id.toString()}
                   renderItem={({ item }: any) =>
                     <MyStoryItemCard
                     edit={edit}
@@ -133,8 +136,11 @@ const MyStory = () => {
                     />
                   }
                   onEndReached={() => {
-                    if (page < max) setPage(page + 1);
-                    if (writtenPage < max) setWrittenPage(writtenPage + 1);
+                    if(type){
+                      if (page < max) setPage(page + 1);
+                    } else {
+                      if (writtenPage < writtenMax) setWrittenPage(writtenPage + 1);
+                    }
                   }}
                   onEndReachedThreshold={0.3}
                   numColumns={2}
