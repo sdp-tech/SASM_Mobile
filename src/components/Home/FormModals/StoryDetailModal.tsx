@@ -55,7 +55,7 @@ export default function StoryDetailModal({ id }: { id: number }) {
     <>
       {
         loading ?
-          <ActivityIndicator />
+          <ActivityIndicator style={{flex:1}}/>
           :
           <ScrollView>
             <Text style={{...StoryTextStyles.category, marginLeft: 20, marginTop: 20 }}>{detailData.category}</Text>

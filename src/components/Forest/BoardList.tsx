@@ -10,10 +10,11 @@ import {
   View,
   TouchableOpacity,
   Image,
+  Alert
 } from "react-native";
 import { TextPretendard as Text } from "../../common/CustomText";
 import type { NativeStackScreenProps } from "@react-navigation/native-stack";
-import { useFocusEffect } from "@react-navigation/native";
+import { useFocusEffect, useNavigation } from "@react-navigation/native";
 import CardView from "../../common/CardView";
 import CustomHeader from "../../common/CustomHeader";
 import PostItem, { HotPostItem } from "./components/PostItem";
@@ -22,6 +23,8 @@ import { LoginContext } from "../../common/Context";
 import { ForestStackParams } from "../../pages/Forest";
 import { Request } from "../../common/requests";
 import PlusButton from "../../common/PlusButton";
+import { StackNavigationProp } from "@react-navigation/stack";
+import { TabProps } from "../../../App";
 
 const { width, height } = Dimensions.get("window");
 
@@ -37,6 +40,8 @@ const BoardListScreen = ({
   const [hotPosts, setHotPosts] = useState([] as any);
   const [newPosts, setNewPosts] = useState([] as any);
   const {isLogin, setLogin} = useContext(LoginContext);
+
+  const navigationToTab = useNavigation<StackNavigationProp<TabProps>>();
 
   const request = new Request();
 
@@ -105,7 +110,7 @@ const BoardListScreen = ({
             <Text style={{ color: '#3C3C3C', fontWeight: '700', fontSize: 16, lineHeight: 22, letterSpacing: -0.6 }}>{isLogin? (`${nickname}님 이 정보들은 어떠신가요?`):('로그인 후 추천 글을 받아보세요')}</Text>
             <View style={{flexDirection: 'row', marginTop: 10}}>
               <View style={{borderColor: '#67D393', borderWidth: 1, borderRadius: 8, paddingVertical: 2, paddingHorizontal: 4, backgroundColor: 'white'}}>
-                <Text style={{color: '#67D393', fontSize: 10, fontWeight: '600'}}>#ESG</Text>
+                <Text style={{color: '#67D393', fontSize: 10, fontWeight: '600'}}>#{posts[0]?.semi_categories[0].name}</Text>
               </View>
               <Text style={{color: '#3C3C3C', fontSize: 12, lineHeight: 18, marginLeft: 5}} numberOfLines={1}>{posts[0]?.title}</Text>
             </View>
@@ -234,7 +239,7 @@ const BoardListScreen = ({
             renderItem={({ item }: any) => (
               <TouchableOpacity style={{ flexDirection: "row", marginTop: 10}} onPress={() => {navigation.navigate('PostDetail', {post_id: item.id})}}>
                 <View style={{borderColor: '#67D393', borderWidth: 1, borderRadius: 8, paddingVertical: 2, paddingHorizontal: 4, backgroundColor: 'white'}}>
-                  <Text style={{color: '#67D393', fontSize: 10, fontWeight: '600'}}>#ESG</Text>
+                  <Text style={{color: '#67D393', fontSize: 10, fontWeight: '600'}}>#{item.semi_categories[0].name}</Text>
                 </View>
                 <Text style={{color: '#3C3C3C', fontSize: 12, lineHeight: 18, marginLeft: 5}} numberOfLines={1}>{item.title}</Text>
               </TouchableOpacity>
@@ -371,11 +376,32 @@ const BoardListScreen = ({
           />
         </View>
       </ScrollView>
-      {isLogin &&
-        <PlusButton
-          onPress={() => navigation.navigate('PostUpload', {})}
-          position="rightbottom" />
-      }
+      <PlusButton
+        onPress={() => {
+          if(!isLogin) {
+            Alert.alert(
+              "로그인이 필요합니다.",
+              "로그인 항목으로 이동하시겠습니까?",
+              [
+                {
+                  text: "이동",
+                  onPress: () => navigationToTab.navigate('마이페이지')
+      
+                },
+                {
+                  text: "취소",
+                  onPress: () => { },
+                  style: "cancel"
+                },
+              ],
+              { cancelable: false }
+            );
+          }
+          else {
+            navigation.navigate('PostUpload', {});
+          }
+        }}
+        position="rightbottom" />
     </SafeAreaView>
   );
 };

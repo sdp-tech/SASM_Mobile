@@ -1,9 +1,9 @@
 import { useState, useEffect, useCallback, useContext } from "react";
-import { SafeAreaView, View, StyleSheet, TouchableOpacity, Dimensions } from "react-native";
+import { SafeAreaView, View, StyleSheet, TouchableOpacity, Dimensions, Alert } from "react-native";
 import { TextPretendard as Text } from '../../common/CustomText';
 import SearchBar from "../../common/SearchBar";
 import { Request } from "../../common/requests";
-import { useFocusEffect } from "@react-navigation/native";
+import { useFocusEffect, useNavigation } from "@react-navigation/native";
 import { StoryProps } from "../../pages/Story";
 import CardView from "../../common/CardView";
 import CustomHeader from "../../common/CustomHeader";
@@ -13,6 +13,8 @@ import MainCard from "./components/MainCard";
 import Reload from "../../assets/img/Story/Reload.svg";
 import PlusButton from "../../common/PlusButton";
 import { LoginContext } from "../../common/Context";
+import { StackNavigationProp } from "@react-navigation/stack";
+import { TabProps } from "../../../App";
 
 export interface StoryListProps {
   id: number;
@@ -44,7 +46,7 @@ const StoryMainPage = ({ navigation, route }: StoryProps) => {
   const [checkedList, setCheckedList] = useState<string[]>([]);
   const [count, setCount] = useState<number>(0);
   const { width, height } = Dimensions.get("screen");
-
+  const navigationToTab = useNavigation<StackNavigationProp<TabProps>>();
   const request = new Request();
 
   useEffect(() => {
@@ -125,8 +127,32 @@ const StoryMainPage = ({ navigation, route }: StoryProps) => {
                 )
               }} />
           </View>
-          {isLogin && <PlusButton onPress={() => navigation.navigate('WriteStory')}
-            position="rightbottom" />}
+          <PlusButton
+        onPress={() => {
+          if(!isLogin) {
+            Alert.alert(
+              "로그인이 필요합니다.",
+              "로그인 항목으로 이동하시겠습니까?",
+              [
+                {
+                  text: "이동",
+                  onPress: () => navigationToTab.navigate('마이페이지')
+      
+                },
+                {
+                  text: "취소",
+                  onPress: () => { },
+                  style: "cancel"
+                },
+              ],
+              { cancelable: false }
+            );
+          }
+          else {
+            navigation.navigate('WriteStory');
+          }
+        }}
+        position="rightbottom" />
     </SafeAreaView>
   );
 };

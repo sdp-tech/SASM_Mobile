@@ -133,7 +133,7 @@ const PostItem = ({
                 }}
                 source={{ uri: rep_pic }}
               />
-              {photos.map((uri: string, index: number) => {
+              {photos.slice(0,2).map((uri: string, index: number) => {
                 return (
                   <Image style={{width: 90, height: 90}} key={index} source={{uri: uri}} />
                 )
@@ -252,11 +252,11 @@ export const HotPostItem = ({
               </View>
               <Text style={{ color: "#67D393", fontWeight: "600", marginRight: 5}}>{writer.nickname}</Text>
             </View>
-            <TouchableOpacity
+            {/* <TouchableOpacity
               style={{ position: "absolute", top: 85, left: (width-40) / 2 }}
             >
               <Arrow width={10} height={10} color={"#FFFFFF"} transform={[{ rotate: "90deg" }]} />
-            </TouchableOpacity>
+            </TouchableOpacity> */}
           </View>
         </ImageBackground>
       </TouchableOpacity>

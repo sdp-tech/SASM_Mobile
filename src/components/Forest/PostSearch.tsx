@@ -8,10 +8,11 @@ import {
   ImageBackground,
   Dimensions,
   ActivityIndicator,
+  Alert
 } from "react-native";
 import { TextPretendard as Text } from "../../common/CustomText";
 import type { NativeStackScreenProps } from "@react-navigation/native-stack";
-import { useFocusEffect } from "@react-navigation/native";
+import { useFocusEffect, useNavigation } from "@react-navigation/native";
 import { LoginContext } from "../../common/Context";
 
 import { ForestStackParams } from "../../pages/Forest";
@@ -23,6 +24,8 @@ import PostItem from "./components/PostItem";
 import Add from "../../assets/img/common/Add.svg";
 import Arrow from "../../assets/img/common/Arrow.svg";
 import PlusButton from "../../common/PlusButton";
+import { StackNavigationProp } from "@react-navigation/stack";
+import { TabProps } from "../../../App";
 
 const { width, height } = Dimensions.get('window');
 
@@ -35,13 +38,13 @@ const PostSearchScreen = ({
   ]
   const [refreshing, setRefreshing] = useState(false);
   const [search, setSearch] = useState("");
-  const [category, setCategory] = useState(1);
+  const [category, setCategory] = useState(0);
   const [orderList, setOrderList] = useState(0);
   const [order, setOrder] = useState<string>(toggleItems[orderList].order);
   const [count, setCount] = useState(0);
   const [posts, setPosts] = useState([]); // id, title, preview, nickname, email, likeCount, created, commentCount
   const {isLogin, setLogin} = useContext(LoginContext);
-
+  const navigationToTab = useNavigation<StackNavigationProp<TabProps>>();
   const request = new Request();
 
   const boardLists = [
@@ -80,7 +83,7 @@ const PostSearchScreen = ({
       {
        order: order,
        search: search,
-       category_filter: category
+       category_filter: category > 0 ? category : ['']
       },
       null
     );
@@ -223,11 +226,32 @@ const PostSearchScreen = ({
           </View>
         </>
       )}
-      {isLogin &&
-        <PlusButton
-          onPress={() => navigation.navigate('PostUpload', {})}
-          position="rightbottom" />
-      }
+      <PlusButton
+        onPress={() => {
+          if(!isLogin) {
+            Alert.alert(
+              "로그인이 필요합니다.",
+              "로그인 항목으로 이동하시겠습니까?",
+              [
+                {
+                  text: "이동",
+                  onPress: () => navigationToTab.navigate('마이페이지')
+      
+                },
+                {
+                  text: "취소",
+                  onPress: () => { },
+                  style: "cancel"
+                },
+              ],
+              { cancelable: false }
+            );
+          }
+          else {
+            navigation.navigate('PostUpload', {});
+          }
+        }}
+        position="rightbottom" />
     </SafeAreaView>
   );
 };

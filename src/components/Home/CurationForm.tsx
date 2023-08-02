@@ -94,6 +94,10 @@ export default function CurationForm({ navigation, route }: StackScreenProps<Hom
   const [selectStoryModal, setSelectStoryModal] = useState<boolean>(false);
   const request = new Request();
 
+  const handleCheckedList = (id: number): void => {
+    setSelectedStory(selectedStory.filter(element => element.id != id));
+  }
+
   const uploadCuration = async () => {
     const formData = new FormData();
     for (let i of Object.keys(form)) {
@@ -142,9 +146,14 @@ export default function CurationForm({ navigation, route }: StackScreenProps<Hom
     ])
   }
 
+  useEffect(() => {
+    console.log(selectedStory);
+  }, [selectedStory])
+
   return (
     <ScrollView style={{ backgroundColor: '#FFFFFF' }}>
       <ReppicBox onPress={handleRepPic}>
+        <ImageBackground source={require('../../assets/img/Home/form_example.png')} style={{ flex: 1, opacity: 0.5 }} resizeMode='cover' />
         {
           rep_pic[0].uri != '' &&
           <Image style={{ width: width, height: height / 2 }}
@@ -160,10 +169,11 @@ export default function CurationForm({ navigation, route }: StackScreenProps<Hom
         <StorySection>
           {
             selectedStory.map((data, index) =>
-              <View style={{ position: 'relative' }}>
-                <StoryImage style={index == 0 && { borderColor: '#209DF5', borderWidth: 2 }} source={{ uri: data.rep_pic }} />
+              <TouchableOpacity onPress={() => { console.log(data); handleCheckedList(data.id) }} style={{ position: 'relative' }}>
+                <StoryImage style={index == 0 && { borderColor: '#67D393', borderWidth: 2 }} source={{ uri: data.rep_pic }} />
                 {index == 0 && <Text style={TextStyles.rep}>대표</Text>}
-              </View>
+                <Text style={TextStyles.place_name}>{data.place_name}</Text>
+              </TouchableOpacity>
             )
           }
           <Button onPress={() => [setSelectStoryModal(true)]}>
@@ -196,12 +206,18 @@ const TextStyles = StyleSheet.create({
     right: 0,
     color: '#FFFFFF',
     fontSize: 10,
-    backgroundColor: '#209DF5',
+    backgroundColor: '#67D393',
     paddingHorizontal: 5,
     paddingVertical: 2,
     textAlign: 'center',
     overflow: 'hidden',
-    borderRadius: 6,
+    borderRadius: 8,
     fontWeight: '500'
+  },
+  place_name: {
+    fontSize: 10,
+    lineHeight: 18,
+    letterSpacing: -0.6,
+    alignSelf: 'center'
   }
 })

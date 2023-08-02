@@ -55,9 +55,12 @@ const MyPlace = ({ navigation }: MyPageParams) => {
   }
 
   const getPlaces = async () => {
-    const response = await request.get(`/mypage/myplace_search/`, {
+    let params = new URLSearchParams();
+    for (const category of checkedList){
+      params.append('filter', category);
+    }
+    const response = await request.get(`/mypage/myplace_search/?${params.toString()}`, {
       search: search,
-      filter: checkedList,
       page: page
     })
     setMax(Math.ceil(response.data.data.count / 6));

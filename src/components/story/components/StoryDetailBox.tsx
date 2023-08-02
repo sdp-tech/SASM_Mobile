@@ -103,7 +103,12 @@ const StoryDetailBox = ({navigation, data, isLogin, onLayout, email, onRefresh, 
             { cancelable: false }
           );
         }
-      }
+    }
+
+    const chunkArray = () => {
+        const array = [data.rep_pic, ...data.extra_pics]
+        return array.slice(0,3);
+    }
 
     const handlePageGoToMap = async () => {
         const response = await request.get('/stories/go_to_map/', {id: data.id});
@@ -153,7 +158,7 @@ const StoryDetailBox = ({navigation, data, isLogin, onLayout, email, onRefresh, 
                         <CardView 
                             gap={0}
                             offset={0}
-                            data={data!.extra_pics}
+                            data={chunkArray()}
                             pageWidth={width}
                             dot={false}
                             renderItem={({item}: any) => (

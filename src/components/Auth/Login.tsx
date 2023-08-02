@@ -85,7 +85,7 @@ const LoginScreen = () => {
       <TouchableOpacity onPress={() => login()}>
         <Text style={TextStyles.button_login}>로그인하기</Text>
       </TouchableOpacity>
-      <TouchableOpacity style={{marginBottom: 60}} onPress={() => navigation.navigate('findidpw')}><Text style={TextStyles.find}>아이디/비밀번호 찾기</Text></TouchableOpacity>
+      <TouchableOpacity style={{marginBottom: 30}} onPress={() => navigation.navigate('findidpw')}><Text style={TextStyles.find}>아이디/비밀번호 찾기</Text></TouchableOpacity>
       <SocialLogin type='login'/>
     </SafeAreaView>
   )
