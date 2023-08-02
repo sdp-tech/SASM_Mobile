@@ -75,23 +75,18 @@ const MyStory = () => {
   };
 
   const getWrittenStory = async () => {
-    const response = await request.get('/mypage/my_story/', {
+    let params = new URLSearchParams();
+    for (const category of checkedList){
+      params.append('filter', category);
+    }
+    const response = await request.get(`/mypage/my_story/?${params.toString()}`, {
       search: search,
-      filter: checkedList,
       page: writtenPage
     });
     setWrittenMax(Math.ceil(response.data.data.count / 6));
     if(writtenPage == 1) setWritten(response.data.data.results);
     else setWritten([...written, ...response.data.data.results])
   }
-
-  const onEndReached = async () => {
-    if (nextPage !== null) {
-      setPage(page + 1);
-    } else {
-      return;
-    }
-  };
   
   useFocusEffect(useCallback(() => {
     if (isLogin) {
