@@ -9,7 +9,6 @@ import Category from '../../../../common/Category';
 import SearchBar from '../../../../common/SearchBar';
 import { useFocusEffect } from '@react-navigation/native';
 import Menu from "../../../../assets/img/MyPage/Menu.svg";
-import { MyPageParams } from '../../../../pages/MyPage';
 import { LoginContext } from '../../../../common/Context';
 import RequireLogin from '../common/RequiredLogin';
 import { SearchNCategory } from '../common/SearchNCategory';

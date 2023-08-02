@@ -29,7 +29,7 @@ export default function RequireLogin({ index }: { index: number }) {
   const navigation = useNavigation<StackNavigationProp<MyPageProps>>();
   return (
     <View>
-      <Text style={{ ...TextStyles.label, marginTop: (index == 0) ? 130 : 180 }}>
+      <Text style={{ ...TextStyles.label, marginTop: 180 }}>
         {
           {
             0: 'SASM의 지속가능한 장소를 저장해보세요!',

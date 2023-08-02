@@ -15,11 +15,6 @@ import Follower from '../components/mypage/components/Follower_List';
 import Options from '../components/mypage/components/option/OptionPage';
 import Withdraw from '../components/mypage/components/option/Withdraw';
 
-export interface MyPageParams {
-    navigation: any;
-    route?: any;
-}
-
 export type MyPageProps = {
     'mypage': any;
     'login': any;
