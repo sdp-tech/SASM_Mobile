@@ -13,26 +13,28 @@ interface CardViewProps {
   onRefresh?: () => void;
   refreshing?: boolean;
   onEndDrag?: () => void;
+  green?: boolean;
 }
 
 interface DotProps {
   focused: boolean;
+  green?: boolean;
 }
 
-const Dot = ({focused}: DotProps) => {
+const Dot = ({focused, green}: DotProps) => {
   return (
     <View style = {{
       width: focused ? 8 : 4,
       height: focused ? 8 : 4,
       marginHorizontal: 6,
       borderRadius: 16,
-      backgroundColor: '#209DF5',
-      opacity: focused ? 1 : 0.3
+      backgroundColor: green ? '#67D393' : '#209DF5',
+      opacity: focused ? 1 : 0.5
     }}/>
 )
 }
 
-const CardView = ({ gap, offset, data, pageWidth, renderItem, dot, onEndReached, onRefresh, refreshing, onEndDrag }: CardViewProps) => {
+const CardView = ({ gap, offset, data, pageWidth, renderItem, dot, onEndReached, onRefresh, refreshing, onEndDrag, green }: CardViewProps) => {
   const [page, setPage] = useState<number>(0);
   const prevScrollOffset = useRef<number>(0); // 이전 스크롤 위치를 저장할 ref
 
@@ -77,7 +79,7 @@ const CardView = ({ gap, offset, data, pageWidth, renderItem, dot, onEndReached,
       {dot ? (
         <View style = {{ flexDirection: 'row', alignItems: 'center', justifyContent: 'center', marginTop: 10 }}>
           {Array.from({length: data.length}, (_, i) => i).map((i) => (
-            <Dot key={i} focused={i === page ? true : false} />
+            <Dot key={i} focused={i === page ? true : false} green={green} />
           ))}
         </View>
       ):(<></>)}
