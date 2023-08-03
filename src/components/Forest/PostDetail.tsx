@@ -128,7 +128,7 @@ const PostDetailSection = ({
             {post.category.name}
           </Text>
           <TouchableOpacity style={{marginTop: 10, marginRight: 10}} onPress={() => setDot(!dot)}>
-            <Settings transform={[{ rotate: dot ? '90deg' : 'none'}]} />
+            <Settings transform={[{ rotate: dot ? '90deg' : 'none'}]} color={'#444444'}/>
           </TouchableOpacity>
           { dot &&
           <View style={{position: 'absolute', backgroundColor: 'white', top: 40, left: width-140, borderRadius: 4}}>
@@ -272,7 +272,7 @@ const UserInfoSection = ({
           <Text style={{ fontSize: 12, fontWeight: '600', color: user.is_verified ? '#209DF5' : '#67D393' }}>{user.is_verified ? 'Editor' : 'User'}</Text>
           <Text style={{ color: '#202020', fontSize: 12, fontWeight: '600' }}> {user.nickname}님의 다른 글</Text>
         </View>
-        <FlatList data={posts.slice(0, 4)} scrollEnabled={false} renderItem={({ item }: any) => {
+        <FlatList data={posts.slice(0,4)} scrollEnabled={false} renderItem={({ item }: any) => {
           return (
             <TouchableOpacity style={{ borderBottomColor: '#EDF8F2', borderBottomWidth: 0.5 }} onPress={() => { navigation.push('PostDetail', { post_id: item.id }) }}>
               <Text style={{ color: '#3C3C3C', fontSize: 10, lineHeight: 18, opacity: 0.6, }} numberOfLines={1}>{item.title}</Text>
@@ -505,7 +505,7 @@ const PostDetailScreen = ({
             ListHeaderComponent={
               <>
                 <PostDetailSection post={post} navigation={navigation} email={user.email} onReport={() => setModalVisible(true)} onDelete={deletePost} onUpdate={()=>navigation.navigate('PostUpload', {post: post})} onLayout={onLayout} />
-                <UserInfoSection user={post.writer} posts={writerPosts} isLogin={isLogin} navigation={navigation} onRefresh={reRenderScreen} writer_is_followed={post.writer_is_followed}/>
+                <UserInfoSection user={post.writer} posts={writerPosts.filter((item: any) => item.id !== post.id)} isLogin={isLogin} navigation={navigation} onRefresh={reRenderScreen} writer_is_followed={post.writer_is_followed}/>
                 <View style={{ flexDirection: 'row', padding: 20, alignItems: 'center' }}>
                   <View style={{ flexDirection: 'row', flex: 1 }}>
                     <Text style={{ fontSize: 16, fontWeight: '700', marginRight: 10 }}>한줄평</Text>
@@ -521,7 +521,7 @@ const PostDetailScreen = ({
             }
             ListFooterComponent={
               <>
-                <PostRecommendSection data={recommend} />
+                <PostRecommendSection data={recommend.filter((item: any) => item.id !== post.id)} />
                 <View style={{ justifyContent: 'center', alignItems: 'center', paddingVertical: 20 }}>
                   <TouchableOpacity onPress={scrollToTop} style={{ flexDirection: 'row' }}>
                     <Arrow width={18} height={18} transform={[{ rotate: '270deg' }]} />

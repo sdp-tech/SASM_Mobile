@@ -1,5 +1,5 @@
 import { useState, useEffect, useContext } from 'react';
-import { View, FlatList, TouchableOpacity, Dimensions } from 'react-native';
+import { View, FlatList, TouchableOpacity, Dimensions, Alert } from 'react-native';
 import { TextPretendard as Text } from '../../../common/CustomText';
 import FormHeader from '../../../common/FormHeader';
 import { ForestContext } from './ForestContext';
@@ -29,7 +29,7 @@ const SemiCategoryForm = ({ tab, setTab, post }: PostUploadParams) => {
 
   return (
     <View>
-      <FormHeader title='포레스트 작성' onLeft={() => setTab(tab-1)} onRight={() => setTab(tab+1)} />
+      <FormHeader title='포레스트 작성' onLeft={() => setTab(tab-1)} onRight={selectedIds.length > 0 ? () => setTab(tab+1) : () => Alert.alert('세부 카테고리를 선택해주세요')} />
       <View style={{alignItems: 'center', justifyContent: 'center', paddingVertical: 150}}>
         <Text style={{fontSize: 16, color: '#202020', marginBottom: 80}}>세부 카테고리를 선택해 주세요</Text>
         <FlatList
