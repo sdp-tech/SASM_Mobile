@@ -1,7 +1,6 @@
 import { useState, useEffect, useCallback } from 'react';
 import { View, ImageBackground, StyleSheet, Dimensions } from 'react-native';
 import { TextPretendard as Text } from '../../../../common/CustomText';
-import { MyPageParams } from '../../../../pages/MyPage';
 import { useNavigation } from '@react-navigation/native';
 import { StackNavigationProp } from '@react-navigation/stack';
 import { HomeStackParams } from '../../../../pages/Home';

@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback, useContext } from 'react';
-import { View, SafeAreaView, useWindowDimensions, Image } from 'react-native';
+import { View, SafeAreaView, useWindowDimensions, Image, Alert } from 'react-native';
 import { TextPretendard as Text } from '../../common/CustomText';
 import { TouchableOpacity } from 'react-native-gesture-handler';
 import { TabView, TabBar, SceneMap } from "react-native-tab-view";
@@ -7,7 +7,7 @@ import { Request } from '../../common/requests';
 import MyPlace from './components/myplace/MyPlace';
 import MyStory from './components/mystory/MyStory';
 import MyCuration from './components/mycuration/MyCuration';
-import { MyPageParams, MyPageProps } from '../../pages/MyPage';
+import { MyPageProps } from '../../pages/MyPage';
 import Profile from '../../assets/img/MyPage/Profile.svg';
 import Settings from '../../assets/img/MyPage/Settings.svg';
 import { getAccessToken } from '../../common/storage';
@@ -78,11 +78,11 @@ const MyPageTabView = ({ navigation }: StackScreenProps<MyPageProps, 'mypage'>) 
   const renderScene = ({ route }: any) => {
     switch (route.key) {
       case "place":
-        return <MyPlace navigation={navigation} />;
+        return <MyPlace />;
       case "story":
-        return <MyStory navigation={navigation} />;
+        return <MyStory />;
       case "curation":
-        return <MyCuration navigation={navigation} />;
+        return <MyCuration />;
       case "forest":
         return <MyForest />
     }
@@ -114,7 +114,7 @@ const MyPageTabView = ({ navigation }: StackScreenProps<MyPageProps, 'mypage'>) 
               </View>
             </View>
             :
-            <View>
+            <View style={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
               <View style={{ width: 80, height: 80, borderRadius: 60, borderColor: '#4DB1F7', borderWidth: 1, display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
                 <Profile />
               </View>
@@ -123,10 +123,10 @@ const MyPageTabView = ({ navigation }: StackScreenProps<MyPageProps, 'mypage'>) 
                 <Text style={{ fontWeight: "400", fontSize: 12, marginTop: 10 }}>로그인해서 다른 사람들의 장소를 탐색해보세요</Text>
                 <View style={{ flexDirection: "row" }}>
                   <TouchableOpacity>
-                    <Text style={{ fontWeight: "400", fontSize: 10, color: "#848484", marginTop: 10 }}>팔로워 {follower.num}  |  </Text>
+                    <Text style={{ fontWeight: "400", fontSize: 10, color: "#848484", marginTop: 10 }}>팔로워 0 |  </Text>
                   </TouchableOpacity>
                   <TouchableOpacity>
-                    <Text style={{ fontWeight: "400", fontSize: 10, color: "#848484", marginTop: 10 }}>팔로잉 {following.num}</Text>
+                    <Text style={{ fontWeight: "400", fontSize: 10, color: "#848484", marginTop: 10 }}>팔로잉 0</Text>
                   </TouchableOpacity>
                 </View>
               </View>
@@ -139,7 +139,7 @@ const MyPageTabView = ({ navigation }: StackScreenProps<MyPageProps, 'mypage'>) 
   return (
     <SafeAreaView style={{ backgroundColor: 'white', flex: 1 }}>
       <View style={{ flexDirection: "row", paddingHorizontal: 20, paddingVertical: 10, justifyContent:'space-between' }}>
-        <TouchableOpacity onPress={() => { navigation.navigate('user', { info: info, follower: follower.num, following: following.num }) }}>
+        <TouchableOpacity onPress={() => { {isLogin ? navigation.navigate('user', { info: info, follower: follower.num, following: following.num }) : Alert.alert('로그인이 필요합니다')} }}>
           <Profile />
         </TouchableOpacity>
         <TouchableOpacity onPress={() => { navigation.navigate('options', { info: info }) }}>

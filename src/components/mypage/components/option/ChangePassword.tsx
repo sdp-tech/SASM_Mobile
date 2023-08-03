@@ -1,11 +1,15 @@
-import React, { useState } from 'react';
-import { Platform, TouchableOpacity, View, TextInput, StyleSheet, SafeAreaView, Alert } from "react-native";
+import React, { useContext, useState } from 'react';
+import { Platform, TouchableOpacity, View, TextInput, StyleSheet, SafeAreaView, Alert, Modal } from "react-native";
 import { TextPretendard as Text } from '../../../../common/CustomText';
 import styled, { css } from 'styled-components/native';
 import { StackScreenProps } from '@react-navigation/stack';
 import { MyPageProps } from '../../../../pages/MyPage';
 import { Request } from '../../../../common/requests';
-
+import Arrow from "../../../../assets/img/common/Arrow.svg";
+import FinishModal from '../../../../common/FinishModal';
+import InputWithLabel from '../../../../common/InputWithLabel';
+import { LoginContext } from '../../../../common/Context';
+import { removeAccessToken, removeNickname, removeRefreshToken } from '../../../../common/storage';
 const SignUpButton = styled.View`
     width: 300px;
     height: 40px;
@@ -41,64 +45,106 @@ const LoginInput = styled.TextInput`
 const request = new Request();
 
 const PasswordChange = ({ navigation }: StackScreenProps<MyPageProps, 'changepw'>) => {
-    const [password, setPassword] = useState('');
-    const [checkpw, setCheckpw] = useState('');
-    const changePW = async () => {
-        if (password != checkpw) Alert.alert('알림', '입력한 비밀번호와 비밀번호 확인이 일치하지 않습니다.', [{ text: '확인' }])
+    const { isLogin, setLogin } = useContext(LoginContext);
+    const [form, setForm] = useState<{password: string; passwordConfirm: string; }>({
+        password: '',
+        passwordConfirm: ''
+    })
+    const [finishModal, setFinishModal] = useState<boolean>(false);
+
+    // 비밀번호 확인 체크
+    let passwordCheck: boolean = false;
+    if (form.password === form.passwordConfirm || form.passwordConfirm === "")
+        passwordCheck = true;
+
+
+    const updateNewPassword = async () => {
+        if (!passwordCheck) Alert.alert('알림', '비밀번호가 일치하지 않습니다.', [{ text: '확인' }])
         else {
-            const response = await request.put(`/users/pw_change/`, { password: password });
+            const response = await request.put(`/users/pw_change/`, { password: form.password });
             if (response.status == 200) {
-                Alert.alert('알림', '비밀번호가 성공적으로 변경되었습니다.', [{ text: '확인' }])
+                logOut();
+                setFinishModal(true);
             }
             else {
                 Alert.alert('알림', '비밀번호 변경이 실패하였습니다.', [{ text: '확인' }])
             }
-            navigation.navigate('mypage');
         }
 
     }
 
-    return (
-        <SafeAreaView
-            style={
-                {
-                    backgroundColor: '#FFFFFF',
-                    width: '100%',
-                    height: '100%',
-                    alignItems: 'center'
-                }
-            }
-        >
-            <View style={{ marginTop: 100 }}>
-                <Text
-                    style={{
-                        fontSize: 24,
-                    }}
-                >비밀번호 변경</Text>
-            </View>
-            <View style={{ marginTop: 40 }}>
-                <LoginInput
-                    secureTextEntry={true}
-                    placeholder="새로운 비밀번호"
-                    placeholderTextColor={'rgba(0, 0, 0, 0.5)'}
-                    onChangeText={text => setPassword(text)}
+    const logOut = () => {
+        removeAccessToken();
+        removeNickname();
+        removeRefreshToken();
+        setLogin(false);
+    }
 
-                />
-                <LoginInput
-                    secureTextEntry={true}
-                    placeholder="새로운 비밀번호 확인"
-                    placeholderTextColor={'rgba(0, 0, 0, 0.5)'}
-                    onChangeText={text => setCheckpw(text)}
-                />
-            </View>
-            <View style={{ marginTop: 40 }}>
-                <TouchableOpacity onPress={() => changePW()}>
-                    <SignUpButton>
-                        <Text style={{ color: '#FFFFFF', fontSize: 16 }}>변경</Text>
-                    </SignUpButton>
+    return (
+        <SafeAreaView style={{ backgroundColor: '#FFFFFF', flex: 1 }}>
+            <View style={{ position: 'relative', marginBottom: 30, width: '100%' }}>
+                <Text style={TextStyles.title}>비밀번호 변경</Text>
+                <TouchableOpacity style={{ left: 10, marginBottom: 30, position: 'absolute' }} onPress={() => { navigation.navigate('mypage') }}>
+                    <Arrow width={20} height={20} transform={[{ rotateY: '180deg' }]} />
                 </TouchableOpacity>
             </View>
-        </SafeAreaView>)
+            <Modal visible={finishModal}>
+                <FinishModal
+                    navigation={() => navigation.navigate('login')}
+                    setModal={setFinishModal}
+                    title='비밀번호 변경 완료!'
+                    subtitle={['다시 로그인해주세요']}
+                />
+            </Modal>
+            <View style={{display:'flex', justifyContent:'center', flex:1}}>
+            <InputWithLabel
+                label='새로운 비밀번호'
+                placeholder='새로운 비밀번호를 입력해주세요'
+                isAlert={!passwordCheck}
+                alertLabel='비밀번호가 동일하지 않습니다'
+                secureTextEntry={true}
+                onChangeText={text => setForm({ ...form, password: text })}
+            />
+            <InputWithLabel
+                label='비밀번호 확인'
+                placeholder='비밀번호를 다시 입력해주세요'
+                isAlert={!passwordCheck}
+                alertLabel='비밀번호가 동일하지 않습니다'
+                secureTextEntry={true}
+                onChangeText={text => setForm({ ...form, passwordConfirm: text })}
+            />
+            <TouchableOpacity style={{ alignSelf: 'center', marginTop: 60 }}
+                onPress={updateNewPassword}
+            ><Text style={TextStyles.button}>비밀번호 변경</Text>
+            </TouchableOpacity>
+            </View>
+        </SafeAreaView>
+
+    )
 }
 
+
+const TextStyles = StyleSheet.create({
+    title: {
+        fontSize: 20,
+        lineHeight: 28,
+        letterSpacing: -0.6,
+        fontWeight: '700',
+        alignSelf: 'center'
+    },
+    button: {
+        overflow: 'hidden',
+        width: 175,
+        height: 45,
+        borderRadius: 22.5,
+        backgroundColor: '#67D393',
+        textAlign: 'center',
+        lineHeight: 45,
+        fontSize: 16,
+        letterSpacing: -0.6,
+        fontWeight: '700',
+        color: '#FFFFFF',
+        marginBottom: 15,
+    },
+})
 export default PasswordChange;
