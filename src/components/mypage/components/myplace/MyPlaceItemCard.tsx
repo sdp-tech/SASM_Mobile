@@ -80,7 +80,7 @@ const MyPlaceItemCard = ({ data, edit, rerender }: { data: MyPlaceItemCardProps,
       {
         edit &&
         <View style={{ position: 'absolute', top: 10, right: 10 }}>
-          <Heart like={like} onPress={handleLike} size={20}/>
+          <Heart like={like} onPress={handleLike} size={20} white={true} />
         </View>
       }
     </View>
