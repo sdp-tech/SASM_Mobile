@@ -42,6 +42,10 @@ const StorySearchPage = ({ navigation }: StoryProps) => {
     }, [page, checkedList, search, order])
   );
 
+  useEffect(() => {
+    setPage(1)
+  }, [checkedList])
+
   const handleSearchToggle = async () => {
     if (search.length === 0) {
       setPage(1);
