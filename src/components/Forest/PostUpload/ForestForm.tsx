@@ -220,7 +220,7 @@ const ForestForm = ({ tab, setTab, navigation, post }: PostUploadParams) => {
       </Modal>
       <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
       <>
-      <FormHeader title='포레스트 작성' onLeft={() => setTab(tab-1)} onRight={post.id != 0 ? updateForest : saveForest} />
+      <FormHeader title='포레스트 작성' onLeft={() => setTab(tab-1)} onRight={post.id != 0 ? updateForest : saveForest} end={true} />
       <ScrollView contentContainerStyle={{paddingBottom: 100}}>
       <ImageBackground source={(repPic && repPic.length == 0 && forest.rep_pic == '') ? images[category.id-1] : { uri: (repPic && repPic.length > 0) ? repPic[0].uri : (forest.rep_pic != '' ? forest.rep_pic : 'none')}} imageStyle={{width: width+30}} style={{width: width, height: width}}>
         <Text style={{fontSize: 20, fontWeight: '700', marginLeft: 10, marginVertical: 10}}>{category.name}</Text>

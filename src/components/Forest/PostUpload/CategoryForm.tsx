@@ -59,8 +59,8 @@ const CategoryForm = ({ tab, setTab, navigation, post }: PostUploadParams) => {
 
   return (
     <View>
-      <FormHeader title='포레스트 작성' onLeft={() => navigation.goBack()} onRight={() => setTab(tab+1)} />
-      <View style={{alignItems: 'center', justifyContent: 'center', paddingVertical: 150}}>
+      <FormHeader title='포레스트 작성' onLeft={() => navigation.goBack()} onRight={category.id !== 0 ? () => setTab(1) : () => Alert.alert('카테고리를 선택해주세요')} begin={true} />
+      <View style={{alignItems: 'center', justifyContent: 'center', paddingVertical: height*0.2}}>
         <Text style={{fontSize: 16, color: '#202020', marginBottom: 30}}>카테고리를 선택해 주세요</Text>
         <FlatList
           data={boardLists}
@@ -89,7 +89,7 @@ const CategoryForm = ({ tab, setTab, navigation, post }: PostUploadParams) => {
           scrollEnabled={false}
         />
         {(selectedId) &&
-          <TouchableOpacity style={{backgroundColor: '#67D393', width: 180, height: 40, alignItems: 'center', justifyContent: 'center', borderRadius: 20, position: 'absolute', top: height-350 }} 
+          <TouchableOpacity style={{backgroundColor: '#67D393', width: 180, height: 40, alignItems: 'center', justifyContent: 'center', borderRadius: 20, position: 'absolute', top: height*0.6 }} 
             onPress={() => setTab(1)}
           >
             <Text style={{fontWeight: '700', fontSize: 16, color: 'white'}}>다음</Text>
