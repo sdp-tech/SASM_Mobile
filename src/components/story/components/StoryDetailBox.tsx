@@ -5,7 +5,7 @@ import { Request } from '../../../common/requests';
 import styled from 'styled-components/native';
 import RenderHTML from 'react-native-render-html';
 import Place from '../../../assets/img/Story/Place.svg';
-import Arrow from '../../../assets/img/common/Arrow.svg';
+import ArrowWhite from '../../../assets/img/common/ArrowWhite.svg';
 import CardView from '../../../common/CardView';
 import { CATEGORY_LIST, MatchCategory } from "../../../common/Category";
 import Selector0 from "../../../assets/img/Category/Selector0.svg";
@@ -143,7 +143,7 @@ const StoryDetailBox = ({navigation, data, isLogin, onLayout, email, onRefresh, 
         return (
             <CategoryWrapper>
                 {list[idx]}
-                <Text style={{ fontSize: 14, marginHorizontal: 5, lineHeight: 14 }}>{data.category}</Text>
+                <Text style={{ fontSize: 14, marginHorizontal: 5 }}>{data.category}</Text>
             </CategoryWrapper>
         )
     }
@@ -152,7 +152,7 @@ const StoryDetailBox = ({navigation, data, isLogin, onLayout, email, onRefresh, 
         <View onLayout={onLayout}>
             <View>
                 <TouchableOpacity style={{position: 'absolute', zIndex: 1, top: 50, left: 10}} onPress={() => {navigation.goBack()}}>
-                    <Arrow width={20} height={20} transform={[{rotateY: '180deg'}]}/>
+                    <ArrowWhite width={18} height={18} strokeWidth={5} />
                 </TouchableOpacity>
                     {data!.extra_pics.length > 0 ? (
                         <CardView 
@@ -166,14 +166,18 @@ const StoryDetailBox = ({navigation, data, isLogin, onLayout, email, onRefresh, 
                                     style={{width: 280, height: 330, marginRight: 15}}
                                     source={{uri: item}}
                                     resizeMode='cover'
-                                />
+                                >
+                                    <View style={{backgroundColor: 'rgba(0,0,0,0.2)', width: 280, height: 330}} />
+                                </ImageBackground>
                             )}
                         />
                     ) : (
-                        <ImageBackground style={{width: width, height: 330}} source={{uri: data!.rep_pic}} />
+                        <ImageBackground style={{width: width, height: 330}} source={{uri: data!.rep_pic}}>
+                            <View style={{backgroundColor: 'rgba(0,0,0,0.2)', width: width, height: 330}} />
+                        </ImageBackground>
                     )}
                 <TouchableOpacity style={{position: 'absolute', zIndex: 1, top: 55, right: 20}} onPress={() => setDot(!dot)}>
-                    <Settings transform={[{ rotate: dot ? '90deg' : 'none'}]} />
+                    <Settings transform={[{ rotate: dot ? '90deg' : 'none'}]} color={'white'} />
                 </TouchableOpacity>
                 { dot &&
                 <View style={{position: 'absolute', backgroundColor: 'white', top: 75, left: width-140, borderRadius: 4}}>
