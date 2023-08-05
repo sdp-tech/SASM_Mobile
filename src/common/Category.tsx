@@ -70,7 +70,7 @@ export default function Category({ checkedList, setCheckedList, story, setPage, 
 
   return (
     <FlatList
-      style={{ marginVertical: 10, ...style, borderColor:'red', borderWidth:1}}
+      style={{ marginVertical: 10, ...style}}
       showsHorizontalScrollIndicator={false}
       data={CATEGORY_LIST}
       horizontal
