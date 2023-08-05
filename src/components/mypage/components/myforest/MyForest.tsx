@@ -7,7 +7,7 @@ import RequireLogin from '../common/RequiredLogin';
 import { TextPretendard as Text } from '../../../../common/CustomText';
 import MyForestItemCard, { MyForestItemCardProps } from './MyForestItemCard';
 import { FlatList } from 'react-native-gesture-handler';
-import { SearchNoCategory } from '../common/SearchNCategory';
+import { SearchNCategory } from '../common/SearchNCategory';
 import NothingIcon from "../../../../assets/img/nothing.svg";
 
 export default function MyForest() {
@@ -23,6 +23,7 @@ export default function MyForest() {
   const [refresh, setRefresh] = useState<boolean>(false);
   const [written, setWritten] = useState<MyForestItemCardProps[]>([]);
   const request = new Request();
+  const [checkedList, setCheckedList] = useState<string[]>([]);
 
   const rerender = () => {
     setRefresh(true);
@@ -31,13 +32,23 @@ export default function MyForest() {
   }
 
   const getForest = async () => {
-    const response = await request.get('/mypage/mypick_forest/', { page: page, search: search });
+
+    let params = new URLSearchParams();
+    for (const category of checkedList) {
+      params.append('category_filter', category);
+    }
+    const response = await request.get(`/mypage/mypick_forest/?${params.toString()}`, { page: page, search: search });
     setMax(Math.ceil(response.data.data.count / 4))
     if (page == 1) setForestList(response.data.data.results);
     else setForestList([...forestList, ...response.data.data.results]);
   }
   const getWrittenForest = async () => {
-    const response = await request.get('/mypage/my_forest/', { page: writtenPage, search: search });
+
+    let params = new URLSearchParams();
+    for (const category of checkedList) {
+      params.append('category_filter', category);
+    }
+    const response = await request.get(`/mypage/my_forest/?${params.toString()}`, { page: writtenPage, search: search, category_filter: checkedList });
     setWrittenMax(Math.ceil(response.data.data.count / 4))
     if (writtenPage == 1) setWritten(response.data.data.results);
     else setForestList([...written, ...response.data.data.results]);
@@ -48,11 +59,24 @@ export default function MyForest() {
       if (type) { setWrittenPage(1); getForest(); }
       else { setPage(1); getWrittenForest(); }
     }
-  }, [page, writtenPage, type, search, refresh]))
+  }, [page, writtenPage, type, search, refresh, checkedList]))
+
 
   return (
     <View style={{ flex: 1 }}>
-
+      <SearchNCategory
+        checkedList={checkedList}
+        setCheckedList={setCheckedList}
+        edit={edit}
+        setEdit={setEdit}
+        setSearch={setSearch}
+        search={search}
+        setType={setType}
+        type={type}
+        setPage={type ? setPage : setWrittenPage}
+        label='내 포레스트'
+        forest
+      />
       {
         isLogin ?
           (type ? forestList : written).length == 0 ?
@@ -62,16 +86,6 @@ export default function MyForest() {
             </View>
             :
             <>
-              <SearchNoCategory
-                edit={edit}
-                setEdit={setEdit}
-                setSearch={setSearch}
-                search={search}
-                setType={setType}
-                type={type}
-                setPage={type ? setPage : setWrittenPage}
-                label='내 포레스트'
-              />
               <FlatList
                 data={type ? forestList : written}
                 contentContainerStyle={{ paddingHorizontal: 20 }}

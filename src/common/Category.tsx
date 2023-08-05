@@ -1,5 +1,5 @@
 import React, { Dispatch, SetStateAction } from 'react';
-import { Image, View, Dimensions, TouchableOpacity, ViewStyle } from 'react-native';
+import { Image, View, Dimensions, TouchableOpacity, ViewStyle, StyleSheet } from 'react-native';
 import { TextPretendard as Text } from './CustomText';
 import { FlatList } from 'react-native-gesture-handler';
 import styled from 'styled-components/native';
@@ -70,7 +70,7 @@ export default function Category({ checkedList, setCheckedList, story, setPage, 
 
   return (
     <FlatList
-      style={{ marginVertical: 10, ...style }}
+      style={{ marginVertical: 10, ...style}}
       showsHorizontalScrollIndicator={false}
       data={CATEGORY_LIST}
       horizontal
@@ -99,3 +99,46 @@ export default function Category({ checkedList, setCheckedList, story, setPage, 
     />
   )
 }
+
+export function ForestCategory({ checkedList, setCheckedList, setPage, style }: CategoryProps) {
+  const category = ['시사', '문화', '라이프스타일', '뷰티', '푸드', '액티비티'];
+  const handleCheckedList = (data: string): void => {
+    if(setPage) setPage(1);
+    if (checkedList.includes(data)) {
+      setCheckedList(checkedList.filter(element => element != data));
+    }
+    else {
+      setCheckedList([...checkedList, data]);
+    }
+  }
+
+  return (
+    <FlatList
+      style={{ marginVertical: 10, ...style, }}
+      showsHorizontalScrollIndicator={false}
+      data={category}
+      horizontal
+      renderItem={({ item }) => {
+        const isSelected = checkedList.includes(item);
+        return (
+            <TouchableOpacity onPress={()=>handleCheckedList(item)}>
+            <Text style={{...TextStyles.forestCategory, backgroundColor: (isSelected ? '#D7D7D7' : '#FFFFFF')}}>{item}</Text>
+            </TouchableOpacity>
+        )
+      }}
+    />
+  )
+}
+
+const TextStyles = StyleSheet.create({
+  forestCategory : {
+    marginHorizontal: 4.5,
+    fontSize: 14,
+    lineHeight: 28,
+    paddingHorizontal: 9,
+    borderRadius: 12,
+    borderColor:'rgba(203, 203, 203, 1)',
+    borderWidth: 1,
+    overflow: 'hidden'
+  }
+})
