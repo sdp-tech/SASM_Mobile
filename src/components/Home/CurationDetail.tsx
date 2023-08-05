@@ -1,5 +1,5 @@
 import { StackScreenProps, StackNavigationProp } from '@react-navigation/stack';
-import React, { useCallback, useContext, useEffect, useState } from 'react';
+import React, { Dispatch, SetStateAction, useCallback, useContext, useEffect, useState } from 'react';
 import { HomeStackParams } from '../../pages/Home';
 import { Alert, Dimensions, Image, SafeAreaView, StyleSheet, TouchableOpacity, View } from 'react-native';
 import { TextPretendard as Text } from '../../common/CustomText';
@@ -83,9 +83,10 @@ interface CuratedStoryProps {
   story_id: number;
   story_review: string;
   writer_email: string;
+  writer_is_followed: boolean;
 }
 
-const following = async (target: string, isLogin: boolean, navigation:StackNavigationProp<TabProps>) => {
+const following = async (target: string, isLogin: boolean, navigation:StackNavigationProp<TabProps>, following?:boolean, setFollowing?:Dispatch<SetStateAction<boolean>>) => {
   const request = new Request();
   if (!isLogin) {
     Alert.alert('로그인이 필요합니다', "",
@@ -107,6 +108,9 @@ const following = async (target: string, isLogin: boolean, navigation:StackNavig
     {
       targetEmail: target
     })
+    if(setFollowing) {
+    setFollowing(!following);
+    }
   if(response.data.status == 'fail') Alert.alert(response.data.message)
 }
 
@@ -219,6 +223,8 @@ export default function CurationDetail({ navigation, route }: StackScreenProps<H
 const Storys = ({ navigation, data }: { navigation: StackNavigationProp<TabProps>, data: CuratedStoryProps }) => {
   const {isLogin, setLogin} = useContext(LoginContext);
   const [like, setLike] = useState<boolean>(false);
+  const [followed, setFollowed] = useState<boolean>(false);
+
   const request = new Request();
   const handleLike = async () => {
     if (!isLogin) {
@@ -241,6 +247,7 @@ const Storys = ({ navigation, data }: { navigation: StackNavigationProp<TabProps
   }
 
   useEffect(() => {
+    setFollowed(data.writer_is_followed);
     setLike(data.like_story);
   }, [])
   return (
@@ -259,9 +266,13 @@ const Storys = ({ navigation, data }: { navigation: StackNavigationProp<TabProps
           <Text style={TextStyles.created}>{data.created.slice(0, 10).replace(/-/gi, '.')}작성</Text>
         </View>
         <TouchableOpacity style={{ position: 'absolute', right: 25 }}
-          onPress={() => { following(data.writer_email, isLogin, navigation) }}>
-          <Text style={TextStyles.following}>+ 팔로잉</Text>
-        </TouchableOpacity>
+            onPress={() => { following(data.writer_email, isLogin, navigation, followed, setFollowed)  }}>
+              {
+                followed ? 
+                <Text style={TextStyles.unfollow}>취소</Text>:
+                <Text style={TextStyles.following}>+ 팔로잉</Text>
+              }
+          </TouchableOpacity>
       </InfoBox>
       {
         data.rep_photos != null &&

@@ -26,7 +26,7 @@ export default function IdExist({ navigation, route }: StackScreenProps<findScre
         <Text style={TextStyles.button}>로그인하기</Text>
         </TouchableOpacity>
       <TouchableOpacity style={{alignSelf:'center'}}
-        onPress={navigation.goBack}>
+        onPress={()=>{navigation.navigate('home', {tab:false})}}>
         <Text style={TextStyles.button}>비밀번호 찾기</Text>
         </TouchableOpacity>
     </SafeAreaView>
