@@ -15,6 +15,7 @@ import Selector3 from "../../../assets/img/Category/Selector3.svg";
 import Selector4 from "../../../assets/img/Category/Selector4.svg";
 import Selector5 from "../../../assets/img/Category/Selector5.svg";
 import Settings from '../../../assets/img/MyPage/Settings.svg';
+import Logo from "../../../assets/img/common/Logo.svg"
 
 interface StoryDetailProps {
     data: any;
@@ -220,10 +221,14 @@ const StoryDetailBox = ({navigation, data, isLogin, onLayout, email, onRefresh, 
                     <Place />
                     <Text style={textStyles.gotomap}>{data!.place_name}</Text>
                 </TouchableOpacity>
+                <View style={{alignItems: 'center', paddingVertical: 50}}>
+                    <Logo />
+                    <Text style={textStyles.review}>{data!.story_review}</Text>
+                </View>
                 <RenderHTML
                     contentWidth = {width}
                     source = {markup}
-                    renderersProps = {renderersProps} 
+                    renderersProps = {renderersProps}
                 />
             </View>
             <Image source={{uri: data!.map_image}} style={{width: width, height: 120}} />
@@ -261,6 +266,13 @@ const textStyles = StyleSheet.create({
         fontSize: 12,
         fontWeight: '600',
     },
+    review: {
+        fontSize: 16,
+        lineHeight: 24,
+        letterSpacing: -0.6,
+        textAlign: 'center',
+        marginTop: 10
+    }
 })
 
 export default StoryDetailBox;
