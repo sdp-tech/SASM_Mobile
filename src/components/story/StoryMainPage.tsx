@@ -105,7 +105,7 @@ const StoryMainPage = ({ navigation, route }: StoryProps) => {
             />
           </View>
           <View style={{ paddingVertical: 5 }}>
-            <CardView data={item} gap={0} offset={0} pageWidth={width} dot={true}
+            <CardView data={item} gap={0} offset={0} pageWidth={width} dot={true} green={true}
               renderItem={({ item }: any) => {
                 return (
                   <MainCard

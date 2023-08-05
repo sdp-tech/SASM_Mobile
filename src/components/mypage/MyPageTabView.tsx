@@ -143,7 +143,7 @@ const MyPageTabView = ({ navigation }: StackScreenProps<MyPageProps, 'mypage'>) 
           <Profile />
         </TouchableOpacity>
         <TouchableOpacity onPress={() => { navigation.navigate('options', { info: info }) }}>
-          <Settings />
+          <Settings color={'black'} />
         </TouchableOpacity>
       </View>
       <ProfileSection />

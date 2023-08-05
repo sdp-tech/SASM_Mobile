@@ -247,7 +247,6 @@ const StoryDetailPage = ({ navigation, route }: StoryProps) => {
 
   useEffect(() => {
     loadItem();
-    console.log(data)
   }, [refreshing]);
 
 
@@ -266,7 +265,7 @@ const StoryDetailPage = ({ navigation, route }: StoryProps) => {
                 keyExtractor={(item, index) => item.id.toString()}
                 ListHeaderComponent={
                 <>
-                    <StoryDetailBox data={data} navigation={navigation} isLogin={isLogin} email={email} onLayout={onLayout} onRefresh={reRenderScreen} onReport={() => setModalVisible(true)} onDelete={deleteStory} onUpdate={()=>navigation.navigate('WriteStoryPage', { id: data!.id })}/>
+                    <StoryDetailBox data={data} navigation={navigation} isLogin={isLogin} email={email} onLayout={onLayout} onRefresh={reRenderScreen} onReport={() => setModalVisible(true)} onDelete={deleteStory} onUpdate={()=>navigation.navigate('WriteStory', { story: data })}/>
                     <View style={{borderBottomColor: '#D9D9D9', width: width, borderBottomWidth: 1, marginTop: 40}} />
                     <View style={{ flexDirection: 'row', padding: 20, alignItems: 'center' }}>
                       <View style={{flexDirection: 'row', flex: 1}}>

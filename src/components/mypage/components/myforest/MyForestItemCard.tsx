@@ -62,8 +62,8 @@ export default function MyForestItemCard({ props, edit, rerender }: { props: MyF
       </TouchableWithoutFeedback>
       {
         edit &&
-        <View style={{ position: 'absolute', right: 10, top: 20 }}>
-          <Heart like={like} onPress={handlelike} />
+        <View style={{ position: 'absolute', right: 5, top: 25 }}>
+          <Heart like={like} onPress={handlelike} size={20} white={true} />
         </View>
       }
     </View>
