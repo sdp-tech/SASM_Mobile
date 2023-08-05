@@ -61,7 +61,7 @@ export default function MyForest() {
               <Text style={{ marginTop: 20 }}>해당하는 포레스트가 없습니다</Text>
             </View>
             :
-            <View>
+            <>
               <SearchNoCategory
                 edit={edit}
                 setEdit={setEdit}
@@ -94,7 +94,7 @@ export default function MyForest() {
                 style={{ alignContent: 'space-between' }}
               />
 
-            </View>
+            </>
           :
           <RequireLogin index={3} />
       }
