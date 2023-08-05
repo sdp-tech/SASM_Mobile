@@ -119,24 +119,25 @@ export default function SocialLogin({ type }: { type: string }) {
       Alert.alert('구글 로그인이 실패하였습니다.')
     });
   }
-  
+
+
   const apple_login = async () => {
-    const appleAuthRequestResponse = await appleAuth.performRequest({
+    appleAuth.performRequest({
       requestedOperation: appleAuth.Operation.LOGIN,
-      // Note: it appears putting FULL_NAME first is important, see issue #293
       requestedScopes: [appleAuth.Scope.FULL_NAME, appleAuth.Scope.EMAIL],
+    }).then(async (appleAuthRequestResponse) => {
+      const credentialState = await appleAuth.getCredentialStateForUser(appleAuthRequestResponse.user);
+      if (credentialState !== appleAuth.State.AUTHORIZED) {
+        throw new Error("인증 상태가 아닌 유저입니다.")
+      }
+      return request.get('/users/apple/callback/', {
+        token: appleAuthRequestResponse.identityToken,
+      });
+    }).then((response) => {
+      processLoginResponse(response, navigation, setLogin);
+    }).catch((error) => {
+      Alert.alert('애플 로그인이 실패하였습니다.')
     });
-    console.log(appleAuthRequestResponse)
-  
-    // get current authentication state for user
-    // /!\ This method must be tested on a real device. On the iOS simulator it always throws an error.
-    const credentialState = await appleAuth.getCredentialStateForUser(appleAuthRequestResponse.user);
-  
-    // use credentialState response to ensure the user is authenticated
-    if (credentialState === appleAuth.State.AUTHORIZED) {
-      // user is authenticated
-      console.log('authenticated')
-    }
   }
 
   useEffect(() => {
