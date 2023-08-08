@@ -35,7 +35,7 @@ const PostListScreen = ({
   const [page, setPage] = useState(1);
   const [order, setOrder] = useState<string>('');
   const [count, setCount] = useState(0);
-  const [posts, setPosts] = useState([]);
+  const [posts, setPosts] = useState([] as any);
   const {isLogin, setLogin} = useContext(LoginContext);
   const navigationToTab = useNavigation<StackNavigationProp<TabProps>>();
   const request = new Request();
@@ -44,19 +44,26 @@ const PostListScreen = ({
   const board_category = route.params?.board_category;
 
   const getPosts = async () => {
-    setLoading(true);
     const response = await request.get('/forest/', {
       order: order,
+      page: page,
       category_filter: board_category?.id
     }, null);
-    setPosts(response.data.data.results);
+    if (page == 1) setPosts(response.data.data.results);
+    else setPosts([...posts, ...response.data.data.results]);
     setCount(response.data.data.count);
-    setLoading(false);
   }
 
   const onRefresh = () => {
     setRefreshing(true);
+    setPage(1);
     setRefreshing(false);
+  }
+
+  const onEndReached = () => {
+    if (page < Math.ceil(count / 10)) {
+      setPage(page+1);
+    }
   }
 
   useEffect(() => {
@@ -67,7 +74,7 @@ const PostListScreen = ({
 
   useFocusEffect(useCallback(() => {
     getPosts();
-  }, [order, refreshing]));
+  }, [order, refreshing, page]));
 
   return (
     <SafeAreaView style={styles.container}>
@@ -77,15 +84,15 @@ const PostListScreen = ({
         navigation={navigation}
       />
       <View style={{flexDirection: 'row', zIndex: 1, alignItems: 'center', padding: 15, backgroundColor: '#F1FCF5'}}>
-        <Text style={{fontSize: 12, fontWeight: '400', flex: 1}}>전체 검색결과 {count}개</Text>
+        <Text style={{fontSize: 12, fontWeight: '400', flex: 1}}>전체 글 {count}개</Text>
       </View>
       <FlatList
         data={posts}
         style={{ flexGrow: 1 }}
         onRefresh={onRefresh}
         refreshing={refreshing}
-        onEndReachedThreshold={0}
-        ListFooterComponent={loading ? <ActivityIndicator /> : <></>}
+        onEndReachedThreshold={0.3}
+        onEndReached={onEndReached}
         renderItem={({ item }) => {
           const {
             id,

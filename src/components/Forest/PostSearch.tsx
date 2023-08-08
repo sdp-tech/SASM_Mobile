@@ -41,7 +41,8 @@ const PostSearchScreen = ({
   const [orderList, setOrderList] = useState(0);
   const [order, setOrder] = useState<string>(toggleItems[orderList].order);
   const [count, setCount] = useState(0);
-  const [posts, setPosts] = useState([]); // id, title, preview, nickname, email, likeCount, created, commentCount
+  const [posts, setPosts] = useState([] as any); // id, title, preview, nickname, email, likeCount, created, commentCount
+  const [page, setPage] = useState(1);
   const {isLogin, setLogin} = useContext(LoginContext);
   const navigationToTab = useNavigation<StackNavigationProp<TabProps>>();
   const request = new Request();
@@ -57,6 +58,7 @@ const PostSearchScreen = ({
 
   const onChangeOrder = async () => {
     setOrder(toggleItems[orderList].order);
+    setPage(1);
   }
 
   const checkCategory = (itemId: any) => {
@@ -65,7 +67,14 @@ const PostSearchScreen = ({
 
   const onRefresh = () => {
     setRefreshing(true);
+    setPage(1);
     setRefreshing(false);
+  }
+
+  const onEndReached = () => {
+    if (page < Math.ceil(count / 10)) {
+      setPage(page+1);
+    }
   }
 
   useEffect(() => {
@@ -74,7 +83,7 @@ const PostSearchScreen = ({
 
   useFocusEffect(useCallback(() => {
     getPosts();
-  }, [order, search, category, refreshing]));
+  }, [order, search, category, page, refreshing]));
 
   const getPosts = async () => {
     const response = await request.get(
@@ -82,11 +91,13 @@ const PostSearchScreen = ({
       {
        order: order,
        search: search,
-       category_filter: category > 0 ? category : ['']
+       category_filter: category > 0 ? category : [''],
+       page: page
       },
       null
     );
-    setPosts(response.data.data.results);
+    if (page == 1) setPosts(response.data.data.results);
+    else setPosts([...posts, ...response.data.data.results]);
     setCount(response.data.data.count);
   };
 
@@ -153,6 +164,8 @@ const PostSearchScreen = ({
                 style={{flexGrow: 1}}
                 refreshing={refreshing}
                 onRefresh={onRefresh}
+                onEndReached={onEndReached}
+                onEndReachedThreshold={0.2}
                 renderItem={({ item }: any) => {
                   const {
                     id,
