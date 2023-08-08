@@ -9,6 +9,7 @@ import Loading from '../../common/Loading';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { ForestStackParams } from '../../pages/Forest';
 import { LoginContext } from '../../common/Context';
+import { BottomSheetModalProvider } from '@gorhom/bottom-sheet';
 
 const PostCommentsScreen = ({ navigation, route }: NativeStackScreenProps<ForestStackParams, "PostComments">) => {
   const { width, height } = Dimensions.get('screen');
@@ -53,6 +54,7 @@ const PostCommentsScreen = ({ navigation, route }: NativeStackScreenProps<Forest
   }, [refreshing])
 
   return (
+    <BottomSheetModalProvider>
     <>{loading ? (
       <Loading />
     ) : (
@@ -80,6 +82,7 @@ const PostCommentsScreen = ({ navigation, route }: NativeStackScreenProps<Forest
       />
     </SafeAreaView>
   )}</>
+  </BottomSheetModalProvider>
   )
 }
 
