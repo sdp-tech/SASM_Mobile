@@ -249,7 +249,7 @@ const UserInfoSection = ({
     <View
       style={{
         flexDirection: "row",
-        padding: 20,
+        padding: 15,
         borderTopWidth: 2,
         borderBottomWidth: 2,
         borderTopColor: "#E3E3E3",
@@ -263,24 +263,22 @@ const UserInfoSection = ({
             uri: user.profile,
           }}
         />
-        <TouchableOpacity style={{ width: 75, borderColor: '#67D393', borderWidth: 1, borderRadius: 12, alignItems: 'center', justifyContent: 'center', paddingVertical: 5, paddingHorizontal: 15, marginTop: 20 }} onPress={onFollow}>
+        <TouchableOpacity style={{ width: 75, borderColor: '#67D393', borderWidth: 1, borderRadius: 12, alignItems: 'center', justifyContent: 'center', paddingVertical: 5, paddingHorizontal: 15, marginTop: 15 }} onPress={onFollow}>
           <Text style={{ color: '#202020', fontSize: 12 }}>{follow ? '팔로잉' : '+ 팔로우'}</Text>
         </TouchableOpacity>
       </View>
       <View style={{ flex: 1, marginLeft: 20 }}>
-        <View style={{ flexDirection: 'row', marginBottom: 10, flex: 1 }}>
+        <View style={{ flexDirection: 'row', marginBottom: 15}}>
           <Text style={{ fontSize: 12, fontWeight: '600', color: user.is_verified ? '#209DF5' : '#67D393' }}>{user.is_verified ? 'Editor' : 'User'}</Text>
           <Text style={{ color: '#202020', fontSize: 12, fontWeight: '600' }}> {user.nickname}님의 다른 글</Text>
         </View>
         <FlatList data={posts.slice(0,4)} scrollEnabled={false} renderItem={({ item }: any) => {
           return (
             <TouchableOpacity style={{ borderBottomColor: '#EDF8F2', borderBottomWidth: 0.5 }} onPress={() => { navigation.push('PostDetail', { post_id: item.id }) }}>
-              <Text style={{ color: '#3C3C3C', fontSize: 10, lineHeight: 18, opacity: 0.6, }} numberOfLines={1}>{item.title}</Text>
+              <Text style={{ color: '#3C3C3C', fontSize: 10, lineHeight: 18, opacity: 0.6, overflow: 'hidden' }} numberOfLines={1}>{item.title}</Text>
             </TouchableOpacity>
           )
         }} />
-      </View>
-      <View style={{ justifyContent: 'center' }}>
       </View>
     </View>
   );
@@ -498,7 +496,7 @@ const PostDetailScreen = ({
         <>
           <FlatList
             ref={scrollRef}
-            data={comment}
+            data={comment.slice(0,3)}
             style={styles.container}
             onRefresh={reRenderScreen}
             refreshing={refreshing}
