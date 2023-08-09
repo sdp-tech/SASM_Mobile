@@ -29,6 +29,10 @@ const SearchCard = ({id, place_name, title, rep_pic, extra_pics, story_like, cat
   const [verified, setVerified] = useState<boolean>(writer_is_verified);
   const request = new Request();
 
+  useEffect(()=> {
+    story_like ? setLike(true) : setLike(false);
+  }, [story_like])
+
   const toggleLike = async () => {
     if(isLogin){
       const response = await request.post(`/stories/${id}/story_like/`);
@@ -56,7 +60,7 @@ const SearchCard = ({id, place_name, title, rep_pic, extra_pics, story_like, cat
 
   const onPress = () => {
     if(sameStory){
-      navigation.replace('StoryDetail', { id: id });
+      navigation.push('StoryDetail', { id: id });
     } else {
       navigation.navigate('StoryDetail', { id: id });
     }
@@ -97,11 +101,7 @@ const SearchCard = ({id, place_name, title, rep_pic, extra_pics, story_like, cat
           <View style={{marginLeft: 8}}>
             {newArray()}
             <View style={{position: 'absolute', right: 10, top: 10}}>
-              {story_like ? (
-                <Heart like={!like} onPress={toggleLike} white={true} />
-              ) : (
-                <Heart like={like} onPress={toggleLike} white={true} />
-              )}
+              <Heart like={like} onPress={toggleLike} white={true} />
             </View>
           </View>
         </View>

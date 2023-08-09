@@ -42,7 +42,7 @@ const PostItem = ({
   const [like, setLike] = useState<boolean>(false);
   const request = new Request();
   useEffect(() => {
-    user_likes && setLike(true);
+    user_likes ? setLike(true) : setLike(false);
   }, [user_likes])
 
   const toggleLike = async () => {
@@ -200,7 +200,7 @@ export const HotPostItem = ({
   const request = new Request();
 
   useEffect(() => {
-    user_likes && setLike(true);
+    user_likes ? setLike(true) : setLike(false);
   }, [user_likes])
 
   const toggleLike = async () => {

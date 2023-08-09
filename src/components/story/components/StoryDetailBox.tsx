@@ -178,7 +178,7 @@ const StoryDetailBox = ({navigation, data, isLogin, onLayout, email, onRefresh, 
                         </ImageBackground>
                     )}
                 <TouchableOpacity style={{position: 'absolute', zIndex: 1, top: 55, right: 20}} onPress={() => setDot(!dot)}>
-                    <Settings transform={[{ rotate: dot ? '90deg' : 'none'}]} color={'white'} />
+                    <Settings transform={[{ rotate: dot ? '90deg' : '0deg'}]} color={'white'} />
                 </TouchableOpacity>
                 { dot &&
                 <View style={{position: 'absolute', backgroundColor: 'white', top: 75, left: width-140, borderRadius: 4}}>
@@ -231,7 +231,9 @@ const StoryDetailBox = ({navigation, data, isLogin, onLayout, email, onRefresh, 
                     renderersProps = {renderersProps}
                 />
             </View>
-            <Image source={{uri: data!.map_image}} style={{width: width, height: 120}} />
+            <TouchableOpacity onPress = {handlePageGoToMap}>
+                <Image source={{uri: data!.map_image}} style={{width: width, height: 120}} />
+            </TouchableOpacity>
         </View>
     )
 }

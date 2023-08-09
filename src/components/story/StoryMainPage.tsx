@@ -3,7 +3,7 @@ import { SafeAreaView, View, StyleSheet, TouchableOpacity, Dimensions, Alert } f
 import { TextPretendard as Text } from '../../common/CustomText';
 import SearchBar from "../../common/SearchBar";
 import { Request } from "../../common/requests";
-import { useFocusEffect, useNavigation } from "@react-navigation/native";
+import { useFocusEffect, useNavigation, useIsFocused } from "@react-navigation/native";
 import { StoryProps } from "../../pages/Story";
 import CardView from "../../common/CardView";
 import CustomHeader from "../../common/CustomHeader";
@@ -41,7 +41,6 @@ const StoryMainPage = ({ navigation, route }: StoryProps) => {
   const [order, setOrder] = useState<string>(toggleItems[orderList].order);
   const [page, setPage] = useState<number>(1);
   const [nextPage, setNextPage] = useState<any>(null);
-  const [search, setSearch] = useState<string>('');
   const [refreshing, setRefreshing] = useState<boolean>(false);
   const [checkedList, setCheckedList] = useState<string[]>([]);
   const [count, setCount] = useState<number>(0);
@@ -64,10 +63,10 @@ const StoryMainPage = ({ navigation, route }: StoryProps) => {
     for (const category of checkedList){
       params.append('filter', category);
     }
-    params.append('search', search);
-    params.append('page', page.toString());
-    params.append('order', order);
-    const response = await request.get(`/stories/story_search/?${params.toString()}`,null, null)
+    const response = await request.get(`/stories/story_search/?${params.toString()}`, {
+      page: page,
+      order: order
+    }, null)
     if (page === 1) {
       setItem(response.data.data.results);
     } else {
