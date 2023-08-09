@@ -71,6 +71,7 @@ interface UserInfoSectionProps {
 
 interface PostRecommendSectionProps {
   data: any;
+  navigation: any;
 }
 
 const { width, height } = Dimensions.get('screen');
@@ -284,7 +285,7 @@ const UserInfoSection = ({
   );
 };
 
-const PostRecommendSection = ({ data }: PostRecommendSectionProps) => {
+const PostRecommendSection = ({ data, navigation }: PostRecommendSectionProps) => {
   return (
     <View style={{
       marginVertical: 20,
@@ -303,7 +304,7 @@ const PostRecommendSection = ({ data }: PostRecommendSectionProps) => {
         data={data}
         renderItem={({ item }: any) => {
           return (
-            <TouchableOpacity style={{ marginRight: 10 }}>
+            <TouchableOpacity style={{ marginRight: 10 }} onPress={() => navigation.push('PostDetail', {post_id: item.id})}>
               <ImageBackground
                 source={{ uri: item.rep_pic }}
                 style={{
@@ -519,7 +520,7 @@ const PostDetailScreen = ({
             }
             ListFooterComponent={
               <>
-                <PostRecommendSection data={recommend.filter((item: any) => item.id !== post.id)} />
+                <PostRecommendSection data={recommend.filter((item: any) => item.id !== post.id)} navigation={navigation}/>
                 <View style={{ justifyContent: 'center', alignItems: 'center', paddingVertical: 20 }}>
                   <TouchableOpacity onPress={scrollToTop} style={{ flexDirection: 'row' }}>
                     <Arrow width={18} height={18} transform={[{ rotate: '270deg' }]} />
