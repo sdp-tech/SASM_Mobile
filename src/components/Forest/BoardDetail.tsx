@@ -26,6 +26,7 @@ import { LoginContext } from "../../common/Context";
 import PlusButton from "../../common/PlusButton";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { TabProps } from "../../../App";
+import Arrow from '../../assets/img/common/Arrow.svg';
 
 const { width, height } = Dimensions.get("window");
 
@@ -141,24 +142,25 @@ const BoardDetailScreen = ({
                 paddingVertical: 15,
               }}
             >
-              <TouchableOpacity
-                onPress={() => {
-                  navigation.navigate("PostList", {
-                    board_name: "추천글",
-                    board_category: board_category
-                  });
+            <View style={{flexDirection: 'row', paddingHorizontal: 15}}>
+              <Text
+                style={{
+                  fontSize: 20,
+                  fontWeight: "600",
+                  flex: 1
                 }}
               >
-                <Text
-                  style={{
-                    fontSize: 20,
-                    fontWeight: "600",
-                    paddingHorizontal: 15,
-                  }}
-                >
-                  사슴의 추천글
-                </Text>
+                사슴의 추천글
+              </Text>
+              <TouchableOpacity style={{ flexDirection: 'row', alignItems: 'center' }} onPress={() => {
+                navigation.navigate("PostList", {
+                  board_name: "사슴의 추천글",
+                });
+              }}>
+                <Text style={{ fontSize: 12, fontWeight: '500', marginRight: 5 }}>더보기</Text>
+                <Arrow width={12} height={12} />
               </TouchableOpacity>
+            </View>
               <CardView
                 gap={0}
                 offset={0}
@@ -230,25 +232,25 @@ const BoardDetailScreen = ({
                 paddingVertical: 15,
               }}
             >
-              <TouchableOpacity
-                onPress={() => {
-                  navigation.navigate("PostList", {
-                    board_name: "인기글",
-                    board_category: board_category
-                  });
-                }}
-              >
+              <View style={{flexDirection: 'row', paddingHorizontal: 15, paddingBottom: 15}}>
                 <Text
                   style={{
                     fontSize: 20,
                     fontWeight: "600",
-                    paddingHorizontal: 15,
-                    paddingBottom: 15,
+                    flex: 1
                   }}
                 >
-                  사슴의 인기글
+                  사슴의 추천글
                 </Text>
-              </TouchableOpacity>
+                <TouchableOpacity style={{ flexDirection: 'row', alignItems: 'center' }} onPress={() => {
+                  navigation.navigate("PostList", {
+                    board_name: "사슴의 추천글",
+                  });
+                }}>
+                  <Text style={{ fontSize: 12, fontWeight: '500', marginRight: 5 }}>더보기</Text>
+                  <Arrow width={12} height={12} />
+                </TouchableOpacity>
+              </View>
               <CardView
                 gap={0}
                 offset={0}
@@ -300,25 +302,25 @@ const BoardDetailScreen = ({
                 paddingVertical: 15,
               }}
             >
-              <TouchableOpacity
-                onPress={() => {
-                  navigation.navigate("PostList", {
-                    board_name: "최신글",
-                    board_category: board_category
-                  });
-                }}
-              >
+              <View style={{flexDirection: 'row', paddingHorizontal: 15}}>
                 <Text
                   style={{
                     fontSize: 20,
                     fontWeight: "600",
-                    paddingHorizontal: 15,
-                    paddingBottom: 15,
+                    flex: 1
                   }}
                 >
-                  사슴의 최신글
+                  사슴의 추천글
                 </Text>
-              </TouchableOpacity>
+                <TouchableOpacity style={{ flexDirection: 'row', alignItems: 'center' }} onPress={() => {
+                  navigation.navigate("PostList", {
+                    board_name: "사슴의 추천글",
+                  });
+                }}>
+                  <Text style={{ fontSize: 12, fontWeight: '500', marginRight: 5 }}>더보기</Text>
+                  <Arrow width={12} height={12} />
+                </TouchableOpacity>
+              </View>
               <FlatList
                 data={newPosts}
                 scrollEnabled={false}

@@ -209,7 +209,7 @@ const ForestForm = ({ tab, setTab, navigation, post }: PostUploadParams) => {
   ]
 
   return (
-    <View>
+    <KeyboardAvoidingView behavior='padding' keyboardVerticalOffset={10} style={{flex: 1}}>
       <Modal visible={modalVisible}>
         <FinishModal
           navigation={()=>navigation.replace('PostDetail', {post_id: postId})}
@@ -221,8 +221,9 @@ const ForestForm = ({ tab, setTab, navigation, post }: PostUploadParams) => {
       <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
       <>
       <FormHeader title='포레스트 작성' onLeft={() => setTab(tab-1)} onRight={post.id != 0 ? updateForest : saveForest} end={true} />
-      <ScrollView contentContainerStyle={{paddingBottom: 100}}>
+      <ScrollView>
       <ImageBackground source={(repPic && repPic.length == 0 && forest.rep_pic == '') ? images[category.id-1] : { uri: (repPic && repPic.length > 0) ? repPic[0].uri : (forest.rep_pic != '' ? forest.rep_pic : 'none')}} imageStyle={{width: width+30}} style={{width: width, height: width}}>
+      <View style={{backgroundColor: 'rgba(0,0,0,0.2)', width: width, height: width}}>
         <Text style={{fontSize: 20, fontWeight: '700', marginLeft: 10, marginVertical: 10}}>{category.name}</Text>
         <CardView data={semiCategories} offset={10} gap={0} pageWidth={100} dot={false} renderItem={({item}: any) => { return (
             <View style={{height: 25, borderRadius: 16, backgroundColor: '#67D393', paddingVertical: 4, paddingHorizontal: 16, margin: 4}}>
@@ -255,6 +256,7 @@ const ForestForm = ({ tab, setTab, navigation, post }: PostUploadParams) => {
         </View>
         <Text style={{ position: 'absolute', bottom: 130, right: 10, color: 'white', fontSize: 12 }}>{forest.title.length}/24</Text>
         <Text style={{ position: 'absolute', bottom: 75, right: 10, color: 'white', fontSize: 12 }}>{forest.subtitle.length}/40</Text>
+      </View>
       </ImageBackground>
       <RichToolbar
         editor={editor}
@@ -270,7 +272,7 @@ const ForestForm = ({ tab, setTab, navigation, post }: PostUploadParams) => {
         ]}
         onPressAddImage={pickImage}
       />
-      <ScrollView ref={scrollRef} nestedScrollEnabled={true} showsVerticalScrollIndicator={true}>
+      <ScrollView ref={scrollRef} nestedScrollEnabled={true} showsVerticalScrollIndicator={true} style={{flex: 1}}>
         <RichEditor
           ref={editor} // from useRef()
           initialContentHTML={forest.content}
@@ -283,19 +285,17 @@ const ForestForm = ({ tab, setTab, navigation, post }: PostUploadParams) => {
       </ScrollView>
       <View style={{flexDirection: 'row', borderBottomColor: '#D9D9D9', borderTopColor: '#D9D9D9', borderBottomWidth: 1, borderTopWidth: 1, padding: 10, alignItems: 'center'}}>
         <Text style={{color: '#848484', marginRight: 5}}>해시태그</Text>
-        <KeyboardAvoidingView behavior='padding' keyboardVerticalOffset={10}>
-          <TextInput
-            value={forest.hashtags}
-            onChangeText={(hashtags) => { setForest({ ...forest, hashtags: hashtags }) }}
-            placeholder='#해시태그를 #작성해주세요'
-            placeholderTextColor={'#848484'}
-          />
-        </KeyboardAvoidingView>
+        <TextInput
+          value={forest.hashtags}
+          onChangeText={(hashtags) => { setForest({ ...forest, hashtags: hashtags }) }}
+          placeholder='#해시태그를 #작성해주세요'
+          placeholderTextColor={'#848484'}
+        />
       </View>
       </ScrollView>
       </>
       </TouchableWithoutFeedback>
-    </View>
+    </KeyboardAvoidingView>
   )
 }
 

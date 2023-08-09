@@ -112,8 +112,10 @@ const PostItem = ({
               </View>
               <View style={{flexDirection: 'row', alignItems: 'center'}}>
                 <Text style={{ color: '#67D393', fontSize: 12, fontWeight: "600", opacity: 0.6, lineHeight: 18, flex: 1 }}>{writer.nickname}</Text>
-                <Heart like={like} color={'#209DF5'} size={12} onPress={toggleLike} />
-                <Text style={{marginLeft: 3, marginRight: 10, color: '#209DF5', fontSize: 12, lineHeight: 18}}>{like_cnt}</Text>
+                <TouchableOpacity style={{flexDirection: 'row', alignItems: 'center'}} onPress={toggleLike}>
+                  <Heart like={like} color={'#209DF5'} size={12} onPress={() => {}} />
+                  <Text style={{marginLeft: 3, marginRight: 10, color: '#209DF5', fontSize: 12, lineHeight: 18}}>{like_cnt}</Text>
+                </TouchableOpacity>
                 <CommentIcon color={'#209DF5'} width={15} height={15} />
                 <Text style={{marginLeft: 3, color: '#209DF5', fontSize: 12, lineHeight: 18}}>{comment_cnt}</Text>
               </View>
