@@ -1,13 +1,14 @@
 import React, { useState, useContext } from 'react';
-import { Platform, TouchableOpacity, View, TextInput, StyleSheet, SafeAreaView, Alert } from "react-native";
+import { Platform, TouchableOpacity, View, TextInput, StyleSheet, SafeAreaView, Alert, Modal } from "react-native";
 import { TextPretendard as Text } from '../../../../common/CustomText';
 import styled, { css } from 'styled-components/native';
 import { StackScreenProps } from '@react-navigation/stack';
 import { MyPageProps } from '../../../../pages/MyPage';
 import { removeNickname, removeAccessToken, removeRefreshToken, } from '../../../../common/storage';
 import { LoginContext } from '../../../../common/Context';
-
-import { Request } from '../../../../common/requests'
+import FinishModal from '../../../../common/FinishModal';
+import { Request } from '../../../../common/requests';
+import Arrow from "../../../../assets/img/common/Arrow.svg";
 
 
 const WithdrawButton = styled.View`
@@ -34,6 +35,7 @@ const PasswordInput = styled.TextInput`
 const request = new Request();
 
 const Withdraw = ({ navigation }: StackScreenProps<MyPageProps, 'withdraw'>) => {
+    const [finishModal, setFinishModal] = useState<boolean>(false);
     const { isLogin, setLogin } = useContext(LoginContext);
     const withdrawConfirmAlert = () => {
         Alert.alert(
@@ -71,31 +73,61 @@ const Withdraw = ({ navigation }: StackScreenProps<MyPageProps, 'withdraw'>) => 
     }
 
     return (
-        <SafeAreaView
-            style={
-                {
-                    backgroundColor: '#FFFFFF',
-                    width: '100%',
-                    height: '100%',
-                    alignItems: 'center'
-                }
-            }
-        >
-            <View style={{ marginTop: 100 }}>
-                <Text
-                    style={{
-                        fontSize: 24,
-                    }}
-                >회원 탈퇴</Text>
-            </View>
-            <View style={{ marginTop: 40 }}>
-                <TouchableOpacity onPress={withdrawConfirmAlert}>
-                    <WithdrawButton>
-                        <Text style={{ color: '#FFFFFF', fontSize: 16 }}>탈퇴</Text>
-                    </WithdrawButton>
+        <SafeAreaView style={{ backgroundColor: '#FFFFFF', flex: 1 }}>
+            <View style={{ position: 'relative', marginBottom: 30, width: '100%' }}>
+                <Text style={TextStyles.title}>회원 탈퇴</Text>
+                <TouchableOpacity style={{ left: 10, marginBottom: 30, position: 'absolute' }} onPress={() => { navigation.navigate('mypage') }}>
+                    <Arrow width={20} height={20} transform={[{ rotateY: '180deg' }]} />
                 </TouchableOpacity>
             </View>
-        </SafeAreaView>)
+            <Modal visible={finishModal}>
+                <FinishModal
+                    navigation={() => navigation.navigate('login')}
+                    setModal={setFinishModal}
+                    title='회원 탈퇴 완료!'
+                    subtitle={['다시 찾아와주세요']}
+                />
+            </Modal>
+            <View style={{ display: 'flex', justifyContent: 'center', flex: 1 }}>
+                <Text style={TextStyles.draw}>회원 탈퇴</Text>
+                <TouchableOpacity style={{ alignSelf: 'center', marginTop: 60 }}
+                    onPress={withdrawConfirmAlert}
+                ><Text style={TextStyles.button}>탈퇴</Text>
+                </TouchableOpacity>
+            </View>
+        </SafeAreaView>
+    )
 }
+
+const TextStyles = StyleSheet.create({
+    title: {
+        fontSize: 20,
+        lineHeight: 28,
+        letterSpacing: -0.6,
+        fontWeight: '700',
+        alignSelf: 'center'
+    },
+    button: {
+        overflow: 'hidden',
+        width: 175,
+        height: 45,
+        borderRadius: 22.5,
+        backgroundColor: '#67D393',
+        textAlign: 'center',
+        lineHeight: 45,
+        fontSize: 16,
+        letterSpacing: -0.6,
+        fontWeight: '700',
+        color: '#FFFFFF',
+        marginBottom: 15,
+    },
+    draw: {
+        fontSize: 18,
+        lineHeight: 24,
+        letterSpacing: -0.6,
+        alignSelf:'center',
+        fontWeight: '700'
+    }
+})
 
 export default Withdraw;

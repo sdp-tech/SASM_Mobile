@@ -143,7 +143,7 @@ const BottomBarSection = ({ post, email, scrollToComment, onRefresh, navigation 
         </TouchableOpacity>
         <Text style={{fontSize: 14, color: '#202020', lineHeight: 20, marginLeft: 3}}>{post.comment_cnt}</Text>
       </View>
-      <ShareButton message={`[SASM Story] ${post.title} - ${post.html_content}`} />
+      <ShareButton color={'black'} message={`[SASM Story] ${post.title} - ${post.html_content}`} />
     </View>
   )
 }
@@ -247,7 +247,6 @@ const StoryDetailPage = ({ navigation, route }: StoryProps) => {
 
   useEffect(() => {
     loadItem();
-    console.log(data)
   }, [refreshing]);
 
 
@@ -260,13 +259,13 @@ const StoryDetailPage = ({ navigation, route }: StoryProps) => {
             <>
             <FlatList
                 ref={scrollRef}
-                data = {comment}
+                data = {comment.slice(0,3)}
                 onRefresh = {reRenderScreen}
                 refreshing = {refreshing}
                 keyExtractor={(item, index) => item.id.toString()}
                 ListHeaderComponent={
                 <>
-                    <StoryDetailBox data={data} navigation={navigation} isLogin={isLogin} email={email} onLayout={onLayout} onRefresh={reRenderScreen} onReport={() => setModalVisible(true)} onDelete={deleteStory} onUpdate={()=>navigation.navigate('WriteStoryPage', { id: data!.id })}/>
+                    <StoryDetailBox data={data} navigation={navigation} isLogin={isLogin} email={email} onLayout={onLayout} onRefresh={reRenderScreen} onReport={() => setModalVisible(true)} onDelete={deleteStory} onUpdate={()=>navigation.navigate('WriteStory', { story: data })}/>
                     <View style={{borderBottomColor: '#D9D9D9', width: width, borderBottomWidth: 1, marginTop: 40}} />
                     <View style={{ flexDirection: 'row', padding: 20, alignItems: 'center' }}>
                       <View style={{flexDirection: 'row', flex: 1}}>

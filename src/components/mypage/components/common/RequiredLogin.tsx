@@ -8,17 +8,17 @@ import styled from 'styled-components/native';
 
 const Register = styled.TouchableOpacity`
   background-color: #67D393;
-  width: 175px;
+  width: 230px;
   height: 45px;
   border-radius: 22.5px;
   display: flex;
   justify-content: center;
   align-self: center;
-  margin-bottom: 15px;
+  margin-bottom: 24px;
 `
 const Login = styled.TouchableOpacity`
   border: 1px #67D393 solid;
-  width: 175px;
+  width: 230px;
   height: 34px;
   border-radius: 17px;
   display: flex;
@@ -29,7 +29,7 @@ export default function RequireLogin({ index }: { index: number }) {
   const navigation = useNavigation<StackNavigationProp<MyPageProps>>();
   return (
     <View>
-      <Text style={{ ...TextStyles.label, marginTop: (index == 0) ? 130 : 180 }}>
+      <Text style={{ ...TextStyles.label, marginTop: 180 }}>
         {
           {
             0: 'SASM의 지속가능한 장소를 저장해보세요!',
@@ -66,7 +66,7 @@ const TextStyles = StyleSheet.create({
     fontSize: 16,
     lineHeight: 24,
     letterSpacing: -0.6,
-    fontWeight: '700',
+    color:'#848484'
   }
 })
 	

@@ -128,7 +128,7 @@ const PostDetailSection = ({
             {post.category.name}
           </Text>
           <TouchableOpacity style={{marginTop: 10, marginRight: 10}} onPress={() => setDot(!dot)}>
-            <Settings transform={[{ rotate: dot ? '90deg' : 'none'}]} />
+            <Settings transform={[{ rotate: dot ? '90deg' : 'none'}]} color={'#444444'}/>
           </TouchableOpacity>
           { dot &&
           <View style={{position: 'absolute', backgroundColor: 'white', top: 40, left: width-140, borderRadius: 4}}>
@@ -232,7 +232,7 @@ const UserInfoSection = ({
         [
           {
             text: "이동",
-            onPress: () => navigation.navigate('Login')
+            onPress: () => navigation.navigate('마이페이지')
 
           },
           {
@@ -249,7 +249,7 @@ const UserInfoSection = ({
     <View
       style={{
         flexDirection: "row",
-        padding: 20,
+        padding: 15,
         borderTopWidth: 2,
         borderBottomWidth: 2,
         borderTopColor: "#E3E3E3",
@@ -263,24 +263,22 @@ const UserInfoSection = ({
             uri: user.profile,
           }}
         />
-        <TouchableOpacity style={{ width: 75, borderColor: '#67D393', borderWidth: 1, borderRadius: 12, alignItems: 'center', justifyContent: 'center', paddingVertical: 5, paddingHorizontal: 15, marginTop: 20 }} onPress={onFollow}>
+        <TouchableOpacity style={{ width: 75, borderColor: '#67D393', borderWidth: 1, borderRadius: 12, alignItems: 'center', justifyContent: 'center', paddingVertical: 5, paddingHorizontal: 15, marginTop: 15 }} onPress={onFollow}>
           <Text style={{ color: '#202020', fontSize: 12 }}>{follow ? '팔로잉' : '+ 팔로우'}</Text>
         </TouchableOpacity>
       </View>
       <View style={{ flex: 1, marginLeft: 20 }}>
-        <View style={{ flexDirection: 'row', marginBottom: 10, flex: 1 }}>
+        <View style={{ flexDirection: 'row', marginBottom: 15}}>
           <Text style={{ fontSize: 12, fontWeight: '600', color: user.is_verified ? '#209DF5' : '#67D393' }}>{user.is_verified ? 'Editor' : 'User'}</Text>
           <Text style={{ color: '#202020', fontSize: 12, fontWeight: '600' }}> {user.nickname}님의 다른 글</Text>
         </View>
-        <FlatList data={posts.slice(0, 4)} scrollEnabled={false} renderItem={({ item }: any) => {
+        <FlatList data={posts.slice(0,4)} scrollEnabled={false} renderItem={({ item }: any) => {
           return (
             <TouchableOpacity style={{ borderBottomColor: '#EDF8F2', borderBottomWidth: 0.5 }} onPress={() => { navigation.push('PostDetail', { post_id: item.id }) }}>
-              <Text style={{ color: '#3C3C3C', fontSize: 10, lineHeight: 18, opacity: 0.6, }} numberOfLines={1}>{item.title}</Text>
+              <Text style={{ color: '#3C3C3C', fontSize: 10, lineHeight: 18, opacity: 0.6, overflow: 'hidden' }} numberOfLines={1}>{item.title}</Text>
             </TouchableOpacity>
           )
         }} />
-      </View>
-      <View style={{ justifyContent: 'center' }}>
       </View>
     </View>
   );
@@ -296,7 +294,7 @@ const PostRecommendSection = ({ data }: PostRecommendSectionProps) => {
       borderTopColor: "#E3E3E3",
       borderBottomColor: "#E3E3E3",
     }}>
-      <Text>추천글</Text>
+      <Text style={{color: '#202020', fontSize: 16, fontWeight: '700', marginBottom: 10}}>추천글</Text>
       <CardView
         gap={0}
         offset={0}
@@ -305,17 +303,24 @@ const PostRecommendSection = ({ data }: PostRecommendSectionProps) => {
         data={data}
         renderItem={({ item }: any) => {
           return (
-            <TouchableOpacity style={{ marginLeft: 10 }}>
+            <TouchableOpacity style={{ marginRight: 10 }}>
               <ImageBackground
-                source={{ uri: item.uri }}
+                source={{ uri: item.rep_pic }}
                 style={{
                   width: 120,
                   height: 120,
-                  alignItems: "center",
-                  justifyContent: "center",
+                }}
+                imageStyle={{
+                  borderRadius: 4
                 }}
               >
-                <Text style={{ color: "white" }}>{item.title}</Text>
+                <View style={{backgroundColor: 'rgba(0,0,0,0.15)', borderRadius: 4, width: 120, height: 120, alignItems: "center", justifyContent: "center"}}>
+                <Text style={{ color: "white", fontSize: 14, lineHeight: 20, letterSpacing: -0.6, fontWeight: 400, overflow: 'hidden', textAlign: 'center' }}>{item.title}</Text>
+                <View style={{ flexDirection: 'row', position: 'absolute', bottom: 5, right: 5 }}>
+                  <Text style={{ fontSize: 12, fontWeight: '600', color: item.writer.is_verified ? '#209DF5' : '#67D393' }}>{item.writer.is_verified ? 'Editor' : 'User'}</Text>
+                  <Text style={{ color: 'white', fontSize: 12, fontWeight: '600' }}> {item.writer.nickname}</Text>
+                </View>
+                </View>
               </ImageBackground>
             </TouchableOpacity>
           );
@@ -372,7 +377,7 @@ const BottomBarSection = ({ post, email, scrollToComment, onRefresh, navigation 
         </TouchableOpacity>
         <Text style={{ fontSize: 14, color: '#202020', lineHeight: 20, marginLeft: 3 }}>{post.comment_cnt}</Text>
       </View>
-      <ShareButton message={`[SASM Forest] ${post.title} - ${post.content}`} />
+      <ShareButton color={'black'} message={`[SASM Forest] ${post.title} - ${post.content}`} />
     </View>
   )
 }
@@ -491,14 +496,14 @@ const PostDetailScreen = ({
         <>
           <FlatList
             ref={scrollRef}
-            data={comment}
+            data={comment.slice(0,3)}
             style={styles.container}
             onRefresh={reRenderScreen}
             refreshing={refreshing}
             ListHeaderComponent={
               <>
                 <PostDetailSection post={post} navigation={navigation} email={user.email} onReport={() => setModalVisible(true)} onDelete={deletePost} onUpdate={()=>navigation.navigate('PostUpload', {post: post})} onLayout={onLayout} />
-                <UserInfoSection user={post.writer} posts={writerPosts} isLogin={isLogin} navigation={navigation} onRefresh={reRenderScreen} writer_is_followed={post.writer_is_followed}/>
+                <UserInfoSection user={post.writer} posts={writerPosts.filter((item: any) => item.id !== post.id)} isLogin={isLogin} navigation={navigation} onRefresh={reRenderScreen} writer_is_followed={post.writer_is_followed}/>
                 <View style={{ flexDirection: 'row', padding: 20, alignItems: 'center' }}>
                   <View style={{ flexDirection: 'row', flex: 1 }}>
                     <Text style={{ fontSize: 16, fontWeight: '700', marginRight: 10 }}>한줄평</Text>
@@ -514,7 +519,7 @@ const PostDetailScreen = ({
             }
             ListFooterComponent={
               <>
-                <PostRecommendSection data={recommend} />
+                <PostRecommendSection data={recommend.filter((item: any) => item.id !== post.id)} />
                 <View style={{ justifyContent: 'center', alignItems: 'center', paddingVertical: 20 }}>
                   <TouchableOpacity onPress={scrollToTop} style={{ flexDirection: 'row' }}>
                     <Arrow width={18} height={18} transform={[{ rotate: '270deg' }]} />

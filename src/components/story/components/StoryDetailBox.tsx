@@ -5,7 +5,7 @@ import { Request } from '../../../common/requests';
 import styled from 'styled-components/native';
 import RenderHTML from 'react-native-render-html';
 import Place from '../../../assets/img/Story/Place.svg';
-import Arrow from '../../../assets/img/common/Arrow.svg';
+import ArrowWhite from '../../../assets/img/common/ArrowWhite.svg';
 import CardView from '../../../common/CardView';
 import { CATEGORY_LIST, MatchCategory } from "../../../common/Category";
 import Selector0 from "../../../assets/img/Category/Selector0.svg";
@@ -15,6 +15,7 @@ import Selector3 from "../../../assets/img/Category/Selector3.svg";
 import Selector4 from "../../../assets/img/Category/Selector4.svg";
 import Selector5 from "../../../assets/img/Category/Selector5.svg";
 import Settings from '../../../assets/img/MyPage/Settings.svg';
+import Logo from "../../../assets/img/common/Logo.svg"
 
 interface StoryDetailProps {
     data: any;
@@ -103,7 +104,12 @@ const StoryDetailBox = ({navigation, data, isLogin, onLayout, email, onRefresh, 
             { cancelable: false }
           );
         }
-      }
+    }
+
+    const chunkArray = () => {
+        const array = [data.rep_pic, ...data.extra_pics]
+        return array.slice(0,3);
+    }
 
     const handlePageGoToMap = async () => {
         const response = await request.get('/stories/go_to_map/', {id: data.id});
@@ -138,7 +144,7 @@ const StoryDetailBox = ({navigation, data, isLogin, onLayout, email, onRefresh, 
         return (
             <CategoryWrapper>
                 {list[idx]}
-                <Text style={{ fontSize: 14, marginHorizontal: 5, lineHeight: 14 }}>{data.category}</Text>
+                <Text style={{ fontSize: 14, marginHorizontal: 5 }}>{data.category}</Text>
             </CategoryWrapper>
         )
     }
@@ -147,13 +153,13 @@ const StoryDetailBox = ({navigation, data, isLogin, onLayout, email, onRefresh, 
         <View onLayout={onLayout}>
             <View>
                 <TouchableOpacity style={{position: 'absolute', zIndex: 1, top: 50, left: 10}} onPress={() => {navigation.goBack()}}>
-                    <Arrow width={20} height={20} transform={[{rotateY: '180deg'}]}/>
+                    <ArrowWhite width={18} height={18} strokeWidth={5} />
                 </TouchableOpacity>
                     {data!.extra_pics.length > 0 ? (
                         <CardView 
                             gap={0}
                             offset={0}
-                            data={data!.extra_pics}
+                            data={chunkArray()}
                             pageWidth={width}
                             dot={false}
                             renderItem={({item}: any) => (
@@ -161,14 +167,18 @@ const StoryDetailBox = ({navigation, data, isLogin, onLayout, email, onRefresh, 
                                     style={{width: 280, height: 330, marginRight: 15}}
                                     source={{uri: item}}
                                     resizeMode='cover'
-                                />
+                                >
+                                    <View style={{backgroundColor: 'rgba(0,0,0,0.2)', width: 280, height: 330}} />
+                                </ImageBackground>
                             )}
                         />
                     ) : (
-                        <ImageBackground style={{width: width, height: 330}} source={{uri: data!.rep_pic}} />
+                        <ImageBackground style={{width: width, height: 330}} source={{uri: data!.rep_pic}}>
+                            <View style={{backgroundColor: 'rgba(0,0,0,0.2)', width: width, height: 330}} />
+                        </ImageBackground>
                     )}
                 <TouchableOpacity style={{position: 'absolute', zIndex: 1, top: 55, right: 20}} onPress={() => setDot(!dot)}>
-                    <Settings transform={[{ rotate: dot ? '90deg' : 'none'}]} />
+                    <Settings transform={[{ rotate: dot ? '90deg' : 'none'}]} color={'white'} />
                 </TouchableOpacity>
                 { dot &&
                 <View style={{position: 'absolute', backgroundColor: 'white', top: 75, left: width-140, borderRadius: 4}}>
@@ -211,10 +221,14 @@ const StoryDetailBox = ({navigation, data, isLogin, onLayout, email, onRefresh, 
                     <Place />
                     <Text style={textStyles.gotomap}>{data!.place_name}</Text>
                 </TouchableOpacity>
+                <View style={{alignItems: 'center', paddingVertical: 50}}>
+                    <Logo />
+                    <Text style={textStyles.review}>{data!.story_review}</Text>
+                </View>
                 <RenderHTML
                     contentWidth = {width}
                     source = {markup}
-                    renderersProps = {renderersProps} 
+                    renderersProps = {renderersProps}
                 />
             </View>
             <Image source={{uri: data!.map_image}} style={{width: width, height: 120}} />
@@ -252,6 +266,13 @@ const textStyles = StyleSheet.create({
         fontSize: 12,
         fontWeight: '600',
     },
+    review: {
+        fontSize: 16,
+        lineHeight: 24,
+        letterSpacing: -0.6,
+        textAlign: 'center',
+        marginTop: 10
+    }
 })
 
 export default StoryDetailBox;

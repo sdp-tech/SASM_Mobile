@@ -10,9 +10,10 @@ import {
   TextInput,
   Dimensions,
   ImageBackground,
+  Alert
 } from "react-native";
 import type { NativeStackScreenProps } from "@react-navigation/native-stack";
-import { useFocusEffect } from "@react-navigation/native";
+import { useFocusEffect, useNavigation } from "@react-navigation/native";
 import ListHeader from "./components/ListHeader";
 import { LoginContext } from "../../common/Context";
 
@@ -20,6 +21,8 @@ import { ForestStackParams } from "../../pages/Forest";
 import { Request } from "../../common/requests";
 import PostItem from "./components/PostItem";
 import PlusButton from "../../common/PlusButton";
+import { StackNavigationProp } from "@react-navigation/stack";
+import { TabProps } from "../../../App";
 
 const { width, height } = Dimensions.get('window');
 
@@ -32,28 +35,35 @@ const PostListScreen = ({
   const [page, setPage] = useState(1);
   const [order, setOrder] = useState<string>('');
   const [count, setCount] = useState(0);
-  const [posts, setPosts] = useState([]);
+  const [posts, setPosts] = useState([] as any);
   const {isLogin, setLogin} = useContext(LoginContext);
-
+  const navigationToTab = useNavigation<StackNavigationProp<TabProps>>();
   const request = new Request();
 
   const board_name = route.params?.board_name;
   const board_category = route.params?.board_category;
 
   const getPosts = async () => {
-    setLoading(true);
     const response = await request.get('/forest/', {
       order: order,
+      page: page,
       category_filter: board_category?.id
     }, null);
-    setPosts(response.data.data.results);
+    if (page == 1) setPosts(response.data.data.results);
+    else setPosts([...posts, ...response.data.data.results]);
     setCount(response.data.data.count);
-    setLoading(false);
   }
 
   const onRefresh = () => {
     setRefreshing(true);
+    setPage(1);
     setRefreshing(false);
+  }
+
+  const onEndReached = () => {
+    if (page < Math.ceil(count / 10)) {
+      setPage(page+1);
+    }
   }
 
   useEffect(() => {
@@ -64,7 +74,7 @@ const PostListScreen = ({
 
   useFocusEffect(useCallback(() => {
     getPosts();
-  }, [order, refreshing]));
+  }, [order, refreshing, page]));
 
   return (
     <SafeAreaView style={styles.container}>
@@ -74,15 +84,15 @@ const PostListScreen = ({
         navigation={navigation}
       />
       <View style={{flexDirection: 'row', zIndex: 1, alignItems: 'center', padding: 15, backgroundColor: '#F1FCF5'}}>
-        <Text style={{fontSize: 12, fontWeight: '400', flex: 1}}>전체 검색결과 {count}개</Text>
+        <Text style={{fontSize: 12, fontWeight: '400', flex: 1}}>전체 글 {count}개</Text>
       </View>
       <FlatList
         data={posts}
         style={{ flexGrow: 1 }}
         onRefresh={onRefresh}
         refreshing={refreshing}
-        onEndReachedThreshold={0}
-        ListFooterComponent={loading ? <ActivityIndicator /> : <></>}
+        onEndReachedThreshold={0.3}
+        onEndReached={onEndReached}
         renderItem={({ item }) => {
           const {
             id,
@@ -114,11 +124,32 @@ const PostListScreen = ({
           );
         }}
       />
-      {isLogin &&
-        <PlusButton
-          onPress={() => navigation.navigate('PostUpload', {})}
-          position="rightbottom" />
-      }
+      <PlusButton
+        onPress={() => {
+          if(!isLogin) {
+            Alert.alert(
+              "로그인이 필요합니다.",
+              "로그인 항목으로 이동하시겠습니까?",
+              [
+                {
+                  text: "이동",
+                  onPress: () => navigationToTab.navigate('마이페이지')
+      
+                },
+                {
+                  text: "취소",
+                  onPress: () => { },
+                  style: "cancel"
+                },
+              ],
+              { cancelable: false }
+            );
+          }
+          else {
+            navigation.navigate('PostUpload', {});
+          }
+        }}
+        position="rightbottom" />
     </SafeAreaView>
   );
 };

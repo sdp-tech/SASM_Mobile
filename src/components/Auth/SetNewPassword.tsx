@@ -5,7 +5,6 @@ import { Alert, Modal, SafeAreaView, StyleSheet, TouchableOpacity, View } from '
 import { TextPretendard as Text } from '../../common/CustomText';
 import { Request } from '../../common/requests';
 import { MyPageProps } from '../../pages/MyPage';
-import InputWithMessage from '../mypage/components/InputWithMessage';
 import ChangePw, { formProps } from './function/ChangePw';
 import InputWithLabel from '../../common/InputWithLabel';
 import Check from '../../assets/img/common/Check.svg';

@@ -101,12 +101,11 @@ const textStyles = StyleSheet.create({
     fontWeight: '600',
     color: 'white',
     marginBottom: 5,
-    letterSpacing: -0.6
+    letterSpacing: -0.6,
   },
   placename: {
     fontSize: 24,
     fontWeight: '700',
-    lineHeight: 24,
     color: 'white'
   },
   preview: {

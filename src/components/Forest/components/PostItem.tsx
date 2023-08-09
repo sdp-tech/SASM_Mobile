@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { TextPretendard as Text } from "../../../common/CustomText";
 import { View, ImageBackground, TouchableOpacity, Dimensions, Image, Alert } from 'react-native';
 import Arrow from "../../../assets/img/common/Arrow.svg";
+import ArrowWhite from '../../../assets/img/common/ArrowWhite.svg';
 import CommentIcon from '../../../assets/img/Story/Comment.svg';
 import Heart from '../../../common/Heart';
 import { Request } from '../../../common/requests';
@@ -81,9 +82,6 @@ const PostItem = ({
         style={{
           width: width - 30,
           paddingTop: 20,
-          paddingBottom: 20,
-          borderBottomWidth: 1,
-          borderBottomColor: "#373737",
           flexDirection: "row",
           marginHorizontal: 15,
         }}
@@ -94,19 +92,20 @@ const PostItem = ({
               <View style={{flex: 1}}>
                 <Text
                   style={{ fontSize: 16, fontWeight: "600", marginBottom: 8 }}
-                  numberOfLines={2}
                 >
                   {title}
                 </Text>
                 <Text
                   style={{
                     fontSize: 12,
+                    lineHeight: 20,
+                    letterSpacing: 0.24, 
                     fontWeight: "200",
                     color: '#373737',
                     opacity: 0.6,
                     marginBottom: 15,
                   }}
-                  numberOfLines={12}
+                  numberOfLines={6}
                 >
                   {preview}
                 </Text>
@@ -118,11 +117,6 @@ const PostItem = ({
                 <CommentIcon color={'#209DF5'} width={15} height={15} />
                 <Text style={{marginLeft: 3, color: '#209DF5', fontSize: 12, lineHeight: 18}}>{comment_cnt}</Text>
               </View>
-              <TouchableOpacity onPress={() => setPressed(false)}
-                style={{ marginLeft: (width-30) / 2 }}
-              >
-                <Arrow transform={[{ rotate: "270deg" }]} width={15} height={15} />
-              </TouchableOpacity>
             </View>
             <View>
               <ImageBackground
@@ -133,7 +127,7 @@ const PostItem = ({
                 }}
                 source={{ uri: rep_pic }}
               />
-              {photos.map((uri: string, index: number) => {
+              {photos.slice(0,2).map((uri: string, index: number) => {
                 return (
                   <Image style={{width: 90, height: 90}} key={index} source={{uri: uri}} />
                 )
@@ -171,14 +165,18 @@ const PostItem = ({
               }}
               source={{ uri: rep_pic }}
             />
-            <TouchableOpacity onPress={() => setPressed(true)}
-              style={{ position: "absolute", top: 110, left: (width-30) / 2 }}
-            >
-              <Arrow transform={[{ rotate: "90deg" }]} width={10} height={10} />
-            </TouchableOpacity>
           </>
         )}
       </View>
+      <TouchableOpacity onPress={() => setPressed(!pressed)}
+        style={{ width: width-30, marginHorizontal: 15, borderBottomWidth: 1, borderBottomColor: "#373737", alignItems: 'center', paddingBottom: 10 }}
+      >
+        {pressed ?
+          <Arrow transform={[{ rotate: "270deg" }]} width={15} height={15} />
+          :
+          <Arrow transform={[{ rotate: "90deg" }]} width={10} height={10} />
+        }
+      </TouchableOpacity>
     </TouchableOpacity>
   );
 };
@@ -197,6 +195,7 @@ export const HotPostItem = ({
   isLogin,
   navigation,
 }: PostItemProps) => {
+  const [pressed, setPressed] = useState<boolean>(false);
   const [like, setLike] = useState<boolean>(false);
   const request = new Request();
 
@@ -239,26 +238,63 @@ export const HotPostItem = ({
           });
         }}
       >
-        <ImageBackground source={{ uri: rep_pic }}
-          style={{ width: width - 40, height: 100 }} imageStyle={{ borderRadius: 4 }}>
-          <View style={{width: width - 40, height: 100, borderRadius: 4, backgroundColor: 'rgba(0,0,0,0.3)'}}>
-            <View style={{ alignItems: "center", flex: 1, marginTop: 40 }}>
-              <Text style={{ color: "white", fontSize: 16, fontWeight: "700"}}>{title}</Text>
-            </View>
-            <View style={{flexDirection: "row", padding: 10}}>
-              <View style={{flexDirection: "row", alignSelf: "flex-start", flex: 1}}>
-                <Heart like={like} onPress={toggleLike} white={true} />
-                <Text style={{ color: "white", lineHeight: 18, marginLeft: 3 }}>{like_cnt}</Text>
+        { pressed ? (
+          <>
+          <ImageBackground source={{ uri: rep_pic }}
+            style={{ width: width - 40, height: 100 }} imageStyle={{ borderTopLeftRadius: 4, borderTopRightRadius: 4 }}>
+            <View style={{width: width - 40, height: 100, borderRadius: 4, backgroundColor: 'rgba(0,0,0,0.3)'}}>
+              <View style={{ alignItems: "center", flex: 1, marginTop: 40 }}>
+                <Text style={{ color: "white", fontSize: 16, fontWeight: "700"}}>{title}</Text>
               </View>
-              <Text style={{ color: "#67D393", fontWeight: "600", marginRight: 5}}>{writer.nickname}</Text>
             </View>
-            <TouchableOpacity
-              style={{ position: "absolute", top: 85, left: (width-40) / 2 }}
-            >
-              <Arrow width={10} height={10} color={"#FFFFFF"} transform={[{ rotate: "90deg" }]} />
-            </TouchableOpacity>
+          </ImageBackground>
+          <View style={{width: width-40}}>
+          <Text
+            style={{
+              fontSize: 12,
+              lineHeight: 20,
+              letterSpacing: 0.24, 
+              fontWeight: "200",
+              color: '#373737',
+              opacity: 0.6,
+              marginBottom: 15,
+            }}
+            numberOfLines={6}
+          >
+            {preview}
+          </Text>
+            <View style={{flexDirection: 'row', alignItems: 'center'}}>
+              <Text style={{ color: '#67D393', fontSize: 12, fontWeight: "600", opacity: 0.6, lineHeight: 18, flex: 1 }}>{writer.nickname}</Text>
+              <Heart like={like} color={'#209DF5'} size={12} onPress={toggleLike} />
+              <Text style={{marginLeft: 3, marginRight: 10, color: '#209DF5', fontSize: 12, lineHeight: 18}}>{like_cnt}</Text>
+              <CommentIcon color={'#209DF5'} width={15} height={15} />
+              <Text style={{marginLeft: 3, color: '#209DF5', fontSize: 12, lineHeight: 18}}>{comment_cnt}</Text>
+            </View>
           </View>
-        </ImageBackground>
+          <TouchableOpacity onPress={() => setPressed(false)} style={{ flex: 1, alignItems: 'center', justifyContent: 'flex-end', width: width-30}}>
+            <Arrow width={15} height={15} transform={[{ rotate: "270deg" }]} strokeWidth={5} />
+          </TouchableOpacity>
+          </>
+        ) : (
+          <ImageBackground source={{ uri: rep_pic }}
+            style={{ width: width - 40, height: 100 }} imageStyle={{ borderRadius: 4 }}>
+            <View style={{width: width - 40, height: 100, borderRadius: 4, backgroundColor: 'rgba(0,0,0,0.3)'}}>
+              <View style={{ alignItems: "center", flex: 1, marginTop: 40 }}>
+                <Text style={{ color: "white", fontSize: 16, fontWeight: "700"}} numberOfLines={1}>{title}</Text>
+              </View>
+              <View style={{flexDirection: "row", padding: 10}}>
+                <View style={{flexDirection: "row", alignSelf: "flex-start"}}>
+                  <Heart like={like} onPress={toggleLike} white={true} />
+                  <Text style={{ color: "white", lineHeight: 18, marginLeft: 3 }}>{like_cnt}</Text>
+                </View>
+                <TouchableOpacity onPress={() => setPressed(true)} style={{ flex: 1, alignItems: 'center', justifyContent: 'flex-end', marginLeft: 10}}>
+                  <ArrowWhite width={10} height={10} transform={[{ rotate: "270deg" }]} strokeWidth={5} />
+                </TouchableOpacity>
+                <Text style={{ color: "#67D393", fontWeight: "600", marginRight: 5}}>{writer.nickname}</Text>
+              </View>
+            </View>
+          </ImageBackground>
+        )}
       </TouchableOpacity>
     </View>
   )
