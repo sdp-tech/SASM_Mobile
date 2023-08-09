@@ -61,6 +61,18 @@ const SearchCard = ({id, place_name, title, rep_pic, extra_pics, story_like, cat
       navigation.navigate('StoryDetail', { id: id });
     }
   }
+
+  const newArray = () => {
+    const array = []
+    const length = extra_pics ? 2-extra_pics.length : 2
+    {extra_pics && extra_pics.slice(0,2).map((uri: string, index: number) => (
+      array.push(<Image style={{width: width*0.34, height: width*0.34, marginBottom: 8}} source={{uri: uri}} />)
+    ))}
+    for (let i = 0; i < length; i++){
+      array.push(<View style={{width: width*0.34, height: width*0.34, marginBottom: 8, backgroundColor: '#D9D9D9'}} />)
+    }
+    return array;
+  }
     
   return (
     <View style={{flex: 1, width: width-30, marginBottom: 30}}>
@@ -83,35 +95,14 @@ const SearchCard = ({id, place_name, title, rep_pic, extra_pics, story_like, cat
             </View>
           </ImageBackground>
           <View style={{marginLeft: 8}}>
-            { extra_pics.length > 0 ? (
-              <>
-              <ImageBackground 
-                source={{uri: extra_pics[0]}}
-                style={{width: width*0.34, height: width*0.34, alignItems: 'flex-end', padding: 10, marginBottom: 8}}
-              >
-                  {story_like ? (
-                    <Heart like={!like} onPress={toggleLike} white={true} />
-                  ) : (
-                    <Heart like={like} onPress={toggleLike} white={true} />
-                  )}
-              </ImageBackground>
-              <Image 
-                source={{uri: extra_pics[1]}}
-                style={{width: width*0.34, height: width*0.34}}
-              />
-              </>
-            ) : (
-              <>
-              <View style={{width: width*0.34, height: width*0.34, marginBottom: 8, backgroundColor: '#D9D9D9', alignItems: 'flex-end', padding: 10}}>
-                  {story_like ? (
-                    <Heart like={!like} onPress={toggleLike} white={true} />
-                  ) : (
-                    <Heart like={like} onPress={toggleLike} white={true} />
-                  )}
-              </View>
-              <View style={{width: width*0.34, height: width*0.34, backgroundColor: '#D9D9D9'}} />
-              </>
-            )}
+            {newArray()}
+            <View style={{position: 'absolute', right: 10, top: 10}}>
+              {story_like ? (
+                <Heart like={!like} onPress={toggleLike} white={true} />
+              ) : (
+                <Heart like={like} onPress={toggleLike} white={true} />
+              )}
+            </View>
           </View>
         </View>
       </TouchableOpacity>

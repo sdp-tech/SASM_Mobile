@@ -222,7 +222,7 @@ export default function WriteStoryPage({ navigation, route }: StoryProps) {
         <TextInput
           value={story.story_review}
           onChangeText={(story_review) => { setStory({ ...story, story_review: story_review }) }}
-          placeholder='소제목 *'
+          placeholder='한 줄 소개 *'
           placeholderTextColor={'#bcbcbe'}
           style={{padding: 10}}
         />
