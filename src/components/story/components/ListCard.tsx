@@ -1,4 +1,4 @@
-import { useState, useRef } from 'react';
+import { useState, useEffect } from 'react';
 import { SafeAreaView, View, TouchableOpacity, Image, StyleSheet, Dimensions, Alert} from 'react-native';
 import { TextPretendard as Text } from '../../../common/CustomText';
 import { Request } from '../../../common/requests';
@@ -25,6 +25,10 @@ const ListCard = ({id, place_name, title, rep_pic, extra_pics, story_like, creat
   const [verified, setVerified] = useState<boolean>(writer_is_verified);
   const [like, setLike] = useState<boolean>(false);
   const request = new Request();
+
+  useEffect(()=> {
+    story_like ? setLike(true) : setLike(false);
+  }, [story_like])
 
   const toggleLike = async () => {
     if(isLogin){
@@ -68,11 +72,7 @@ const ListCard = ({id, place_name, title, rep_pic, extra_pics, story_like, creat
             <Text style={textStyles.placename} numberOfLines={1}>{place_name}</Text>
           </View>
           <View style={{justifyContent: 'flex-end'}}>
-            {story_like ? (
-              <Heart like={!like} onPress={toggleLike} size={20} />
-            ) : (
-              <Heart like={like} onPress={toggleLike} size={20} color={'black'}/>
-            )}
+            <Heart like={like} onPress={toggleLike} size={20} color={'black'}/>
           </View>
           <Image source={{uri: rep_pic}} style={{width: 60, height: 60, borderRadius: 4, marginRight: 8, marginLeft: 20}} />
           { extra_pics!= null ? (
