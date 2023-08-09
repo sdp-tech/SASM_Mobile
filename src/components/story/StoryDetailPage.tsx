@@ -259,7 +259,7 @@ const StoryDetailPage = ({ navigation, route }: StoryProps) => {
             <>
             <FlatList
                 ref={scrollRef}
-                data = {comment}
+                data = {comment.slice(0,3)}
                 onRefresh = {reRenderScreen}
                 refreshing = {refreshing}
                 keyExtractor={(item, index) => item.id.toString()}

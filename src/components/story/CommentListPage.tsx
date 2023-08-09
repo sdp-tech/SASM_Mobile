@@ -8,6 +8,7 @@ import WriteComment from './components/WriteComment';
 import Arrow from '../../assets/img/common/Arrow.svg';
 import Loading from '../../common/Loading';
 import { LoginContext } from '../../common/Context';
+import { BottomSheetModalProvider } from '@gorhom/bottom-sheet';
 
 const CommentListPage = ({ navigation, route }: StoryProps) => {
   const { width, height } = Dimensions.get('screen');
@@ -52,33 +53,35 @@ const CommentListPage = ({ navigation, route }: StoryProps) => {
   }, [refreshing])
 
   return (
-    <>{loading ? (
-      <Loading />
-    ) : (
-    <SafeAreaView style={{flex: 1, backgroundColor: 'white'}}>
-      <FlatList
-        data={comment}
-        refreshing={refreshing}
-        onRefresh={onRefresh}
-        ListHeaderComponent={<>
-          <View style={{height: 50, alignItems: 'center', justifyContent: 'center'}}>
-            <TouchableOpacity style={{position: 'absolute', left: 10}} onPress={() => {navigation.goBack()}}>
-              <Arrow width={20} height={20} transform={[{rotateY: '180deg'}]}/>
-            </TouchableOpacity>
-            <Text style={{textAlign: 'center', textAlignVertical: 'center', fontSize: 20, fontWeight: '700'}}>한줄평</Text>
-          </View>
-          <View style={{borderBottomColor: '#D9D9D9', width: width, borderBottomWidth: 1, marginBottom: 20}} />
-          <WriteComment id={id} reRenderScreen={reRenderScreen} data={updateText} commentId={commentId} isLogin={isLogin} navigation={navigation} />
-        </>}
-        renderItem={({item}) => { 
-          return (
-            <Comment data={item} story_id={id} reRenderScreen={reRenderScreen} email={email} callback={callback} isLogin={isLogin} navigation={navigation}/>
-          )
-        }}
-        keyExtractor={(item: any)=>item.id}
-      />
-    </SafeAreaView>
-  )}</>
+    <BottomSheetModalProvider>
+      <>{loading ? (
+        <Loading />
+      ) : (
+      <SafeAreaView style={{flex: 1, backgroundColor: 'white'}}>
+        <FlatList
+          data={comment}
+          refreshing={refreshing}
+          onRefresh={onRefresh}
+          ListHeaderComponent={<>
+            <View style={{height: 50, alignItems: 'center', justifyContent: 'center'}}>
+              <TouchableOpacity style={{position: 'absolute', left: 10}} onPress={() => {navigation.goBack()}}>
+                <Arrow width={20} height={20} transform={[{rotateY: '180deg'}]}/>
+              </TouchableOpacity>
+              <Text style={{textAlign: 'center', textAlignVertical: 'center', fontSize: 20, fontWeight: '700'}}>한줄평</Text>
+            </View>
+            <View style={{borderBottomColor: '#D9D9D9', width: width, borderBottomWidth: 1, marginBottom: 20}} />
+            <WriteComment id={id} reRenderScreen={reRenderScreen} data={updateText} commentId={commentId} isLogin={isLogin} navigation={navigation} />
+          </>}
+          renderItem={({item}) => { 
+            return (
+              <Comment data={item} story_id={id} reRenderScreen={reRenderScreen} email={email} callback={callback} isLogin={isLogin} navigation={navigation}/>
+            )
+          }}
+          keyExtractor={(item: any)=>item.id}
+        />
+      </SafeAreaView>
+    )}</>
+  </BottomSheetModalProvider>
   )
 }
 
