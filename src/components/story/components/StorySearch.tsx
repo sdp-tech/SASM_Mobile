@@ -100,11 +100,11 @@ const StorySearchPage = ({ navigation }: StoryProps) => {
   }
 
   const recommendData = [
-    '슬로우 패션', '비건', 'ESG', '비건 레시피', '비건 레스토랑', '자연', '숲', '한강'
+    '비건', '제로웨이스트', '카페', '식당', '서울', '한강', '자연'
   ]
 
   return (
-    <SafeAreaView style={{flex: 1, backgroundColor: 'white'}}>
+    <SafeAreaView style={{flex: 1, backgroundColor: 'white', paddingTop: 10}}>
       <View style={{flexDirection: 'row'}}>
         <TouchableOpacity style={{justifyContent: 'center', marginLeft: 10}} onPress={()=>{navigation.goBack();}}>
           <Arrow width={18} height={18} transform={[{rotate: '180deg'}]} />

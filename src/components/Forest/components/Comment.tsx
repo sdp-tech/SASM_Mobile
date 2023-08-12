@@ -118,7 +118,7 @@ const Comment = ({ data, reRenderScreen, post_id, email, isLogin, navigation, ca
                 </View>
                 <Modal visible={modalVisible} transparent={true} onRequestClose={() => setModalVisible(false)} >
                   <Pressable style={{flex:1, backgroundColor:'rgba(0, 0, 0, 0.5)'}} onPress={()=>setModalVisible(false)} />
-                    <View style={{backgroundColor: 'white', width: width, position: 'absolute', top: height-245}}>
+                    <View style={{backgroundColor: 'white', width: width, position: 'absolute', top: height-200}}>
                       <TouchableOpacity style={{justifyContent: 'center', alignItems: 'center', paddingVertical: 35}} onPress={() => {callback(data.content, data.id); setModalVisible(false)}}>
                         <Text style={{fontSize: 16, fontWeight: '700'}}>수정</Text>
                       </TouchableOpacity>

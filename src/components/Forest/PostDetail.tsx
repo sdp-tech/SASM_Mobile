@@ -11,6 +11,7 @@ import {
   Alert,
   ImageBackground,
   Dimensions,
+  Platform
 } from "react-native";
 import type { NativeStackScreenProps } from "@react-navigation/native-stack";
 import RenderHTML from 'react-native-render-html';
@@ -108,7 +109,7 @@ const PostDetailSection = ({
         <View
           style={{
             flexDirection: "row",
-            marginTop: 45,
+            marginTop: Platform.OS === 'ios' ? 45:15,
             alignSelf: "center",
             flex: 1,
             padding: 10
@@ -121,8 +122,7 @@ const PostDetailSection = ({
             style={{
               fontSize: 20,
               fontWeight: "700",
-              marginBottom: 15,
-              marginLeft: width / 2 - 50,
+              textAlign: 'center',
               flex: 1
             }}
           >
