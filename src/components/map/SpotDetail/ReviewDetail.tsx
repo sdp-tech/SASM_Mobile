@@ -40,11 +40,11 @@ const PageButton = styled.View`
 interface ReviewDetailProps {
   reviewData: reviewDataProps;
   setDetailModal: Dispatch<SetStateAction<boolean>>;
-  rerender: ()=>void;
+  rerender: () => void;
   category: string;
 }
 
-export default function ReviewDetail({ reviewData, setDetailModal, rerender, category}: ReviewDetailProps): JSX.Element {
+export default function ReviewDetail({ reviewData, setDetailModal, rerender, category }: ReviewDetailProps): JSX.Element {
   const request = new Request();
   const { width, height } = Dimensions.get('window');
   const flatlistRef = useRef<FlatList>(null);
@@ -53,7 +53,7 @@ export default function ReviewDetail({ reviewData, setDetailModal, rerender, cat
   const [reviewModal, setReviewModal] = useState<boolean>(false);
   const checkisWriter = async () => {
     const nickname = await getNickname();
-    if(reviewData.nickname == nickname) setIsWriter(true);
+    if (reviewData.nickname == nickname) setIsWriter(true);
   }
 
   useEffect(() => {
@@ -71,26 +71,31 @@ export default function ReviewDetail({ reviewData, setDetailModal, rerender, cat
   return (
     <Section>
       <Modal visible={reviewModal}>
-        <WriteReview id={reviewData.place} setReviewModal={setReviewModal} rerender={rerender} category={category} setTab={()=>{}} targetData={reviewData}/>
+        <WriteReview id={reviewData.place} setReviewModal={setReviewModal} rerender={rerender} category={category} setTab={() => { }} targetData={reviewData} />
       </Modal>
       <CloseButton onPress={() => { setDetailModal(false) }}>
         <Close color={'#FFFFFF'} />
       </CloseButton>
       <View>
         {
-          currentIdx != 0 &&
-          <PageButton style={{ left: 10 }}>
-            <TouchableOpacity onPress={() => { flatlistRef.current?.scrollToIndex({ animated: true, index: currentIdx - 1 }) }}>
-              <ArrowWhite />
-            </TouchableOpacity>
-          </PageButton>
-        }
-        {currentIdx != reviewData.photos.length - 1 &&
-          <PageButton style={{ right: 10 }}>
-            <TouchableOpacity onPress={() => { flatlistRef.current?.scrollToIndex({ animated: true, index: currentIdx + 1 }) }}>
-              <ArrowWhite transform={[{ rotate: '180deg' }]} />
-            </TouchableOpacity>
-          </PageButton>
+          reviewData.photos.length > 1 &&
+          <>
+            {
+              currentIdx != 0 &&
+              <PageButton style={{ left: 10 }}>
+                <TouchableOpacity onPress={() => { flatlistRef.current?.scrollToIndex({ animated: true, index: currentIdx - 1 }) }}>
+                  <ArrowWhite />
+                </TouchableOpacity>
+              </PageButton>
+            }
+            {currentIdx != reviewData.photos.length - 1 &&
+              <PageButton style={{ right: 10 }}>
+                <TouchableOpacity onPress={() => { flatlistRef.current?.scrollToIndex({ animated: true, index: currentIdx + 1 }) }}>
+                  <ArrowWhite transform={[{ rotate: '180deg' }]} />
+                </TouchableOpacity>
+              </PageButton>
+            }
+          </>
         }
         <FlatList
           ref={flatlistRef}
@@ -106,10 +111,10 @@ export default function ReviewDetail({ reviewData, setDetailModal, rerender, cat
         <Text style={TextStyles.date}>{reviewData.created.slice(0, 10).replace(/-/gi, '.')}</Text>
         <Text style={TextStyles.content}>{reviewData.contents}</Text>
         {
-          isWriter && 
-          <View style={{display:'flex', flexDirection:'row', alignSelf:'flex-end'}}>
+          isWriter &&
+          <View style={{ display: 'flex', flexDirection: 'row', alignSelf: 'flex-end' }}>
             <TouchableOpacity onPress={deleteReview}><Text style={TextStyles.button}>삭제하기</Text></TouchableOpacity>
-            <TouchableOpacity onPress={()=> {setReviewModal(true);}}><Text style={TextStyles.button}>수정하기</Text></TouchableOpacity>
+            <TouchableOpacity onPress={() => { setReviewModal(true); }}><Text style={TextStyles.button}>수정하기</Text></TouchableOpacity>
           </View>
         }
       </TextBox>
@@ -136,7 +141,7 @@ const TextStyles = StyleSheet.create({
   button: {
     fontSize: 16,
     fontWeight: '700',
-    color:'#FFFFFF',
+    color: '#FFFFFF',
     marginRight: 5,
   }
 })

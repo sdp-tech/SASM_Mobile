@@ -51,14 +51,7 @@ const MyPlaceItemCard = ({ data, edit, rerender }: { data: MyPlaceItemCardProps,
   }
 
   const handlePageGoToMap = async () => {
-    let coor = { latitude: 0, longitude: 0 };
-    const places = await request.get('/places/map_info/', {}, {});
-    for (const place of places.data.data) {
-      if (place.id === data.id) {
-        coor = { latitude: place.latitude, longitude: place.longitude }
-      }
-    }
-    navigationToTab.navigate('맵', { coor: { latitude: coor.latitude, longitude: coor.longitude } })
+    navigationToTab.navigate('맵', {place_name: data.place_name})
   }
 
   return (

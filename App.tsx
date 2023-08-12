@@ -59,6 +59,7 @@ export type TabProps = {
   맵: {
     id?: number;
     coor?: Coord;
+    place_name?: string;
   };
   스토리: {
     id: number | undefined;
