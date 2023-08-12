@@ -129,7 +129,7 @@ const PostDetailSection = ({
             {post.category.name}
           </Text>
           <TouchableOpacity style={{marginTop: 10, marginRight: 10}} onPress={() => setDot(!dot)}>
-            <Settings transform={[{ rotate: dot ? '90deg' : 'none'}]} color={'#444444'}/>
+            <Settings transform={[{ rotate: dot ? '90deg' : '0deg'}]} color={'#444444'}/>
           </TouchableOpacity>
           { dot &&
           <View style={{position: 'absolute', backgroundColor: 'white', top: 40, left: width-140, borderRadius: 4}}>

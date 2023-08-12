@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef, useCallback, useContext } from 'react';
-import { View, TouchableOpacity, Dimensions, ImageBackground, TextInput, ScrollView, Modal, Alert, KeyboardAvoidingView, TouchableWithoutFeedback, Keyboard } from 'react-native';
+import { View, TouchableOpacity, Dimensions, ImageBackground, TextInput, ScrollView, Modal, Alert, KeyboardAvoidingView, TouchableWithoutFeedback, Keyboard, Platform } from 'react-native';
 import { TextPretendard as Text } from '../../../common/CustomText';
 import { RichEditor, RichToolbar, actions } from 'react-native-pell-rich-editor';
 import { ImageLibraryOptions, launchCamera, launchImageLibrary } from 'react-native-image-picker';
@@ -8,6 +8,7 @@ import CardView from '../../../common/CardView';
 import Camera from '../../../assets/img/Forest/Camera.svg';
 import FinishModal from '../../../common/FinishModal';
 import { ForestContext } from './ForestContext';
+import { getStatusBarHeight } from 'react-native-status-bar-height';
 
 import { Request } from '../../../common/requests';
 import { PostUploadParams } from '../PostUpload';
@@ -24,6 +25,8 @@ const ForestForm = ({ tab, setTab, navigation, post }: PostUploadParams) => {
   const [hashtag, setHashtag] = useState([] as any);
   const [postId, setPostId] = useState<number>(0);
   const request = new Request();
+  const statusBarHeight = getStatusBarHeight();
+  const iOS = Boolean(Platform.OS === 'ios');
 
   const loadInfo = async () => {
     const response = await request.get('/mypage/me/', {}, {});
@@ -209,7 +212,7 @@ const ForestForm = ({ tab, setTab, navigation, post }: PostUploadParams) => {
   ]
 
   return (
-    <KeyboardAvoidingView behavior='padding' keyboardVerticalOffset={10} style={{flex: 1}}>
+    <KeyboardAvoidingView behavior={iOS ? 'padding' : 'height'} keyboardVerticalOffset={iOS ? 10 : statusBarHeight+100} style={{flex: 1}}>
       <Modal visible={modalVisible}>
         <FinishModal
           navigation={()=>navigation.replace('PostDetail', {post_id: postId})}
