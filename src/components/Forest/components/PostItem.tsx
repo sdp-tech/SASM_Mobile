@@ -100,9 +100,8 @@ const PostItem = ({
                     fontSize: 12,
                     lineHeight: 20,
                     letterSpacing: 0.24, 
-                    fontWeight: "200",
-                    color: '#373737',
-                    opacity: 0.6,
+                    fontWeight: "300",
+                    color: '#202020',
                     marginBottom: 15,
                   }}
                   numberOfLines={6}
@@ -148,7 +147,7 @@ const PostItem = ({
                 style={{
                   fontSize: 12,
                   fontWeight: "200",
-                  opacity: 0.6,
+                  color: '#434343',
                   marginBottom: 8,
                 }}
                 numberOfLines={2}

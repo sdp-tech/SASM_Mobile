@@ -89,7 +89,7 @@ const Comment = ({ data, story_id, reRenderScreen, email, isLogin, navigation, c
         isWriter = true;
     }
     return (
-        <View style={{borderBottomColor: '#D9D9D9', borderBottomWidth: 1, width: width-40, alignSelf: 'center', flex: 1}}>
+        <View style={{borderBottomColor: '#D9D9D9', borderBottomWidth: 1, width: width-40, alignSelf: 'center', flex: 1, paddingVertical: 15,}}>
             <View style = {{ flexDirection: 'row', paddingVertical: 15, alignItems: 'center'}}>
                 <View style = {{alignSelf: 'center'}}>
                     <Image source={{uri: data.profile_image}} style={{width:50,height:50,borderRadius:60}} />

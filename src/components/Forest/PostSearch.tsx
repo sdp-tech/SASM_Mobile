@@ -213,8 +213,8 @@ const PostSearchScreen = ({
             <View style={{flex: 1, flexDirection: 'row', flexWrap: 'wrap', }}>
               {recommendData.map((item) => (
                 <TouchableOpacity onPress={()=>{setSearch(item)}}
-                  style={{height: 30, borderRadius: 16, borderColor: '#67D393', borderWidth: 1, paddingVertical: 4, paddingHorizontal: 16, marginRight: 8, marginBottom: 8}}>
-                  <Text style={{color: '#202020', fontSize: 14, lineHeight: 20}}>{item}</Text>
+                  style={{height: 30, borderRadius: 16, borderColor: '#67D393', borderWidth: 1, paddingVertical: 4, paddingHorizontal: 16, marginRight: 8, marginBottom: 8, justifyContent: 'center'}}>
+                  <Text style={{color: '#202020', fontSize: 14}}>{item}</Text>
                 </TouchableOpacity>
               ))}
             </View>

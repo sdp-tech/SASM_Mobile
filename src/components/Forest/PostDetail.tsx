@@ -97,6 +97,16 @@ const PostDetailSection = ({
       enableExperimentalPercentWidth: true
     }
   };
+
+  const tagsStyles = {
+    div: {
+      fontSize: 16,
+      fontWeight: "300",
+      lineHeight: 30,
+      letterSpacing: -0.6
+    }
+  }
+
   return (
     <View onLayout={onLayout}>
       <ImageBackground
@@ -181,6 +191,8 @@ const PostDetailSection = ({
           contentWidth={width}
           source={markup}
           renderersProps={renderersProps}
+          tagsStyles={tagsStyles}
+          // renderers={renderers}
         />
         <View style={{ flexDirection: 'row', paddingVertical: 15 }}>
           <View style={{ flexDirection: 'row', flex: 1 }}>
