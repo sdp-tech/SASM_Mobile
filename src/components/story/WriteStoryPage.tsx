@@ -217,14 +217,14 @@ export default function WriteStoryPage({ navigation, route }: StoryProps) {
           onChangeText={(title) => { setStory({ ...story, title: title }) }}
           placeholder='제목 *'
           placeholderTextColor={'#bcbcbe'}
-          style={{borderBottomColor: '#D9D9D9', borderBottomWidth: 1, padding: 10}}
+          style={{borderBottomColor: '#D9D9D9', borderBottomWidth: 1, padding: 10, height: 40}}
         />
         <TextInput
           value={story.story_review}
           onChangeText={(story_review) => { setStory({ ...story, story_review: story_review }) }}
           placeholder='한 줄 소개 *'
           placeholderTextColor={'#bcbcbe'}
-          style={{padding: 10}}
+          style={{padding: 10, height: 40}}
         />
         <ModalSelector
           data={places}
@@ -234,7 +234,8 @@ export default function WriteStoryPage({ navigation, route }: StoryProps) {
           onChange={(option) => { setStory({ ...story, place: option.id }) }}
           initValue='장소 선택 *'
           initValueTextStyle={{textAlign: 'left', fontSize: 14, color: '#bcbcbe'}}
-          selectStyle={{borderRadius: 0, borderTopColor: '#D9D9D9', borderBottomColor: '#D9D9D9', borderLeftWidth:0, borderRightWidth:0, borderBottomWidth: 1, alignItems: 'flex-start', padding: 10}}
+          optionStyle={{height: 40}}
+          selectStyle={{borderRadius: 0, borderTopColor: '#D9D9D9', borderBottomColor: '#D9D9D9', borderLeftWidth:0, borderRightWidth:0, borderBottomWidth: 1, alignItems: 'flex-start', padding: 10, height: 40}}
           selectTextStyle={{fontSize: 14, color: 'black'}}
         />
           </>
@@ -262,14 +263,14 @@ export default function WriteStoryPage({ navigation, route }: StoryProps) {
               onChangeText={(preview) => { setStory({ ...story, preview: preview }) }}
               placeholder='프리뷰 *'
               placeholderTextColor={'#bcbcbe'}
-              style={{padding: 10, borderTopColor: '#D9D9D9', borderBottomColor: '#D9D9D9', borderTopWidth: 1, borderBottomWidth: 1}}
+              style={{padding: 10, borderTopColor: '#D9D9D9', borderBottomColor: '#D9D9D9', borderTopWidth: 1, borderBottomWidth: 1, height: 40}}
             />
             <TextInput
               value={story.tag}
               onChangeText={(tag) => { setStory({ ...story, tag: tag }) }}
               placeholder='#해시태그를 #작성해주세요 *'
               placeholderTextColor={'#bcbcbe'}
-              style={{padding: 10, borderBottomColor: '#D9D9D9', borderBottomWidth: 1}}
+              style={{padding: 10, borderBottomColor: '#D9D9D9', borderBottomWidth: 1, height: 40}}
             />
                 </>
           </TouchableWithoutFeedback>

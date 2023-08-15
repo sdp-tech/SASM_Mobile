@@ -240,11 +240,11 @@ const BoardDetailScreen = ({
                     flex: 1
                   }}
                 >
-                  사슴의 추천글
+                  사슴의 인기글
                 </Text>
                 <TouchableOpacity style={{ flexDirection: 'row', alignItems: 'center' }} onPress={() => {
                   navigation.navigate("PostList", {
-                    board_name: "사슴의 추천글",
+                    board_name: "사슴의 인기글",
                   });
                 }}>
                   <Text style={{ fontSize: 12, fontWeight: '500', marginRight: 5 }}>더보기</Text>
@@ -310,11 +310,11 @@ const BoardDetailScreen = ({
                     flex: 1
                   }}
                 >
-                  사슴의 추천글
+                  사슴의 최신글
                 </Text>
                 <TouchableOpacity style={{ flexDirection: 'row', alignItems: 'center' }} onPress={() => {
                   navigation.navigate("PostList", {
-                    board_name: "사슴의 추천글",
+                    board_name: "사슴의 최신글",
                   });
                 }}>
                   <Text style={{ fontSize: 12, fontWeight: '500', marginRight: 5 }}>더보기</Text>

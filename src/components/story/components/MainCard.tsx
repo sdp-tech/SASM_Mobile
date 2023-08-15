@@ -18,11 +18,10 @@ export interface MainCardProps {
   writer_is_verified: boolean;
   isLogin: boolean;
   navigation: any;
-  width: any;
 }
 
-const MainCard = ({id, place_name, title, rep_pic, story_like, category, preview, writer, nickname, profile, writer_is_verified, isLogin, width, navigation}: MainCardProps) => {
-  //const { width, height } = Dimensions.get('screen');
+const MainCard = ({id, place_name, title, rep_pic, story_like, category, preview, writer, nickname, profile, writer_is_verified, isLogin, navigation}: MainCardProps) => {
+  const { width, height } = Dimensions.get('window');
   const [verified, setVerified] = useState<boolean>(writer_is_verified);
   const [like, setLike] = useState<boolean>(false);
   const request = new Request();
