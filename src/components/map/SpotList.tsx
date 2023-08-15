@@ -23,15 +23,16 @@ type MapListProps = {
   setPage: (num: number) => void;
   setDetailData: Dispatch<SetStateAction<detailDataProps>>;
   setCenter: Dispatch<SetStateAction<Coord>>;
+  setIndex: Dispatch<SetStateAction<number>>;
 }
 
-export default function MapList({ placeData, setSheetMode, setPage, page, total, setDetailData, setCenter }: MapListProps): JSX.Element {
+export default function MapList({ placeData, setSheetMode, setPage, page, total, setDetailData, setCenter, setIndex }: MapListProps): JSX.Element {
   let recommends = [];
   for (let i = 0; i < Math.min(3, placeData.length); i++) {
     recommends.push(placeData[i]);
   }
   return (
-    <View style={{borderTopLeftRadius:10, borderTopRightRadius:10, overflow:'hidden'}}>
+    <View style={{borderTopLeftRadius:10, borderTopRightRadius:10, overflow:'hidden', flex:1}}>
       {
         placeData.length != 0 &&
         <FlatList
@@ -50,6 +51,10 @@ export default function MapList({ placeData, setSheetMode, setPage, page, total,
               }}
             />
           }
+          onEndReached={()=>{
+            if(placeData.length != 1) setIndex(2);
+          }}
+          onEndReachedThreshold={0.3}
           ListFooterComponent={
             <PaginationSection>
               <Pagination page={page} setPage={setPage} total={total} limit={20}></Pagination>

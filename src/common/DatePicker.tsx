@@ -35,7 +35,6 @@ export default function DatePicker({ callback, isBorder, label, containerStyle, 
 
   useEffect(()=>{
     if (defaultDate) {
-      console.error(defaultDate)
       const [_y, _m, _d] = defaultDate.split('-');
       setYear(Number(_y));
       setMonth(Number(_m));

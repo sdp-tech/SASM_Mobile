@@ -8,10 +8,11 @@ import {
   ImageBackground,
   Dimensions,
   ActivityIndicator,
+  Alert
 } from "react-native";
 import { TextPretendard as Text } from "../../common/CustomText";
 import type { NativeStackScreenProps } from "@react-navigation/native-stack";
-import { useFocusEffect } from "@react-navigation/native";
+import { useFocusEffect, useNavigation } from "@react-navigation/native";
 import { LoginContext } from "../../common/Context";
 
 import { ForestStackParams } from "../../pages/Forest";
@@ -20,9 +21,10 @@ import SearchBar from "../../common/SearchBar";
 import CardView from "../../common/CardView";
 import DropDown from "../../common/DropDown";
 import PostItem from "./components/PostItem";
-import Add from "../../assets/img/common/Add.svg";
 import Arrow from "../../assets/img/common/Arrow.svg";
 import PlusButton from "../../common/PlusButton";
+import { StackNavigationProp } from "@react-navigation/stack";
+import { TabProps } from "../../../App";
 
 const { width, height } = Dimensions.get('window');
 
@@ -35,13 +37,14 @@ const PostSearchScreen = ({
   ]
   const [refreshing, setRefreshing] = useState(false);
   const [search, setSearch] = useState("");
-  const [category, setCategory] = useState(1);
+  const [category, setCategory] = useState(0);
   const [orderList, setOrderList] = useState(0);
   const [order, setOrder] = useState<string>(toggleItems[orderList].order);
   const [count, setCount] = useState(0);
-  const [posts, setPosts] = useState([]); // id, title, preview, nickname, email, likeCount, created, commentCount
+  const [posts, setPosts] = useState([] as any); // id, title, preview, nickname, email, likeCount, created, commentCount
+  const [page, setPage] = useState(1);
   const {isLogin, setLogin} = useContext(LoginContext);
-
+  const navigationToTab = useNavigation<StackNavigationProp<TabProps>>();
   const request = new Request();
 
   const boardLists = [
@@ -55,6 +58,7 @@ const PostSearchScreen = ({
 
   const onChangeOrder = async () => {
     setOrder(toggleItems[orderList].order);
+    setPage(1);
   }
 
   const checkCategory = (itemId: any) => {
@@ -63,7 +67,14 @@ const PostSearchScreen = ({
 
   const onRefresh = () => {
     setRefreshing(true);
+    setPage(1);
     setRefreshing(false);
+  }
+
+  const onEndReached = () => {
+    if (page < Math.ceil(count / 10)) {
+      setPage(page+1);
+    }
   }
 
   useEffect(() => {
@@ -72,7 +83,7 @@ const PostSearchScreen = ({
 
   useFocusEffect(useCallback(() => {
     getPosts();
-  }, [order, search, category, refreshing]));
+  }, [order, search, category, page, refreshing]));
 
   const getPosts = async () => {
     const response = await request.get(
@@ -80,13 +91,19 @@ const PostSearchScreen = ({
       {
        order: order,
        search: search,
-       category_filter: category
+       category_filter: category > 0 ? category : [''],
+       page: page
       },
       null
     );
-    setPosts(response.data.data.results);
+    if (page == 1) setPosts(response.data.data.results);
+    else setPosts([...posts, ...response.data.data.results]);
     setCount(response.data.data.count);
   };
+
+  const recommendData = [
+    '슬로우 패션', '비건', 'ESG', '비건 레시피', '비건 레스토랑', '자연', '숲', '한강'
+  ]
 
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: "white" }}>
@@ -147,6 +164,8 @@ const PostSearchScreen = ({
                 style={{flexGrow: 1}}
                 refreshing={refreshing}
                 onRefresh={onRefresh}
+                onEndReached={onEndReached}
+                onEndReachedThreshold={0.2}
                 renderItem={({ item }: any) => {
                   const {
                     id,
@@ -191,16 +210,16 @@ const PostSearchScreen = ({
             }}
           >
             <Text style={{color: '#3C3C3C', fontSize: 16, fontWeight: '700', marginBottom: 15}}>추천 검색어</Text>
-            <View style={{flex: 1, flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'space-between'}}>
-              {boardLists.map((item) => (
-                <TouchableOpacity onPress={()=>{setSearch(item.name)}}
-                  style={{height: 30, borderRadius: 16, backgroundColor: '#67D393', paddingVertical: 4, paddingHorizontal: 16, marginRight: 8, marginBottom: 8}}>
-                  <Text style={{color: 'white', fontSize: 14, lineHeight: 20}}>{item.name}</Text>
+            <View style={{flex: 1, flexDirection: 'row', flexWrap: 'wrap', }}>
+              {recommendData.map((item) => (
+                <TouchableOpacity onPress={()=>{setSearch(item)}}
+                  style={{height: 30, borderRadius: 16, borderColor: '#67D393', borderWidth: 1, paddingVertical: 4, paddingHorizontal: 16, marginRight: 8, marginBottom: 8}}>
+                  <Text style={{color: '#202020', fontSize: 14, lineHeight: 20}}>{item}</Text>
                 </TouchableOpacity>
               ))}
             </View>
           </View>
-          <View style={{flex: 4, padding: 20}}>
+          {/* <View style={{flex: 4, padding: 20}}>
             <View style={{ flexDirection: "row" }}>
               <Text style={{flex: 1, color: '#3C3C3C', fontSize: 16, fontWeight: '700', marginBottom: 15, lineHeight: 20}}>최근 검색어</Text>
               <TouchableOpacity>
@@ -220,14 +239,35 @@ const PostSearchScreen = ({
                 </View>
               )}
             />
-          </View>
+          </View> */}
         </>
       )}
-      {isLogin &&
-        <PlusButton
-          onPress={() => navigation.navigate('PostUpload', {})}
-          position="rightbottom" />
-      }
+      <PlusButton
+        onPress={() => {
+          if(!isLogin) {
+            Alert.alert(
+              "로그인이 필요합니다.",
+              "로그인 항목으로 이동하시겠습니까?",
+              [
+                {
+                  text: "이동",
+                  onPress: () => navigationToTab.navigate('마이페이지')
+      
+                },
+                {
+                  text: "취소",
+                  onPress: () => { },
+                  style: "cancel"
+                },
+              ],
+              { cancelable: false }
+            );
+          }
+          else {
+            navigation.navigate('PostUpload', {});
+          }
+        }}
+        position="rightbottom" />
     </SafeAreaView>
   );
 };

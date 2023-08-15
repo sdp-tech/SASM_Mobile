@@ -8,7 +8,6 @@ import { Request } from "../../../../common/requests";
 import SearchBar from '../../../../common/SearchBar';
 import { useFocusEffect } from '@react-navigation/native';
 import Menu from "../../../../assets/img/MyPage/Menu.svg";
-import { MyPageParams } from '../../../../pages/MyPage';
 import { LoginContext } from '../../../../common/Context';
 import RequireLogin from '../common/RequiredLogin';
 import { SearchNoCategory } from '../common/SearchNCategory';
@@ -37,7 +36,7 @@ const styles = StyleSheet.create({
   },
 });
 
-const MyStory = ({ navigation, route }: MyPageParams) => {
+const MyStory = () => {
   const { isLogin, setLogin } = useContext(LoginContext);
   const [refresh, setRefresh] = useState<boolean>(false);
   const [curationList, setCurationList] = useState<MyCurationItemCardProps[]>([]);
@@ -49,14 +48,14 @@ const MyStory = ({ navigation, route }: MyPageParams) => {
   const [type, setType] = useState<boolean>(true);
 
   const rerender = () => {
-    setRefresh(!refresh);
+    setRefresh(true);
+    setRefresh(false);
   }
 
   const getCuration = async () => {
     const response = await request.get("/mypage/my_liked_curation/", {
       search: search,
     });
-    console.error(response.data.data);
     setCurationList(response.data.data);
   };
 

@@ -1,7 +1,7 @@
-import React, { useEffect, useState, useCallback, useRef, useContext } from 'react';
+import React, { useEffect, useState, useCallback, useRef, useContext, Dispatch, SetStateAction } from 'react';
 import { Dimensions, Image, View, TouchableOpacity, StyleSheet, Button, Linking, Modal, SafeAreaView, Alert, Share } from 'react-native';
 import { TextPretendard as Text } from '../../../common/CustomText';
-import { ScrollView } from 'react-native-gesture-handler';
+import { FlatList, ScrollView } from 'react-native-gesture-handler';
 import styled from 'styled-components/native';
 import { detailDataProps } from '../Map';
 import OpenTime from "../../../assets/img/PlaceDetail/OpenTime.svg";
@@ -88,6 +88,7 @@ const StorySection = styled.View`
 `
 interface DetailCardProps {
   detailData: detailDataProps;
+  setIndex: Dispatch<SetStateAction<number>>;
 }
 export interface reviewDataProps {
   category: any[];
@@ -101,7 +102,7 @@ export interface reviewDataProps {
   writer: string;
 }
 
-export default function DetailCard({ detailData }: DetailCardProps): JSX.Element {
+export default function DetailCard({ detailData, setIndex }: DetailCardProps): JSX.Element {
   const { isLogin, setLogin } = useContext(LoginContext);
   const navigationToTab = useNavigation<StackNavigationProp<TabProps, '스토리'>>();
   const detailRef = useRef<ScrollView>(null);
@@ -197,6 +198,10 @@ export default function DetailCard({ detailData }: DetailCardProps): JSX.Element
   }
 
   useEffect(() => {
+    if (detailData.place_like == 'ok') setLikePlace(true);
+  }, [])
+
+  useEffect(() => {
     getReview();
     getStory();
   }, [refresh]);
@@ -206,152 +211,153 @@ export default function DetailCard({ detailData }: DetailCardProps): JSX.Element
       <Modal style={{ position: 'absolute' }} visible={reviewModal}>
         <WriteReview rerender={rerenderScreen} id={detailData.id} category={detailData.category} setReviewModal={setReviewModal} setTab={setTab} />
       </Modal>
-      <ScrollView style={{ position: 'relative' }} ref={detailRef}>
-        <Image source={{ uri: detailData.rep_pic }} style={{ width: '100%', height: 350 }} />
-        <ButtonBox>
-          <TouchableOpacity onPress={() => {
-            if (!isLogin) {
-              Alert.alert('로그인이 필요합니다', '', [{ text: '로그인', onPress: () => { navigationToTab.navigate('마이페이지') }, style: 'cancel' }, { text: 'ok' }]);
-              return;
-            }
-            setReviewModal(true);
-          }}>
-            <PlusWhite />
-          </TouchableOpacity>
-          <TouchableOpacity onPress={handlePlaceLike}>
-            {
-              likePlace ?
-                <FilledLikePlace /> :
-                <LikePlace />
-            }
-          </TouchableOpacity>
-          <ShareButton message={`[SASM Map] ${detailData.place_name}(${detailData.category}) - ${detailData.place_review}`} />
-        </ButtonBox>
-        <TextBox>
-          <Text style={TextStyles.info}>{detailData.category}</Text>
-          <Text style={{ ...TextStyles.info, marginBottom: 20, fontWeight: '700' }}>{detailData.place_name}</Text>
-          <Text style={TextStyles.info}>{detailData.place_review}</Text>
-        </TextBox>
-        <View>
-          <TabsBox>
-            {
-              tabs.map((data: { index: number, name: string }) => {
-                return (
-                  <TabButton
-                    key={data.index}
-                    selected={tab == data.index}
-                    onPress={() => { setTab(data.index) }}>
-                    <TabText selected={tab == data.index}>{data.name}</TabText>
-                  </TabButton>
-                )
-              })
-            }
-          </TabsBox>
+      <FlatList
+        data={[detailData]}
+        onEndReachedThreshold={0.2}
+        onEndReached={()=>{setIndex(2);}}
+        renderItem={({ item: detailData }: { item: detailDataProps }) =>
           <View>
-            {
-              {
-                0: <Section>
-                  <PaddingBox>
-                    <Text style={TextStyles.commonColor}>{detailData.address}</Text>
-                    <TouchableOpacity onPress={() => { Linking.openURL(`tel:${detailData.phone_num}`) }}>
-                      <Text style={TextStyles.commonColor}>
-                        {detailData.phone_num}
-                      </Text>
-                    </TouchableOpacity>
-                    <Text style={TextStyles.common}>영업시간</Text>
-                    <TouchableOpacity onPress={() => { setViewHours(!viewHours) }} style={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
-                      <Text style={TextStyles.common}>
-                        {detailData.open_hours}
-                      </Text>
-                      <View style={{ marginLeft: 20, transform: [{ rotate: viewHours ? '180deg' : '0deg' }] }}><ToggleOpen /></View>
-                    </TouchableOpacity>
-                    {
-                      viewHours &&
-                      <>
-                        <Text style={{ fontSize: 12, color: '#000000' }}>월 : {detailData.mon_hours}</Text>
-                        <Text style={{ fontSize: 12, color: '#000000' }}>화 : {detailData.tues_hours}</Text>
-                        <Text style={{ fontSize: 12, color: '#000000' }}>수 : {detailData.wed_hours}</Text>
-                        <Text style={{ fontSize: 12, color: '#000000' }}>목 : {detailData.thurs_hours}</Text>
-                        <Text style={{ fontSize: 12, color: '#000000' }}>금 : {detailData.fri_hours}</Text>
-                        <Text style={{ fontSize: 12, color: '#000000' }}>토 : {detailData.sat_hours}</Text>
-                        <Text style={{ fontSize: 12, color: '#000000' }}>일 : {detailData.sun_hours}</Text>
-                      </>
-                    }
-                    {
-                      detailData.etc_hours &&
-                      <>
-                        <Text style={TextStyles.common}>브레이크타임</Text>
-                        <Text style={TextStyles.common}>{detailData.etc_hours}</Text>
-                      </>
-                    }
-                    <Text style={TextStyles.common}>
-                      {detailData.short_cur}
-                    </Text>
-                    {detailData.pet_category && <Text style={TextStyles.common}>반려동물 출입 가능</Text>}
-                    {detailData.reusable_con_category && <Text style={TextStyles.common}>재사용 용기 사용 가능</Text>}
-                    {detailData.tumblur_category && <Text style={TextStyles.common}>텀블러 할인 가능</Text>}
-                    {detailData.vegan_category && <Text style={TextStyles.common}>비건 카테고리 : {detailData.vegan_category}</Text>}
-                  </PaddingBox>
-                  <Box>
-                    <CardView
-                      pageWidth={210}
-                      offset={19}
-                      gap={8}
-                      dot={false}
-                      data={detailData.photos}
-                      renderItem={({ item }: any) => <Image source={{ uri: item.image }} style={{ width: 219, height: 219, marginHorizontal: 4 }} />}
-                    />
-                  </Box>
-                  {
-                    reviewData && <UserReviews category={detailData.category} rerender={rerenderScreen} reviewData={reviewData[0]} />
-                  }
-                  {
-                    detailData.story_id != null &&
-                    <StorySection>
-                      <Image source={{ uri: storyData.rep_pic }} style={{ width: '100%', height: 450 }} />
-                      <View style={{ backgroundColor: 'rgba(0, 0, 0, 0.3)', position: 'absolute', width: '100%', height: '100%', paddingVertical: 35, paddingHorizontal: 20 }}>
-                        <Text style={TextStyles.story_title}>{storyData.title}</Text>
-                        <Text style={TextStyles.story_place_name}>{storyData.place_name}</Text>
-                        <Text style={TextStyles.story_category}>{storyData.category}</Text>
-                        <Text style={TextStyles.story_writer}>{storyData.nickname}님의 이야기</Text>
-                        <Text numberOfLines={3} style={TextStyles.story_preview}>{storyData.preview}...<TouchableOpacity onPress={() => { navigationToTab.navigate('스토리', { id: detailData.story_id }) }} style={{ height: 18, paddingTop: 3 }}><Text style={TextStyles.story_preview}>더보기</Text></TouchableOpacity></Text>
-                      </View>
-                      <View style={{ position: 'absolute', top: 34, right: 30 }}><Heart white={true} like={likeStory} onPress={handleStoryLike} /></View>
-                    </StorySection>
-                  }
-                </Section>,
-                1: <Section>
-                  {
-                    reviewData && (
-                      reviewData.length != 0 ? reviewData.map((data: reviewDataProps) => (
-                        <UserReviews category={detailData.category} rerender={rerenderScreen} reviewData={data} />
-                      ))
-                        :
-                        <Text style={{ marginHorizontal: 15, fontWeight: '700', color: '#000000' }}>리뷰가 없습니다.</Text>
+            <Image source={{ uri: detailData.rep_pic }} style={{ width: '100%', height: 350 }} />
+            <ButtonBox>
+              <TouchableOpacity onPress={() => {
+                if (!isLogin) {
+                  Alert.alert('로그인이 필요합니다', '', [{ text: '로그인', onPress: () => { navigationToTab.navigate('마이페이지') }, style: 'cancel' }, { text: 'ok' }]);
+                  return;
+                }
+                setReviewModal(true);
+              }}>
+                <PlusWhite />
+              </TouchableOpacity>
+              <Heart like={likePlace} onPress={handlePlaceLike} white />
+              <ShareButton color='white' message={`[SASM Map] ${detailData.place_name}(${detailData.category}) - ${detailData.place_review}`} />
+            </ButtonBox>
+            <TextBox>
+              <Text style={TextStyles.info}>{detailData.category}</Text>
+              <Text style={{ ...TextStyles.info, marginBottom: 20, fontWeight: '700' }}>{detailData.place_name}</Text>
+              <Text style={TextStyles.info}>{detailData.place_review}</Text>
+            </TextBox>
+            <View>
+              <TabsBox>
+                {
+                  tabs.map((data: { index: number, name: string }) => {
+                    return (
+                      <TabButton
+                        key={data.index}
+                        selected={tab == data.index}
+                        onPress={() => { setTab(data.index) }}>
+                        <TabText selected={tab == data.index}>{data.name}</TabText>
+                      </TabButton>
                     )
-                  }
-                </Section>,
-                2: <Section>
+                  })
+                }
+              </TabsBox>
+              <View>
+                {
                   {
-                    detailData.story_id == null ? <Text style={{ margin: 15, fontWeight: '700', color: '#000000' }}>스토리가 없습니다.</Text> :
-                      <StorySection>
-                        <Image source={{ uri: storyData.rep_pic }} style={{ width: '100%', height: 450 }} />
-                        <View style={{ backgroundColor: 'rgba(0, 0, 0, 0.3)', position: 'absolute', width: '100%', height: '100%', paddingVertical: 35, paddingHorizontal: 20 }}>
-                          <Text style={TextStyles.story_title}>{storyData.title}</Text>
-                          <Text style={TextStyles.story_place_name}>{storyData.place_name}</Text>
-                          <Text style={TextStyles.story_category}>{storyData.category}</Text>
-                          <Text style={TextStyles.story_writer}>{storyData.nickname}님의 이야기</Text>
-                          <Text numberOfLines={3} style={TextStyles.story_preview}>{storyData.preview}...<TouchableOpacity onPress={() => { navigationToTab.navigate('스토리', { id: detailData.story_id }) }} style={{ height: 18, paddingTop: 3 }}><Text style={TextStyles.story_preview}>더보기</Text></TouchableOpacity></Text>
-                        </View>
-                        <View style={{ position: 'absolute', top: 34, right: 30 }}><Heart white={true} like={likeStory} onPress={handleStoryLike} /></View>
-                      </StorySection>
-                  }
-                </Section>,
-              }[tab]
-            }
+                    0: <Section>
+                      <PaddingBox>
+                        <Text style={TextStyles.commonColor}>{detailData.address}</Text>
+                        <TouchableOpacity onPress={() => { Linking.openURL(`tel:${detailData.phone_num}`) }}>
+                          <Text style={TextStyles.commonColor}>
+                            {detailData.phone_num}
+                          </Text>
+                        </TouchableOpacity>
+                        <Text style={TextStyles.common}>영업시간</Text>
+                        <TouchableOpacity onPress={() => { setViewHours(!viewHours) }} style={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
+                          <Text style={TextStyles.common}>
+                            {detailData.open_hours}
+                          </Text>
+                          <View style={{ marginLeft: 20, transform: [{ rotate: viewHours ? '180deg' : '0deg' }] }}><ToggleOpen /></View>
+                        </TouchableOpacity>
+                        {
+                          viewHours &&
+                          <>
+                            <Text style={{ fontSize: 12, color: '#000000' }}>월 : {detailData.mon_hours}</Text>
+                            <Text style={{ fontSize: 12, color: '#000000' }}>화 : {detailData.tues_hours}</Text>
+                            <Text style={{ fontSize: 12, color: '#000000' }}>수 : {detailData.wed_hours}</Text>
+                            <Text style={{ fontSize: 12, color: '#000000' }}>목 : {detailData.thurs_hours}</Text>
+                            <Text style={{ fontSize: 12, color: '#000000' }}>금 : {detailData.fri_hours}</Text>
+                            <Text style={{ fontSize: 12, color: '#000000' }}>토 : {detailData.sat_hours}</Text>
+                            <Text style={{ fontSize: 12, color: '#000000' }}>일 : {detailData.sun_hours}</Text>
+                          </>
+                        }
+                        {
+                          detailData.etc_hours &&
+                          <>
+                            <Text style={TextStyles.common}>브레이크타임</Text>
+                            <Text style={TextStyles.common}>{detailData.etc_hours}</Text>
+                          </>
+                        }
+                        <Text style={TextStyles.common}>
+                          {detailData.short_cur}
+                        </Text>
+                        {detailData.pet_category && <Text style={TextStyles.common}>반려동물 출입 가능</Text>}
+                        {detailData.reusable_con_category && <Text style={TextStyles.common}>재사용 용기 사용 가능</Text>}
+                        {detailData.tumblur_category && <Text style={TextStyles.common}>텀블러 할인 가능</Text>}
+                        {detailData.vegan_category && <Text style={TextStyles.common}>비건 카테고리 : {detailData.vegan_category}</Text>}
+                      </PaddingBox>
+                      <Box>
+                        <CardView
+                          pageWidth={210}
+                          offset={19}
+                          gap={8}
+                          dot={false}
+                          data={detailData.photos}
+                          renderItem={({ item }: any) => <Image source={{ uri: item.image }} style={{ width: 219, height: 219, marginHorizontal: 4 }} />}
+                        />
+                      </Box>
+                      {
+                        reviewData && <UserReviews category={detailData.category} rerender={rerenderScreen} reviewData={reviewData[0]} />
+                      }
+                      {
+                        detailData.story_id != null &&
+                        <StorySection>
+                          <Image source={{ uri: storyData.rep_pic }} style={{ width: '100%', height: 450 }} />
+                          <View style={{ backgroundColor: 'rgba(0, 0, 0, 0.3)', position: 'absolute', width: '100%', height: '100%', paddingVertical: 35, paddingHorizontal: 20 }}>
+                            <Text style={TextStyles.story_title}>{storyData.title}</Text>
+                            <Text style={TextStyles.story_place_name}>{storyData.place_name}</Text>
+                            <Text style={TextStyles.story_category}>{storyData.category}</Text>
+                            <Text style={TextStyles.story_writer}>{storyData.nickname}님의 이야기</Text>
+                            <Text numberOfLines={3} style={TextStyles.story_preview}>{storyData.preview}...<TouchableOpacity onPress={() => { navigationToTab.navigate('스토리', { id: detailData.story_id }) }} style={{ height: 18, paddingTop: 3 }}><Text style={TextStyles.story_preview}>더보기</Text></TouchableOpacity></Text>
+                          </View>
+                          <View style={{ position: 'absolute', top: 34, right: 30 }}><Heart white={true} like={likeStory} onPress={handleStoryLike} /></View>
+                        </StorySection>
+                      }
+                    </Section>,
+                    1: <Section>
+                      {
+                        reviewData && (
+                          reviewData.length != 0 ? reviewData.map((data: reviewDataProps) => (
+                            <UserReviews category={detailData.category} rerender={rerenderScreen} reviewData={data} />
+                          ))
+                            :
+                            <Text style={{ marginHorizontal: 15, fontWeight: '700', color: '#000000' }}>리뷰가 없습니다.</Text>
+                        )
+                      }
+                    </Section>,
+                    2: <Section>
+                      {
+                        detailData.story_id == null ? <Text style={{ margin: 15, fontWeight: '700', color: '#000000' }}>스토리가 없습니다.</Text> :
+                          <StorySection>
+                            <Image source={{ uri: storyData.rep_pic }} style={{ width: '100%', height: 450 }} />
+                            <View style={{ backgroundColor: 'rgba(0, 0, 0, 0.3)', position: 'absolute', width: '100%', height: '100%', paddingVertical: 35, paddingHorizontal: 20 }}>
+                              <Text style={TextStyles.story_title}>{storyData.title}</Text>
+                              <Text style={TextStyles.story_place_name}>{storyData.place_name}</Text>
+                              <Text style={TextStyles.story_category}>{storyData.category}</Text>
+                              <Text style={TextStyles.story_writer}>{storyData.nickname}님의 이야기</Text>
+                              <Text numberOfLines={3} style={TextStyles.story_preview}>{storyData.preview}...<TouchableOpacity onPress={() => { navigationToTab.navigate('스토리', { id: detailData.story_id }) }} style={{ height: 18, paddingTop: 3 }}><Text style={TextStyles.story_preview}>더보기</Text></TouchableOpacity></Text>
+                            </View>
+                            <View style={{ position: 'absolute', top: 34, right: 30 }}><Heart white={true} like={likeStory} onPress={handleStoryLike} /></View>
+                          </StorySection>
+                      }
+                    </Section>,
+                  }[tab]
+                }
+              </View>
+            </View>
           </View>
-        </View>
-      </ScrollView>
+        }
+      />
       <GoToTop onPress={scrollToTop}><ArrowTop /></GoToTop>
     </View>
   )

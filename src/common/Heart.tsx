@@ -14,7 +14,7 @@ interface HeartProps {
 
 export default function Heart({ like, onPress, white, size, color }: HeartProps): JSX.Element {
   return (
-    <TouchableOpacity onPress={onPress}>
+    <TouchableOpacity onPress={onPress} style={{display:'flex', alignItems:'center'}}>
       {
         like ?
           white ? <FilledLike width={size? size : 18} height={size? size : 18} /> : <FilledLike width={size? size : 25} height={size? size : 25} /> 

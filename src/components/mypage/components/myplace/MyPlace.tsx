@@ -3,7 +3,6 @@ import { View, StyleSheet, FlatList, } from "react-native";
 import { TextPretendard as Text } from '../../../../common/CustomText';
 import NothingIcon from "../../../../assets/img/nothing.svg";
 import { Request } from "../../../../common/requests";
-import { MyPageParams } from "../../../../pages/MyPage";
 import { useFocusEffect } from "@react-navigation/native";
 import { LoginContext } from "../../../../common/Context";
 import RequireLogin from "../common/RequiredLogin";
@@ -36,7 +35,7 @@ const styles = (isCategory?: boolean) => StyleSheet.create({
   },
 });
 
-const MyPlace = ({ navigation }: MyPageParams) => {
+const MyPlace = () => {
   const { isLogin, setLogin } = useContext(LoginContext);
   const [placeList, setPlaceList] = useState<MyPlaceItemCardProps[]>([]);
   const [page, setPage] = useState<number>(1);
@@ -55,9 +54,12 @@ const MyPlace = ({ navigation }: MyPageParams) => {
   }
 
   const getPlaces = async () => {
-    const response = await request.get(`/mypage/myplace_search/`, {
+    let params = new URLSearchParams();
+    for (const category of checkedList){
+      params.append('filter', category);
+    }
+    const response = await request.get(`/mypage/myplace_search/?${params.toString()}`, {
       search: search,
-      filter: checkedList,
       page: page
     })
     setMax(Math.ceil(response.data.data.count / 6));

@@ -6,7 +6,6 @@ import styled from "styled-components/native";
 import SearchBar from '../../common/SearchBar';
 import Category, { MatchCategory } from '../../common/Category';
 import MapList from './SpotList';
-import SpotDetail from './SpotDetail';
 import { Request } from '../../common/requests';
 import { Coord } from "react-native-nmap";
 import Animated, { SharedValue, useAnimatedStyle, useSharedValue, withTiming } from "react-native-reanimated";
@@ -18,6 +17,7 @@ import { useFocusEffect } from "@react-navigation/native";
 import SearchHere from "../../assets/img/Map/SearchHere.svg";
 import { LoginContext } from "../../common/Context";
 import PlusButton from "../../common/PlusButton";
+import DetailCard from "./SpotDetail/DetailCard";
 
 const { width, height } = Dimensions.get('window');
 
@@ -185,7 +185,7 @@ interface MapContainerProps extends StackScreenProps<TabProps, '맵'> {
 }
 
 export default function MapContainer({ nowCoor, navigation, route }: MapContainerProps): JSX.Element {
-  const {isLogin, setLogin} = useContext(LoginContext);
+  const { isLogin, setLogin } = useContext(LoginContext);
   //지도의 Ref
   const mapView = useRef<any>(null);
   const [loading, setLoading] = useState<boolean>(true);
@@ -233,7 +233,7 @@ export default function MapContainer({ nowCoor, navigation, route }: MapContaine
   //checkedList => 카테고리 체크 복수 체크 가능
   const [checkedList, setCheckedList] = useState<string[]>([]);
   //search => 검색어
-  const [search, setSearch] = useState<string>("")
+  const [search, setSearch] = useState<string>('')
   const [page, setPage] = useState<number>(1);
   //searchHere => 특정 좌표에서 검색할때 tempCoor의 좌표를 기반으로 검색
   const [searchHere, setSearchHere] = useState<Coord>({ ...nowCoor });
@@ -248,23 +248,32 @@ export default function MapContainer({ nowCoor, navigation, route }: MapContaine
       filter: checkedList,
       page: page,
     });
-    setPlaceData(response.data.data.results);
-    setTotal(response.data.data.count);
+    if (response.data.data.count != 0) {
+      setPlaceData(response.data.data.results);
+      setTotal(response.data.data.count);
+    }
+    if(response.data.data.count == 1) {
+      mapView?.current.animateToCoordinate({latitude: response.data.data.results[0].latitude, longitude: response.data.data.results[0].longitude});
+  }
     setLoading(false);
   }
-  //searchHere, page가 변할 시 데이터 재검색
-  useEffect(() => {
-    getPlaces();
-  }, [searchHere, page, search, checkedList]);
 
+  //searchHere, page가 변할 시 데이터 재검색
   useFocusEffect(useCallback(() => {
+    //좌표가 있으면 좌표로 이동
     if (route.params.coor) {
       mapView?.current.animateToCoordinate(route.params.coor)
     }
     else {
+      //현재 위치로 이동
       mapView?.current.animateToCoordinate(nowCoor);
+      //스토리에서 넘어왔을 경우 해당 장소로 이동
+      if(route.params.place_name && search != route.params.place_name) {
+        setSearch(route.params.place_name);
+      }
+      else getPlaces();
     }
-  }, [route.params]))
+  }, [route.params, searchHere, page, search, checkedList]))
 
   /////////////////////////////////////////////////////// BottomSheet
   //BottomSheet에서 list(true)를 보일지 detail(false)을 보일지
@@ -339,12 +348,12 @@ export default function MapContainer({ nowCoor, navigation, route }: MapContaine
       <PlusButton
         position="rightbottom"
         onPress={() => {
-        if (!isLogin) {
-          Alert.alert('로그인이 필요합니다', '', [{ text: '로그인', onPress: () => { navigation.navigate('마이페이지') }, style: 'cancel' }, { text: 'ok' }]);
-          return;
-        }
-        setPlaceformModal(true);
-      }}/>
+          if (!isLogin) {
+            Alert.alert('로그인이 필요합니다', '', [{ text: '로그인', onPress: () => { navigation.navigate('마이페이지') }, style: 'cancel' }, { text: 'ok' }]);
+            return;
+          }
+          setPlaceformModal(true);
+        }} />
       <Modal visible={placeformModal}>
         <PlaceForm setPlaceformModal={setPlaceformModal} />
       </Modal>
@@ -378,27 +387,32 @@ interface BottomSheetMemoProps {
 //좌표가 바뀌어서 바텀시트가 올라가는것을 방지
 const BottomSheetMemo = memo(
   ({ sheetMode, setSheetMode, buttonAnimatedPosition, loading, page, setPage, setCenter, setDetailData, placeData, total, detailData }: BottomSheetMemoProps) => {
+    const [index, setIndex] = useState(1);
+    const { width, height } = Dimensions.get('window');
     //modal의 ref
     const modalRef = useRef(null);
-    const idx = useRef<number>(1);
     //BottomSheet 중단점
-    const snapPoints = useMemo(() => [15, 500], []);
+    const snapPoints = useMemo(() => [15, 500, height - 127], []);
+    useEffect(() => {
+      if (sheetMode) setIndex(1)
+    }, [sheetMode])
     return (
       <BottomSheet
         ref={modalRef}
         snapPoints={snapPoints}
-        index={1}
+        index={index}
         handleComponent={() => <CustomHandle mode={sheetMode} />}
         onAnimate={(fromIndex, toIndex) => {
-          if (fromIndex == 1 && toIndex == 0) {
+          setIndex(toIndex);
+          if ((fromIndex == 1 || fromIndex == 2) && toIndex == 0) {
             if (!sheetMode) setSheetMode(true);
             else buttonAnimatedPosition.value = 45;
-            idx.current = 0;
-            // setIdx(0);
+          }
+          else if (toIndex == 2) {
+            buttonAnimatedPosition.value = 750;
           }
           else {
             buttonAnimatedPosition.value = 520;
-            idx.current = 1;
             // setIdx(1);
           }
         }}
@@ -410,6 +424,7 @@ const BottomSheetMemo = memo(
               {
                 sheetMode ?
                   <MapList
+                    setIndex={setIndex}
                     page={page}
                     setPage={setPage}
                     total={total}
@@ -418,8 +433,10 @@ const BottomSheetMemo = memo(
                     setSheetMode={setSheetMode}
                     setCenter={setCenter} />
                   :
-                  <SpotDetail
-                    detailData={detailData} />
+                  <DetailCard
+                    setIndex={setIndex}
+                    detailData={detailData}
+                  />
               }</>
         }
       </BottomSheet>

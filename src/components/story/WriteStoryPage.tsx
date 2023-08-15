@@ -15,7 +15,7 @@ export default function WriteStoryPage({ navigation, route }: StoryProps) {
   const editor = useRef<RichEditor>(null);
   const scrollRef = useRef<ScrollView>(null);
   const request = new Request();
-  const id = route.params?.id;
+  const post = route.params?.story;
   const [places, setPlaces] = useState([] as any);
   const [repPic, setRepPic] = useState([] as any);
   const [story, setStory] = useState({ title: "", tag: "", preview: "", place: 0, story_review: "", html_content: "", photoList: [], rep_pic: "" });
@@ -36,12 +36,10 @@ export default function WriteStoryPage({ navigation, route }: StoryProps) {
   const loadInfo = async () => {
     const response_places = await request.get(`/sdp_admin/places/`, null, null);
     setPlaces(response_places.data.data);
-    if (!id) return;
+    if (!post) return;
     else {
-      const response_story = await request.get(`/stories/story_detail/${id}/`);
-      console.log(response_story.data.data)
       let _place = 0;
-      const { title, tag, preview, story_review, html_content, rep_pic, place_name } = response_story.data.data;
+      const { title, tag, preview, story_review, html_content, rep_pic, place_name } = post;
       for (const place of response_places.data.data) {
         if (place_name === place.place_name){
           _place = place.id
@@ -57,7 +55,7 @@ export default function WriteStoryPage({ navigation, route }: StoryProps) {
 
   const pickImage = () => {
     launchImageLibrary(options, (response: any) => {
-      uploadImage(response.assets[0]);
+      if (response && response.assets) uploadImage(response.assets[0]);
     });
   }
 
@@ -128,6 +126,7 @@ export default function WriteStoryPage({ navigation, route }: StoryProps) {
     }
     const response = await request.post("/stories/create/", formData, { "Content-Type": "multipart/form-data" });
     setStoryId(response.data.data.id);
+    setModalVisible(true);
   };
 
   const updateStory = async () => {
@@ -139,28 +138,27 @@ export default function WriteStoryPage({ navigation, route }: StoryProps) {
       Alert.alert('빈 칸을 전부 채워주세요.');
       return;
     }
-    if(repPic.uri.length == 0){
-      Alert.alert('대표 사진을 설정해주세요.');
-      return;
-    }
     const formData = new FormData();
     for (const photo of photoList){
       formData.append('photoList', photo);
     }
     for (let [key, value] of Object.entries(story)) {
       if (key === "rep_pic") {
-        formData.append(`${key}`, {
-          uri: repPic.uri,
-          name: repPic.fileName,
-          type: repPic.uri.endsWith('.jpg') ? 'image/jpeg' : 'image/png',
-        });
+        if(repPic.length > 0){
+          formData.append(`${key}`, {
+            uri: repPic[0].uri,
+            name: repPic[0].fileName,
+            type: repPic[0].uri.endsWith('.jpg') ? 'image/jpeg' : 'image/png',
+          });
+        }
       } else {
         //문자열의 경우 변환
         formData.append(`${key}`, `${value}`);
       }
     }
-    const response = await request.put(`/stories/${id}/update/`, formData, { "Content-Type": "multipart/form-data" });
-    setStoryId(id);
+    const response = await request.put(`/stories/${post.id}/update/`, formData, { "Content-Type": "multipart/form-data" });
+    setStoryId(post.id);
+    setModalVisible(true);
   }
 
   const handleCursorPosition = useCallback((scrollY: number) => {
@@ -171,7 +169,7 @@ export default function WriteStoryPage({ navigation, route }: StoryProps) {
   useEffect(
     () =>
       navigation.addListener('beforeRemove', (e: any) => {
-        if (!hasUnsavedChanges) {
+        if (!hasUnsavedChanges || storyId != 0) {
           return;
         }
 
@@ -194,7 +192,7 @@ export default function WriteStoryPage({ navigation, route }: StoryProps) {
           ]
         );
       }),
-    [navigation, hasUnsavedChanges]
+    [navigation, hasUnsavedChanges, storyId]
   );
   
   return (
@@ -203,12 +201,12 @@ export default function WriteStoryPage({ navigation, route }: StoryProps) {
         <FinishModal
           navigation={()=>navigation.replace('StoryDetail', {id: storyId})}
           setModal={setModalVisible}
-          title={ id ? '수정 완료 !' : '작성 완료 !'}
+          title={ post ? '수정 완료 !' : '작성 완료 !'}
           subtitle={['작성한 스토리는', '마이페이지 > 스토리 > 내가 쓴 스토리', '에서 확인할 수 있어요']}
         />
       </Modal>
-      <FormHeader title='스토리 작성' onLeft={() => navigation.goBack()} onRight={id ? updateStory : saveStory} />
-      <ScrollView>
+      <FormHeader title='스토리 작성' onLeft={() => navigation.goBack()} onRight={post ? updateStory : saveStory} begin={true} end={true} />
+      <ScrollView showsVerticalScrollIndicator={false}>
       <TouchableWithoutFeedback onPress={() => {
         Keyboard.dismiss();
         editor.current?.dismissKeyboard();
@@ -224,13 +222,13 @@ export default function WriteStoryPage({ navigation, route }: StoryProps) {
         <TextInput
           value={story.story_review}
           onChangeText={(story_review) => { setStory({ ...story, story_review: story_review }) }}
-          placeholder='소제목 *'
+          placeholder='한 줄 소개 *'
           placeholderTextColor={'#bcbcbe'}
           style={{padding: 10}}
         />
         <ModalSelector
           data={places}
-          selectedKey={id ? story.place : 0}
+          selectedKey={post ? story.place : 0}
           keyExtractor={item => item.id}
           labelExtractor={item => item.place_name}
           onChange={(option) => { setStory({ ...story, place: option.id }) }}

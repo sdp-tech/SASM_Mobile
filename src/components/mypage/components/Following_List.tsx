@@ -14,6 +14,11 @@ const Following = ({ navigation, route }: StackScreenProps<MyPageProps, 'followi
   const request = new Request();
   const [followingList, setFollowingList] = useState<{ email: string, profile_image: string, nickname: string }[]>([]);
   const [searchQuery, setSearchQuery] = useState('');
+  const [refresh, setRefresh] = useState<boolean>(false);
+
+  const rerender = () => {
+    setRefresh(!refresh);
+  }
 
   const GetFollowing = async () => {
     const response = await request.get('/mypage/following/', {
@@ -23,10 +28,15 @@ const Following = ({ navigation, route }: StackScreenProps<MyPageProps, 'followi
     setFollowingList(response.data.data.results)
   }
 
+  const undoFollowing = async (email: string) => {
+    const response = await request.post('/mypage/follow/', { targetEmail: email });
+    rerender();
+  }
+
   useFocusEffect(
     useCallback(() => {
       GetFollowing();
-    }, [searchQuery]))
+    }, [searchQuery, refresh]))
 
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: 'white' }}>
@@ -43,15 +53,27 @@ const Following = ({ navigation, route }: StackScreenProps<MyPageProps, 'followi
       />
       <ScrollView contentContainerStyle={styles.container}>
         {
-          followingList.map((user) => (
-            <View style={styles.userContainer}>
-              <Image source={{ uri: user.profile_image }} style={styles.profileImage} />
-              <View style={styles.userInfo}>
-                <Text style={styles.username}>{user.nickname}</Text>
-                <Text style={styles.useremail}>{user.email}</Text>
-              </View>
-            </View>
-          ))
+          followingList.length == 0 ?
+            <View>
+              <Text style={styles.alert}>팔로잉 중인 유저가 없습니다</Text>
+            </View> :
+            <>
+              {
+                followingList.map((user) => (
+                  <View style={styles.userContainer}>
+                    <Image source={{ uri: user.profile_image }} style={styles.profileImage} />
+                    <View style={styles.userInfo}>
+                      <Text style={styles.username}>{user.nickname}</Text>
+                      <Text style={styles.useremail}>{user.email}</Text>
+                    </View>
+                    <TouchableOpacity style={{ position: 'absolute', right: 20 }}
+                      onPress={() => { undoFollowing(user.email) }}>
+                        <Text style={styles.undofollowing}>삭제</Text>
+                    </TouchableOpacity>
+                  </View>
+                ))
+              }
+            </>
         }
       </ScrollView>
     </SafeAreaView>
@@ -117,6 +139,19 @@ const styles = StyleSheet.create({
     display: 'flex',
     justifyContent: 'space-between'
   },
+  undofollowing: {
+    height: 18,
+    fontSize: 10,
+    lineHeight: 18,
+    borderColor: '#D7D7D7',
+    borderWidth:1,
+    paddingHorizontal:7,
+    borderRadius:9
+  },
+  alert: {
+    fontWeight: '700',
+    marginLeft: 20
+  }
 });
 
 

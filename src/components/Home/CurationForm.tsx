@@ -1,5 +1,5 @@
 import React, { Dispatch, SetStateAction, useEffect, useMemo, useState, useRef, useCallback } from 'react';
-import { Dimensions, TextInput, TouchableOpacity, Image, Modal, View, ActivityIndicator, ImageBackground, StyleSheet, Alert } from 'react-native';
+import { Dimensions, TextInput, TouchableOpacity, Image, Modal, View, ActivityIndicator, ImageBackground, StyleSheet, Alert, KeyboardAvoidingView, Platform } from 'react-native';
 import { TextPretendard as Text } from '../../common/CustomText';
 import { ScrollView } from 'react-native-gesture-handler';
 import PhotoOptions, { PhotoResultProps } from '../../common/PhotoOptions';
@@ -10,6 +10,7 @@ import { HomeStackParams } from '../../pages/Home';
 import SelectStoryModal from './FormModals/SelectStoryModal';
 import { launchImageLibrary, launchCamera, ImagePickerResponse } from 'react-native-image-picker';
 import AddColor from "../../assets/img/common/AddColor.svg";
+import { getStatusBarHeight } from 'react-native-status-bar-height';
 
 const { width, height } = Dimensions.get('window');
 
@@ -93,6 +94,12 @@ export default function CurationForm({ navigation, route }: StackScreenProps<Hom
   }])
   const [selectStoryModal, setSelectStoryModal] = useState<boolean>(false);
   const request = new Request();
+  const statusBarHeight = getStatusBarHeight();
+  const iOS = Boolean(Platform.OS === 'ios');
+
+  const handleCheckedList = (id: number): void => {
+    setSelectedStory(selectedStory.filter(element => element.id != id));
+  }
 
   const handleCheckedList = (id: number): void => {
     setSelectedStory(selectedStory.filter(element => element.id != id));
@@ -151,7 +158,8 @@ export default function CurationForm({ navigation, route }: StackScreenProps<Hom
   }, [selectedStory])
 
   return (
-    <ScrollView style={{ backgroundColor: '#FFFFFF' }}>
+    <KeyboardAvoidingView behavior={'height'} keyboardVerticalOffset={iOS ? 0 : statusBarHeight+88} style={{flex: 1, backgroundColor: '#FFFFFF'}}>
+    <ScrollView>
       <ReppicBox onPress={handleRepPic}>
         <ImageBackground source={require('../../assets/img/Home/form_example.png')} style={{ flex: 1, opacity: 0.5 }} resizeMode='cover' />
         {
@@ -193,6 +201,7 @@ export default function CurationForm({ navigation, route }: StackScreenProps<Hom
         <SelectStoryModal setSelectStoryModal={setSelectStoryModal} setSelectedStory={setSelectedStory} selectedStory={selectedStory} />
       </Modal>
     </ScrollView>
+    </KeyboardAvoidingView>
   )
 }
 

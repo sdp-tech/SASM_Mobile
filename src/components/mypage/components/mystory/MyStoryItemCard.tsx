@@ -2,7 +2,6 @@ import React, { useState } from "react";
 import { TouchableOpacity, StyleSheet, View, ImageBackground, Dimensions } from 'react-native';
 import { TextPretendard as Text } from '../../../../common/CustomText';
 import { Request } from "../../../../common/requests";
-import { MyPageParams } from "../../../../pages/MyPage";
 import { CATEGORY_LIST, MatchCategory } from "../../../../common/Category";
 import Selector0 from "../../../../assets/img/Category/Selector0.svg";
 import Selector1 from "../../../../assets/img/Category/Selector1.svg";
@@ -32,13 +31,13 @@ export interface MyStroyItemCardProps {
 
 const MyStoryItemCard = ({ data, edit, rerender }: { data: MyStroyItemCardProps, edit: boolean, rerender: () => void }) => {
   const { category, extra_pics, id, nickname, place_name, preview, rep_pic, story_like, story_review, title, writer } = data;
-  const [like, setLike] = useState(true);
+  const [like, setLike] = useState(story_like);
   const navigationToTab = useNavigation<StackNavigationProp<TabProps>>();
   const request = new Request();
 
   // 좋아요 클릭 이벤트
   const handleLike = async () => {
-    const response = await request.post("/stories/story_like/", { id: id });
+    const response = await request.post(`/stories/${id}/story_like/`);
     setLike(!like);
     rerender();
   };
@@ -64,7 +63,7 @@ const MyStoryItemCard = ({ data, edit, rerender }: { data: MyStroyItemCardProps,
           style={{ width: 170, height: 220 }}
         >
           <View style={{ width: 170, height: 220, backgroundColor: 'rgba(0,0,0,0.3)', padding: 10 }}>
-            <View style={{ flex: 1 }}>
+            <View style={{ flex: 1, width: edit ? 130 : 'auto' }}>
               <Text style={textStyles.title}>{title}</Text>
               <Text style={textStyles.place_name}>{place_name}</Text>
             </View>
@@ -79,8 +78,8 @@ const MyStoryItemCard = ({ data, edit, rerender }: { data: MyStroyItemCardProps,
       </TouchableWithoutFeedback>
       {
         edit &&
-        <View style={{position:'absolute', top: 10, right: 10}}>
-          <Heart like={like} onPress={handleLike} />
+        <View style={{position:'absolute', top: 10, right: 15}}>
+          <Heart like={like} onPress={handleLike} size={20} white={true} />
         </View>
       }
     </View>

@@ -90,30 +90,28 @@ const Comment = ({ data, reRenderScreen, post_id, email, isLogin, navigation, ca
     }
 
     return (
-        <View style={{borderBottomColor: '#D9D9D9', borderBottomWidth: 1, height: 90, width: width-40, alignSelf: 'center', flex: 1}}>
-            <View style = {{ flexDirection: 'row', paddingTop: 20}}>
+        <View style={{borderBottomColor: '#D9D9D9', borderBottomWidth: 1, width: width-40, alignSelf: 'center', flex: 1}}>
+            <View style = {{ flexDirection: 'row', paddingVertical: 15, alignItems: 'center'}}>
                 <View style = {{alignSelf: 'center'}}>
                     <Image source={{uri: data.writer.profile}} style={{width:50,height:50,borderRadius:60}} />
                 </View>
                 <View style={{ marginLeft: 10, flex: 1}}>
                     <View style={{flexDirection: 'row', justifyContent: 'space-between'}}>
-                        <View style={{flexDirection: 'row',}}>
-                            <Text style={[textStyles.nickname, {color: data!.writer_is_verified ? '#209DF5' : '#89C77F'}]}>{data!.writer_is_verified ? ('Editor') : ('User')}</Text>
+                        <View style={{flexDirection: 'row', alignItems: 'center'}}>
+                            <Text style={[textStyles.nickname, {color: data!.writer.is_verified? '#209DF5' : '#89C77F'}]}>{data!.writer.is_verified ? ('Editor') : ('User')}</Text>
                             <Text style={textStyles.nickname}> {data!.writer.nickname}</Text>
                             <Text style={textStyles.date}>{date} 작성</Text>
-                        </View>
-                        <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'flex-end'}}>
-                            {isWriter ?
-                                <TouchableOpacity style={{marginRight: 5}} onPress={() => setModalVisible(!modalVisible)}>
+                            { isWriter &&
+                                <TouchableOpacity style={{marginLeft: 5}} onPress={() => setModalVisible(!modalVisible)}>
                                     <Edit width={12} height={12} />
                                 </TouchableOpacity>
-                            : 
-                                <TouchableOpacity style={{marginRight: 5}} onPress={() => setReportVisible(true)}>
-                                    <ReportIcon width={12} height={12} color={'#666666'} />
-                                </TouchableOpacity>
                             }
-                            <Heart like={like} onPress={toggleLike} size={10} />
-                            <Text style={{fontSize: 10, color: '#676767', marginHorizontal: 5}}>{data!.like_cnt}</Text>
+                        </View>
+                        <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'flex-end'}}>
+                            <TouchableOpacity style={{flexDirection: 'row', alignItems: 'center'}} onPress={toggleLike}>
+                                <Heart like={like} onPress={() => {}} size={12} />
+                                <Text style={{fontSize: 12, color: '#676767', marginHorizontal: 5}}>{data!.like_cnt}</Text>
+                            </TouchableOpacity>
                         </View>
                     </View>
                     <Text style={textStyles.content}>{data.content}</Text>
@@ -132,15 +130,19 @@ const Comment = ({ data, reRenderScreen, post_id, email, isLogin, navigation, ca
                 </Modal>
                 <Report reported={reported} modalVisible={reportVisible} setModalVisible={setReportVisible} onReport={onReport} />
             </View>
+            {!isWriter &&
+                <TouchableOpacity style={{position: 'absolute', bottom: 5, right: 0}} onPress={() => setReportVisible(true)}>
+                    <Text style={{color: '#A8A8A8', fontSize: 12}}>신고</Text>
+                </TouchableOpacity>
+            }
         </View>
     )
 }
 
 const textStyles = StyleSheet.create({
     nickname: {
-        fontSize: 12,
+        fontSize: 14,
         fontWeight: '600',
-        lineHeight: 18
     },
     date: {
         fontSize: 10,
@@ -150,10 +152,11 @@ const textStyles = StyleSheet.create({
         lineHeight: 18
     },
     content: {
-        fontSize: 12,
+        fontSize: 14,
         fontWeight: '400',
-        color: '#676767',
-        lineHeight: 18,
+        color: '#202020',
+        lineHeight: 20,
+        letterSpacing: -0.6,
         marginTop: 5
     }
 })

@@ -4,8 +4,7 @@ import { ScrollView, TextInput, TouchableOpacity, View, Alert, SafeAreaView, Sty
 import { TextPretendard as Text } from '../../common/CustomText';
 import styled from 'styled-components/native';
 import { Request } from '../../common/requests';
-import InputWithMessage from '../mypage/components/InputWithMessage';
-import { MyPageParams, MyPageProps } from '../../pages/MyPage';
+import { MyPageProps } from '../../pages/MyPage';
 import InputWithLabel from '../../common/InputWithLabel';
 import Arrow from "../../assets/img/common/Arrow.svg";
 import DropDown from '../../common/DropDown';
@@ -238,7 +237,7 @@ const TextStyles = StyleSheet.create({
     letterSpacing: -0.6,
     fontWeight: '700',
     marginTop: 5,
-    marginBottom: 150
+    marginBottom: 110
   },
   home_label: {
     fontSize: 14,

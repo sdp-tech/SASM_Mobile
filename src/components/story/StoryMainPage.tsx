@@ -1,9 +1,9 @@
 import { useState, useEffect, useCallback, useContext } from "react";
-import { SafeAreaView, View, StyleSheet, TouchableOpacity, Dimensions } from "react-native";
+import { SafeAreaView, View, StyleSheet, TouchableOpacity, Dimensions, Alert } from "react-native";
 import { TextPretendard as Text } from '../../common/CustomText';
 import SearchBar from "../../common/SearchBar";
 import { Request } from "../../common/requests";
-import { useFocusEffect } from "@react-navigation/native";
+import { useFocusEffect, useNavigation, useIsFocused } from "@react-navigation/native";
 import { StoryProps } from "../../pages/Story";
 import CardView from "../../common/CardView";
 import CustomHeader from "../../common/CustomHeader";
@@ -13,6 +13,8 @@ import MainCard from "./components/MainCard";
 import Reload from "../../assets/img/Story/Reload.svg";
 import PlusButton from "../../common/PlusButton";
 import { LoginContext } from "../../common/Context";
+import { StackNavigationProp } from "@react-navigation/stack";
+import { TabProps } from "../../../App";
 
 export interface StoryListProps {
   id: number;
@@ -39,12 +41,11 @@ const StoryMainPage = ({ navigation, route }: StoryProps) => {
   const [order, setOrder] = useState<string>(toggleItems[orderList].order);
   const [page, setPage] = useState<number>(1);
   const [nextPage, setNextPage] = useState<any>(null);
-  const [search, setSearch] = useState<string>('');
   const [refreshing, setRefreshing] = useState<boolean>(false);
   const [checkedList, setCheckedList] = useState<string[]>([]);
   const [count, setCount] = useState<number>(0);
   const { width, height } = Dimensions.get("screen");
-
+  const navigationToTab = useNavigation<StackNavigationProp<TabProps>>();
   const request = new Request();
 
   useEffect(() => {
@@ -62,10 +63,10 @@ const StoryMainPage = ({ navigation, route }: StoryProps) => {
     for (const category of checkedList){
       params.append('filter', category);
     }
-    params.append('search', search);
-    params.append('page', page.toString());
-    params.append('order', order);
-    const response = await request.get(`/stories/story_search/?${params.toString()}`,null, null)
+    const response = await request.get(`/stories/story_search/?${params.toString()}`, {
+      page: page,
+      order: order
+    }, null)
     if (page === 1) {
       setItem(response.data.data.results);
     } else {
@@ -103,7 +104,7 @@ const StoryMainPage = ({ navigation, route }: StoryProps) => {
             />
           </View>
           <View style={{ paddingVertical: 5 }}>
-            <CardView data={item} gap={0} offset={0} pageWidth={width} dot={true}
+            <CardView data={item} gap={0} offset={0} pageWidth={width} dot={true} green={true}
               renderItem={({ item }: any) => {
                 return (
                   <MainCard
@@ -125,8 +126,32 @@ const StoryMainPage = ({ navigation, route }: StoryProps) => {
                 )
               }} />
           </View>
-          {isLogin && <PlusButton onPress={() => navigation.navigate('WriteStory')}
-            position="rightbottom" />}
+          <PlusButton
+        onPress={() => {
+          if(!isLogin) {
+            Alert.alert(
+              "로그인이 필요합니다.",
+              "로그인 항목으로 이동하시겠습니까?",
+              [
+                {
+                  text: "이동",
+                  onPress: () => navigationToTab.navigate('마이페이지')
+      
+                },
+                {
+                  text: "취소",
+                  onPress: () => { },
+                  style: "cancel"
+                },
+              ],
+              { cancelable: false }
+            );
+          }
+          else {
+            navigation.navigate('WriteStory');
+          }
+        }}
+        position="rightbottom" />
     </SafeAreaView>
   );
 };

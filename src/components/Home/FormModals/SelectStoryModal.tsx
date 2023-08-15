@@ -119,7 +119,7 @@ export default function SelectStoryModal({ setSelectStoryModal, selectedStory, s
               setPage(page + 1)
             }
           }}
-          ListFooterComponent={<>{loading && <ActivityIndicator />}</>}
+          ListFooterComponent={<>{loading && <ActivityIndicator style={{flex:1}}/>}</>}
         />
         <BottomSheetModalProvider>
           <BottomSheetModal

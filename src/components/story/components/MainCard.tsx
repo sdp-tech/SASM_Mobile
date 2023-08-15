@@ -1,4 +1,4 @@
-import { useState, useRef } from 'react';
+import { useState, useEffect } from 'react';
 import { View, TouchableOpacity, Image, StyleSheet, Dimensions, ImageBackground, Pressable, Alert } from 'react-native';
 import { TextPretendard as Text } from '../../../common/CustomText';
 import { Request } from '../../../common/requests';
@@ -26,6 +26,10 @@ const MainCard = ({id, place_name, title, rep_pic, story_like, category, preview
   const [verified, setVerified] = useState<boolean>(writer_is_verified);
   const [like, setLike] = useState<boolean>(false);
   const request = new Request();
+
+  useEffect(()=> {
+    story_like ? setLike(true) : setLike(false)
+  }, [story_like])
 
   const toggleLike = async () => {
     if(isLogin){
@@ -75,11 +79,7 @@ const MainCard = ({id, place_name, title, rep_pic, story_like, category, preview
             <Text style={textStyles.placename}>{place_name}</Text>
           </View>
           <View style={{marginRight: 20, marginTop: 30}}>
-            {story_like ? (
-              <Heart like={!like} onPress={toggleLike} white={true} />
-            ) : (
-              <Heart like={like} onPress={toggleLike} white={true} />
-            )}
+            <Heart like={like} onPress={toggleLike} white={true} />
           </View>
         </View>
       </ImageBackground>
@@ -101,12 +101,11 @@ const textStyles = StyleSheet.create({
     fontWeight: '600',
     color: 'white',
     marginBottom: 5,
-    letterSpacing: -0.6
+    letterSpacing: -0.6,
   },
   placename: {
     fontSize: 24,
     fontWeight: '700',
-    lineHeight: 24,
     color: 'white'
   },
   preview: {

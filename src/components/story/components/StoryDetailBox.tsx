@@ -5,7 +5,7 @@ import { Request } from '../../../common/requests';
 import styled from 'styled-components/native';
 import RenderHTML from 'react-native-render-html';
 import Place from '../../../assets/img/Story/Place.svg';
-import Arrow from '../../../assets/img/common/Arrow.svg';
+import ArrowWhite from '../../../assets/img/common/ArrowWhite.svg';
 import CardView from '../../../common/CardView';
 import { CATEGORY_LIST, MatchCategory } from "../../../common/Category";
 import Selector0 from "../../../assets/img/Category/Selector0.svg";
@@ -14,11 +14,19 @@ import Selector2 from "../../../assets/img/Category/Selector2.svg";
 import Selector3 from "../../../assets/img/Category/Selector3.svg";
 import Selector4 from "../../../assets/img/Category/Selector4.svg";
 import Selector5 from "../../../assets/img/Category/Selector5.svg";
+import Settings from '../../../assets/img/MyPage/Settings.svg';
+import Logo from "../../../assets/img/common/Logo.svg"
 
 interface StoryDetailProps {
     data: any;
     navigation: any;
     isLogin: boolean;
+    onLayout: any;
+    email: string;
+    onRefresh: () => void;
+    onReport: () => void;
+    onUpdate: () => void;
+    onDelete: () => void;
 }
 
 export interface StoryDetail {
@@ -55,9 +63,11 @@ const CategoryWrapper = styled.View`
   border-width: 1;
 `
 
-const StoryDetailBox = ({navigation, data, isLogin}: StoryDetailProps) => {
+const StoryDetailBox = ({navigation, data, isLogin, onLayout, email, onRefresh, onReport, onUpdate, onDelete}: StoryDetailProps) => {
     const { width, height } = Dimensions.get('screen');
-    const [follow, setFollow] = useState<boolean>(false);
+    const [follow, setFollow] = useState<boolean>(data.writer_is_followed);
+    const [dot, setDot] = useState<boolean>(false);
+    const user = Boolean(data.writer === email)
     const request = new Request();
 
     const onFollow = async () => {
@@ -65,7 +75,16 @@ const StoryDetailBox = ({navigation, data, isLogin}: StoryDetailProps) => {
           const response = await request.post('/mypage/follow/', {
             targetEmail: data.writer
           }, {});
-          setFollow(response.data.data.follows);
+          console.log(response.data)
+          if(response.data.status==='success'){
+            setFollow(response.data.data.follows);
+            onRefresh();
+          }
+          else{
+            Alert.alert(
+                `${response.data.message}`
+            )
+          }
         } else {
           Alert.alert(
             "로그인이 필요합니다.",
@@ -85,7 +104,12 @@ const StoryDetailBox = ({navigation, data, isLogin}: StoryDetailProps) => {
             { cancelable: false }
           );
         }
-      }
+    }
+
+    const chunkArray = () => {
+        const array = [data.rep_pic, ...data.extra_pics]
+        return array.slice(0,3);
+    }
 
     const handlePageGoToMap = async () => {
         const response = await request.get('/stories/go_to_map/', {id: data.id});
@@ -120,35 +144,54 @@ const StoryDetailBox = ({navigation, data, isLogin}: StoryDetailProps) => {
         return (
             <CategoryWrapper>
                 {list[idx]}
-                <Text style={{ fontSize: 14, marginHorizontal: 5, lineHeight: 14 }}>{data.category}</Text>
+                <Text style={{ fontSize: 14, marginHorizontal: 5 }}>{data.category}</Text>
             </CategoryWrapper>
         )
     }
 
     return (
-        <>
+        <View onLayout={onLayout}>
             <View>
-                    <TouchableOpacity style={{position: 'absolute', zIndex: 1, top: 50, left: 10}} onPress={() => {navigation.goBack()}}>
-                        <Arrow width={20} height={20} transform={[{rotateY: '180deg'}]}/>
+                <TouchableOpacity style={{position: 'absolute', zIndex: 1, top: 50, left: 10}} onPress={() => {navigation.goBack()}}>
+                    <ArrowWhite width={18} height={18} strokeWidth={5} />
+                </TouchableOpacity>
+                    {data!.extra_pics.length > 0 ? (
+                        <CardView 
+                            gap={0}
+                            offset={0}
+                            data={chunkArray()}
+                            pageWidth={width}
+                            dot={false}
+                            renderItem={({item}: any) => (
+                                <ImageBackground
+                                    style={{width: 280, height: 330, marginRight: 15}}
+                                    source={{uri: item}}
+                                    resizeMode='cover'
+                                >
+                                    <View style={{backgroundColor: 'rgba(0,0,0,0.2)', width: 280, height: 330}} />
+                                </ImageBackground>
+                            )}
+                        />
+                    ) : (
+                        <ImageBackground style={{width: width, height: 330}} source={{uri: data!.rep_pic}}>
+                            <View style={{backgroundColor: 'rgba(0,0,0,0.2)', width: width, height: 330}} />
+                        </ImageBackground>
+                    )}
+                <TouchableOpacity style={{position: 'absolute', zIndex: 1, top: 55, right: 20}} onPress={() => setDot(!dot)}>
+                    <Settings transform={[{ rotate: dot ? '90deg' : '0deg'}]} color={'white'} />
+                </TouchableOpacity>
+                { dot &&
+                <View style={{position: 'absolute', backgroundColor: 'white', top: 75, left: width-140, borderRadius: 4}}>
+                    <TouchableOpacity style={{borderColor: 'rgba(168, 168, 168, 0.20)', borderBottomWidth: 1, paddingHorizontal: 40, paddingVertical: 10}} onPress={onUpdate} disabled={!user}>
+                        <Text style={{fontSize: 14, lineHeight: 20, letterSpacing: -0.6, opacity: user ? 1 : 0.4}}>수정하기</Text>
                     </TouchableOpacity>
-                        {data!.extra_pics.length > 0 ? (
-                            <CardView 
-                                gap={0}
-                                offset={0}
-                                data={data!.extra_pics}
-                                pageWidth={width}
-                                dot={false}
-                                renderItem={({item}: any) => (
-                                    <ImageBackground
-                                        style={{width: 280, height: 330, marginRight: 15}}
-                                        source={{uri: item}}
-                                        resizeMode='cover'
-                                    />
-                                )}
-                            />
-                        ) : (
-                            <ImageBackground style={{width: width, height: 330}} source={{uri: data!.rep_pic}} />
-                        )}
+                    <TouchableOpacity style={{borderColor: 'rgba(168, 168, 168, 0.20)', borderBottomWidth: 1, paddingHorizontal: 40, paddingVertical: 10}} onPress={onDelete} disabled={!user}>
+                        <Text style={{fontSize: 14, lineHeight: 20, letterSpacing: -0.6, opacity: user ? 1 : 0.4}}>삭제하기</Text>
+                    </TouchableOpacity>
+                    <TouchableOpacity style={{paddingHorizontal: 40, paddingVertical: 10}} onPress={onReport} disabled={user}>
+                        <Text style={{fontSize: 14, lineHeight: 20, letterSpacing: -0.6, opacity: !user ? 1 : 0.4}}>신고하기</Text>
+                    </TouchableOpacity>
+                </View>}
             </View>
             <View style={{borderBottomColor: '#D9D9D9', borderBottomWidth: 1, padding: 15}}>
                 <View style={{flexDirection: 'row'}}>
@@ -178,14 +221,20 @@ const StoryDetailBox = ({navigation, data, isLogin}: StoryDetailProps) => {
                     <Place />
                     <Text style={textStyles.gotomap}>{data!.place_name}</Text>
                 </TouchableOpacity>
+                <View style={{alignItems: 'center', paddingVertical: 50}}>
+                    <Logo />
+                    <Text style={textStyles.review}>{data!.story_review}</Text>
+                </View>
                 <RenderHTML
                     contentWidth = {width}
                     source = {markup}
-                    renderersProps = {renderersProps} 
+                    renderersProps = {renderersProps}
                 />
             </View>
-            <Image source={{uri: data!.map_image}} style={{width: width, height: 120}} />
-        </>
+            <TouchableOpacity onPress = {handlePageGoToMap}>
+                <Image source={{uri: data!.map_image}} style={{width: width, height: 120}} />
+            </TouchableOpacity>
+        </View>
     )
 }
 
@@ -219,6 +268,13 @@ const textStyles = StyleSheet.create({
         fontSize: 12,
         fontWeight: '600',
     },
+    review: {
+        fontSize: 16,
+        lineHeight: 24,
+        letterSpacing: -0.6,
+        textAlign: 'center',
+        marginTop: 10
+    }
 })
 
 export default StoryDetailBox;

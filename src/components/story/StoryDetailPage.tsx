@@ -14,40 +14,47 @@ import { LoginContext } from '../../common/Context';
 import ShareButton from "../../common/ShareButton";
 import Report from '../../common/Report';
 import { BottomSheetModalProvider } from '@gorhom/bottom-sheet';
+import { StackNavigationProp } from '@react-navigation/stack';
+import { HomeStackParams } from '../../pages/Home';
+import { useNavigation } from '@react-navigation/native';
 
 interface PostRecommendSectionProps {
-  item: any;
+  curations: any;
+  stories: any;
+  navigation: any;
 }
 
 interface BottomBarSectionProps {
   post: any;
   email: string;
-  onUpdate: () => void;
-  onDelete: () => void;
+  scrollToComment: () => void;
   onRefresh: any;
   navigation: any;
 }
 
 const { width, height } = Dimensions.get('screen');
 
-const PostRecommendSection = ({ item }: PostRecommendSectionProps) => {
+const PostRecommendSection = ({ curations, stories, navigation }: PostRecommendSectionProps) => {
+  const navigationHome = useNavigation<StackNavigationProp<HomeStackParams>>();
   return (
     <View>
+      {curations.length > 0 &&
+      <>
       <View style={{ flexDirection: 'row', padding: 20, alignItems: 'center' }}>
         <Text style={{ fontSize: 16, fontWeight: '700', marginRight: 10, flex: 1 }}>스토리가 포함된 큐레이션</Text>
-        <TouchableOpacity style={{flexDirection: 'row', alignItems: 'center'}} onPress={() => {}}>
+        <TouchableOpacity style={{flexDirection: 'row', alignItems: 'center'}} onPress={() => {navigation.navigate('RecommendList', {data: curations, type: false})}}>
           <Text style={{ fontSize: 12, fontWeight: '500', marginRight: 5 }}>더보기</Text>
           <Arrow width={12} height={12} />
         </TouchableOpacity>
       </View>
       <CardView 
-        gap={10}
+        gap={0}
         offset={12}
-        data={item}
+        data={curations}
         pageWidth={width*0.6}
         dot={false}
         renderItem={({item}: any) => (
-          <TouchableOpacity style={{marginHorizontal: 8}}>
+          <TouchableOpacity style={{marginHorizontal: 8}} onPress={() => { navigationHome.navigate('Detail', { id: item.id }) }}>
             <ImageBackground
               style={{width: width*0.5, height: width*0.5}}
               source={{uri: item.rep_pic}}
@@ -55,27 +62,30 @@ const PostRecommendSection = ({ item }: PostRecommendSectionProps) => {
               resizeMode='cover'
             >
               <View style={{width: width*0.5, height: width*0.5, borderRadius: 5, backgroundColor: 'rgba(0, 0, 0, 0.3)', justifyContent: 'flex-end'}}>
-                <Text style={{fontSize: 15, fontWeight: '700', marginBottom: 10, marginLeft: 10, color: 'white'}}>서울 어쩌구 저쩌구{"\n"}비건 카페 5곳</Text>
+                <Text style={{fontSize: 15, fontWeight: '700', marginBottom: 10, marginLeft: 10, color: 'white'}}>{item.title}</Text>
               </View>
             </ImageBackground>
           </TouchableOpacity>
         )}
-    />
+      />
+      </>}
+    {stories.length > 0 &&
+    <>
     <View style={{ flexDirection: 'row', padding: 20, alignItems: 'center' }}>
       <Text style={{ fontSize: 16, fontWeight: '700', marginRight: 10, flex: 1 }}>이 장소의 다른 스토리</Text>
-      <TouchableOpacity style={{flexDirection: 'row', alignItems: 'center'}} onPress={() => {}}>
+      <TouchableOpacity style={{flexDirection: 'row', alignItems: 'center'}} onPress={() => {navigation.navigate('RecommendList', {data: stories, type: true})}}>
         <Text style={{ fontSize: 12, fontWeight: '500', marginRight: 5 }}>더보기</Text>
         <Arrow width={12} height={12} />
       </TouchableOpacity>
     </View>
     <CardView 
-      gap={10}
+      gap={0}
       offset={12}
-      data={item}
+      data={stories}
       pageWidth={width*0.6}
       dot={false}
       renderItem={({item}: any) => (
-        <TouchableOpacity style={{marginHorizontal: 8}}>
+        <TouchableOpacity style={{marginHorizontal: 8}} onPress={() => navigation.replace('StoryDetail', { id: item.id })}>
           <ImageBackground
             style={{width: width*0.5, height: width*0.25}}
             source={{uri: item.rep_pic}}
@@ -83,17 +93,18 @@ const PostRecommendSection = ({ item }: PostRecommendSectionProps) => {
             resizeMode='cover'
           >
             <View style={{width: width*0.5, height: width*0.25, borderRadius: 5, backgroundColor: 'rgba(0, 0, 0, 0.3)', justifyContent: 'flex-end'}}>
-              <Text style={{fontSize: 15, fontWeight: '700', marginBottom: 10, marginLeft: 10, color: 'white'}}>서울 어쩌구 저쩌구{"\n"}비건 카페 5곳</Text>
+              <Text style={{fontSize: 15, fontWeight: '700', marginBottom: 10, marginLeft: 10, color: 'white'}}>{item.title}</Text>
             </View>
           </ImageBackground>
         </TouchableOpacity>
       )}
-    />                       
+    />
+    </>}                       
     </View>
   )
 }
 
-const BottomBarSection = ({ post, email, onUpdate, onDelete, onRefresh, navigation }: BottomBarSectionProps) => {
+const BottomBarSection = ({ post, email, scrollToComment, onRefresh, navigation }: BottomBarSectionProps) => {
   const [like, setLike] = useState<boolean>(post.story_like)
   const request = new Request();
 
@@ -127,20 +138,12 @@ const BottomBarSection = ({ post, email, onUpdate, onDelete, onRefresh, navigati
       <View style={{ flexDirection: 'row', flex: 1, alignItems: 'center' }}>
         <Heart color={'#202020'} like={like} onPress={toggleLike} size={18} ></Heart>
         <Text style={{fontSize: 14, color: '#202020', lineHeight: 20, marginLeft: 3, marginRight: 10}}>{post.like_cnt}</Text>
-        <CommentIcon color={'#202020'} />
+        <TouchableOpacity onPress={scrollToComment}>
+          <CommentIcon color={'#202020'} />
+        </TouchableOpacity>
         <Text style={{fontSize: 14, color: '#202020', lineHeight: 20, marginLeft: 3}}>{post.comment_cnt}</Text>
       </View>
-      <ShareButton message={`[SASM Story] ${post.title} - ${post.html_content}`} />
-      {post.writer === email && (
-        <>
-          <TouchableOpacity onPress={onUpdate}>
-            <Text>수정</Text>
-          </TouchableOpacity>
-          <TouchableOpacity onPress={onDelete}>
-            <Text>삭제</Text>
-          </TouchableOpacity>
-        </>
-      )}
+      <ShareButton color={'black'} message={`[SASM Story] ${post.title} - ${post.html_content}`} />
     </View>
   )
 }
@@ -151,12 +154,15 @@ const StoryDetailPage = ({ navigation, route }: StoryProps) => {
   const { isLogin, setLogin } = useContext(LoginContext);
   const [data, setData] = useState<StoryDetail>();
   const [comment, setComment] = useState([] as any);
+  const [curations, setCurations] = useState([] as any);
+  const [otherStories, setOtherStories] = useState([] as any);
   const [refreshing, setRefreshing] = useState<boolean>(false);
   const [email, setEmail] = useState<string>('');
   const [updateText, setUpdateText] = useState<string>('');
   const [commentId, setCommentId] = useState<number>(0);
   const [reported, setReported] = useState<string>('');
   const [modalVisible, setModalVisible] = useState<boolean>(false);
+  const [headerHeight, setHeaderHeight] = useState<number>(0);
   const request = new Request();
 
   const checkUser = async () => {
@@ -167,8 +173,12 @@ const StoryDetailPage = ({ navigation, route }: StoryProps) => {
   const loadItem = async () => {
     const response_detail = await request.get(`/stories/story_detail/${id}/`);
     const response_comment = await request.get("/stories/comments/", { story: id }, null);
+    const response_curation = await request.get(`/stories/story_included_curation/${id}/`);
+    const response_stories = await request.get(`/stories/same_place_story/${id}/`);
     setData(response_detail.data.data);
     setComment(response_comment.data.data.results);
+    setCurations(response_curation.data.data);
+    setOtherStories(response_stories.data.data);
   };
 
   const reRenderScreen = () => {
@@ -220,24 +230,25 @@ const StoryDetailPage = ({ navigation, route }: StoryProps) => {
     }
   };
 
+  const onLayout = (e: any) => {
+    const { height } = e.nativeEvent.layout;
+    setHeaderHeight(height);
+  }
+
+  const scrollToComment = () => {
+    if (scrollRef.current) {
+      scrollRef.current.scrollToOffset({ animated: true, offset: headerHeight })
+    }
+  }
+
   useEffect(() => {
     if (isLogin) checkUser();
   }, [isLogin]);
 
   useEffect(() => {
     loadItem();
-    getStories();
   }, [refreshing]);
 
-  const [item, setItem] = useState([])
-  const getStories = async () => {
-    const response = await request.get('/stories/story_search/', {
-      page: 1,
-      search: null,
-      latest: true
-    }, null);
-    setItem(response.data.data.results);
-  }
 
   return (
     <BottomSheetModalProvider>
@@ -248,13 +259,13 @@ const StoryDetailPage = ({ navigation, route }: StoryProps) => {
             <>
             <FlatList
                 ref={scrollRef}
-                data = {comment}
+                data = {comment.slice(0,3)}
                 onRefresh = {reRenderScreen}
                 refreshing = {refreshing}
                 keyExtractor={(item, index) => item.id.toString()}
                 ListHeaderComponent={
                 <>
-                    <StoryDetailBox data={data} navigation={navigation} isLogin={isLogin} />
+                    <StoryDetailBox data={data} navigation={navigation} isLogin={isLogin} email={email} onLayout={onLayout} onRefresh={reRenderScreen} onReport={() => setModalVisible(true)} onDelete={deleteStory} onUpdate={()=>navigation.navigate('WriteStory', { story: data })}/>
                     <View style={{borderBottomColor: '#D9D9D9', width: width, borderBottomWidth: 1, marginTop: 40}} />
                     <View style={{ flexDirection: 'row', padding: 20, alignItems: 'center' }}>
                       <View style={{flexDirection: 'row', flex: 1}}>
@@ -275,7 +286,7 @@ const StoryDetailPage = ({ navigation, route }: StoryProps) => {
                 }}
                 ListFooterComponent = {
                 <>
-                    <PostRecommendSection item={item} />
+                    <PostRecommendSection curations={curations} stories={otherStories} navigation={navigation} />
                     <View style={{ justifyContent: 'center', alignItems: 'center', paddingVertical: 20 }}>
                         <TouchableOpacity onPress={scrollToTop} style={{ flexDirection: 'row' }}>
                             <Arrow width={18} height={18} transform={[{rotate: '270deg'}]} />
@@ -284,7 +295,7 @@ const StoryDetailPage = ({ navigation, route }: StoryProps) => {
                     </View>
                 </>}
             />
-            <BottomBarSection post={data} email={email} navigation={navigation} onDelete={deleteStory} onUpdate={() => { navigation.navigate('WriteStoryPage', { id: data!.id }) }} onRefresh={reRenderScreen} />
+            <BottomBarSection post={data} email={email} navigation={navigation} scrollToComment={scrollToComment} onRefresh={reRenderScreen} />
             <Report reported={reported} modalVisible={modalVisible} setModalVisible={setModalVisible} onReport={onReport} />
             </>
         )}

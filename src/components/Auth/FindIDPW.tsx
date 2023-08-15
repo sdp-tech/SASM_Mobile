@@ -1,5 +1,5 @@
 import { createStackNavigator, StackScreenProps } from '@react-navigation/stack';
-import React, { useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { Alert, SafeAreaView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import styled from 'styled-components/native';
 import { Request } from '../../common/requests';
@@ -10,6 +10,7 @@ import FindPw from './function/FindPw';
 import SetNewPassword from './SetNewPassword';
 import InputWithLabel from '../../common/InputWithLabel';
 import Arrow from '../../assets/img/common/Arrow.svg';
+import { useFocusEffect } from '@react-navigation/native';
 
 const TabsBox = styled.View`
   display: flex;
@@ -32,7 +33,9 @@ const TabText = styled.Text<{ selected: boolean }>`
   text-align: center;
 `
 export type findScreenProps = {
-  'home': any;
+  'home': {
+    tab: boolean;
+  };
   'idExist': {
     email: string;
   };
@@ -99,6 +102,10 @@ const FindIDPW = ({ navigation, route }: StackScreenProps<findScreenProps, 'home
       navigation.navigate('idNotExist', { email: email });
     }
   }
+
+  useFocusEffect(useCallback(()=>{
+    if(route.params?.tab == false) setTab(false);
+  },[route]))
 
   return (
     <SafeAreaView style={{ backgroundColor: 'white', flex: 1 }}>
