@@ -24,7 +24,6 @@ const useDidMountEffect = (func: any, deps: any[]) => {
 }
 
 export default function CurationList({ navigation, route }: StackScreenProps<HomeStackParams, 'List'>): JSX.Element {
-  const [loading, setLoading] = useState<boolean>(false);
   const [max, setMax] = useState<number>(0);
   const [search, setSearch] = useState<string>("");
   const [page, setPage] = useState<number>(1);
@@ -32,7 +31,6 @@ export default function CurationList({ navigation, route }: StackScreenProps<Hom
   const request = new Request();
 
   const getList = async () => {
-    setLoading(true);
     switch (route.params.from) {
       case ('search'):
         const response_search = await request.get('/curations/curation_search/', { search: search });
@@ -62,7 +60,6 @@ export default function CurationList({ navigation, route }: StackScreenProps<Hom
         }
         break;
     }
-    setLoading(false);
   }
 
   useFocusEffect(useCallback(() => {
@@ -84,9 +81,7 @@ export default function CurationList({ navigation, route }: StackScreenProps<Hom
           style={{ width: '80%', backgroundColor: '#F1F1F1' }}
         />
       </View>
-      {
-        loading ? <ActivityIndicator style={{flex:1}}/>
-          : <FlatList
+      <FlatList
             contentContainerStyle={{ padding: 5 }}
             numColumns={2}
             data={list}
@@ -96,10 +91,8 @@ export default function CurationList({ navigation, route }: StackScreenProps<Hom
               }
             }}
             renderItem={({ item }) => <SearchItemCard style={{ width: width / 2 - 15, height: height / 3, margin: 5 }} data={item} />}
-            ListFooterComponent={<>{loading && <ActivityIndicator />}</>}
             ListHeaderComponent={<>{list.length == 0 && <View style={{ marginLeft: 15 }}><Text style={{ fontSize: 16, fontWeight: '600' }}>큐레이션이 없습니다.</Text></View>}</>}
           />
-      }
       <PlusButton
         position='rightbottom'
         onPress={() => { navigation.navigate('Form') }}
