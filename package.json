@@ -34,6 +34,7 @@
     "react-native-image-picker": "^5.1.0",
     "react-native-keychain": "^8.1.1",
     "react-native-modal-selector": "^2.1.2",
+    "react-native-modal-selector-searchable": "^2.1.4",
     "react-native-nmap": "git+https://github.com/sejongk/react-native-naver-map.git",
     "react-native-pager-view": "^6.2.0",
     "react-native-pell-rich-editor": "^1.8.9",
