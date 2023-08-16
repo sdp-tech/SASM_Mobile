@@ -92,7 +92,7 @@ const MyStory = () => {
       if (type) getStories();
       else getWrittenStory();
     }
-  }, [page, writtenPage, type, search, checkedList, refresh]));
+  }, [isLogin, page, writtenPage, type, search, checkedList, refresh]));
 
 
   return (
