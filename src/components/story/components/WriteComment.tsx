@@ -47,7 +47,7 @@ const WriteComment = ({ id, reRenderScreen, data, isLogin, navigation, commentId
                 [
                     {
                         text: "이동",
-                        onPress: () => navigation.navigate('Login')
+                        onPress: () => navigation.navigate('마이페이지')
         
                     },
                     {
