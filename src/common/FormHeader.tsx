@@ -20,7 +20,7 @@ const FormHeader = ({ title, onLeft, onRight, begin, end }: FormHeaderProps) => 
       </TouchableOpacity>
       <Text style={{flex: 1, fontWeight: '700', color: 'white', fontSize: 20, textAlign: 'center'}}>{title}</Text>
       <TouchableOpacity onPress={onRight}>
-        {end ? <Text style={{color: 'white', fontWeight: '500', lineHeight: 20}}>등록</Text> : <Arrow width={18} height={18} strokeWidth={5} transform={[{rotate: '180deg'}]}/>}
+        {end ? <Text style={{color: 'white', fontWeight: '500', lineHeight: 20}}>완료</Text> : <Arrow width={18} height={18} strokeWidth={5} transform={[{rotate: '180deg'}]}/>}
       </TouchableOpacity>
     </View>
   )

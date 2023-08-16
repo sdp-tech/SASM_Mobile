@@ -11,6 +11,7 @@ import {
   Alert,
   ImageBackground,
   Dimensions,
+  Platform
 } from "react-native";
 import type { NativeStackScreenProps } from "@react-navigation/native-stack";
 import RenderHTML from 'react-native-render-html';
@@ -28,6 +29,9 @@ import Report from "../../common/Report";
 import ShareButton from "../../common/ShareButton";
 import { BottomSheetModalProvider } from "@gorhom/bottom-sheet";
 import Settings from '../../assets/img/MyPage/Settings.svg';
+import { StackNavigationProp, StackScreenProps } from "@react-navigation/stack";
+import { useNavigation } from "@react-navigation/native";
+import { TabProps } from "../../../App";
 
 interface Post {
   id: number;
@@ -52,7 +56,6 @@ interface Post {
 
 interface PostDetailSectionProps {
   post: Post;
-  navigation: any;
   email: string;
   onReport: () => void;
   onUpdate: () => void;
@@ -78,7 +81,6 @@ const { width, height } = Dimensions.get('screen');
 
 const PostDetailSection = ({
   post,
-  navigation,
   email,
   onUpdate,
   onDelete,
@@ -86,6 +88,7 @@ const PostDetailSection = ({
   onLayout
 }: PostDetailSectionProps) => {
   const [dot, setDot] = useState<boolean>(false);
+  const navigation = useNavigation<StackNavigationProp<TabProps>>();
   const user = Boolean(post.writer.email === email)
   const markup = {
     html: `${post?.content}`
@@ -96,6 +99,16 @@ const PostDetailSection = ({
       enableExperimentalPercentWidth: true
     }
   };
+
+  const tagsStyles = {
+    div: {
+      fontSize: 16,
+      fontWeight: "300",
+      lineHeight: 30,
+      letterSpacing: -0.6
+    }
+  }
+
   return (
     <View onLayout={onLayout}>
       <ImageBackground
@@ -108,7 +121,7 @@ const PostDetailSection = ({
         <View
           style={{
             flexDirection: "row",
-            marginTop: 45,
+            marginTop: Platform.OS === 'ios' ? 45:15,
             alignSelf: "center",
             flex: 1,
             padding: 10
@@ -121,8 +134,7 @@ const PostDetailSection = ({
             style={{
               fontSize: 20,
               fontWeight: "700",
-              marginBottom: 15,
-              marginLeft: width / 2 - 50,
+              textAlign: 'center',
               flex: 1
             }}
           >
@@ -181,6 +193,8 @@ const PostDetailSection = ({
           contentWidth={width}
           source={markup}
           renderersProps={renderersProps}
+          tagsStyles={tagsStyles}
+          // renderers={renderers}
         />
         <View style={{ flexDirection: 'row', paddingVertical: 15 }}>
           <View style={{ flexDirection: 'row', flex: 1 }}>
@@ -386,7 +400,7 @@ const BottomBarSection = ({ post, email, scrollToComment, onRefresh, navigation 
 const PostDetailScreen = ({
   navigation,
   route,
-}: NativeStackScreenProps<ForestStackParams, "PostDetail">) => {
+}: StackScreenProps<ForestStackParams, "PostDetail">) => {
   const scrollRef = useRef<FlatList>(null);
   const [refreshing, setRefreshing] = useState(false);
   const [post, setPost] = useState<Post>();
@@ -503,7 +517,7 @@ const PostDetailScreen = ({
             refreshing={refreshing}
             ListHeaderComponent={
               <>
-                <PostDetailSection post={post} navigation={navigation} email={user.email} onReport={() => setModalVisible(true)} onDelete={deletePost} onUpdate={()=>navigation.navigate('PostUpload', {post: post})} onLayout={onLayout} />
+                <PostDetailSection post={post} email={user.email} onReport={() => setModalVisible(true)} onDelete={deletePost} onUpdate={()=>navigation.navigate('PostUpload', {post: post})} onLayout={onLayout} />
                 <UserInfoSection user={post.writer} posts={writerPosts.filter((item: any) => item.id !== post.id)} isLogin={isLogin} navigation={navigation} onRefresh={reRenderScreen} writer_is_followed={post.writer_is_followed}/>
                 <View style={{ flexDirection: 'row', padding: 20, alignItems: 'center' }}>
                   <View style={{ flexDirection: 'row', flex: 1 }}>

@@ -19,7 +19,7 @@ interface CommentProps {
 
 const Comment = ({ data, story_id, reRenderScreen, email, isLogin, navigation, callback }: CommentProps) => {
     const date = data.created_at.slice(0, 10);
-    const { width, height } = Dimensions.get('screen');
+    const { width, height } = Dimensions.get('window');
     const [modalVisible, setModalVisible] = useState<boolean>(false);
     const [reported, setReported] = useState<string>('');
     const [reportVisible, setReportVisible] = useState<boolean>(false);
@@ -89,7 +89,7 @@ const Comment = ({ data, story_id, reRenderScreen, email, isLogin, navigation, c
         isWriter = true;
     }
     return (
-        <View style={{borderBottomColor: '#D9D9D9', borderBottomWidth: 1, width: width-40, alignSelf: 'center', flex: 1}}>
+        <View style={{borderBottomColor: '#D9D9D9', borderBottomWidth: 1, width: width-40, alignSelf: 'center', flex: 1, paddingVertical: 15,}}>
             <View style = {{ flexDirection: 'row', paddingVertical: 15, alignItems: 'center'}}>
                 <View style = {{alignSelf: 'center'}}>
                     <Image source={{uri: data.profile_image}} style={{width:50,height:50,borderRadius:60}} />
@@ -117,7 +117,7 @@ const Comment = ({ data, story_id, reRenderScreen, email, isLogin, navigation, c
                 </View>
                 <Modal visible={modalVisible} transparent={true} onRequestClose={() => setModalVisible(false)} >
                     <Pressable style={{flex:1, backgroundColor:'rgba(0, 0, 0, 0.5)'}} onPress={()=>setModalVisible(false)}/>
-                    <View style={{backgroundColor: 'white', width: width, position: 'absolute', top: height-245}}>
+                    <View style={{backgroundColor: 'white', width: width, position: 'absolute', top: height-200}}>
                     <TouchableOpacity style={{justifyContent: 'center', alignItems: 'center', paddingVertical: 35}} onPress={() => {callback(data.content, data.id); setModalVisible(false)}}>
                         <Text style={{fontSize: 16, fontWeight: '700'}}>수정</Text>
                     </TouchableOpacity>

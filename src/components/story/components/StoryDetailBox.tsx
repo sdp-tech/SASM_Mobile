@@ -1,7 +1,10 @@
-import { View, StyleSheet, TouchableOpacity, Dimensions, Image, Alert, ImageBackground } from 'react-native';
+import { View, StyleSheet, TouchableOpacity, Dimensions, Image, Alert, ImageBackground, Platform } from 'react-native';
 import { TextPretendard as Text } from '../../../common/CustomText';
 import { useState, useEffect } from 'react';
 import { Request } from '../../../common/requests';
+import { useNavigation } from '@react-navigation/native';
+import { TabProps } from '../../../../App';
+import { StackNavigationProp } from '@react-navigation/stack';
 import styled from 'styled-components/native';
 import RenderHTML from 'react-native-render-html';
 import Place from '../../../assets/img/Story/Place.svg';
@@ -68,6 +71,7 @@ const StoryDetailBox = ({navigation, data, isLogin, onLayout, email, onRefresh, 
     const [follow, setFollow] = useState<boolean>(data.writer_is_followed);
     const [dot, setDot] = useState<boolean>(false);
     const user = Boolean(data.writer === email)
+    const navigationToTab = useNavigation<StackNavigationProp<TabProps>>();
     const request = new Request();
 
     const onFollow = async () => {
@@ -114,7 +118,7 @@ const StoryDetailBox = ({navigation, data, isLogin, onLayout, email, onRefresh, 
     const handlePageGoToMap = async () => {
         const response = await request.get('/stories/go_to_map/', {id: data.id});
         console.log(response)
-        navigation.navigate('맵', {coor: {latitude: response.data.data.latitude, longitude: response.data.data.longitude}});
+        navigationToTab.navigate('맵', {place_name: data.place_name})
     }
 
     const markup = {
@@ -130,6 +134,19 @@ const StoryDetailBox = ({navigation, data, isLogin, onLayout, email, onRefresh, 
           }
         }
     };
+
+    const tagsStyles = {
+        span: {
+          fontSize: 16,
+          lineHeight: 30,
+          letterSpacing: -0.6
+        },
+        h6: {
+            fontSize: 12,
+            lineHeight: 30,
+            letterSpacing: -0.6
+        }
+    }
 
     const category = () => {
         let idx = MatchCategory(data.category);
@@ -152,7 +169,7 @@ const StoryDetailBox = ({navigation, data, isLogin, onLayout, email, onRefresh, 
     return (
         <View onLayout={onLayout}>
             <View>
-                <TouchableOpacity style={{position: 'absolute', zIndex: 1, top: 50, left: 10}} onPress={() => {navigation.goBack()}}>
+                <TouchableOpacity style={{position: 'absolute', zIndex: 1, top: Platform.OS === 'ios' ? 50:20, left: 10}} onPress={() => {navigation.goBack()}}>
                     <ArrowWhite width={18} height={18} strokeWidth={5} />
                 </TouchableOpacity>
                     {data!.extra_pics.length > 0 ? (
@@ -177,11 +194,11 @@ const StoryDetailBox = ({navigation, data, isLogin, onLayout, email, onRefresh, 
                             <View style={{backgroundColor: 'rgba(0,0,0,0.2)', width: width, height: 330}} />
                         </ImageBackground>
                     )}
-                <TouchableOpacity style={{position: 'absolute', zIndex: 1, top: 55, right: 20}} onPress={() => setDot(!dot)}>
+                <TouchableOpacity style={{position: 'absolute', zIndex: 1, top: Platform.OS === 'ios' ? 55:25, right: 20}} onPress={() => setDot(!dot)}>
                     <Settings transform={[{ rotate: dot ? '90deg' : '0deg'}]} color={'white'} />
                 </TouchableOpacity>
                 { dot &&
-                <View style={{position: 'absolute', backgroundColor: 'white', top: 75, left: width-140, borderRadius: 4}}>
+                <View style={{position: 'absolute', backgroundColor: 'white', top: Platform.OS === 'ios' ? 75: 50, left: width-140, borderRadius: 4}}>
                     <TouchableOpacity style={{borderColor: 'rgba(168, 168, 168, 0.20)', borderBottomWidth: 1, paddingHorizontal: 40, paddingVertical: 10}} onPress={onUpdate} disabled={!user}>
                         <Text style={{fontSize: 14, lineHeight: 20, letterSpacing: -0.6, opacity: user ? 1 : 0.4}}>수정하기</Text>
                     </TouchableOpacity>
@@ -229,6 +246,7 @@ const StoryDetailBox = ({navigation, data, isLogin, onLayout, email, onRefresh, 
                     contentWidth = {width}
                     source = {markup}
                     renderersProps = {renderersProps}
+                    tagsStyles = {tagsStyles}
                 />
             </View>
             <TouchableOpacity onPress = {handlePageGoToMap}>

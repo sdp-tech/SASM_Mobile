@@ -17,7 +17,7 @@ const CategoryWrapper = styled.TouchableOpacity<{ selected: boolean, color: stri
   background-color: ${props => props.selected ? props.color : '#FFFFFF'};
   padding: 5px 10px;
   border-radius: 12px;
-  margin: 0 10px;
+  margin: ${props => props.story ? '0 5px' : '0 10px'};
   border-color: 'rgba(203, 203, 203, 1)';
   border-width: ${props => props.story ? 1 : 0};
 `

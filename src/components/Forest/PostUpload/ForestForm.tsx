@@ -118,9 +118,9 @@ const ForestForm = ({ tab, setTab, navigation, post }: PostUploadParams) => {
         });
       } else if (key === 'hashtags') {
         let hashtags = value.split('#');
-        hashtags = hashtags.splice(1);
+        hashtags = hashtags.splice(1);  // array
         for (const _hashtag of hashtags){
-          formData.append('hashtags', "add,"+_hashtag.trim());
+          if(_hashtag.length > 0) formData.append('hashtags', "add,"+_hashtag.trim());
         }
       } else if (key === 'category') {
         formData.append('category', category.id.toString())
@@ -158,7 +158,7 @@ const ForestForm = ({ tab, setTab, navigation, post }: PostUploadParams) => {
         };
         for (const item of hashtags) {
           if (!hashtag.includes(item)) {
-            formData.append('hashtags', `add,${item.trim()}`);
+            if(item.length > 0) formData.append('hashtags', `add,${item.trim()}`);
           }
         };
       } else if (key === 'photos') {

@@ -34,13 +34,14 @@ export interface MyForestItemCardProps {
   preview: string;
   rep_pic: string;
   writer: string;
+  nickname: string;
   writer_is_verified: boolean;
 }
 
 export default function MyForestItemCard({ props, edit, rerender }: { props: MyForestItemCardProps, edit: boolean, rerender: () => void }) {
   const request = new Request();
   const navigationToTab = useNavigation<StackNavigationProp<TabProps>>();
-  const { id, title, forest_like, preview, rep_pic, writer, writer_is_verified } = props;
+  const { id, title, forest_like, preview, rep_pic, writer, nickname, writer_is_verified } = props;
   const [like, setLike] = useState<boolean>(forest_like);
 
   const handlelike = async () => {
@@ -55,7 +56,7 @@ export default function MyForestItemCard({ props, edit, rerender }: { props: MyF
           <TextBox>
             <Text style={TextStyles.title} numberOfLines={1} ellipsizeMode='tail'>{title}</Text>
             <Text style={TextStyles.preview} numberOfLines={2} ellipsizeMode='tail'>{preview}</Text>
-            <Text style={TextStyles.writer}>{writer}</Text>
+            <Text style={TextStyles.writer}>{nickname}</Text>
           </TextBox>
           <Image source={{ uri: rep_pic }} style={{ width: 88, height: 88 }} />
         </Container>

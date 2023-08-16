@@ -90,13 +90,13 @@ const Comment = ({ data, reRenderScreen, post_id, email, isLogin, navigation, ca
     }
 
     return (
-        <View style={{borderBottomColor: '#D9D9D9', borderBottomWidth: 1, width: width-40, alignSelf: 'center', flex: 1}}>
+        <View style={{borderBottomColor: '#D9D9D9', borderBottomWidth: 1, width: width-40, paddingVertical: 15, alignSelf: 'center', flex: 1}}>
             <View style = {{ flexDirection: 'row', paddingVertical: 15, alignItems: 'center'}}>
                 <View style = {{alignSelf: 'center'}}>
                     <Image source={{uri: data.writer.profile}} style={{width:50,height:50,borderRadius:60}} />
                 </View>
                 <View style={{ marginLeft: 10, flex: 1}}>
-                    <View style={{flexDirection: 'row', justifyContent: 'space-between'}}>
+                    <View style={{flexDirection: 'row', justifyContent: 'space-between', marginBottom: 10}}>
                         <View style={{flexDirection: 'row', alignItems: 'center'}}>
                             <Text style={[textStyles.nickname, {color: data!.writer.is_verified? '#209DF5' : '#89C77F'}]}>{data!.writer.is_verified ? ('Editor') : ('User')}</Text>
                             <Text style={textStyles.nickname}> {data!.writer.nickname}</Text>
@@ -118,7 +118,7 @@ const Comment = ({ data, reRenderScreen, post_id, email, isLogin, navigation, ca
                 </View>
                 <Modal visible={modalVisible} transparent={true} onRequestClose={() => setModalVisible(false)} >
                   <Pressable style={{flex:1, backgroundColor:'rgba(0, 0, 0, 0.5)'}} onPress={()=>setModalVisible(false)} />
-                    <View style={{backgroundColor: 'white', width: width, position: 'absolute', top: height-245}}>
+                    <View style={{backgroundColor: 'white', width: width, position: 'absolute', top: height-200}}>
                       <TouchableOpacity style={{justifyContent: 'center', alignItems: 'center', paddingVertical: 35}} onPress={() => {callback(data.content, data.id); setModalVisible(false)}}>
                         <Text style={{fontSize: 16, fontWeight: '700'}}>수정</Text>
                       </TouchableOpacity>
@@ -157,7 +157,6 @@ const textStyles = StyleSheet.create({
         color: '#202020',
         lineHeight: 20,
         letterSpacing: -0.6,
-        marginTop: 5
     }
 })
 

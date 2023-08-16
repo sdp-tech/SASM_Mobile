@@ -100,11 +100,11 @@ const StorySearchPage = ({ navigation }: StoryProps) => {
   }
 
   const recommendData = [
-    '슬로우 패션', '비건', 'ESG', '비건 레시피', '비건 레스토랑', '자연', '숲', '한강'
+    '비건', '제로웨이스트', '카페', '식당', '서울', '한강', '자연'
   ]
 
   return (
-    <SafeAreaView style={{flex: 1, backgroundColor: 'white'}}>
+    <SafeAreaView style={{flex: 1, backgroundColor: 'white', paddingTop: 10}}>
       <View style={{flexDirection: 'row'}}>
         <TouchableOpacity style={{justifyContent: 'center', marginLeft: 10}} onPress={()=>{navigation.goBack();}}>
           <Arrow width={18} height={18} transform={[{rotate: '180deg'}]} />
@@ -165,8 +165,8 @@ const StorySearchPage = ({ navigation }: StoryProps) => {
             <View style={{flex: 1, flexDirection: 'row', flexWrap: 'wrap'}}>
               {recommendData.map((item) => (
                 <TouchableOpacity onPress={()=>{setSearch(item)}}
-                  style={{height: 30, borderRadius: 16, borderColor: '#67D393', borderWidth: 1, paddingVertical: 4, paddingHorizontal: 16, marginRight: 8, marginBottom: 8}}>
-                  <Text style={{color: '#202020', fontSize: 14, lineHeight: 20}}>{item}</Text>
+                  style={{height: 30, borderRadius: 16, borderColor: '#67D393', borderWidth: 1, paddingVertical: 4, paddingHorizontal: 16, marginRight: 8, marginBottom: 8, justifyContent: 'center'}}>
+                  <Text style={{color: '#202020', fontSize: 14}}>{item}</Text>
                 </TouchableOpacity>
               ))}
             </View>

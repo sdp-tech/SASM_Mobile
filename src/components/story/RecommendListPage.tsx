@@ -39,7 +39,7 @@ const RecommendListPage = ({ navigation, route }: StoryProps) => {
 
   const curationItem = ({item}: any) => {
     return (
-      <SearchItemCard data={item} style={{ width: width / 2 - 15, height: height / 3, margin: 5 }}  />
+      <SearchItemCard data={item} style={{ width: width / 2 - 15, height: height / 3, margin: 5 }} onPress={() => navigation.navigate('홈', { id: item.id})} />
     )
   }
 
@@ -47,8 +47,6 @@ const RecommendListPage = ({ navigation, route }: StoryProps) => {
     setRefreshing(false);
     setRefreshing(true);
   }
-
-  useEffect(() => {console.log(data)})
 
   return (
     <SafeAreaView style={{flex: 1, backgroundColor: 'white'}}>

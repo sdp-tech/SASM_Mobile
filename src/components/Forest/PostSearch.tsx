@@ -106,7 +106,7 @@ const PostSearchScreen = ({
   ]
 
   return (
-    <SafeAreaView style={{ flex: 1, backgroundColor: "white" }}>
+    <SafeAreaView style={{ flex: 1, backgroundColor: "white", paddingTop: 10 }}>
       <View style={{flexDirection: 'row'}}>
       <TouchableOpacity style={{justifyContent: 'center', marginLeft: 10}} onPress={()=>{navigation.goBack();}}>
         <Arrow width={18} height={18} transform={[{rotate: '180deg'}]} />
@@ -213,8 +213,8 @@ const PostSearchScreen = ({
             <View style={{flex: 1, flexDirection: 'row', flexWrap: 'wrap', }}>
               {recommendData.map((item) => (
                 <TouchableOpacity onPress={()=>{setSearch(item)}}
-                  style={{height: 30, borderRadius: 16, borderColor: '#67D393', borderWidth: 1, paddingVertical: 4, paddingHorizontal: 16, marginRight: 8, marginBottom: 8}}>
-                  <Text style={{color: '#202020', fontSize: 14, lineHeight: 20}}>{item}</Text>
+                  style={{height: 30, borderRadius: 16, borderColor: '#67D393', borderWidth: 1, paddingVertical: 4, paddingHorizontal: 16, marginRight: 8, marginBottom: 8, justifyContent: 'center'}}>
+                  <Text style={{color: '#202020', fontSize: 14}}>{item}</Text>
                 </TouchableOpacity>
               ))}
             </View>

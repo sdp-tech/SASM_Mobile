@@ -15,6 +15,8 @@ import PlusButton from "../../common/PlusButton";
 import { LoginContext } from "../../common/Context";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { TabProps } from "../../../App";
+import { ScrollView } from "react-native-gesture-handler";
+import { getStatusBarHeight } from "react-native-status-bar-height";
 
 export interface StoryListProps {
   id: number;
@@ -44,9 +46,10 @@ const StoryMainPage = ({ navigation, route }: StoryProps) => {
   const [refreshing, setRefreshing] = useState<boolean>(false);
   const [checkedList, setCheckedList] = useState<string[]>([]);
   const [count, setCount] = useState<number>(0);
-  const { width, height } = Dimensions.get("screen");
+  const { width, height } = Dimensions.get("window");
   const navigationToTab = useNavigation<StackNavigationProp<TabProps>>();
   const request = new Request();
+  const statusBarHeight = getStatusBarHeight();
 
   useEffect(() => {
     onChangeOrder();
@@ -87,7 +90,7 @@ const StoryMainPage = ({ navigation, route }: StoryProps) => {
           navigation.navigate("StorySearch");
         }}
       />
-          <View style={{ flexDirection: "row", paddingHorizontal: 30, paddingVertical: 20 }}>
+          <View style={{ flexDirection: "row", paddingHorizontal: 30, paddingVertical: height * 0.02 }}>
             <View style={{ flex: 1 }}>
               <Text style={textStyles.title}>{toggleItems[orderList].title}</Text>
               <Text style={textStyles.subtitle}>{toggleItems[orderList].subtitle}</Text>
@@ -96,14 +99,14 @@ const StoryMainPage = ({ navigation, route }: StoryProps) => {
               <Reload />
             </TouchableOpacity>
           </View>
-          <View style={{ borderTopColor: 'rgba(203, 203, 203, 1)', borderTopWidth: 1, paddingTop: 10}}>
+          <View style={{ borderTopColor: 'rgba(203, 203, 203, 1)', borderTopWidth: 1, paddingTop: 10, paddingLeft: 15}}>
             <Category
               checkedList={checkedList}
               setCheckedList={setCheckedList}
               story={true}
             />
           </View>
-          <View style={{ paddingVertical: 5 }}>
+          <ScrollView scrollEnabled={height-statusBarHeight-88 > 700 ? false : true} style={{ marginVertical: 10 }} showsVerticalScrollIndicator={false}>
             <CardView data={item} gap={0} offset={0} pageWidth={width} dot={true} green={true}
               renderItem={({ item }: any) => {
                 return (
@@ -121,11 +124,10 @@ const StoryMainPage = ({ navigation, route }: StoryProps) => {
                     writer_is_verified={item.writer_is_verified}
                     isLogin={isLogin}
                     navigation={navigation}
-                    width={width}
                   />
                 )
               }} />
-          </View>
+          </ScrollView>
           <PlusButton
         onPress={() => {
           if(!isLogin) {
