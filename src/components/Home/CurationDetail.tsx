@@ -11,6 +11,8 @@ import { useFocusEffect, useNavigation } from '@react-navigation/native';
 import { AppProps, TabProps } from '../../../App';
 import CardView from '../../common/CardView';
 import Heart from '../../common/Heart';
+import ShareButton from "../../common/ShareButton";
+import CommentIcon from '../../assets/img/Story/Comment.svg';
 import { LoginContext } from '../../common/Context';
 
 const { width, height } = Dimensions.get('window');
@@ -86,21 +88,21 @@ interface CuratedStoryProps {
   writer_is_followed: boolean;
 }
 
-const following = async (target: string, isLogin: boolean, navigation:StackNavigationProp<TabProps>, following?:boolean, setFollowing?:Dispatch<SetStateAction<boolean>>) => {
+const following = async (target: string, isLogin: boolean, navigation: StackNavigationProp<TabProps>, following?: boolean, setFollowing?: Dispatch<SetStateAction<boolean>>) => {
   const request = new Request();
   if (!isLogin) {
     Alert.alert('로그인이 필요합니다', "",
-    [         
-      {
-        text: "로그인",
-        onPress: () => navigation.navigate('마이페이지'),
-        style: "cancel"
-      },
-      {
-        text: "ok",
-        style: "cancel"
-      },
-    ])
+      [
+        {
+          text: "로그인",
+          onPress: () => navigation.navigate('마이페이지'),
+          style: "cancel"
+        },
+        {
+          text: "ok",
+          style: "cancel"
+        },
+      ])
     return;
   }
 
@@ -108,16 +110,17 @@ const following = async (target: string, isLogin: boolean, navigation:StackNavig
     {
       targetEmail: target
     })
-    if(setFollowing) {
+  if (setFollowing) {
     setFollowing(!following);
-    }
-  if(response.data.status == 'fail') Alert.alert(response.data.message)
+  }
+  if (response.data.status == 'fail') Alert.alert(response.data.message)
 }
 
 export default function CurationDetail({ navigation, route }: StackScreenProps<HomeStackParams, 'Detail'>): JSX.Element {
   const { isLogin, setLogin } = useContext(LoginContext);
   const navigationTab = useNavigation<StackNavigationProp<TabProps>>();
   const request = new Request();
+  const [like, setLike] = useState<boolean>(false);
   const [curatedStory, setCuratedStory] = useState<CuratedStoryProps[]>([]);
   const [curationDetail, setCurationDetail] = useState<CurationDetailProps>({
     contents: '',
@@ -142,6 +145,7 @@ export default function CurationDetail({ navigation, route }: StackScreenProps<H
     const response_detail = await request.get(`/curations/curation_detail/${route.params.id}/`);
     console.error(response_detail.data.data)
     setCurationDetail(response_detail.data.data);
+    setLike(response_detail.data.data.curation_like);
     Image.getSize(response_detail.data.data.rep_pic, (width, height) => { setReppicSize({ width: width, height: height }) });
     Image.getSize(response_detail.data.data.map_image, (width, height) => { setMapImageSize({ width: width, height: height }) })
   }
@@ -153,17 +157,17 @@ export default function CurationDetail({ navigation, route }: StackScreenProps<H
   const handleLike = async () => {
     if (!isLogin) {
       Alert.alert('로그인이 필요합니다', "",
-      [         
-        {
-          text: "로그인",
-          onPress: () => navigationTab.navigate('마이페이지'),
-          style: "cancel"
-        },
-        {
-          text: "ok",
-          style: "cancel"
-        },
-      ])
+        [
+          {
+            text: "로그인",
+            onPress: () => navigationTab.navigate('마이페이지'),
+            style: "cancel"
+          },
+          {
+            text: "ok",
+            style: "cancel"
+          },
+        ])
       return;
     }
     const response = await request.post(`/curations/curation_like/${route.params.id}/`);
@@ -193,11 +197,11 @@ export default function CurationDetail({ navigation, route }: StackScreenProps<H
           </View>
           <TouchableOpacity style={{ position: 'absolute', right: 25 }}
             onPress={() => { following(curationDetail.writer_email, isLogin, navigationTab) }}>
-              {
-                curationDetail.writer_is_followed ? 
-                <Text style={TextStyles.unfollow}>취소</Text>:
+            {
+              curationDetail.writer_is_followed ?
+                <Text style={TextStyles.unfollow}>취소</Text> :
                 <Text style={TextStyles.following}>+ 팔로잉</Text>
-              }
+            }
           </TouchableOpacity>
         </InfoBox>
         <ContentBox>
@@ -207,9 +211,14 @@ export default function CurationDetail({ navigation, route }: StackScreenProps<H
         <GotoMap onPress={() => { navigationTab.navigate('맵', {}) }}>
           <Text style={TextStyles.gotomap}>맵페이지로 이동</Text>
         </GotoMap>
-        <ButtonBox>
-          <Heart like={curationDetail.like_curation} onPress={handleLike} />
-        </ButtonBox>
+
+        <View style={{ flexDirection: "row", padding: 10 }}>
+          <View style={{ flexDirection: 'row', flex: 1, alignItems: 'center' }}>
+            <Heart color={'#202020'} like={like} onPress={handleLike} size={18} ></Heart>
+            {/* <Text style={{ fontSize: 14, color: '#202020', lineHeight: 20, marginLeft: 3, marginRight: 10 }}>{curationDetail.like_cnt}</Text> */}
+          </View>
+          <ShareButton color={'black'} message={`[SASM Curation] ${curationDetail.title}`} />
+        </View>
         {
           curatedStory.map(data =>
             <Storys data={data} navigation={navigationTab} />
@@ -221,7 +230,7 @@ export default function CurationDetail({ navigation, route }: StackScreenProps<H
 }
 
 const Storys = ({ navigation, data }: { navigation: StackNavigationProp<TabProps>, data: CuratedStoryProps }) => {
-  const {isLogin, setLogin} = useContext(LoginContext);
+  const { isLogin, setLogin } = useContext(LoginContext);
   const [like, setLike] = useState<boolean>(false);
   const [followed, setFollowed] = useState<boolean>(false);
 
@@ -229,17 +238,17 @@ const Storys = ({ navigation, data }: { navigation: StackNavigationProp<TabProps
   const handleLike = async () => {
     if (!isLogin) {
       Alert.alert('로그인이 필요합니다', "",
-      [         
-        {
-          text: "로그인",
-          onPress: () => navigation.navigate('마이페이지'),
-          style: "cancel"
-        },
-        {
-          text: "ok",
-          style: "cancel"
-        },
-      ])
+        [
+          {
+            text: "로그인",
+            onPress: () => navigation.navigate('마이페이지'),
+            style: "cancel"
+          },
+          {
+            text: "ok",
+            style: "cancel"
+          },
+        ])
       return;
     }
     const response_like = await request.post('/stories/story_like/', { id: data.story_id });
@@ -266,13 +275,13 @@ const Storys = ({ navigation, data }: { navigation: StackNavigationProp<TabProps
           <Text style={TextStyles.created}>{data.created.slice(0, 10).replace(/-/gi, '.')}작성</Text>
         </View>
         <TouchableOpacity style={{ position: 'absolute', right: 25 }}
-            onPress={() => { following(data.writer_email, isLogin, navigation, followed, setFollowed)  }}>
-              {
-                followed ? 
-                <Text style={TextStyles.unfollow}>취소</Text>:
-                <Text style={TextStyles.following}>+ 팔로잉</Text>
-              }
-          </TouchableOpacity>
+          onPress={() => { following(data.writer_email, isLogin, navigation, followed, setFollowed) }}>
+          {
+            followed ?
+              <Text style={TextStyles.unfollow}>취소</Text> :
+              <Text style={TextStyles.following}>+ 팔로잉</Text>
+          }
+        </TouchableOpacity>
       </InfoBox>
       {
         data.rep_photos != null &&
@@ -363,12 +372,12 @@ const TextStyles = StyleSheet.create({
     textAlign: 'center',
     overflow: 'hidden'
   },
-  unfollow : {
+  unfollow: {
     width: 75,
     height: 28,
     borderRadius: 14,
     borderColor: '#4DB1F7',
-    borderWidth:1,
+    borderWidth: 1,
     letterSpacing: -0.6,
     fontSize: 12,
     lineHeight: 28,
