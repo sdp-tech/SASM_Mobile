@@ -48,6 +48,18 @@ export function MatchCategory(data: string): number {
   return index;
 }
 
+export function CategoryIcon({data}:{data:string}) {
+  const index = MatchCategory(data);
+  switch(index) {
+    case 0: return <Selector0 width={18} height={18} color={CATEGORY_LIST[index].color}/>
+    case 1: return <Selector1 width={18} height={18} color={CATEGORY_LIST[index].color}/>
+    case 2: return <Selector2 width={18} height={18} color={CATEGORY_LIST[index].color}/>
+    case 3: return <Selector3 width={18} height={18} color={CATEGORY_LIST[index].color}/>
+    case 4: return <Selector4 width={18} height={18} color={CATEGORY_LIST[index].color}/>
+    case 5: return <Selector5 width={18} height={18} color={CATEGORY_LIST[index].color}/>
+  }
+}
+
 
 interface CategoryProps {
   checkedList: string[];
