@@ -96,7 +96,7 @@ export default function CurationForm({ navigation, route }: StackScreenProps<Hom
   const request = new Request();
   const statusBarHeight = getStatusBarHeight();
   const iOS = Boolean(Platform.OS === 'ios');
-
+  
   const handleCheckedList = (id: number): void => {
     setSelectedStory(selectedStory.filter(element => element.id != id));
   }
