@@ -79,7 +79,7 @@ const MyPlace = () => {
       if (type) getPlaces();
       else getWrittenReview();
     }
-  }, [page, search, checkedList, type, refresh]))
+  }, [isLogin, page, search, checkedList, type, refresh]))
 
   return (
     <View style={styles().Container}>
