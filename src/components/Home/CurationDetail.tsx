@@ -32,11 +32,6 @@ const ContentBox = styled.View`
 const GotoMap = styled.TouchableOpacity`
   margin: 20px auto;
 `
-const ButtonBox = styled.View`
-  border-top-width: 3px;
-  border-color: #EAEAEA;
-  padding: 10px 25px;
-`
 const StorySection = styled.View`
   border-top-width: 3px;
   border-color: #EAEAEA;
@@ -88,7 +83,7 @@ interface CuratedStoryProps {
   writer_is_followed: boolean;
 }
 
-const following = async (target: string, isLogin: boolean, navigation: StackNavigationProp<TabProps>, following?: boolean, setFollowing?: Dispatch<SetStateAction<boolean>>) => {
+const handleFollow = async (target: string, isLogin: boolean, navigation: StackNavigationProp<TabProps>, following?: boolean, setFollowing?: Dispatch<SetStateAction<boolean>>) => {
   const request = new Request();
   if (!isLogin) {
     Alert.alert('로그인이 필요합니다', "",
@@ -121,6 +116,7 @@ export default function CurationDetail({ navigation, route }: StackScreenProps<H
   const navigationTab = useNavigation<StackNavigationProp<TabProps>>();
   const request = new Request();
   const [like, setLike] = useState<boolean>(false);
+  const [following, setFollowing] = useState<boolean>(false);
   const [curatedStory, setCuratedStory] = useState<CuratedStoryProps[]>([]);
   const [curationDetail, setCurationDetail] = useState<CurationDetailProps>({
     contents: '',
@@ -146,6 +142,7 @@ export default function CurationDetail({ navigation, route }: StackScreenProps<H
     console.error(response_detail.data.data)
     setCurationDetail(response_detail.data.data);
     setLike(response_detail.data.data.curation_like);
+    setFollowing(response_detail.data.data.writer_is_followed);
     Image.getSize(response_detail.data.data.rep_pic, (width, height) => { setReppicSize({ width: width, height: height }) });
     Image.getSize(response_detail.data.data.map_image, (width, height) => { setMapImageSize({ width: width, height: height }) })
   }
@@ -196,9 +193,9 @@ export default function CurationDetail({ navigation, route }: StackScreenProps<H
             <Text style={TextStyles.created}>{curationDetail.created.slice(0, 10).replace(/-/gi, '.')}작성</Text>
           </View>
           <TouchableOpacity style={{ position: 'absolute', right: 25 }}
-            onPress={() => { following(curationDetail.writer_email, isLogin, navigationTab) }}>
+            onPress={() => { handleFollow(curationDetail.writer_email, isLogin, navigationTab, following, setFollowing) }}>
             {
-              curationDetail.writer_is_followed ?
+              following ?
                 <Text style={TextStyles.unfollow}>취소</Text> :
                 <Text style={TextStyles.following}>+ 팔로잉</Text>
             }
@@ -275,7 +272,7 @@ const Storys = ({ navigation, data }: { navigation: StackNavigationProp<TabProps
           <Text style={TextStyles.created}>{data.created.slice(0, 10).replace(/-/gi, '.')}작성</Text>
         </View>
         <TouchableOpacity style={{ position: 'absolute', right: 25 }}
-          onPress={() => { following(data.writer_email, isLogin, navigation, followed, setFollowed) }}>
+          onPress={() => { handleFollow(data.writer_email, isLogin, navigation, followed, setFollowed) }}>
           {
             followed ?
               <Text style={TextStyles.unfollow}>취소</Text> :
