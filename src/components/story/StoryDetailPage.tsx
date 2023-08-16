@@ -17,6 +17,7 @@ import { BottomSheetModalProvider } from '@gorhom/bottom-sheet';
 import { StackNavigationProp } from '@react-navigation/stack';
 import { HomeStackParams } from '../../pages/Home';
 import { useNavigation } from '@react-navigation/native';
+import { TabProps } from '../../../App';
 
 interface PostRecommendSectionProps {
   curations: any;
@@ -35,7 +36,7 @@ interface BottomBarSectionProps {
 const { width, height } = Dimensions.get('screen');
 
 const PostRecommendSection = ({ curations, stories, navigation }: PostRecommendSectionProps) => {
-  const navigationHome = useNavigation<StackNavigationProp<HomeStackParams>>();
+  const navigationHome = useNavigation<StackNavigationProp<TabProps>>();
   return (
     <View>
       {curations.length > 0 &&
@@ -54,7 +55,7 @@ const PostRecommendSection = ({ curations, stories, navigation }: PostRecommendS
         pageWidth={width*0.6}
         dot={false}
         renderItem={({item}: any) => (
-          <TouchableOpacity style={{marginHorizontal: 8}} onPress={() => { navigationHome.navigate('Detail', { id: item.id }) }}>
+          <TouchableOpacity style={{marginHorizontal: 8}} onPress={() => { navigationHome.navigate('홈', { id: item.id }) }}>
             <ImageBackground
               style={{width: width*0.5, height: width*0.5}}
               source={{uri: item.rep_pic}}
@@ -85,7 +86,7 @@ const PostRecommendSection = ({ curations, stories, navigation }: PostRecommendS
       pageWidth={width*0.6}
       dot={false}
       renderItem={({item}: any) => (
-        <TouchableOpacity style={{marginHorizontal: 8}} onPress={() => navigation.replace('StoryDetail', { id: item.id })}>
+        <TouchableOpacity style={{marginHorizontal: 8}} onPress={() => navigation.push('StoryDetail', { id: item.id })}>
           <ImageBackground
             style={{width: width*0.5, height: width*0.25}}
             source={{uri: item.rep_pic}}
