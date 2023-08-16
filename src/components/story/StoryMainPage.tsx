@@ -99,7 +99,7 @@ const StoryMainPage = ({ navigation, route }: StoryProps) => {
               <Reload />
             </TouchableOpacity>
           </View>
-          <View style={{ borderTopColor: 'rgba(203, 203, 203, 1)', borderTopWidth: 1, paddingTop: 10}}>
+          <View style={{ borderTopColor: 'rgba(203, 203, 203, 1)', borderTopWidth: 1, paddingTop: 10, paddingLeft: 15}}>
             <Category
               checkedList={checkedList}
               setCheckedList={setCheckedList}

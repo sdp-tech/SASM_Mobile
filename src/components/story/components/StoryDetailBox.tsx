@@ -131,6 +131,19 @@ const StoryDetailBox = ({navigation, data, isLogin, onLayout, email, onRefresh, 
         }
     };
 
+    const tagsStyles = {
+        span: {
+          fontSize: 16,
+          lineHeight: 30,
+          letterSpacing: -0.6
+        },
+        h6: {
+            fontSize: 12,
+            lineHeight: 30,
+            letterSpacing: -0.6
+        }
+    }
+
     const category = () => {
         let idx = MatchCategory(data.category);
         let list = [
@@ -229,6 +242,7 @@ const StoryDetailBox = ({navigation, data, isLogin, onLayout, email, onRefresh, 
                     contentWidth = {width}
                     source = {markup}
                     renderersProps = {renderersProps}
+                    tagsStyles = {tagsStyles}
                 />
             </View>
             <TouchableOpacity onPress = {handlePageGoToMap}>

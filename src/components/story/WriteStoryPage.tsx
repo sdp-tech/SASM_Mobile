@@ -6,8 +6,9 @@ import { ImageLibraryOptions, launchCamera, launchImageLibrary } from 'react-nat
 import { Request } from '../../common/requests';
 import FormHeader from '../../common/FormHeader';
 import FinishModal from '../../common/FinishModal';
-import ModalSelector from 'react-native-modal-selector';
+import ModalSelector from 'react-native-modal-selector-searchable';
 import { StoryProps } from '../../pages/Story';
+import { getStatusBarHeight } from 'react-native-status-bar-height';
 
 const { width, height } = Dimensions.get('window');
 
@@ -22,6 +23,7 @@ export default function WriteStoryPage({ navigation, route }: StoryProps) {
   const [photoList, setPhotoList] = useState([] as any);
   const [modalVisible, setModalVisible] = useState(false);
   const [storyId, setStoryId] = useState<number>(0);
+  const statusBarHeight = getStatusBarHeight();
   const hasUnsavedChanges = Boolean(story.title.length > 0 || story.tag.length > 0 || story.preview.length > 0 || story.place != 0 || story.html_content.length > 0 || photoList.length > 0 || repPic.length > 0);
 
   const options: ImageLibraryOptions = {
@@ -232,11 +234,15 @@ export default function WriteStoryPage({ navigation, route }: StoryProps) {
           keyExtractor={item => item.id}
           labelExtractor={item => item.place_name}
           onChange={(option) => { setStory({ ...story, place: option.id }) }}
+          search={true}
+          searchText='장소 검색'
           initValue='장소 선택 *'
           initValueTextStyle={{textAlign: 'left', fontSize: 14, color: '#bcbcbe'}}
           optionStyle={{height: 40}}
           selectStyle={{borderRadius: 0, borderTopColor: '#D9D9D9', borderBottomColor: '#D9D9D9', borderLeftWidth:0, borderRightWidth:0, borderBottomWidth: 1, alignItems: 'flex-start', padding: 10, height: 40}}
           selectTextStyle={{fontSize: 14, color: 'black'}}
+          optionContainerStyle={{height: height-statusBarHeight-100}}
+          cancelText='취소'
         />
           </>
         </TouchableWithoutFeedback>
