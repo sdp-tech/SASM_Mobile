@@ -51,7 +51,7 @@ export default function RegisterScreen({ navigation, route }: StackScreenProps<M
 
 function RegisterHome({ navigation, route }: StackScreenProps<RegisterParams>) {
   return (
-    <SafeAreaView style={{ flex: 1, backgroundColor: '#FFFFFF', display: 'flex', alignItems: 'center', width: '100%' }}>
+    <SafeAreaView style={{ flex: 1, backgroundColor: '#FFFFFF', display: 'flex', alignItems: 'center', width: '100%', justifyContent: 'center' }}>
       <Logo width={56} height={56} style={{marginTop: 60}}/>
       <Text style={TextStyles.home_title}>SASM</Text>
       <Text style={TextStyles.home_subtitle}>당신의 발자국에 녹색을 더합니다</Text>
