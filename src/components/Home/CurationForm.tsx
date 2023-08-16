@@ -101,10 +101,6 @@ export default function CurationForm({ navigation, route }: StackScreenProps<Hom
     setSelectedStory(selectedStory.filter(element => element.id != id));
   }
 
-  const handleCheckedList = (id: number): void => {
-    setSelectedStory(selectedStory.filter(element => element.id != id));
-  }
-
   const uploadCuration = async () => {
     const formData = new FormData();
     for (let i of Object.keys(form)) {

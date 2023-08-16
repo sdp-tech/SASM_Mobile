@@ -1,11 +1,14 @@
-import React from 'react';
+import React, { useCallback, useEffect } from 'react';
 import { Dimensions, StyleSheet } from 'react-native';
 import styled from 'styled-components/native';
-import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import { NativeStackScreenProps, createNativeStackNavigator } from '@react-navigation/native-stack';
+import { useNavigation, useFocusEffect } from '@react-navigation/native';
+import { StackNavigationProp, StackScreenProps } from '@react-navigation/stack';
 import CurationList from '../components/Home/CurationList ';
 import CurationDetail from '../components/Home/CurationDetail';
 import CurationForm from '../components/Home/CurationForm';
 import CurationHome, { CurationProps } from '../components/Home/CurationHome';
+import { TabProps } from '../../App';
 
 const { width, height } = Dimensions.get('screen');
 
@@ -20,8 +23,15 @@ export type HomeStackParams = {
   "Form": undefined;
 }
 
-export default function HomeScreen(): JSX.Element {
+export default function HomeScreen({navigation, route}:StackScreenProps<TabProps, '홈'>): JSX.Element {
   const HomeStack = createNativeStackNavigator<HomeStackParams>();
+
+  const navigationToHome = useNavigation<StackNavigationProp<HomeStackParams>>();
+  useEffect(()=>{
+    if(route.params?.id) {
+      navigationToHome.push('Detail', {id: route.params.id})
+    }
+  },[route.params?.id])
 
   return (
     <HomeStack.Navigator

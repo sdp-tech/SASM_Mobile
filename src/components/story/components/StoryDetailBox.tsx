@@ -2,6 +2,9 @@ import { View, StyleSheet, TouchableOpacity, Dimensions, Image, Alert, ImageBack
 import { TextPretendard as Text } from '../../../common/CustomText';
 import { useState, useEffect } from 'react';
 import { Request } from '../../../common/requests';
+import { useNavigation } from '@react-navigation/native';
+import { TabProps } from '../../../../App';
+import { StackNavigationProp } from '@react-navigation/stack';
 import styled from 'styled-components/native';
 import RenderHTML from 'react-native-render-html';
 import Place from '../../../assets/img/Story/Place.svg';
@@ -68,6 +71,7 @@ const StoryDetailBox = ({navigation, data, isLogin, onLayout, email, onRefresh, 
     const [follow, setFollow] = useState<boolean>(data.writer_is_followed);
     const [dot, setDot] = useState<boolean>(false);
     const user = Boolean(data.writer === email)
+    const navigationToTab = useNavigation<StackNavigationProp<TabProps>>();
     const request = new Request();
 
     const onFollow = async () => {
@@ -114,7 +118,7 @@ const StoryDetailBox = ({navigation, data, isLogin, onLayout, email, onRefresh, 
     const handlePageGoToMap = async () => {
         const response = await request.get('/stories/go_to_map/', {id: data.id});
         console.log(response)
-        navigation.navigate('맵', {coor: {latitude: response.data.data.latitude, longitude: response.data.data.longitude}});
+        navigationToTab.navigate('맵', {place_name: data.place_name})
     }
 
     const markup = {

@@ -55,7 +55,9 @@ const App = (): JSX.Element => {
 };
 
 export type TabProps = {
-  홈: undefined;
+  홈: {
+    id?: number | undefined;
+  };
   맵: {
     id?: number;
     coor?: Coord;
@@ -87,7 +89,13 @@ const CustomTab = ({ state, descriptors, navigation }: BottomTabBarProps) => {
       {state.routes.map((route, index) => {
         const isFocused = state.index == index;
         const onPress = () => {
-          if (route.name == "맵") {
+          if (route.name == "홈") {
+            if (isFocused)
+              navigation.reset({
+                routes: [{ name: route.name, params: { id: undefined } }],
+              });
+            else navigation.navigate(route.name, { id: undefined });
+          } else if (route.name == "맵") {
             if (isFocused)
               navigation.reset({
                 routes: [
@@ -166,6 +174,7 @@ const HomeScreens = (): JSX.Element => {
       screenOptions={() => ({
         headerShown: false,
       })}
+      backBehavior="order"
     >
       <Tab.Screen name={"홈"} component={HomeScreen} />
       <Tab.Screen name={"스토리"} component={StoryScreen} />

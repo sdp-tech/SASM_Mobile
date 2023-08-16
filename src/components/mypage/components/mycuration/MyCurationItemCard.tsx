@@ -7,6 +7,7 @@ import { HomeStackParams } from '../../../../pages/Home';
 import { TouchableWithoutFeedback } from 'react-native-gesture-handler';
 import Heart from '../../../../common/Heart';
 import { Request } from '../../../../common/requests';
+import { TabProps } from '../../../../../App';
 
 export interface MyCurationItemCardProps {
   id: number;
@@ -18,7 +19,7 @@ export interface MyCurationItemCardProps {
 const MyCurationItemCard = ({ props, edit, rerender }: { props: MyCurationItemCardProps, edit: boolean, rerender: ()=>void }) => {
   const request = new Request();
   const { width, height } = Dimensions.get("window");
-  const navigationHome = useNavigation<StackNavigationProp<HomeStackParams>>();
+  const navigationHome = useNavigation<StackNavigationProp<TabProps>>();
   const [like, setLike] = useState<boolean>(true);
 
   const handleLike = async () => {
@@ -29,7 +30,7 @@ const MyCurationItemCard = ({ props, edit, rerender }: { props: MyCurationItemCa
 
   return (
     <View style={{ position: 'relative' }} >
-      <TouchableWithoutFeedback onPress={() => { navigationHome.navigate('Detail', { id: props.id }) }}>
+      <TouchableWithoutFeedback onPress={() => { navigationHome.navigate('홈', { id: props.id }) }}>
         <ImageBackground source={{ uri: props.rep_pic }} style={{ width: width / 2, height: 240 }}>
           <View style={{ backgroundColor: 'rgba(0,0,0,0.3)', width: width / 2, height: 240, padding: 10, justifyContent: 'flex-end' }}>
             <View style={{ flexDirection: "row" }}>

@@ -5,7 +5,7 @@ import styled, { css } from 'styled-components/native';
 import { NavigationScreenProp } from 'react-navigation';
 import { Request } from '../../common/requests'
 import { useFocusEffect, useNavigation } from '@react-navigation/native';
-import { MyPageParams } from '../../pages/MyPage';
+import { MyPageProps } from '../../pages/MyPage';
 import InputWithLabel from '../../common/InputWithLabel';
 import { LoginContext } from '../../common/Context';
 import Arrow from "../../assets/img/common/Arrow.svg";
@@ -20,7 +20,7 @@ const InputWrapper = styled.View`
 
 const LoginScreen = () => {
   const {isLogin, setLogin} = useContext(LoginContext);
-  const navigation = useNavigation<NavigationScreenProp<MyPageParams>>();
+  const navigation = useNavigation<NavigationScreenProp<MyPageProps>>();
   const [form, setForm] = useState<{ email: string, password: string }>({
     email: '',
     password: ''
