@@ -1,10 +1,10 @@
 import { StackScreenProps, StackNavigationProp } from '@react-navigation/stack';
 import React, { Dispatch, SetStateAction, useCallback, useContext, useEffect, useState } from 'react';
 import { HomeStackParams } from '../../pages/Home';
-import { Alert, Dimensions, Image, SafeAreaView, StyleSheet, TouchableOpacity, View } from 'react-native';
+import { Alert, Dimensions, Image, ImageBackground, SafeAreaView, StyleSheet, TouchableOpacity, View } from 'react-native';
 import { TextPretendard as Text } from '../../common/CustomText';
 import { Request } from '../../common/requests';
-import Arrow from "../../assets/img/common/Arrow.svg";
+import ArrowWhite from "../../assets/img/common/ArrowWhite.svg";
 import { ScrollView } from 'react-native-gesture-handler';
 import styled from 'styled-components/native';
 import { useFocusEffect, useNavigation } from '@react-navigation/native';
@@ -185,12 +185,12 @@ export default function CurationDetail({ navigation, route }: StackScreenProps<H
     <>
       <ScrollView style={{ backgroundColor: '#FFFFFF' }}>
         <TouchableOpacity style={{ position: 'absolute', top: 50, left: 10, zIndex: 2 }} onPress={navigation.goBack}>
-          <Arrow width={20} height={20} transform={[{ rotateY: '180deg' }]} />
+          <ArrowWhite width={20} height={20} strokeWidth={5} />
         </TouchableOpacity>
-        <View style={{ position: 'relative' }}>
-          <Image source={{ uri: curationDetail.rep_pic }} style={{ width: width, height: width * (reppicSize.height / reppicSize.width) }} />
-          <Text style={TextStyles.title} numberOfLines={4}>{curationDetail.title}</Text>
-        </View>
+          <ImageBackground source={{ uri: curationDetail.rep_pic }} style={{ width: width, height: width * (reppicSize.height / reppicSize.width), position:'relative' }}>
+            <View style={{width:'100%', height:'100%', backgroundColor:'rgba(0,0,0,0.3)', position:'absolute', zIndex:2}}/>
+            <Text style={TextStyles.title} numberOfLines={4}>{curationDetail.title}</Text>
+          </ImageBackground>
         <InfoBox>
           <Image source={{ uri: curationDetail.profile_image }} style={{ width: 50, height: 50, borderRadius: 25, marginRight: 20 }} />
           <View>
@@ -322,6 +322,7 @@ const TextStyles = StyleSheet.create({
     bottom: 20,
     color: '#FFFFFF',
     width: '100%',
+    zIndex: 2
   },
   content: {
     color: '#6B6B6B',
