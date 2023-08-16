@@ -230,18 +230,23 @@ export default function CurationHome({ navigation, route }: StackScreenProps<Hom
           <PlusButton
             onPress={() => {
               if (!isLogin) {
-                Alert.alert('로그인이 필요합니다', "",
+                Alert.alert(
+                  "로그인이 필요합니다.",
+                  "로그인 항목으로 이동하시겠습니까?",
                   [
                     {
-                      text: "로그인",
-                      onPress: () => navigationToTab.navigate('마이페이지'),
-                      style: "cancel"
+                      text: "이동",
+                      onPress: () => navigationToTab.navigate('마이페이지')
+          
                     },
                     {
-                      text: "ok",
+                      text: "취소",
+                      onPress: () => { },
                       style: "cancel"
                     },
-                  ])
+                  ],
+                  { cancelable: false }
+                );
                 return;
               }
               navigation.navigate('Form')

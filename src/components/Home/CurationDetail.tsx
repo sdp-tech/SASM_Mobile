@@ -153,18 +153,23 @@ export default function CurationDetail({ navigation, route }: StackScreenProps<H
 
   const handleLike = async () => {
     if (!isLogin) {
-      Alert.alert('로그인이 필요합니다', "",
+      Alert.alert(
+        "로그인이 필요합니다.",
+        "로그인 항목으로 이동하시겠습니까?",
         [
           {
-            text: "로그인",
-            onPress: () => navigationTab.navigate('마이페이지'),
-            style: "cancel"
+            text: "이동",
+            onPress: () => navigationTab.navigate('마이페이지')
+
           },
           {
-            text: "ok",
+            text: "취소",
+            onPress: () => { },
             style: "cancel"
           },
-        ])
+        ],
+        { cancelable: false }
+      );
       return;
     }
     const response = await request.post(`/curations/curation_like/${route.params.id}/`);
@@ -234,18 +239,23 @@ const Storys = ({ navigation, data }: { navigation: StackNavigationProp<TabProps
   const request = new Request();
   const handleLike = async () => {
     if (!isLogin) {
-      Alert.alert('로그인이 필요합니다', "",
+      Alert.alert(
+        "로그인이 필요합니다.",
+        "로그인 항목으로 이동하시겠습니까?",
         [
           {
-            text: "로그인",
-            onPress: () => navigation.navigate('마이페이지'),
-            style: "cancel"
+            text: "이동",
+            onPress: () => navigation.navigate('마이페이지')
+
           },
           {
-            text: "ok",
+            text: "취소",
+            onPress: () => { },
             style: "cancel"
           },
-        ])
+        ],
+        { cancelable: false }
+      );
       return;
     }
     const response_like = await request.post('/stories/story_like/', { id: data.story_id });

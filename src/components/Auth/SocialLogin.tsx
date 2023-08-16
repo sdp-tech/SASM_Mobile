@@ -1,5 +1,5 @@
 import React, { useContext, useEffect } from 'react';
-import { Alert, Dimensions, StyleSheet, TouchableOpacity, View } from 'react-native';
+import { Alert, Dimensions, StyleSheet, TouchableOpacity, View, Platform } from 'react-native';
 import { TextPretendard as Text } from '../../common/CustomText';
 import Kakao from "../../assets/img/Auth/Social_Kakao.svg";
 import Naver from "../../assets/img/Auth/Social_Naver.svg";
@@ -160,20 +160,20 @@ export default function SocialLogin({ type }: { type: string }) {
           'login': '로그인'
         }[type]}</Text>
       </Button>
-      <Button style={{ backgroundColor: '#FEE500' }} onPress={() => kakao_login()}>
+      {/* <Button style={{ backgroundColor: '#FEE500' }} onPress={() => kakao_login()}>
         <Kakao width={18} height={16} style={{ position: 'absolute', top: 16, left: 16 }} />
         <Text style={TextStyles.button}>카카오로 {{
           'register': '회원가입',
           'login': '로그인'
         }[type]}</Text>
-      </Button>
-      <Button style={{ backgroundColor: '#000000' }} onPress={() => apple_login()}>
+      </Button> */}
+      {Platform.OS == 'ios' && <Button style={{ backgroundColor: '#000000' }} onPress={() => apple_login()}>
         <Apple width={30} height={30} style={{ position: 'absolute', left: 10 }} />
         <Text style={{ ...TextStyles.button, color: '#FFFFFF' }}>Apple로 {{
           'register': '회원가입',
           'login': '로그인'
         }[type]}</Text>
-      </Button>
+      </Button>}
       {
         (type == 'register') &&
         <Button style={{ borderColor: '#67D393', borderWidth: 1 }} onPress={() => navigationRegister.navigate('email')}>

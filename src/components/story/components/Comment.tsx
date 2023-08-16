@@ -46,7 +46,7 @@ const Comment = ({ data, story_id, reRenderScreen, email, isLogin, navigation, c
               [
                   {
                       text: "이동",
-                      onPress: () => navigation.navigate('Login')
+                      onPress: () => navigation.navigate('마이페이지')
       
                   },
                   {
