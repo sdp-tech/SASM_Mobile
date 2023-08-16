@@ -59,7 +59,7 @@ export default function MyForest() {
       if (type) { setWrittenPage(1); getForest(); }
       else { setPage(1); getWrittenForest(); }
     }
-  }, [page, writtenPage, type, search, refresh, checkedList]))
+  }, [isLogin, page, writtenPage, type, search, refresh, checkedList]))
 
 
   return (

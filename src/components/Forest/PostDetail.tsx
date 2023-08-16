@@ -103,7 +103,6 @@ const PostDetailSection = ({
   const tagsStyles = {
     div: {
       fontSize: 16,
-      fontWeight: "300",
       lineHeight: 30,
       letterSpacing: -0.6
     }
@@ -369,7 +368,7 @@ const BottomBarSection = ({ post, email, scrollToComment, onRefresh, navigation 
         [
           {
             text: "이동",
-            onPress: () => navigation.navigate('Login')
+            onPress: () => navigation.navigate('마이페이지')
 
           },
           {

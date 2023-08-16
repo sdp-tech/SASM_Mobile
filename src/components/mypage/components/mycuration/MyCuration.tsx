@@ -69,7 +69,7 @@ const MyStory = () => {
       if (type) getCuration();
       else getWrittenCuration();
     }
-  }, [type, search, refresh]))
+  }, [isLogin, type, search, refresh]))
 
   return (
     <View style={styles.Container}>

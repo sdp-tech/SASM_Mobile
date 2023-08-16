@@ -44,7 +44,7 @@ const SearchCard = ({id, place_name, title, rep_pic, extra_pics, story_like, cat
         [
             {
                 text: "이동",
-                onPress: () => navigation.navigate('Login'),
+                onPress: () => navigation.navigate('마이페이지'),
 
             },
             {

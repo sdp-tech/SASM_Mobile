@@ -57,7 +57,7 @@ const PostItem = ({
         [
             {
                 text: "이동",
-                onPress: () => navigation.navigate('Login'),
+                onPress: () => navigation.navigate('마이페이지'),
 
             },
             {
@@ -216,7 +216,7 @@ export const HotPostItem = ({
         [
             {
                 text: "이동",
-                onPress: () => navigation.navigate('Login'),
+                onPress: () => navigation.navigate('마이페이지'),
 
             },
             {
