@@ -9,6 +9,7 @@ import { LoginContext } from '../../../../common/Context';
 import FinishModal from '../../../../common/FinishModal';
 import { Request } from '../../../../common/requests';
 import Arrow from "../../../../assets/img/common/Arrow.svg";
+import NextButton from '../../../../common/NextButton';
 
 
 const WithdrawButton = styled.View`
@@ -73,11 +74,11 @@ const Withdraw = ({ navigation }: StackScreenProps<MyPageProps, 'withdraw'>) => 
     }
 
     return (
-        <SafeAreaView style={{ backgroundColor: '#FFFFFF', flex: 1 }}>
+        <SafeAreaView style={{ backgroundColor: '#FFFFFF', flex: 1, paddingTop: 10 }}>
             <View style={{ position: 'relative', marginBottom: 30, width: '100%' }}>
                 <Text style={TextStyles.title}>회원 탈퇴</Text>
                 <TouchableOpacity style={{ left: 10, marginBottom: 30, position: 'absolute' }} onPress={() => { navigation.navigate('mypage') }}>
-                    <Arrow width={20} height={20} transform={[{ rotateY: '180deg' }]} />
+                    <Arrow width={20} height={20} transform={[{ rotateY: '180deg' }]} color={'black'} />
                 </TouchableOpacity>
             </View>
             <Modal visible={finishModal}>
@@ -90,10 +91,7 @@ const Withdraw = ({ navigation }: StackScreenProps<MyPageProps, 'withdraw'>) => 
             </Modal>
             <View style={{ display: 'flex', justifyContent: 'center', flex: 1 }}>
                 <Text style={TextStyles.draw}>회원 탈퇴</Text>
-                <TouchableOpacity style={{ alignSelf: 'center', marginTop: 60 }}
-                    onPress={withdrawConfirmAlert}
-                ><Text style={TextStyles.button}>탈퇴</Text>
-                </TouchableOpacity>
+                <NextButton label='회원 탈퇴' onPress={withdrawConfirmAlert} style={{alignSelf: 'center', marginTop: 60}} />
             </View>
         </SafeAreaView>
     )

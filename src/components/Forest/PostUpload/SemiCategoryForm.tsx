@@ -6,6 +6,7 @@ import { ForestContext } from './ForestContext';
 
 import { Request } from '../../../common/requests';
 import { PostUploadParams } from '../PostUpload';
+import NextButton from '../../../common/NextButton';
 
 const SemiCategoryForm = ({ tab, setTab, post }: PostUploadParams) => {
   const { category, setCategory, semiCategories, setSemiCategories } = useContext(ForestContext);
@@ -30,7 +31,7 @@ const SemiCategoryForm = ({ tab, setTab, post }: PostUploadParams) => {
   return (
     <View>
       <FormHeader title='포레스트 작성' onLeft={() => setTab(tab-1)} onRight={selectedIds.length > 0 ? () => setTab(tab+1) : () => Alert.alert('세부 카테고리를 선택해주세요')} />
-      <View style={{alignItems: 'center', justifyContent: 'center', paddingVertical: 150}}>
+      <View style={{alignItems: 'center', justifyContent: 'center', paddingVertical: height * 0.2}}>
         <Text style={{fontSize: 16, color: '#202020', marginBottom: 80}}>세부 카테고리를 선택해 주세요</Text>
         <FlatList
           data={items}
@@ -54,11 +55,9 @@ const SemiCategoryForm = ({ tab, setTab, post }: PostUploadParams) => {
           scrollEnabled={false}
         />
         {(selectedIds.length > 0) &&
-          <TouchableOpacity style={{backgroundColor: '#67D393', width: 180, paddingVertical: 10, alignItems: 'center', justifyContent: 'center', borderRadius: 20, position: 'absolute', top: height-350}}
+          <NextButton label="다음" style={{position: 'absolute', bottom: 30}}  
             onPress={() => setTab(2)}
-          >
-            <Text style={{fontWeight: '700', fontSize: 16, color: 'white'}}>다음</Text>
-          </TouchableOpacity>
+          />
         }
       </View>
     </View>

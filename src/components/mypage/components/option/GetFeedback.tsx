@@ -9,6 +9,7 @@ import { StackScreenProps } from '@react-navigation/stack';
 import { MyPageProps } from '../../../../pages/MyPage';
 import FinishModal from '../../../../common/FinishModal';
 import { TouchableWithoutFeedback } from 'react-native-gesture-handler';
+import NextButton from '../../../../common/NextButton';
 
 const { width, height } = Dimensions.get('window');
 
@@ -33,7 +34,7 @@ const Feedback = ({ navigation }: StackScreenProps<MyPageProps, 'feedback'>) => 
     }
 
     return (
-        <SafeAreaView style={{ backgroundColor: '#FFFFFF', flex: 1, display: 'flex', alignItems: 'center' }}>
+        <SafeAreaView style={{ backgroundColor: '#FFFFFF', flex: 1, display: 'flex', alignItems: 'center', paddingTop: 10 }}>
             <Modal visible={finishModal}>
                 <FinishModal
                     setModal={setFinishModal}
@@ -45,7 +46,7 @@ const Feedback = ({ navigation }: StackScreenProps<MyPageProps, 'feedback'>) => 
             <View style={{ position: 'relative', marginBottom: 30, width: '100%' }}>
                 <Text style={TextStyles.title}>의견 보내기</Text>
                 <TouchableOpacity style={{ left: 10, marginBottom: 30, position: 'absolute' }} onPress={() => { navigation.navigate('mypage') }}>
-                    <Arrow width={20} height={20} transform={[{ rotateY: '180deg' }]} />
+                    <Arrow width={20} height={20} transform={[{ rotateY: '180deg' }]} color={'black'}/>
                 </TouchableOpacity>
             </View>
             <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
@@ -60,7 +61,7 @@ const Feedback = ({ navigation }: StackScreenProps<MyPageProps, 'feedback'>) => 
                 }}
                 />
             <Text style={{ width: '100%', textAlign: 'right', fontSize: 12, lineHeight: 18, letterSpacing: -0.6 }}>{voc.length}/300</Text>
-            <TouchableOpacity style={{ marginTop: 50 }} onPress={FeedbackPost}><Text style={TextStyles.button}>의견 보내기</Text></TouchableOpacity>
+            <NextButton style={{ marginTop: 50, alignSelf: 'center' }} onPress={FeedbackPost} label="의견 보내기"/>
             </TouchableWithoutFeedback>
         </SafeAreaView>)
 }

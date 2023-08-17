@@ -69,8 +69,8 @@ export default function CurationList({ navigation, route }: StackScreenProps<Hom
   return (
     <SafeAreaView style={{ backgroundColor: "#FFFFFF", flex: 1 }}>
       <View style={{ display: 'flex', flexDirection: 'row', alignItems: 'center', marginTop: Platform.OS == 'android' ? 10 : 0 }}>
-        <TouchableOpacity onPress={navigation.goBack}>
-          <Arrow width={20} height={20} transform={[{ rotateY: '180deg' }]} />
+        <TouchableOpacity style={{marginLeft: 3}} onPress={navigation.goBack}>
+          <Arrow width={20} height={20} transform={[{ rotateY: '180deg' }]} color={'black'}/>
         </TouchableOpacity>
         <SearchBar
           textAlign='center'

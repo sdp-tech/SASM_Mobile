@@ -12,6 +12,7 @@ import ProfileImage from '../../../../assets/img/MyPage/ProfileImage.svg';
 import { Request } from '../../../../common/requests';
 import { CameraSelector } from '../../../../common/PhotoOptions';
 import * as ImagePicker from "react-native-image-picker";
+import NextButton from '../../../../common/NextButton';
 
 const Section = styled.View`
   margin-vertical: 20px;
@@ -148,11 +149,11 @@ export default function ChangeForm({ navigation, route }: StackScreenProps<MyPag
   }
 
   return (
-    <SafeAreaView style={{ backgroundColor: '#FFFFFF', flex: 1 }}>
+    <SafeAreaView style={{ backgroundColor: '#FFFFFF', flex: 1, paddingTop: 10 }}>
       <View style={{ position: 'relative', }}>
         <Text style={TextStyles.header}>프로필 수정</Text>
         <TouchableOpacity style={{ left: 10, marginBottom: 30, position: 'absolute', display: 'flex', flexDirection: 'row', alignItems: 'center' }} onPress={() => { navigation.goBack() }}>
-          <Arrow width={20} height={20} transform={[{ rotateY: '180deg' }]} />
+          <Arrow width={20} height={20} transform={[{ rotateY: '180deg' }]} color={'black'} />
         </TouchableOpacity>
       </View>
       {
@@ -211,9 +212,7 @@ export default function ChangeForm({ navigation, route }: StackScreenProps<MyPag
               containerStyle={{ zIndex: 2 }}
               defaultDate={form.birthdate}
             />
-            <TouchableOpacity onPress={updateInfo}>
-              <Text style={TextStyles.submit}>저장</Text>
-            </TouchableOpacity>
+            <NextButton onPress={updateInfo} label='저장' style={{alignSelf: 'center'}} />
           </Section>
       }
     </SafeAreaView>

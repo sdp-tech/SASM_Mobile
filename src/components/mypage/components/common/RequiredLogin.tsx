@@ -10,11 +10,11 @@ const Register = styled.TouchableOpacity`
   background-color: #67D393;
   width: 230px;
   height: 45px;
-  border-radius: 22.5px;
+  border-radius: 12px;
   display: flex;
   justify-content: center;
   align-self: center;
-  margin-bottom: 24px;
+  margin-bottom: 14px;
 `
 const Login = styled.TouchableOpacity`
   border: 1px #67D393 solid;

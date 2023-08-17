@@ -34,7 +34,7 @@ export default function UserInfoBox({ navigation, route }: StackScreenProps<MyPa
         <View style={{ position: 'relative' }}>
           <Text style={TextStyles.header}>프로필</Text>
           <TouchableOpacity style={{ left: 10, marginBottom: 30, position: 'absolute', display: 'flex', flexDirection: 'row', alignItems: 'center' }} onPress={() => { navigation.goBack() }}>
-            <Arrow width={20} height={20} transform={[{ rotateY: '180deg' }]} />
+            <Arrow width={20} height={20} transform={[{ rotateY: '180deg' }]} color={'black'} />
           </TouchableOpacity>
         </View>
         <Section>

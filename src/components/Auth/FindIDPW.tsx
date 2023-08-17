@@ -112,7 +112,7 @@ const FindIDPW = ({ navigation, route }: StackScreenProps<findScreenProps, 'home
       <View style={{ position: 'relative'}}>
         <Text style={TextStyles.title}>아이디 / 비밀번호 찾기</Text>
         <TouchableOpacity style={{ left: 10, marginBottom: 30, position: 'absolute' }} onPress={() => { navigation.goBack() }}>
-          <Arrow width={20} height={20} transform={[{ rotateY: '180deg' }]} />
+          <Arrow width={20} height={20} transform={[{ rotateY: '180deg' }]} color={'black'} />
         </TouchableOpacity>
       </View>
       <TabsBox>

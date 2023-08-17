@@ -173,9 +173,9 @@ const PostItem = ({
         style={{ width: width-30, marginHorizontal: 15, borderBottomWidth: 1, borderBottomColor: "#373737", alignItems: 'center', paddingBottom: 10 }}
       >
         {pressed ?
-          <Arrow transform={[{ rotate: "270deg" }]} width={15} height={15} />
+          <Arrow transform={[{ rotate: "270deg" }]} width={15} height={15} color={'#373737'}/>
           :
-          <Arrow transform={[{ rotate: "90deg" }]} width={10} height={10} />
+          <Arrow transform={[{ rotate: "90deg" }]} width={10} height={10} color={'#373737'} />
         }
       </TouchableOpacity>
     </TouchableOpacity>
@@ -273,7 +273,7 @@ export const HotPostItem = ({
             </View>
           </View>
           <TouchableOpacity onPress={() => setPressed(false)} style={{ flex: 1, alignItems: 'center', justifyContent: 'flex-end', width: width-30}}>
-            <Arrow width={15} height={15} transform={[{ rotate: "270deg" }]} strokeWidth={5} />
+            <Arrow width={15} height={15} transform={[{ rotate: "270deg" }]} strokeWidth={5} color={'#373737'} />
           </TouchableOpacity>
           </>
         ) : (

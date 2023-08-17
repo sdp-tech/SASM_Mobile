@@ -150,15 +150,16 @@ const BoardDetailScreen = ({
                   flex: 1
                 }}
               >
-                사슴의 추천글
+                추천글_{board_category.name}
               </Text>
               <TouchableOpacity style={{ flexDirection: 'row', alignItems: 'center' }} onPress={() => {
                 navigation.navigate("PostList", {
-                  board_name: "사슴의 추천글",
+                  board_name: "추천글",
+                  board_category: board_category
                 });
               }}>
                 <Text style={{ fontSize: 12, fontWeight: '500', marginRight: 5 }}>더보기</Text>
-                <Arrow width={12} height={12} />
+                <Arrow width={12} height={12} color={'black'} />
               </TouchableOpacity>
             </View>
               <CardView
@@ -167,7 +168,7 @@ const BoardDetailScreen = ({
                 data={chunkArray(posts, 3)}
                 pageWidth={width}
                 dot={true}
-                onEndDrag={() => posts.length >= 9 && navigation.navigate('PostList', { board_name: '사슴의 추천글'})} 
+                onEndDrag={() => posts.length >= 9 && navigation.navigate('PostList', { board_name: "추천글", board_category: board_category})} 
                 renderItem={({ item }: any) => {
                   return (
                     <FlatList
@@ -240,15 +241,16 @@ const BoardDetailScreen = ({
                     flex: 1
                   }}
                 >
-                  사슴의 인기글
+                  인기글_{board_category.name}
                 </Text>
                 <TouchableOpacity style={{ flexDirection: 'row', alignItems: 'center' }} onPress={() => {
                   navigation.navigate("PostList", {
-                    board_name: "사슴의 인기글",
+                    board_name: "인기글",
+                    board_category: board_category
                   });
                 }}>
                   <Text style={{ fontSize: 12, fontWeight: '500', marginRight: 5 }}>더보기</Text>
-                  <Arrow width={12} height={12} />
+                  <Arrow width={12} height={12} color={'black'} />
                 </TouchableOpacity>
               </View>
               <CardView
@@ -257,7 +259,7 @@ const BoardDetailScreen = ({
                 data={chunkArray(hotPosts, 3)}
                 pageWidth={width}
                 dot={true}
-                onEndDrag={() => navigation.navigate('PostList', { board_name: '사슴의 인기글'})} 
+                onEndDrag={() => navigation.navigate('PostList', { board_name: "인기글", board_category: board_category})} 
                 renderItem={({ item }: any) => {
                   return (
                     <FlatList
@@ -310,15 +312,16 @@ const BoardDetailScreen = ({
                     flex: 1
                   }}
                 >
-                  사슴의 최신글
+                  최신글_{board_category.name}
                 </Text>
                 <TouchableOpacity style={{ flexDirection: 'row', alignItems: 'center' }} onPress={() => {
                   navigation.navigate("PostList", {
-                    board_name: "사슴의 최신글",
+                    board_name: "최신글",
+                    board_category: board_category
                   });
                 }}>
                   <Text style={{ fontSize: 12, fontWeight: '500', marginRight: 5 }}>더보기</Text>
-                  <Arrow width={12} height={12} />
+                  <Arrow width={12} height={12} color={'black'} />
                 </TouchableOpacity>
               </View>
               <FlatList

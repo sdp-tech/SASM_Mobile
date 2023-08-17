@@ -15,6 +15,7 @@ import SNSModal from './Modals/SNSModal';
 import HourModal from './Modals/HourModal';
 import FinishModal from '../../../common/FinishModal';
 import InputWithLabel, { InputTouchWithLabel } from '../../../common/InputWithLabel';
+import NextButton from '../../../common/NextButton';
 
 const { width, height } = Dimensions.get('window');
 
@@ -278,9 +279,7 @@ export default function PlaceFormUser({ setPlaceformModal, snsType }: { setPlace
       <ServiceWrapper>
         <Service onPress={() => { setForm({ ...form, tumblur_category: !form.tumblur_category }) }} selected={form.tumblur_category}><Text style={form.tumblur_category && TextStyles.serviceSelected}>텀블러 할인</Text></Service>
       </ServiceWrapper>
-      <Submit onPress={uploadPlace}>
-        <Text style={TextStyles.submit}>장소 제보하기</Text>
-      </Submit>
+      <NextButton label='장소 제보하기' onPress={uploadPlace} style={{alignSelf: 'center', marginBottom: 20}} />
       <Modal visible={postModal}>
         <Postcode style={{ width: width, height: height - 100, marginTop: 100 }}
           onError={() => { Alert.alert('주소 검색에 실패하였습니다.') }}

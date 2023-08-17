@@ -120,7 +120,7 @@ export default function CurationHome({ navigation, route }: StackScreenProps<Hom
               <TextBox>
                 <Text style={TextStyles.Title}>큐레이션</Text>
                 <Text style={TextStyles.Sub}>장소를 모아 놓은 코스를 추천받아보세요.</Text>
-                <TouchableOpacity onPress={() => { navigation.navigate('List', { from: 'admin' }) }}><Text style={TextStyles.SubBlack}>모두보기 <Arrow /></Text></TouchableOpacity>
+                <TouchableOpacity onPress={() => { navigation.navigate('List', { from: 'admin' }) }}><Text style={TextStyles.SubBlack}>모두보기 <Arrow color={'black'}/></Text></TouchableOpacity>
               </TextBox>
               <CardView
                 gap={15}
@@ -140,7 +140,7 @@ export default function CurationHome({ navigation, route }: StackScreenProps<Hom
               <TextBox>
                 <Text style={TextStyles.Title}>이 큐레이션은 어때요?</Text>
                 <Text style={TextStyles.Sub}>유저가 직접 작성한 큐레이션</Text>
-                <TouchableOpacity onPress={() => { navigation.navigate('List', { from: 'verify' }) }}><Text style={TextStyles.SubBlack}>모두보기 <Arrow /></Text></TouchableOpacity>
+                <TouchableOpacity onPress={() => { navigation.navigate('List', { from: 'verify' }) }}><Text style={TextStyles.SubBlack}>모두보기 <Arrow color={'black'} /></Text></TouchableOpacity>
               </TextBox>
               {
                 verifedList.map((data, index) =>

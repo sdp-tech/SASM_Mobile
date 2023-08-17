@@ -8,6 +8,7 @@ import PlaceFormOwner from './PlaceFormOwner';
 import PlaceUser from "../../../assets/img/Map/PlaceUser.svg";
 import { Request } from '../../../common/requests';
 import Popup from '../../../common/Popup';
+import FormHeader from '../../../common/FormHeader';
 
 export const HeaderPlaceForm = styled.View<{ color: string }>`
   background-color: ${props => props.color};
@@ -26,13 +27,14 @@ const Section = styled.View`
 const Link = styled.TouchableOpacity`
   width: 100%;
   height: 100px;
-  background-color: #75E59B;
+  background-color: #67D393;
   margin-vertical: 10px;
   padding-horizontal: 20px;
   display: flex;
   flex-direction: row;
   align-items: center;
   justify-content: space-between;
+  border-radius: 12px;
 `
 const MenuWrapper = styled.View`
   width: 85%;
@@ -68,7 +70,7 @@ export default function PlaceForm({ setPlaceformModal }: PlaceFormProps): JSX.El
 
   return (
     <View>
-      <HeaderPlaceForm color={tab == 1 ? '#75E59B' : '#FFFFFF'}>
+      <HeaderPlaceForm color={tab == 1 ? '#67D393' : '#FFFFFF'}>
         <Text style={{ ...TextStyles.Link, fontSize: 24 }}>장소 제보하기</Text>
         <TouchableOpacity onPress={() => { tab == 0 ? setPlaceformModal(false) : setClosePopup(true) }}>
           <Close color={tab == 1 ? '#FFFFFF' : '#000000'} />

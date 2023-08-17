@@ -41,7 +41,7 @@ const Following = ({ navigation, route }: StackScreenProps<MyPageProps, 'followi
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: 'white' }}>
       <TouchableOpacity style={{ left: 10, marginBottom: 18, display: 'flex', flexDirection: 'row', alignItems: 'center' }} onPress={() => { navigation.goBack() }}>
-        <Arrow width={20} height={20} transform={[{ rotateY: '180deg' }]} style={{ marginRight: 16 }} />
+        <Arrow width={20} height={20} transform={[{ rotateY: '180deg' }]} style={{ marginRight: 16 }} color={'black'}/>
         <Text style={{ fontSize: 16, lineHeight: 24, letteringSpace: -0.6 }} >팔로잉</Text>
       </TouchableOpacity>
       <SearchBar

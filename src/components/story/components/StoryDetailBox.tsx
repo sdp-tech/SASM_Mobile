@@ -169,7 +169,7 @@ const StoryDetailBox = ({navigation, data, isLogin, onLayout, email, onRefresh, 
     return (
         <View onLayout={onLayout}>
             <View>
-                <TouchableOpacity style={{position: 'absolute', zIndex: 1, top: Platform.OS === 'ios' ? 50:20, left: 10}} onPress={() => {navigation.goBack()}}>
+                <TouchableOpacity style={{position: 'absolute', zIndex: 1, top: Platform.OS === 'ios' ? 60:30, left: 15, width: 30, height: 30}} onPress={() => {navigation.goBack()}}>
                     <ArrowWhite width={18} height={18} strokeWidth={5} />
                 </TouchableOpacity>
                     {data!.extra_pics.length > 0 ? (
@@ -194,7 +194,7 @@ const StoryDetailBox = ({navigation, data, isLogin, onLayout, email, onRefresh, 
                             <View style={{backgroundColor: 'rgba(0,0,0,0.2)', width: width, height: 330}} />
                         </ImageBackground>
                     )}
-                <TouchableOpacity style={{position: 'absolute', zIndex: 1, top: Platform.OS === 'ios' ? 55:25, right: 20}} onPress={() => setDot(!dot)}>
+                <TouchableOpacity style={{position: 'absolute', zIndex: 1, top: Platform.OS === 'ios' ? 65:35, right: 20, width: 30, height: 30, alignItems: 'flex-end'}} onPress={() => setDot(!dot)}>
                     <Settings transform={[{ rotate: dot ? '90deg' : '0deg'}]} color={'white'} />
                 </TouchableOpacity>
                 { dot &&

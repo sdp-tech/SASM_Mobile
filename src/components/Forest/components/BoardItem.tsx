@@ -30,6 +30,7 @@ const BoardItem = ({ id, data, onPress, isSelected }: BoardItemProps) => {
           justifyContent: "center",
         }}
         source={images[data.id-1]}
+        imageStyle={{borderRadius: 4}}
       >
         <View style={{
           backgroundColor: isSelected ? 'rgba(0, 0, 0, 0.60)' : 'rgba(0, 0, 0, 0.15)', 

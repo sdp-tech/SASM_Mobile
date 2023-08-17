@@ -92,8 +92,8 @@ export default function SelectStoryModal({ setSelectStoryModal, selectedStory, s
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
       <SafeAreaView style={{ flex: 1 }}>
-        <TouchableOpacity onPress={() => { setSelectStoryModal(false) }} style={{marginTop:Platform.OS == 'android' ? 10 : 0}}>
-          <Arrow width={20} height={20} transform={[{ rotateY: '180deg' }]} />
+        <TouchableOpacity onPress={() => { setSelectStoryModal(false) }} style={{marginTop:Platform.OS == 'android' ? 10 : 0, marginLeft: 3}}>
+          <Arrow width={20} height={20} transform={[{ rotateY: '180deg' }]} color={'black'} />
         </TouchableOpacity>
         <View style={{ paddingHorizontal: 15, marginVertical: 10 }}>
           <Text style={{ ...TextStyles.title, fontSize: 20, marginBottom: 20 }}>장소 검색</Text>

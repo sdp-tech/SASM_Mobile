@@ -65,7 +65,7 @@ const CommentListPage = ({ navigation, route }: StoryProps) => {
           ListHeaderComponent={<>
             <View style={{height: 50, alignItems: 'center', justifyContent: 'center'}}>
               <TouchableOpacity style={{position: 'absolute', left: 10}} onPress={() => {navigation.goBack()}}>
-                <Arrow width={20} height={20} transform={[{rotateY: '180deg'}]}/>
+                <Arrow width={20} height={20} transform={[{rotateY: '180deg'}]} color={'black'}/>
               </TouchableOpacity>
               <Text style={{textAlign: 'center', textAlignVertical: 'center', fontSize: 20, fontWeight: '700'}}>한줄평</Text>
             </View>

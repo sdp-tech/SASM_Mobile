@@ -10,6 +10,7 @@ import FinishModal from '../../../../common/FinishModal';
 import InputWithLabel from '../../../../common/InputWithLabel';
 import { LoginContext } from '../../../../common/Context';
 import { removeAccessToken, removeNickname, removeRefreshToken } from '../../../../common/storage';
+import NextButton from '../../../../common/NextButton';
 const SignUpButton = styled.View`
     width: 300px;
     height: 40px;
@@ -81,11 +82,11 @@ const PasswordChange = ({ navigation }: StackScreenProps<MyPageProps, 'changepw'
     }
 
     return (
-        <SafeAreaView style={{ backgroundColor: '#FFFFFF', flex: 1 }}>
+        <SafeAreaView style={{ backgroundColor: '#FFFFFF', flex: 1, paddingTop: 10 }}>
             <View style={{ position: 'relative', marginBottom: 30, width: '100%' }}>
                 <Text style={TextStyles.title}>비밀번호 변경</Text>
                 <TouchableOpacity style={{ left: 10, marginBottom: 30, position: 'absolute' }} onPress={() => { navigation.navigate('mypage') }}>
-                    <Arrow width={20} height={20} transform={[{ rotateY: '180deg' }]} />
+                    <Arrow width={20} height={20} transform={[{ rotateY: '180deg' }]} color={'black'} />
                 </TouchableOpacity>
             </View>
             <Modal visible={finishModal}>
@@ -113,10 +114,7 @@ const PasswordChange = ({ navigation }: StackScreenProps<MyPageProps, 'changepw'
                 secureTextEntry={true}
                 onChangeText={text => setForm({ ...form, passwordConfirm: text })}
             />
-            <TouchableOpacity style={{ alignSelf: 'center', marginTop: 60 }}
-                onPress={updateNewPassword}
-            ><Text style={TextStyles.button}>비밀번호 변경</Text>
-            </TouchableOpacity>
+            <NextButton label='비밀번호 변경' onPress={updateNewPassword} style={{alignSelf: 'center', marginTop: 20}} />
             </View>
         </SafeAreaView>
 
