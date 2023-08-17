@@ -1,5 +1,5 @@
 import React from 'react';
-import { StyleSheet, TextStyle, Image } from 'react-native';
+import { StyleSheet, TextStyle, Image, ImageBackground } from 'react-native';
 import { TextPretendard as Text } from '../../common/CustomText';
 import styled from 'styled-components/native';
 import { CurationProps } from './CurationHome';
@@ -40,14 +40,15 @@ export function SearchItemCard({ style, data, onPress }: ItemCardProps): JSX.Ele
   return (
     <TouchableWithoutFeedback onPress={onPress ? onPress : () => { navigation.navigate('Detail', { id: data.id }) }}>
       <CardWrapper style={style}>
-        <Image
-          style={{ width: '100%', height: '100%' }}
+        <ImageBackground
+          style={{ width: '100%', height: '100%', justifyContent: 'flex-end' }}
           source={{
             uri: data.rep_pic
           }}
-        />
-        <Text numberOfLines={2} style={TextStyles.title_email}>{data.title}</Text>
+        >
         <Text style={TextStyles.writer}>{data.writer_email}</Text>
+        <Text numberOfLines={2} style={TextStyles.title_email}>{data.title}</Text>
+        </ImageBackground>
       </CardWrapper>
     </TouchableWithoutFeedback>
   )
@@ -63,20 +64,16 @@ const TextStyles = StyleSheet.create({
     fontWeight: '600',
   },
   title_email: {
-    position: 'absolute',
-    width: '90%',
-    left: 10,
-    bottom: 10,
+    marginLeft: 10,
+    marginBottom: 10,
     color: '#FFFFFF',
     fontWeight: '600',
     fontSize: 16,
   },
   writer: {
-    position: 'absolute',
-    alignSelf: 'center',
     color: '#FFFFFF',
     fontSize: 10,
-    left: 10,
-    bottom: 30
+    marginLeft: 10,
+    marginBottom: 5
   }
 })
