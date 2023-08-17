@@ -90,8 +90,8 @@ const Comment = ({ data, reRenderScreen, post_id, email, isLogin, navigation, ca
     }
 
     return (
-        <View style={{borderBottomColor: '#D9D9D9', borderBottomWidth: 1, width: width-40, paddingVertical: 15, alignSelf: 'center', flex: 1}}>
-            <View style = {{ flexDirection: 'row', paddingVertical: 15, alignItems: 'center'}}>
+        <View style={{borderBottomColor: '#D9D9D9', borderBottomWidth: 1, width: width-40, alignSelf: 'center', flex: 1}}>
+            <View style = {{ flexDirection: 'row', paddingVertical: 25, alignItems: 'center'}}>
                 <View style = {{alignSelf: 'center'}}>
                     <Image source={{uri: data.writer.profile}} style={{width:50,height:50,borderRadius:60}} />
                 </View>
