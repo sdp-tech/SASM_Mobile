@@ -377,7 +377,7 @@ export default function DetailCard({ detailData, setIndex }: DetailCardProps): J
                           <Text style={TextStyles.menu}>리뷰</Text>
                           <TouchableOpacity onPress={()=>{setTab(1)}} style={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
                             <Text>더보기</Text>
-                            <Arrow style={{ marginHorizontal: 7.5 }} />
+                            <Arrow style={{ marginHorizontal: 7.5 }} color={'black'} />
                           </TouchableOpacity>
                         </MenuBox>
                         {
@@ -389,7 +389,7 @@ export default function DetailCard({ detailData, setIndex }: DetailCardProps): J
                           <Text style={TextStyles.menu}>스토리</Text>
                           <TouchableOpacity onPress={()=>{setTab(2)}} style={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
                             <Text>더보기</Text>
-                            <Arrow style={{ marginHorizontal: 7.5 }} />
+                            <Arrow style={{ marginHorizontal: 7.5 }} color={'black'} />
                           </TouchableOpacity>
                         </MenuBox>
                         {

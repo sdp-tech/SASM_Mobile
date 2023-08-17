@@ -159,7 +159,7 @@ const BoardDetailScreen = ({
                 });
               }}>
                 <Text style={{ fontSize: 12, fontWeight: '500', marginRight: 5 }}>더보기</Text>
-                <Arrow width={12} height={12} />
+                <Arrow width={12} height={12} color={'black'} />
               </TouchableOpacity>
             </View>
               <CardView
@@ -250,7 +250,7 @@ const BoardDetailScreen = ({
                   });
                 }}>
                   <Text style={{ fontSize: 12, fontWeight: '500', marginRight: 5 }}>더보기</Text>
-                  <Arrow width={12} height={12} />
+                  <Arrow width={12} height={12} color={'black'} />
                 </TouchableOpacity>
               </View>
               <CardView
@@ -321,7 +321,7 @@ const BoardDetailScreen = ({
                   });
                 }}>
                   <Text style={{ fontSize: 12, fontWeight: '500', marginRight: 5 }}>더보기</Text>
-                  <Arrow width={12} height={12} />
+                  <Arrow width={12} height={12} color={'black'} />
                 </TouchableOpacity>
               </View>
               <FlatList

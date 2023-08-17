@@ -107,7 +107,7 @@ const StorySearchPage = ({ navigation }: StoryProps) => {
     <SafeAreaView style={{flex: 1, backgroundColor: 'white', paddingTop: 10}}>
       <View style={{flexDirection: 'row'}}>
         <TouchableOpacity style={{justifyContent: 'center', marginLeft: 10}} onPress={()=>{navigation.goBack();}}>
-          <Arrow width={18} height={18} transform={[{rotate: '180deg'}]} />
+          <Arrow width={18} height={18} transform={[{rotate: '180deg'}]} color={'black'}/>
         </TouchableOpacity>
         <SearchBar
           search={search}

@@ -79,7 +79,7 @@ const SearchList = ({ info, onEndReached, onRefresh, refreshing, navigation, car
       ListFooterComponent={
         <View style={{ justifyContent: 'center', alignItems: 'center', paddingVertical: 20 }}>
           <TouchableOpacity onPress={scrollToTop} style={{ flexDirection: 'row' }}>
-            <Arrow width={18} height={18} transform={[{rotate: '270deg'}]} />
+            <Arrow width={18} height={18} transform={[{rotate: '270deg'}]} color={'#373737'}/>
             <Text style={{color: '#666666', fontWeight: '600', marginTop: 3}}>맨 위로 이동</Text>
           </TouchableOpacity>
         </View>

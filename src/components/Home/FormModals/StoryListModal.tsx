@@ -96,8 +96,8 @@ export default function StoryListModal({ target, setStoryListModal, selectedStor
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
       <SafeAreaView style={{ flex: 1 }}>
-        <TouchableOpacity onPress={() => { setStoryListModal(false) }} style={{marginTop: Platform.OS == 'android' ? 10 : 0}}>
-          <Arrow width={20} height={20} transform={[{ rotateY: '180deg' }]} />
+        <TouchableOpacity onPress={() => { setStoryListModal(false) }} style={{marginTop: Platform.OS == 'android' ? 10 : 0, marginLeft: 3}}>
+          <Arrow width={20} height={20} transform={[{ rotateY: '180deg' }]} color={'black'} />
         </TouchableOpacity>
         <View style={{ paddingHorizontal: 15, marginTop: 10, zIndex: 2 }}>
           <Text style={{ ...ListTextStyles.title, fontSize: 20, marginBottom: 20 }}>스토리 선택</Text>

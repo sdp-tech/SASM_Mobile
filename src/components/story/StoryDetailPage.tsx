@@ -45,7 +45,7 @@ const PostRecommendSection = ({ curations, stories, navigation }: PostRecommendS
         <Text style={{ fontSize: 16, fontWeight: '700', marginRight: 10, flex: 1 }}>스토리가 포함된 큐레이션</Text>
         <TouchableOpacity style={{flexDirection: 'row', alignItems: 'center'}} onPress={() => {navigation.navigate('RecommendList', {data: curations, type: false})}}>
           <Text style={{ fontSize: 12, fontWeight: '500', marginRight: 5 }}>더보기</Text>
-          <Arrow width={12} height={12} />
+          <Arrow width={12} height={12} color={'black'}/>
         </TouchableOpacity>
       </View>
       <CardView 
@@ -76,7 +76,7 @@ const PostRecommendSection = ({ curations, stories, navigation }: PostRecommendS
       <Text style={{ fontSize: 16, fontWeight: '700', marginRight: 10, flex: 1 }}>이 장소의 다른 스토리</Text>
       <TouchableOpacity style={{flexDirection: 'row', alignItems: 'center'}} onPress={() => {navigation.navigate('RecommendList', {data: stories, type: true})}}>
         <Text style={{ fontSize: 12, fontWeight: '500', marginRight: 5 }}>더보기</Text>
-        <Arrow width={12} height={12} />
+        <Arrow width={12} height={12} color={'black'}/>
       </TouchableOpacity>
     </View>
     <CardView 
@@ -275,7 +275,7 @@ const StoryDetailPage = ({ navigation, route }: StoryProps) => {
                       </View>
                       <TouchableOpacity style={{flexDirection: 'row', alignItems: 'center'}} onPress={() => {navigation.navigate('CommentList', { id: id, email: email })}}>
                         <Text style={{ fontSize: 12, fontWeight: '500', marginRight: 5 }}>더보기</Text>
-                        <Arrow width={12} height={12} />
+                        <Arrow width={12} height={12} color={'black'} />
                       </TouchableOpacity>
                     </View>
                     <WriteComment id = {id} reRenderScreen = {reRenderScreen} data={updateText} commentId={commentId} isLogin={isLogin} navigation={navigation} />
@@ -290,7 +290,7 @@ const StoryDetailPage = ({ navigation, route }: StoryProps) => {
                     <PostRecommendSection curations={curations} stories={otherStories} navigation={navigation} />
                     <View style={{ justifyContent: 'center', alignItems: 'center', paddingVertical: 20 }}>
                         <TouchableOpacity onPress={scrollToTop} style={{ flexDirection: 'row' }}>
-                            <Arrow width={18} height={18} transform={[{rotate: '270deg'}]} />
+                            <Arrow width={18} height={18} transform={[{rotate: '270deg'}]} color={'black'}/>
                             <Text style={{color: '#666666', fontWeight: '600', marginTop: 3}}>맨 위로 이동</Text>
                         </TouchableOpacity>
                     </View>

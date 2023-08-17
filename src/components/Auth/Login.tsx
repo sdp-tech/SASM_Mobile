@@ -58,7 +58,7 @@ const LoginScreen = () => {
       <View style={{ position: 'relative', marginBottom: 30, width:'100%', display:'flex', justifyContent:'center' }}>
         <Text style={TextStyles.header}>로그인</Text>
         <TouchableOpacity style={{ left: 10, marginBottom: 30, position: 'absolute' }} onPress={() => { navigation.goBack() }}>
-          <Arrow width={20} height={20} transform={[{ rotateY: '180deg' }]} />
+          <Arrow width={20} height={20} transform={[{ rotateY: '180deg' }]} color={'black'} />
         </TouchableOpacity>
       </View>
       <InputWrapper>

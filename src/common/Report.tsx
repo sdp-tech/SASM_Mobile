@@ -61,7 +61,7 @@ const Report = ({ modalVisible, setModalVisible, reported, onReport }: ReportPro
           return (
             <TouchableOpacity onPress={() => onReport(item)} style={{flexDirection: 'row', padding: 15, borderTopColor: '#E3E3E3', borderTopWidth: 1, alignItems: 'center'}}>
               <Text style={{color: '#202020', fontSize: 14, fontWeight: '500', flex: 1}}>{item}</Text>
-              <Arrow width={18} height={18} />
+              <Arrow width={18} height={18} color={'#67D393'} />
             </TouchableOpacity>
           )
         }}

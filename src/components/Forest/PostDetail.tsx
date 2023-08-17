@@ -127,7 +127,7 @@ const PostDetailSection = ({
           }}
         >
           <TouchableOpacity style={{ marginTop: 5, width: 30, height: 30 }} onPress={() => { navigation.goBack() }}>
-            <Arrow width={18} height={18} transform={[{ rotate: '180deg' }]} />
+            <Arrow width={18} height={18} transform={[{ rotate: '180deg' }]} color={'black'} />
           </TouchableOpacity>
           <Text
             style={{
@@ -140,7 +140,7 @@ const PostDetailSection = ({
             {post.category.name}
           </Text>
           <TouchableOpacity style={{marginTop: 10, marginRight: 10, width: 30, height: 30, alignItems: 'flex-end'}} onPress={() => setDot(!dot)}>
-            <Settings transform={[{ rotate: dot ? '90deg' : '0deg'}]} color={'#444444'}/>
+            <Settings transform={[{ rotate: dot ? '90deg' : '0deg'}]} color={'black'}/>
           </TouchableOpacity>
           { dot &&
           <View style={{position: 'absolute', backgroundColor: 'white', top: 40, left: width-140, borderRadius: 4}}>
@@ -525,7 +525,7 @@ const PostDetailScreen = ({
                   </View>
                   <TouchableOpacity style={{ flexDirection: 'row', alignItems: 'center' }} onPress={() => { navigation.navigate('PostComments', { id: post_id, email: user.email }) }}>
                     <Text style={{ fontSize: 12, fontWeight: '500', marginRight: 5 }}>더보기</Text>
-                    <Arrow width={12} height={12} />
+                    <Arrow width={12} height={12} color={'black'} />
                   </TouchableOpacity>
                 </View>
                 <WriteComment id={post_id} reRenderScreen={reRenderScreen} data={updateText} commentId={commentId} isLogin={isLogin} navigation={navigation} />
@@ -536,7 +536,7 @@ const PostDetailScreen = ({
                 <PostRecommendSection data={recommend.filter((item: any) => item.id !== post.id)} navigation={navigation}/>
                 <View style={{ justifyContent: 'center', alignItems: 'center', paddingVertical: 20 }}>
                   <TouchableOpacity onPress={scrollToTop} style={{ flexDirection: 'row' }}>
-                    <Arrow width={18} height={18} transform={[{ rotate: '270deg' }]} />
+                    <Arrow width={18} height={18} transform={[{ rotate: '270deg' }]} color={'#666666'}/>
                     <Text style={{ color: '#666666', fontWeight: '600', marginTop: 3 }}>맨 위로 이동</Text>
                   </TouchableOpacity>
                 </View>

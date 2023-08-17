@@ -12,7 +12,7 @@ const ListHeader = ({ board_name,board_category,navigation }: ListHeaderProps) =
   return (
     <View style={{flexDirection: 'row', alignItems: 'center', padding: 15, borderBottomWidth: 1, borderBottomColor: '#E3E3E3'}}>
       <TouchableOpacity onPress={()=>{navigation.goBack();}}>
-        <Arrow width={18} height={18} transform={[{rotate: '180deg'}]} />
+        <Arrow width={18} height={18} transform={[{rotate: '180deg'}]} color={'black'} />
       </TouchableOpacity>
       <Text style={{ flex: 1, fontSize: 20, fontWeight: "700", textAlign: 'center' }}>
         {board_category ? board_category.name + " / " : ""}
