@@ -48,16 +48,17 @@ export function MatchCategory(data: string): number {
   return index;
 }
 
-export function CategoryIcon({data}:{data:string}) {
+export function CategoryIcon({data}:{data:string}): JSX.Element {
   const index = MatchCategory(data);
-  switch(index) {
-    case 0: return <Selector0 width={18} height={18} color={CATEGORY_LIST[index].color}/>
-    case 1: return <Selector1 width={18} height={18} color={CATEGORY_LIST[index].color}/>
-    case 2: return <Selector2 width={18} height={18} color={CATEGORY_LIST[index].color}/>
-    case 3: return <Selector3 width={18} height={18} color={CATEGORY_LIST[index].color}/>
-    case 4: return <Selector4 width={18} height={18} color={CATEGORY_LIST[index].color}/>
-    case 5: return <Selector5 width={18} height={18} color={CATEGORY_LIST[index].color}/>
-  }
+  let list = [
+    <Selector0 width={18} height={18} color={CATEGORY_LIST[0].color} />,
+    <Selector1 width={18} height={18} color={CATEGORY_LIST[1].color} />,
+    <Selector2 width={18} height={18} color={CATEGORY_LIST[2].color} />,
+    <Selector3 width={18} height={18} color={CATEGORY_LIST[3].color} />,
+    <Selector4 width={18} height={18} color={CATEGORY_LIST[4].color} />,
+    <Selector5 width={18} height={18} color={CATEGORY_LIST[5].color} />
+  ]
+  return list[index];
 }
 
 
