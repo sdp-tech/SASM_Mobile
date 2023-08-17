@@ -10,13 +10,7 @@ import RenderHTML from 'react-native-render-html';
 import Place from '../../../assets/img/Story/Place.svg';
 import ArrowWhite from '../../../assets/img/common/ArrowWhite.svg';
 import CardView from '../../../common/CardView';
-import { CATEGORY_LIST, MatchCategory } from "../../../common/Category";
-import Selector0 from "../../../assets/img/Category/Selector0.svg";
-import Selector1 from "../../../assets/img/Category/Selector1.svg";
-import Selector2 from "../../../assets/img/Category/Selector2.svg";
-import Selector3 from "../../../assets/img/Category/Selector3.svg";
-import Selector4 from "../../../assets/img/Category/Selector4.svg";
-import Selector5 from "../../../assets/img/Category/Selector5.svg";
+import { CategoryIcon } from "../../../common/Category";
 import Settings from '../../../assets/img/MyPage/Settings.svg';
 import Logo from "../../../assets/img/common/Logo.svg"
 
@@ -149,18 +143,9 @@ const StoryDetailBox = ({navigation, data, isLogin, onLayout, email, onRefresh, 
     }
 
     const category = () => {
-        let idx = MatchCategory(data.category);
-        let list = [
-        <Selector0 color={CATEGORY_LIST[0].color}/>,
-        <Selector1 color={CATEGORY_LIST[1].color}/>,
-        <Selector2 color={CATEGORY_LIST[2].color}/>,
-        <Selector3 color={CATEGORY_LIST[3].color}/>,
-        <Selector4 color={CATEGORY_LIST[4].color}/>,
-        <Selector5 color={CATEGORY_LIST[5].color}/>
-        ]
         return (
             <CategoryWrapper>
-                {list[idx]}
+                <CategoryIcon data={data.category} />
                 <Text style={{ fontSize: 14, marginHorizontal: 5 }}>{data.category}</Text>
             </CategoryWrapper>
         )

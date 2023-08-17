@@ -3,13 +3,7 @@ import { TouchableOpacity, View, ImageBackground, StyleSheet, Dimensions } from 
 import { TextPretendard as Text } from '../../../../common/CustomText';
 import Heart from "../../../../common/Heart";
 import { Request } from "../../../../common/requests";
-import { CATEGORY_LIST, MatchCategory } from "../../../../common/Category";
-import Selector0 from "../../../../assets/img/Category/Selector0.svg";
-import Selector1 from "../../../../assets/img/Category/Selector1.svg";
-import Selector2 from "../../../../assets/img/Category/Selector2.svg";
-import Selector3 from "../../../../assets/img/Category/Selector3.svg";
-import Selector4 from "../../../../assets/img/Category/Selector4.svg";
-import Selector5 from "../../../../assets/img/Category/Selector5.svg";
+import { CategoryIcon } from "../../../../common/Category";
 import { useNavigation } from "@react-navigation/native";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { TabProps } from "../../../../../App";
@@ -37,19 +31,6 @@ const MyPlaceItemCard = ({ data, edit, rerender }: { data: MyPlaceItemCardProps,
     rerender();
   };
 
-  const category = () => {
-    let idx = MatchCategory(data.category);
-    let list = [
-      <Selector0 color={CATEGORY_LIST[0].color} width={15} height={15} />,
-      <Selector1 color={CATEGORY_LIST[1].color} width={15} height={15} />,
-      <Selector2 color={CATEGORY_LIST[2].color} width={15} height={15} />,
-      <Selector3 color={CATEGORY_LIST[3].color} width={15} height={15} />,
-      <Selector4 color={CATEGORY_LIST[4].color} width={15} height={15} />,
-      <Selector5 color={CATEGORY_LIST[5].color} width={15} height={15} />
-    ]
-    return list[idx];
-  }
-
   const handlePageGoToMap = async () => {
     navigationToTab.navigate('맵', {place_name: data.place_name})
   }
@@ -63,7 +44,7 @@ const MyPlaceItemCard = ({ data, edit, rerender }: { data: MyPlaceItemCardProps,
         >
           <View style={{ width: '100%', height: '100%', backgroundColor: 'rgba(0,0,0,0.3)', padding: 5, justifyContent: 'flex-end' }}>
             <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-              {category()}
+              <CategoryIcon data={data.category} />
               <Text style={textStyles.address}>{data.address.split(' ')[1]}, {data.address.split(' ')[0]}</Text>
             </View>
             <Text numberOfLines={1} style={textStyles.place_name}>{data.place_name}</Text>

@@ -42,7 +42,7 @@ export default function CurationList({ navigation, route }: StackScreenProps<Hom
         }
         break;
       case ('admin'):
-        const response_admin = await request.get('/curations/admin_curations/', { page: page });
+        const response_admin = await request.get('/curations/admin_curations/', { page: page, search: search });
         if (page === 1) {
           setList(response_admin.data.data.results);
           setMax(Math.ceil(response_admin.data.data.count / 4));
@@ -51,7 +51,7 @@ export default function CurationList({ navigation, route }: StackScreenProps<Hom
         }
         break;
       case ('verify'):
-        const response_verifed = await request.get('/curations/verified_user_curations/', { page: page });
+        const response_verifed = await request.get('/curations/verified_user_curations/', { page: page, search: search });
         if (page === 1) {
           setList(response_verifed.data.data.results);
           setMax(Math.ceil(response_verifed.data.data.count / 4));
@@ -77,7 +77,7 @@ export default function CurationList({ navigation, route }: StackScreenProps<Hom
           placeholder='큐레이션 검색'
           search={search}
           setSearch={setSearch}
-          setPage={() => { }}
+          setPage={setPage}
           style={{ width: '80%', backgroundColor: '#F1F1F1' }}
         />
       </View>

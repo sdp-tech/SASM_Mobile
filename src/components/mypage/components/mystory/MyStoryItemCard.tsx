@@ -10,6 +10,7 @@ import Selector3 from "../../../../assets/img/Category/Selector3.svg";
 import Selector4 from "../../../../assets/img/Category/Selector4.svg";
 import Selector5 from "../../../../assets/img/Category/Selector5.svg";
 import Heart from '../../../../common/Heart';
+import { CategoryIcon } from "../../../../common/Category";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { useNavigation } from "@react-navigation/native";
 import { TabProps } from "../../../../../App";
@@ -42,19 +43,6 @@ const MyStoryItemCard = ({ data, edit, rerender }: { data: MyStroyItemCardProps,
     rerender();
   };
 
-  const categoryIcon = () => {
-    let idx = MatchCategory(category);
-    let list = [
-      <Selector0 color={CATEGORY_LIST[0].color} />,
-      <Selector1 color={CATEGORY_LIST[1].color} />,
-      <Selector2 color={CATEGORY_LIST[2].color} />,
-      <Selector3 color={CATEGORY_LIST[3].color} />,
-      <Selector4 color={CATEGORY_LIST[4].color} />,
-      <Selector5 color={CATEGORY_LIST[5].color} />
-    ]
-    return list[idx];
-  }
-
   return (
     <View style={{ position: 'relative' }}>
       <TouchableWithoutFeedback style={{ marginHorizontal: 10, marginBottom: 10 }} onPress={() => { navigationToTab.navigate('스토리', { id: id }) }}>
@@ -73,7 +61,9 @@ const MyStoryItemCard = ({ data, edit, rerender }: { data: MyStroyItemCardProps,
         <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'flex-end', marginTop: 5 }}>
           {/* <Text style={[textStyles.writer, {color: verified ? '#209DF5' : '#89C77F'}]}>{verified ? ('Editor') : ('User')}</Text> */}
           <Text style={textStyles.writer}> {nickname}</Text>
-          <View style={{ flex: 1, alignItems: 'flex-end' }}>{categoryIcon()}</View>
+          <View style={{ flex: 1, alignItems: 'flex-end' }}>
+            <CategoryIcon data={category} />
+          </View>
         </View>
       </TouchableWithoutFeedback>
       {

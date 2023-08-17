@@ -87,7 +87,7 @@ const TabText = styled.Text<{ selected: boolean }>`
   font-weight: 700;
   color: ${props => props.selected ? '#000000' : '#C0C0C0'}
 `
-const StorySection = styled.View`
+const StorySection = styled.TouchableOpacity`
   width: ${width - 54}px;
   margin: 27px;
   position: relative;
@@ -394,14 +394,14 @@ export default function DetailCard({ detailData, setIndex }: DetailCardProps): J
                         </MenuBox>
                         {
                           detailData.story_id != null &&
-                          <StorySection>
+                          <StorySection onPress={() => { navigationToTab.navigate('스토리', { id: detailData.story_id }) }}>
                             <Image source={{ uri: storyData.rep_pic }} style={{ width: '100%', height: 450 }} />
                             <View style={{ backgroundColor: 'rgba(0, 0, 0, 0.3)', position: 'absolute', width: '100%', height: '100%', paddingVertical: 35, paddingHorizontal: 20 }}>
                               <Text style={TextStyles.story_title}>{storyData.title}</Text>
                               <Text style={TextStyles.story_place_name}>{storyData.place_name}</Text>
                               <Text style={TextStyles.story_category}>{storyData.category}</Text>
                               <Text style={TextStyles.story_writer}>{storyData.nickname}님의 이야기</Text>
-                              <Text numberOfLines={3} style={TextStyles.story_preview}>{storyData.preview}...<TouchableOpacity onPress={() => { navigationToTab.navigate('스토리', { id: detailData.story_id }) }} style={{ height: 18, paddingTop: 3 }}><Text style={TextStyles.story_preview}>더보기</Text></TouchableOpacity></Text>
+                              <Text numberOfLines={3} style={TextStyles.story_preview}>{storyData.preview}...더보기</Text>
                             </View>
                             <View style={{ position: 'absolute', top: 34, right: 30 }}><Heart white={true} like={likeStory} onPress={handleStoryLike} /></View>
                           </StorySection>
@@ -422,14 +422,14 @@ export default function DetailCard({ detailData, setIndex }: DetailCardProps): J
                     2: <Section>
                       {
                         detailData.story_id == null ? <Text style={{ margin: 15, fontWeight: '700', color: '#000000' }}>스토리가 없습니다.</Text> :
-                          <StorySection>
+                          <StorySection onPress={() => { navigationToTab.navigate('스토리', { id: detailData.story_id }) }}>
                             <Image source={{ uri: storyData.rep_pic }} style={{ width: '100%', height: 450 }} />
                             <View style={{ backgroundColor: 'rgba(0, 0, 0, 0.3)', position: 'absolute', width: '100%', height: '100%', paddingVertical: 35, paddingHorizontal: 20 }}>
                               <Text style={TextStyles.story_title}>{storyData.title}</Text>
                               <Text style={TextStyles.story_place_name}>{storyData.place_name}</Text>
                               <Text style={TextStyles.story_category}>{storyData.category}</Text>
                               <Text style={TextStyles.story_writer}>{storyData.nickname}님의 이야기</Text>
-                              <Text numberOfLines={3} style={TextStyles.story_preview}>{storyData.preview}...<TouchableOpacity onPress={() => { navigationToTab.navigate('스토리', { id: detailData.story_id }) }} style={{ height: 18, paddingTop: 3 }}><Text style={TextStyles.story_preview}>더보기</Text></TouchableOpacity></Text>
+                              <Text numberOfLines={3} style={TextStyles.story_preview}>{storyData.preview}...더보기</Text>
                             </View>
                             <View style={{ position: 'absolute', top: 34, right: 30 }}><Heart white={true} like={likeStory} onPress={handleStoryLike} /></View>
                           </StorySection>
