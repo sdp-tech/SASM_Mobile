@@ -535,9 +535,9 @@ const PostDetailScreen = ({
               <>
                 <PostRecommendSection data={recommend.filter((item: any) => item.id !== post.id)} navigation={navigation}/>
                 <View style={{ justifyContent: 'center', alignItems: 'center', paddingVertical: 20 }}>
-                  <TouchableOpacity onPress={scrollToTop} style={{ flexDirection: 'row' }}>
-                    <Arrow width={18} height={18} transform={[{ rotate: '270deg' }]} color={'#666666'}/>
-                    <Text style={{ color: '#666666', fontWeight: '600', marginTop: 3 }}>맨 위로 이동</Text>
+                  <TouchableOpacity onPress={scrollToTop} style={{ flexDirection: 'row', width: '100%', justifyContent: 'center' }}>
+                    <Arrow width={18} height={18} transform={[{rotate: '270deg'}]} color={'#666666'} style={{marginRight: 5}} />
+                    <Text style={{color: '#666666', fontWeight: '600', marginTop: 3}}>맨 위로 이동</Text>
                   </TouchableOpacity>
                 </View>
               </>

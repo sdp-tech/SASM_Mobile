@@ -130,11 +130,6 @@ const StoryDetailBox = ({navigation, data, isLogin, onLayout, email, onRefresh, 
     };
 
     const tagsStyles = {
-        span: {
-          fontSize: 16,
-          lineHeight: 30,
-          letterSpacing: -0.6
-        },
         p: {
             fontSize: 16,
             lineHeight: 30,
@@ -146,7 +141,7 @@ const StoryDetailBox = ({navigation, data, isLogin, onLayout, email, onRefresh, 
             letterSpacing: -0.6
         },
         img: {
-            width: width-30
+            width: width,
         }
     }
 
