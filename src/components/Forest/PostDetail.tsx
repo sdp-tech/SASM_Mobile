@@ -126,7 +126,7 @@ const PostDetailSection = ({
             padding: 10
           }}
         >
-          <TouchableOpacity style={{ marginTop: 5 }} onPress={() => { navigation.goBack() }}>
+          <TouchableOpacity style={{ marginTop: 5, width: 30, height: 30 }} onPress={() => { navigation.goBack() }}>
             <Arrow width={18} height={18} transform={[{ rotate: '180deg' }]} />
           </TouchableOpacity>
           <Text
@@ -139,7 +139,7 @@ const PostDetailSection = ({
           >
             {post.category.name}
           </Text>
-          <TouchableOpacity style={{marginTop: 10, marginRight: 10}} onPress={() => setDot(!dot)}>
+          <TouchableOpacity style={{marginTop: 10, marginRight: 10, width: 30, height: 30, alignItems: 'flex-end'}} onPress={() => setDot(!dot)}>
             <Settings transform={[{ rotate: dot ? '90deg' : '0deg'}]} color={'#444444'}/>
           </TouchableOpacity>
           { dot &&

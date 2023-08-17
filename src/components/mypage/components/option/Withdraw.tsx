@@ -74,7 +74,7 @@ const Withdraw = ({ navigation }: StackScreenProps<MyPageProps, 'withdraw'>) => 
     }
 
     return (
-        <SafeAreaView style={{ backgroundColor: '#FFFFFF', flex: 1 }}>
+        <SafeAreaView style={{ backgroundColor: '#FFFFFF', flex: 1, paddingTop: 10 }}>
             <View style={{ position: 'relative', marginBottom: 30, width: '100%' }}>
                 <Text style={TextStyles.title}>회원 탈퇴</Text>
                 <TouchableOpacity style={{ left: 10, marginBottom: 30, position: 'absolute' }} onPress={() => { navigation.navigate('mypage') }}>
@@ -91,7 +91,7 @@ const Withdraw = ({ navigation }: StackScreenProps<MyPageProps, 'withdraw'>) => 
             </Modal>
             <View style={{ display: 'flex', justifyContent: 'center', flex: 1 }}>
                 <Text style={TextStyles.draw}>회원 탈퇴</Text>
-                <NextButton label='회원 탈퇴' onPress={withdraw} style={{alignSelf: 'center', marginTop: 60}} />
+                <NextButton label='회원 탈퇴' onPress={withdrawConfirmAlert} style={{alignSelf: 'center', marginTop: 60}} />
             </View>
         </SafeAreaView>
     )

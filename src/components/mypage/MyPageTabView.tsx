@@ -137,12 +137,14 @@ const MyPageTabView = ({ navigation }: StackScreenProps<MyPageProps, 'mypage'>) 
   }
 
   return (
-    <SafeAreaView style={{ backgroundColor: 'white', flex: 1 }}>
-      <View style={{ flexDirection: "row", paddingHorizontal: 20, paddingVertical: 10, justifyContent:'space-between' }}>
-        <TouchableOpacity onPress={() => { {isLogin ? navigation.navigate('user', { info: info, follower: follower.num, following: following.num }) : Alert.alert('로그인이 필요합니다')} }}>
+    <SafeAreaView style={{ backgroundColor: 'white', flex: 1, paddingTop: 10 }}>
+      <View style={{ flexDirection: "row", paddingHorizontal: 15, paddingVertical: 10, justifyContent:'space-between' }}>
+        <TouchableOpacity style={{width: 30, alignItems: 'center', justifyContent: 'center', height: 30}}
+          onPress={() => { {isLogin ? navigation.navigate('user', { info: info, follower: follower.num, following: following.num }) : Alert.alert('로그인이 필요합니다')} }}>
           <Profile />
         </TouchableOpacity>
-        <TouchableOpacity onPress={() => { isLogin ? navigation.navigate('options', { info: info }) : Alert.alert('로그인이 필요합니다') }}>
+        <TouchableOpacity style={{width: 30, alignItems: 'center', justifyContent: 'center', height: 30}} 
+          onPress={() => { isLogin ? navigation.navigate('options', { info: info }) : Alert.alert('로그인이 필요합니다') }}>
           <Settings color={'black'} />
         </TouchableOpacity>
       </View>

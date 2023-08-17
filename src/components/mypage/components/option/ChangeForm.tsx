@@ -149,7 +149,7 @@ export default function ChangeForm({ navigation, route }: StackScreenProps<MyPag
   }
 
   return (
-    <SafeAreaView style={{ backgroundColor: '#FFFFFF', flex: 1 }}>
+    <SafeAreaView style={{ backgroundColor: '#FFFFFF', flex: 1, paddingTop: 10 }}>
       <View style={{ position: 'relative', }}>
         <Text style={TextStyles.header}>프로필 수정</Text>
         <TouchableOpacity style={{ left: 10, marginBottom: 30, position: 'absolute', display: 'flex', flexDirection: 'row', alignItems: 'center' }} onPress={() => { navigation.goBack() }}>

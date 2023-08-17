@@ -56,7 +56,7 @@ export default function Options({ navigation, route }: StackScreenProps<MyPagePr
     ]
 
     return (
-        <SafeAreaView style={{ flex: 1, backgroundColor: '#FFFFFF' }}>
+        <SafeAreaView style={{ flex: 1, backgroundColor: '#FFFFFF', paddingTop: 10 }}>
             <View style={{ position: 'relative', marginBottom: 30 }}>
                 <TouchableOpacity style={{ left: 10, marginBottom: 30, position: 'absolute', display: 'flex', flexDirection: 'row', alignItems: 'center' }} onPress={() => { navigation.goBack() }}>
                     <Arrow width={20} height={20} transform={[{ rotateY: '180deg' }]} />

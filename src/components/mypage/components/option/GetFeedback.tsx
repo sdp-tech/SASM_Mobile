@@ -34,7 +34,7 @@ const Feedback = ({ navigation }: StackScreenProps<MyPageProps, 'feedback'>) => 
     }
 
     return (
-        <SafeAreaView style={{ backgroundColor: '#FFFFFF', flex: 1, display: 'flex', alignItems: 'center' }}>
+        <SafeAreaView style={{ backgroundColor: '#FFFFFF', flex: 1, display: 'flex', alignItems: 'center', paddingTop: 10 }}>
             <Modal visible={finishModal}>
                 <FinishModal
                     setModal={setFinishModal}
