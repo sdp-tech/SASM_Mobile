@@ -78,7 +78,7 @@ const MainCard = ({id, place_name, title, rep_pic, story_like, category, preview
             <Text style={textStyles.placename}>{place_name}</Text>
           </View>
           <View style={{marginRight: 20, marginTop: 30}}>
-            <Heart like={like} onPress={toggleLike} white={true} />
+            <Heart like={like} onPress={toggleLike} color="white" size={20} />
           </View>
         </View>
       </ImageBackground>

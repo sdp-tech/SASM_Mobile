@@ -108,7 +108,7 @@ const Comment = ({ data, story_id, reRenderScreen, email, isLogin, navigation, c
                         </View>
                         <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'flex-end'}}>
                             <TouchableOpacity style={{flexDirection: 'row', alignItems: 'center'}} onPress={toggleLike}>
-                                <Heart like={like} onPress={() => {}} size={12} />
+                                <Heart color={'#676767'} like={like} onPress={toggleLike} size={12} />
                                 <Text style={{fontSize: 12, color: '#676767', marginHorizontal: 5}}>{data!.like_cnt}</Text>
                             </TouchableOpacity>
                         </View>

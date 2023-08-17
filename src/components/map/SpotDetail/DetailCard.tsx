@@ -217,7 +217,7 @@ export default function DetailCard({ detailData, setIndex }: DetailCardProps): J
       );
       return;
     }
-    const response_like = await request.post('/stories/story_like/', { id: detailData.story_id });
+    const response = await request.post(`/stories/${detailData.story_id}/story_like/`);
     setLikeStory(!likeStory);
   }
 
@@ -294,7 +294,7 @@ export default function DetailCard({ detailData, setIndex }: DetailCardProps): J
               }}>
                 <PlusWhite />
               </TouchableOpacity>
-              <Heart like={likePlace} onPress={handlePlaceLike} white />
+              <Heart like={likePlace} onPress={handlePlaceLike} color={'white'} size={20}/>
               <ShareButton color='white' message={`[SASM Map] ${detailData.place_name}(${detailData.category}) - ${detailData.place_review}`} />
             </ButtonBox>
             <TextBox>
@@ -403,7 +403,7 @@ export default function DetailCard({ detailData, setIndex }: DetailCardProps): J
                               <Text style={TextStyles.story_writer}>{storyData.nickname}님의 이야기</Text>
                               <Text numberOfLines={3} style={TextStyles.story_preview}>{storyData.preview}...더보기</Text>
                             </View>
-                            <View style={{ position: 'absolute', top: 34, right: 30 }}><Heart white={true} like={likeStory} onPress={handleStoryLike} /></View>
+                            <View style={{ position: 'absolute', top: 34, right: 30 }}><Heart color={'white'} size={20} like={likeStory} onPress={handleStoryLike} /></View>
                           </StorySection>
                         }
                       </Box>
@@ -431,7 +431,7 @@ export default function DetailCard({ detailData, setIndex }: DetailCardProps): J
                               <Text style={TextStyles.story_writer}>{storyData.nickname}님의 이야기</Text>
                               <Text numberOfLines={3} style={TextStyles.story_preview}>{storyData.preview}...더보기</Text>
                             </View>
-                            <View style={{ position: 'absolute', top: 34, right: 30 }}><Heart white={true} like={likeStory} onPress={handleStoryLike} /></View>
+                            <View style={{ position: 'absolute', top: 34, right: 30 }}><Heart color={'white'} size={20} like={likeStory} onPress={handleStoryLike} /></View>
                           </StorySection>
                       }
                     </Section>,
@@ -456,7 +456,6 @@ const TextStyles = StyleSheet.create({
   },
   place_name: {
     fontSize: 28,
-    lineHeight: 28,
     letterSpacing: -0.6,
     color: '#FFFFFF',
     fontWeight: '700',
