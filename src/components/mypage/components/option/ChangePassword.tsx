@@ -10,6 +10,7 @@ import FinishModal from '../../../../common/FinishModal';
 import InputWithLabel from '../../../../common/InputWithLabel';
 import { LoginContext } from '../../../../common/Context';
 import { removeAccessToken, removeNickname, removeRefreshToken } from '../../../../common/storage';
+import NextButton from '../../../../common/NextButton';
 const SignUpButton = styled.View`
     width: 300px;
     height: 40px;
@@ -113,10 +114,7 @@ const PasswordChange = ({ navigation }: StackScreenProps<MyPageProps, 'changepw'
                 secureTextEntry={true}
                 onChangeText={text => setForm({ ...form, passwordConfirm: text })}
             />
-            <TouchableOpacity style={{ alignSelf: 'center', marginTop: 60 }}
-                onPress={updateNewPassword}
-            ><Text style={TextStyles.button}>비밀번호 변경</Text>
-            </TouchableOpacity>
+            <NextButton label='비밀번호 변경' onPress={updateNewPassword} style={{alignSelf: 'center', marginTop: 20}} />
             </View>
         </SafeAreaView>
 

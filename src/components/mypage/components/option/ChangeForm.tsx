@@ -12,6 +12,7 @@ import ProfileImage from '../../../../assets/img/MyPage/ProfileImage.svg';
 import { Request } from '../../../../common/requests';
 import { CameraSelector } from '../../../../common/PhotoOptions';
 import * as ImagePicker from "react-native-image-picker";
+import NextButton from '../../../../common/NextButton';
 
 const Section = styled.View`
   margin-vertical: 20px;
@@ -211,9 +212,7 @@ export default function ChangeForm({ navigation, route }: StackScreenProps<MyPag
               containerStyle={{ zIndex: 2 }}
               defaultDate={form.birthdate}
             />
-            <TouchableOpacity onPress={updateInfo}>
-              <Text style={TextStyles.submit}>저장</Text>
-            </TouchableOpacity>
+            <NextButton onPress={updateInfo} label='저장' style={{alignSelf: 'center'}} />
           </Section>
       }
     </SafeAreaView>

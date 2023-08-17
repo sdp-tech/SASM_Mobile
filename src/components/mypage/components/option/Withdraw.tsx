@@ -9,6 +9,7 @@ import { LoginContext } from '../../../../common/Context';
 import FinishModal from '../../../../common/FinishModal';
 import { Request } from '../../../../common/requests';
 import Arrow from "../../../../assets/img/common/Arrow.svg";
+import NextButton from '../../../../common/NextButton';
 
 
 const WithdrawButton = styled.View`
@@ -90,10 +91,7 @@ const Withdraw = ({ navigation }: StackScreenProps<MyPageProps, 'withdraw'>) => 
             </Modal>
             <View style={{ display: 'flex', justifyContent: 'center', flex: 1 }}>
                 <Text style={TextStyles.draw}>회원 탈퇴</Text>
-                <TouchableOpacity style={{ alignSelf: 'center', marginTop: 60 }}
-                    onPress={withdrawConfirmAlert}
-                ><Text style={TextStyles.button}>탈퇴</Text>
-                </TouchableOpacity>
+                <NextButton label='회원 탈퇴' onPress={withdraw} style={{alignSelf: 'center', marginTop: 60}} />
             </View>
         </SafeAreaView>
     )

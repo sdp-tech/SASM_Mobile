@@ -9,6 +9,7 @@ import { MyPageProps } from '../../pages/MyPage';
 import InputWithLabel from '../../common/InputWithLabel';
 import { LoginContext } from '../../common/Context';
 import Arrow from "../../assets/img/common/Arrow.svg";
+import NextButton from '../../common/NextButton';
 import SocialLogin, {processLoginResponse} from './SocialLogin';
 
 const InputWrapper = styled.View`
@@ -82,9 +83,7 @@ const LoginScreen = () => {
           isAlert={alert.isAlert}
         />
       </InputWrapper>
-      <TouchableOpacity onPress={() => login()}>
-        <Text style={TextStyles.button_login}>로그인하기</Text>
-      </TouchableOpacity>
+      <NextButton label='로그인' onPress={() => login()} style={{marginBottom: 10}}/>
       <TouchableOpacity style={{marginBottom: 30}} onPress={() => navigation.navigate('findidpw')}><Text style={TextStyles.find}>아이디/비밀번호 찾기</Text></TouchableOpacity>
       <SocialLogin type='login'/>
     </SafeAreaView>

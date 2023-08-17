@@ -7,6 +7,7 @@ import { ForestContext } from './ForestContext';
 
 import { Request } from '../../../common/requests';
 import { PostUploadParams } from '../PostUpload';
+import NextButton from '../../../common/NextButton';
 
 const CategoryForm = ({ tab, setTab, navigation, post }: PostUploadParams) => {
   const request = new Request();
@@ -89,11 +90,9 @@ const CategoryForm = ({ tab, setTab, navigation, post }: PostUploadParams) => {
           scrollEnabled={false}
         />
         {(selectedId) &&
-          <TouchableOpacity style={{backgroundColor: '#67D393', width: 180, height: 40, alignItems: 'center', justifyContent: 'center', borderRadius: 20, position: 'absolute', top: height*0.6 }} 
+          <NextButton label="다음" style={{position: 'absolute', bottom: 30}} 
             onPress={() => setTab(1)}
-          >
-            <Text style={{fontWeight: '700', fontSize: 16, color: 'white'}}>다음</Text>
-          </TouchableOpacity>
+          />
         }
       </View>
     </View>

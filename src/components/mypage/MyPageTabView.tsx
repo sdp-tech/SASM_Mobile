@@ -142,7 +142,7 @@ const MyPageTabView = ({ navigation }: StackScreenProps<MyPageProps, 'mypage'>) 
         <TouchableOpacity onPress={() => { {isLogin ? navigation.navigate('user', { info: info, follower: follower.num, following: following.num }) : Alert.alert('로그인이 필요합니다')} }}>
           <Profile />
         </TouchableOpacity>
-        <TouchableOpacity onPress={() => { navigation.navigate('options', { info: info }) }}>
+        <TouchableOpacity onPress={() => { isLogin ? navigation.navigate('options', { info: info }) : Alert.alert('로그인이 필요합니다') }}>
           <Settings color={'black'} />
         </TouchableOpacity>
       </View>

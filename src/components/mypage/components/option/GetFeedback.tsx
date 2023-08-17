@@ -9,6 +9,7 @@ import { StackScreenProps } from '@react-navigation/stack';
 import { MyPageProps } from '../../../../pages/MyPage';
 import FinishModal from '../../../../common/FinishModal';
 import { TouchableWithoutFeedback } from 'react-native-gesture-handler';
+import NextButton from '../../../../common/NextButton';
 
 const { width, height } = Dimensions.get('window');
 
@@ -60,7 +61,7 @@ const Feedback = ({ navigation }: StackScreenProps<MyPageProps, 'feedback'>) => 
                 }}
                 />
             <Text style={{ width: '100%', textAlign: 'right', fontSize: 12, lineHeight: 18, letterSpacing: -0.6 }}>{voc.length}/300</Text>
-            <TouchableOpacity style={{ marginTop: 50 }} onPress={FeedbackPost}><Text style={TextStyles.button}>의견 보내기</Text></TouchableOpacity>
+            <NextButton style={{ marginTop: 50, alignSelf: 'center' }} onPress={FeedbackPost} label="의견 보내기"/>
             </TouchableWithoutFeedback>
         </SafeAreaView>)
 }
