@@ -11,12 +11,13 @@ import SelectStoryModal from './FormModals/SelectStoryModal';
 import { launchImageLibrary, launchCamera, ImagePickerResponse } from 'react-native-image-picker';
 import AddColor from "../../assets/img/common/AddColor.svg";
 import { getStatusBarHeight } from 'react-native-status-bar-height';
+import FormHeader from '../../common/FormHeader';
 
 const { width, height } = Dimensions.get('window');
 
 const ReppicBox = styled.TouchableOpacity`
   position: relative;
-  height: ${height / 2};
+  height: ${height*0.9 / 2};
   display: flex;
   justify-content: center;
   background: #DADADA;
@@ -155,12 +156,13 @@ export default function CurationForm({ navigation, route }: StackScreenProps<Hom
 
   return (
     <KeyboardAvoidingView behavior={'height'} keyboardVerticalOffset={iOS ? 0 : statusBarHeight+88} style={{flex: 1, backgroundColor: '#FFFFFF'}}>
+    <FormHeader title='큐레이션 작성' onLeft={() => navigation.goBack()} onRight={uploadCuration} begin={true} end={true} />
     <ScrollView>
       <ReppicBox onPress={handleRepPic}>
-        <ImageBackground source={require('../../assets/img/Home/form_example.png')} style={{ flex: 1, opacity: 0.5 }} resizeMode='cover' />
+        <ImageBackground source={require('../../assets/img/Home/form_example.png')} imageStyle={{height: (height*0.9)/2}} style={{ flex: 1, opacity: 0.5 }} resizeMode='cover' />
         {
           rep_pic[0].uri != '' &&
-          <Image style={{ width: width, height: height / 2 }}
+          <Image style={{ width: width, height: (height*0.9) / 2 }}
             source={{ uri: rep_pic[0].uri }}
             alt='대표 사진'
             resizeMode='contain' />
