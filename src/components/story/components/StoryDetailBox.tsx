@@ -135,10 +135,18 @@ const StoryDetailBox = ({navigation, data, isLogin, onLayout, email, onRefresh, 
           lineHeight: 30,
           letterSpacing: -0.6
         },
+        p: {
+            fontSize: 16,
+            lineHeight: 30,
+            letterSpacing: -0.6
+        },
         h6: {
             fontSize: 12,
             lineHeight: 30,
             letterSpacing: -0.6
+        },
+        img: {
+            width: width-30
         }
     }
 
