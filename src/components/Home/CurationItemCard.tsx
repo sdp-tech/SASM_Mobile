@@ -46,7 +46,7 @@ export function SearchItemCard({ style, data, onPress }: ItemCardProps): JSX.Ele
             uri: data.rep_pic
           }}
         >
-        <Text style={TextStyles.writer}>{data.writer_email}</Text>
+        <Text style={TextStyles.writer}>{data.nickname}</Text>
         <Text numberOfLines={2} style={TextStyles.title_email}>{data.title}</Text>
         </ImageBackground>
       </CardWrapper>

@@ -20,7 +20,7 @@ const DropDown = ({ items, isBorder, value, setValue }: DropDownProps) => {
       style={{ borderWidth: isBorder ? 1 : 0, justifyContent: 'flex-start', alignItems: 'center', minHeight: 20, backgroundColor: 'transparent'}}
       textStyle={{ fontSize: 12 }}
       dropDownContainerStyle={{ borderWidth: isBorder ? 1 : 0 }}
-      listItemContainerStyle={{ height: 20, borderTopWidth: isBorder ? 1 : 0, }}
+      listItemContainerStyle={{ height: 30, borderTopWidth: isBorder ? 1 : 0, }}
       tickIconStyle={{ width: 10, height: 10 }}
       arrowIconStyle={{ width: 15, height: 15 }}
     />

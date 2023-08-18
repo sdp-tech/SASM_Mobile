@@ -1,10 +1,10 @@
 import { StackScreenProps, StackNavigationProp } from '@react-navigation/stack';
 import React, { Dispatch, SetStateAction, useCallback, useContext, useEffect, useState } from 'react';
 import { HomeStackParams } from '../../pages/Home';
-import { Alert, Dimensions, Image, ImageBackground, SafeAreaView, StyleSheet, TouchableOpacity, View } from 'react-native';
+import { Alert, Dimensions, Image, ImageBackground, SafeAreaView, StyleSheet, TouchableOpacity, View, Platform } from 'react-native';
 import { TextPretendard as Text } from '../../common/CustomText';
 import { Request } from '../../common/requests';
-import ArrowWhite from "../../assets/img/common/ArrowWhite.svg";
+import Arrow from "../../assets/img/common/Arrow.svg";
 import { ScrollView } from 'react-native-gesture-handler';
 import styled from 'styled-components/native';
 import { useFocusEffect, useNavigation } from '@react-navigation/native';
@@ -139,9 +139,8 @@ export default function CurationDetail({ navigation, route }: StackScreenProps<H
   })
   const getCurationDetail = async () => {
     const response_detail = await request.get(`/curations/curation_detail/${route.params.id}/`);
-    console.error(response_detail.data.data)
     setCurationDetail(response_detail.data.data);
-    setLike(response_detail.data.data.curation_like);
+    setLike(response_detail.data.data.like_curation);
     setFollowing(response_detail.data.data.writer_is_followed);
     Image.getSize(response_detail.data.data.rep_pic, (width, height) => { setReppicSize({ width: width, height: height }) });
     Image.getSize(response_detail.data.data.map_image, (width, height) => { setMapImageSize({ width: width, height: height }) })
@@ -174,6 +173,7 @@ export default function CurationDetail({ navigation, route }: StackScreenProps<H
     }
     const response = await request.post(`/curations/curation_like/${route.params.id}/`);
     setCurationDetail({ ...curationDetail, like_curation: !curationDetail.like_curation });
+    setLike(!like);
   }
 
   useFocusEffect(useCallback(() => {
@@ -184,8 +184,8 @@ export default function CurationDetail({ navigation, route }: StackScreenProps<H
   return (
     <>
       <ScrollView style={{ backgroundColor: '#FFFFFF' }}>
-        <TouchableOpacity style={{ position: 'absolute', top: 50, left: 10, zIndex: 2 }} onPress={navigation.goBack}>
-          <ArrowWhite width={20} height={20} strokeWidth={5} />
+        <TouchableOpacity style={{ position: 'absolute', top: Platform.OS == 'ios' ? 50 : 30, left: 10, zIndex: 2 }} onPress={navigation.goBack}>
+          <Arrow width={18} height={18} transform={[{ rotate: '180deg' }]} color={'white'} />
         </TouchableOpacity>
           <ImageBackground source={{ uri: curationDetail.rep_pic }} style={{ width: width, height: width * (reppicSize.height / reppicSize.width), position:'relative' }}>
             <View style={{width:'100%', height:'100%', backgroundColor:'rgba(0,0,0,0.3)', position:'absolute', zIndex:2}}/>
@@ -258,7 +258,7 @@ const Storys = ({ navigation, data }: { navigation: StackNavigationProp<TabProps
       );
       return;
     }
-    const response_like = await request.post('/stories/story_like/', { id: data.story_id });
+    const response = await request.post(`/stories/${data.story_id}/story_like/`);
     setLike(!like);
   }
 
@@ -271,7 +271,7 @@ const Storys = ({ navigation, data }: { navigation: StackNavigationProp<TabProps
       <StoryInfoBox>
         <View style={{ display: 'flex', flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
           <Text style={TextStyles.place_name}>{data.place_name}</Text>
-          <TouchableOpacity><Heart like={like} onPress={handleLike} /></TouchableOpacity>
+          <TouchableOpacity><Heart color={'#202020'} like={like} onPress={handleLike} /></TouchableOpacity>
         </View>
         <Text style={{ fontSize: 12 }}>{data.place_address}</Text>
       </StoryInfoBox>

@@ -48,7 +48,7 @@ export interface CurationProps {
   title: string;
   id: number;
   is_selected: boolean;
-  writer_email: string;
+  nickname: string;
   rep_pic: string;
 }
 
@@ -97,11 +97,11 @@ export default function CurationHome({ navigation, route }: StackScreenProps<Hom
     <SafeAreaView style={{ backgroundColor: '#FFFFFF', flex: 1 }}>
       {loading ? <ActivityIndicator style={{flex:1}}/>
         : <>
+          <CustomHeader
+            onSearch={() => { navigation.navigate('List', { from: 'search' }) }}
+            onAlarm={() => { }}
+          />
           <ScrollView>
-            <CustomHeader
-              onSearch={() => { navigation.navigate('List', { from: 'search' }) }}
-              onAlarm={() => { }}
-            />
             <CardView
               gap={0}
               offset={0}

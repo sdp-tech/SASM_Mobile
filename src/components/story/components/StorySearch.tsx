@@ -118,7 +118,7 @@ const StorySearchPage = ({ navigation }: StoryProps) => {
       </View>
       {search.length > 0 ? (
         <>
-        <View style={{borderColor: '#E3E3E3', borderTopWidth: 1, marginTop: 10}}>
+        <View style={{borderColor: '#E3E3E3', borderTopWidth: 1, marginTop: 10, paddingLeft: 10}}>
           <Category checkedList={checkedList} setCheckedList={setCheckedList} story={true} />
         </View>
         <View style={{flexDirection: 'row', zIndex: 1, alignItems: 'center', padding: 15, backgroundColor: '#F1FCF5'}}>

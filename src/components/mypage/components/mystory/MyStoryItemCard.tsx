@@ -55,7 +55,7 @@ const MyStoryItemCard = ({ data, edit, rerender }: { data: MyStroyItemCardProps,
               <Text style={textStyles.title}>{title}</Text>
               <Text style={textStyles.place_name}>{place_name}</Text>
             </View>
-            <Text style={textStyles.preview} numberOfLines={4}>{preview}</Text>
+            <Text style={textStyles.preview} numberOfLines={3}>{preview}</Text>
           </View>
         </ImageBackground>
         <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'flex-end', marginTop: 5 }}>
@@ -69,7 +69,7 @@ const MyStoryItemCard = ({ data, edit, rerender }: { data: MyStroyItemCardProps,
       {
         edit &&
         <View style={{position:'absolute', top: 10, right: 15}}>
-          <Heart like={like} onPress={handleLike} size={20} white={true} />
+          <Heart like={like} onPress={handleLike} size={20} color={'white'} />
         </View>
       }
     </View>
@@ -80,25 +80,29 @@ const textStyles = StyleSheet.create({
   title: {
     fontSize: 12,
     color: "#F4F4F4",
-    fontWeight: "600",
+    fontWeight: "700",
     lineHeight: 18,
+    letterSpacing: -0.6
   },
   place_name: {
     fontSize: 16,
     color: "#F4F4F4",
     fontWeight: "700",
     lineHeight: 22,
+    letterSpacing: -0.6
   },
   preview: {
-    fontSize: 12,
+    fontSize: 10,
     color: "#F4F4F4",
-    fontWeight: "400",
+    fontWeight: "700",
     lineHeight: 18,
+    letterSpacing: -0.6
   },
   writer: {
     fontSize: 12,
     fontWeight: "600",
-    lineHeight: 18
+    lineHeight: 18,
+    letterSpacing: -0.6
   }
 })
 

@@ -66,7 +66,7 @@ const SearchCard = ({id, place_name, title, rep_pic, extra_pics, story_like, cat
     }
   }
 
-  const newArray = () => {
+  const photoArray = () => {
     const array = []
     const length = extra_pics ? 2-extra_pics.length : 2
     {extra_pics && extra_pics.slice(0,2).map((uri: string, index: number) => (
@@ -99,9 +99,9 @@ const SearchCard = ({id, place_name, title, rep_pic, extra_pics, story_like, cat
             </View>
           </ImageBackground>
           <View style={{marginLeft: 8}}>
-            {newArray()}
+            {photoArray()}
             <View style={{position: 'absolute', right: 10, top: 10}}>
-              <Heart like={like} onPress={toggleLike} white={true} />
+              <Heart like={like} onPress={toggleLike} color={'white'} size={20} />
             </View>
           </View>
         </View>

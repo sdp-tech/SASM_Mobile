@@ -69,10 +69,10 @@ const ListCard = ({id, place_name, title, rep_pic, extra_pics, story_like, creat
         <View style={{flexDirection: 'row', marginBottom: 10}}>
           <View style={{flex: 1}}>
             <Text numberOfLines={2} style={textStyles.title}>{title}</Text>
-            <Text style={textStyles.placename} numberOfLines={1}>{place_name}</Text>
-          </View>
-          <View style={{justifyContent: 'flex-end'}}>
-            <Heart like={like} onPress={toggleLike} size={20} color={'black'}/>
+            <View style={{flexDirection: 'row', alignItems: 'center'}}>
+              <Text style={textStyles.placename} numberOfLines={1}>{place_name}</Text>
+              <Heart like={like} onPress={toggleLike} size={20} color={'#202020'}/>
+            </View>
           </View>
           <Image source={{uri: rep_pic}} style={{width: 60, height: 60, borderRadius: 4, marginRight: 8, marginLeft: 20}} />
           { extra_pics!= null ? (
@@ -92,17 +92,21 @@ const textStyles = StyleSheet.create({
     fontSize: 16,
     fontWeight: '700',
     lineHeight: 22,
-    marginBottom: 5
+    letterSpacing: -0.6,
+    width: '80%'
   },
   placename: {
     fontSize: 20,
     fontWeight: '700',
     lineHeight: 28,
+    letterSpacing: -0.6,
+    flex: 1
   },
   preview: {
-    fontSize: 12,
+    fontSize: 14,
     fontWeight: '400',
-    lineHeight: 18,
+    lineHeight: 24,
+    letterSpacing: -0.6
   },
   writer: { 
     fontSize: 12,

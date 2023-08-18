@@ -2,7 +2,6 @@ import { useState, useEffect } from 'react';
 import { TextPretendard as Text } from "../../../common/CustomText";
 import { View, ImageBackground, TouchableOpacity, Dimensions, Image, Alert } from 'react-native';
 import Arrow from "../../../assets/img/common/Arrow.svg";
-import ArrowWhite from '../../../assets/img/common/ArrowWhite.svg';
 import CommentIcon from '../../../assets/img/Story/Comment.svg';
 import Heart from '../../../common/Heart';
 import { Request } from '../../../common/requests';
@@ -273,7 +272,7 @@ export const HotPostItem = ({
             </View>
           </View>
           <TouchableOpacity onPress={() => setPressed(false)} style={{ flex: 1, alignItems: 'center', justifyContent: 'flex-end', width: width-30}}>
-            <Arrow width={15} height={15} transform={[{ rotate: "270deg" }]} strokeWidth={5} color={'#373737'} />
+            <Arrow width={15} height={15} transform={[{ rotate: "270deg" }]} color={'#373737'} />
           </TouchableOpacity>
           </>
         ) : (
@@ -284,12 +283,12 @@ export const HotPostItem = ({
                 <Text style={{ color: "white", fontSize: 16, fontWeight: "700"}} numberOfLines={1}>{title}</Text>
               </View>
               <View style={{flexDirection: "row", padding: 10}}>
-                <View style={{flexDirection: "row", alignSelf: "flex-start"}}>
-                  <Heart like={like} onPress={toggleLike} white={true} />
+                <View style={{flexDirection: "row", alignSelf: "flex-start", alignItems: 'center'}}>
+                  <Heart like={like} onPress={toggleLike} color={'white'} size={16} />
                   <Text style={{ color: "white", lineHeight: 18, marginLeft: 3 }}>{like_cnt}</Text>
                 </View>
                 <TouchableOpacity onPress={() => setPressed(true)} style={{ flex: 1, alignItems: 'center', justifyContent: 'flex-end', marginLeft: 10}}>
-                  <ArrowWhite width={10} height={10} transform={[{ rotate: "270deg" }]} strokeWidth={5} />
+                  <Arrow width={10} height={10} transform={[{ rotate: "90deg" }]} color="white" strokeWidth={7} />
                 </TouchableOpacity>
                 <Text style={{ color: "#67D393", fontWeight: "600", marginRight: 5}}>{writer.nickname}</Text>
               </View>
