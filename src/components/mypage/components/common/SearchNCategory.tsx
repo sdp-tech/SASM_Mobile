@@ -48,7 +48,8 @@ export function SearchNCategory({ setSearch, search, checkedList, setCheckedList
       opacity: withTiming(buttonAnimatedDisplay.value, { duration: 350 }),
       flexDirection: 'row',
       alignItems: 'center',
-      justifyContent: 'flex-end',
+      justifyContent: 'space-between',
+      paddingHorizontal: 5
     };
   })
   return (
@@ -62,11 +63,11 @@ export function SearchNCategory({ setSearch, search, checkedList, setCheckedList
                   setPage={setPage}
                   search={search}
                   setSearch={setSearch}
-                  style={{ backgroundColor: "#F4F4F4", borderRadius: 10, height: 35, width: 280, zIndex: 1 }}
+                  style={{ backgroundColor: "#F4F4F4", borderRadius: 10, height: 35, flex: 1, zIndex: 1 }}
                   placeholder="내용 입력 전"
                   placeholderTextColor={"#848484"}
                 />
-                <TouchableOpacity style={{ borderRadius: 12, borderColor: "#D7D7D7", borderWidth: 0.25, justifyContent: "center", alignItems: "center", marginRight: 5, paddingHorizontal: 5, height: 25 }}
+                <TouchableOpacity style={{ borderRadius: 12, borderColor: "#D7D7D7", borderWidth: 0.25, justifyContent: "center", alignItems: "center", marginHorizontal: 5, paddingHorizontal: 5, height: 25 }}
                   onPress={() => { setEdit(!edit) }}>
                   <Text style={{ fontSize: 12 }}>편집</Text>
                 </TouchableOpacity>
@@ -77,7 +78,7 @@ export function SearchNCategory({ setSearch, search, checkedList, setCheckedList
               </>
               :
               <>
-                {forest?<ForestCategory setPage={setPage} checkedList={checkedList} setCheckedList={setCheckedList} story={true} style={{ marginVertical: 0 }}/> : <Category setPage={setPage} checkedList={checkedList} setCheckedList={setCheckedList} story={true} style={{ marginVertical: 0 }} />
+                {forest?<ForestCategory setPage={setPage} checkedList={checkedList} setCheckedList={setCheckedList} story={true} style={{marginVertical: 5, height: 40}} /> : <Category setPage={setPage} checkedList={checkedList} setCheckedList={setCheckedList} story={true} style={{ marginVertical: 0 }} />
               }
               </>
               }
@@ -131,41 +132,65 @@ interface SearchNoCategoryProps {
 }
 
 export function SearchNoCategory({ setSearch, search, type, setType, label, setPage, setEdit, edit }: SearchNoCategoryProps) {
-  const [mode, setMode] = useState<boolean>(true);
+  const [mode, setMode] = useState<boolean>(false);
+  const [view, setView] = useState<boolean>(false);
+  const buttonAnimatedDisplay = useSharedValue(0);
+  const buttonAnimatedPosition = useSharedValue(0);
+  const buttonAnimatedStyle = useAnimatedStyle(() => {
+    return {
+      height: withTiming(buttonAnimatedPosition.value, { duration: 350 }),
+      display: 'flex',
+      opacity: withTiming(buttonAnimatedDisplay.value, { duration: 350 }),
+      flexDirection: 'row',
+      alignItems: 'center',
+      justifyContent: 'space-between',
+      paddingHorizontal: 5
+    };
+  })
 
   return (
     <Container>
+      {
+        <Animated.View style={buttonAnimatedStyle}>
+          {
+            mode &&
+              <>
+                <SearchBar
+                  setPage={setPage}
+                  search={search}
+                  setSearch={setSearch}
+                  style={{ backgroundColor: "#F4F4F4", borderRadius: 10, height: 35, flex: 1, zIndex: 1 }}
+                  placeholder="내용 입력 전"
+                  placeholderTextColor={"#848484"}
+                />
+                <TouchableOpacity style={{ borderRadius: 12, borderColor: "#D7D7D7", borderWidth: 0.25, justifyContent: "center", alignItems: "center", marginHorizontal: 5, paddingHorizontal: 5, height: 25 }}
+                  onPress={() => { setEdit(!edit) }}>
+                  <Text style={{ fontSize: 12 }}>편집</Text>
+                </TouchableOpacity>
+                <TouchableOpacity style={{ backgroundColor: type ? '#FFFFFF' : '#D7D7D7', borderRadius: 20, borderColor: "#D7D7D7", borderWidth: 0.25, justifyContent: "center", alignItems: "center", marginRight: 5, paddingHorizontal: 5, height: 25 }}
+                  onPress={() => { setType(!type); if (setPage) setPage(1) }}>
+                  <Text style={{ fontSize: 12 }}>{label}</Text>
+                </TouchableOpacity>
+              </>
+           }
+        </Animated.View>
+      }
       <Section>
-        {
-          mode ?
-            <>
-              <SearchBar
-                setPage={setPage}
-                search={search}
-                setSearch={setSearch}
-                style={{ backgroundColor: "#F4F4F4", borderRadius: 10, height: 35, zIndex: 1 }}
-                placeholder="내용 입력 전"
-                placeholderTextColor={"#848484"}
-              />
-              <TouchableOpacity style={{ marginHorizontal: 10 }} onPress={() => { setMode(false); }}>
-                <Menu width={18} height={18} />
-              </TouchableOpacity></>
-            :
-            <>
-              <TouchableOpacity style={{ marginHorizontal: 10 }} onPress={() => { setMode(true); }}>
-                <Search width={18} height={18} />
-              </TouchableOpacity>
-              <TouchableOpacity style={{ borderRadius: 12, borderColor: "#D7D7D7", borderWidth: 0.25, justifyContent: "center", alignItems: "center", marginRight: 5, paddingHorizontal: 5, height: 25 }}
-                onPress={() => { setEdit(!edit) }}>
-                <Text style={{ fontSize: 12 }}>편집</Text>
-              </TouchableOpacity>
-              <TouchableOpacity style={{ backgroundColor: type ? '#FFFFFF' : '#D7D7D7', borderRadius: 20, borderColor: "#D7D7D7", borderWidth: 0.25, justifyContent: "center", alignItems: "center", marginRight: 5, paddingHorizontal: 5, height: 25 }}
-                onPress={() => { setType(!type) }}>
-                <Text style={{ fontSize: 12 }}>{label}</Text>
-              </TouchableOpacity>
-            </>
-        }
-
+        <TouchableOpacity style={{ marginHorizontal: 10 }} onPress={() => {
+          if (!view) {
+            setView(true);
+            buttonAnimatedPosition.value = 45;
+            buttonAnimatedDisplay.value = 1;
+          };
+          if (view && mode) {
+            setView(false);
+            buttonAnimatedPosition.value = 0;
+            buttonAnimatedDisplay.value = 0;
+          }
+          setMode(true)
+        }}>
+          <Search width={18} height={18} />
+        </TouchableOpacity>
       </Section>
     </Container>
   )

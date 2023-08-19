@@ -45,7 +45,7 @@ const MyStoryItemCard = ({ data, edit, rerender }: { data: MyStroyItemCardProps,
 
   return (
     <View style={{ position: 'relative' }}>
-      <TouchableWithoutFeedback style={{ marginHorizontal: 10, marginBottom: 10 }} onPress={() => { navigationToTab.navigate('스토리', { id: id }) }}>
+      <TouchableWithoutFeedback style={{ marginHorizontal: 8, marginBottom: 10 }} onPress={() => { navigationToTab.navigate('스토리', { id: id }) }}>
         <ImageBackground
           source={{ uri: rep_pic }}
           style={{ width: 170, height: 220 }}

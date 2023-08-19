@@ -138,7 +138,7 @@ const MyPageTabView = ({ navigation }: StackScreenProps<MyPageProps, 'mypage'>) 
 
   return (
     <SafeAreaView style={{ backgroundColor: 'white', flex: 1, paddingTop: 10 }}>
-      <View style={{ flexDirection: "row", paddingHorizontal: 15, paddingVertical: 10, justifyContent:'space-between' }}>
+      {/* <View style={{ flexDirection: "row", paddingHorizontal: 15, paddingVertical: 10, justifyContent:'space-between' }}>
         <TouchableOpacity style={{width: 30, alignItems: 'center', justifyContent: 'center', height: 30}}
           onPress={() => { {isLogin ? navigation.navigate('user', { info: info, follower: follower.num, following: following.num }) : Alert.alert('로그인이 필요합니다')} }}>
           <Profile />
@@ -147,7 +147,11 @@ const MyPageTabView = ({ navigation }: StackScreenProps<MyPageProps, 'mypage'>) 
           onPress={() => { isLogin ? navigation.navigate('options', { info: info }) : Alert.alert('로그인이 필요합니다') }}>
           <Settings color={'black'} />
         </TouchableOpacity>
-      </View>
+      </View> */}
+       <TouchableOpacity style={{width: 30, alignItems: 'center', justifyContent: 'center', height: 30, alignSelf: 'flex-end', marginRight: 10}} 
+          onPress={() => { isLogin ? navigation.navigate('options', { info: info }) : Alert.alert('로그인이 필요합니다') }}>
+          <Settings color={'black'} />
+        </TouchableOpacity>
       <ProfileSection />
       <TabView
         navigationState={{ index, routes }}

@@ -30,7 +30,8 @@ const styles = (isCategory?: boolean) => StyleSheet.create({
     zIndex: 1
   },
   Place: {
-    alignItems: 'center',
+    alignItems: 'flex-start',
+    paddingHorizontal: 5,
     flex: 1
   },
 });
@@ -96,7 +97,7 @@ const MyPlace = () => {
             />
             <View style={styles().Place}>
               {(type ? placeList : written).length === 0 ? (
-                <View style={{ alignItems: 'center', marginVertical: 20 }}>
+                <View style={{ alignItems: 'center', marginVertical: 20, alignSelf: 'center' }}>
                   <NothingIcon />
                   <Text style={{ marginTop: 20 }}>해당하는 장소가 없습니다</Text>
                 </View>

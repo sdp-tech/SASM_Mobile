@@ -37,7 +37,7 @@ const MyPlaceItemCard = ({ data, edit, rerender }: { data: MyPlaceItemCardProps,
 
   return (
     <View style={{ position: 'relative' }}>
-      <TouchableWithoutFeedback style={{ marginHorizontal: 6, marginBottom: 20 }} onPress={handlePageGoToMap}>
+      <TouchableWithoutFeedback style={{ marginHorizontal: 6, marginBottom: 10 }} onPress={handlePageGoToMap}>
         <ImageBackground
           source={{ uri: data.rep_pic }}
           style={{ width: 110, height: 150 }}
