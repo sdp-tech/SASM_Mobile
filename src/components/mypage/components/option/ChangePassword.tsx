@@ -83,9 +83,9 @@ const PasswordChange = ({ navigation }: StackScreenProps<MyPageProps, 'changepw'
 
     return (
         <SafeAreaView style={{ backgroundColor: '#FFFFFF', flex: 1, paddingTop: 10 }}>
-            <View style={{ position: 'relative', marginBottom: 30, width: '100%' }}>
+            <View style={{ position: 'relative', marginBottom: 30, width: '100%', marginTop: Platform.OS == 'ios' ? 5 : 0 }}>
                 <Text style={TextStyles.title}>비밀번호 변경</Text>
-                <TouchableOpacity style={{ left: 10, marginBottom: 30, position: 'absolute' }} onPress={() => { navigation.navigate('mypage') }}>
+                <TouchableOpacity style={{ left: 10, top: 5, position: 'absolute' }} onPress={() => { navigation.goBack() }}>
                     <Arrow width={20} height={20} transform={[{ rotateY: '180deg' }]} color={'black'} />
                 </TouchableOpacity>
             </View>

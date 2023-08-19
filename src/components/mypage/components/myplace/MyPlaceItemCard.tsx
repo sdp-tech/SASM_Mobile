@@ -37,7 +37,7 @@ const MyPlaceItemCard = ({ data, edit, rerender }: { data: MyPlaceItemCardProps,
 
   return (
     <View style={{ position: 'relative' }}>
-      <TouchableWithoutFeedback style={{ marginHorizontal: 6, marginBottom: 20 }} onPress={handlePageGoToMap}>
+      <TouchableWithoutFeedback style={{ marginHorizontal: 6, marginBottom: 10 }} onPress={handlePageGoToMap}>
         <ImageBackground
           source={{ uri: data.rep_pic }}
           style={{ width: 110, height: 150 }}
@@ -63,14 +63,14 @@ const MyPlaceItemCard = ({ data, edit, rerender }: { data: MyPlaceItemCardProps,
 
 const textStyles = StyleSheet.create({
   place_name: {
-    fontSize: 12,
+    fontSize: 14,
     color: "#F4F4F4",
     fontWeight: "700",
     lineHeight: 18,
     letterSpacing: -0.6
   },
   address: {
-    fontSize: 10,
+    fontSize: 12,
     lineHeight: 18,
     color: "#F4F4F4",
     marginLeft: 5,

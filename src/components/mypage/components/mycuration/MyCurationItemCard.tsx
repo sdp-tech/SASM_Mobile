@@ -47,7 +47,7 @@ const MyCurationItemCard = ({ props, edit, rerender }: { props: MyCurationItemCa
           <Heart
             like={like}
             onPress={handleLike}
-            white={true}
+            color={'white'}
             size={20}
           />
         </View>
@@ -64,7 +64,7 @@ const textStyles = StyleSheet.create({
     lineHeight: 22,
   },
   writer: {
-    fontSize: 12,
+    fontSize: 14,
     color: "white",
     fontWeight: "600",
     lineHeight: 18

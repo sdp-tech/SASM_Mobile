@@ -31,7 +31,7 @@ const styles = StyleSheet.create({
     zIndex: 1
   },
   Curation: {
-    alignItems: 'center',
+    alignItems: 'flex-start',
     flex: 1
   },
 });
@@ -79,7 +79,7 @@ const MyStory = () => {
             <SearchNoCategory setEdit={setEdit} edit={edit} setSearch={setSearch} search={search} setType={setType} type={type} label='내 큐레이션' />
             <View style={styles.Curation}>
               {(type ? curationList : written).length === 0 ? (
-                <View style={{ alignItems: 'center', marginVertical: 20 }}>
+                <View style={{ alignItems: 'center', marginVertical: 20, alignSelf: 'center' }}>
                   <NothingIcon />
                   <Text style={{ marginTop: 20 }}>해당하는 큐레이션이 없습니다</Text>
                 </View>
@@ -93,7 +93,7 @@ const MyStory = () => {
                       props={item}
                     />
                   )}
-
+                  showsVerticalScrollIndicator={false}
                   numColumns={2}
                 />
               )}

@@ -15,14 +15,14 @@ interface ReportProps {
 
 const Report = ({ modalVisible, setModalVisible, reported, onReport }: ReportProps) => {
   const reportLists = [
-    "지나친 광고성 컨텐츠입니다.(상업적 홍보)",
+    "지나친 광고성 컨텐츠입니다. (상업적 홍보)",
     "욕설이 포함된 컨텐츠입니다.",
     "성희롱이 포함된 컨텐츠입니다.",
     "기타"
   ]
 
   const bottomSheetModalRef = useRef<BottomSheetModal>(null);
-  const snapPoints = useMemo(() => ["45%"], []);
+  const snapPoints = useMemo(() => [350], []);
 
   const openModal = () => {
     bottomSheetModalRef.current?.present();
@@ -53,9 +53,9 @@ const Report = ({ modalVisible, setModalVisible, reported, onReport }: ReportPro
         <View style={{alignItems: 'center', marginTop: 30, marginBottom: 20}}>
           <View style={{flexDirection: 'row', justifyContent: 'center'}}>
             <ReportIcon width={20} height={20} color={'#FF4C00'} />
-            <Text style={{marginLeft: 8, fontSize: 16, fontWeight: '700',  letterSpacing: -0.6}}>이 글을 신고하는 이유가 무엇인가요?</Text>
+            <Text style={{marginLeft: 8, fontSize: 18, fontWeight: '700',  letterSpacing: -0.6}}>이 글을 신고하는 이유가 무엇인가요?</Text>
           </View>
-          <Text style={{textAlign: 'center', marginTop: 10, fontSize: 12, lineHeight: 18, letterSpacing: -0.6, color: '#848484'}}>지적재산권 침해를 신고하는 경우를 제외하고{"\n"}회원님의 신고는 익명으로 처리됩니다.</Text>
+          <Text style={{textAlign: 'center', marginTop: 10, fontSize: 14, lineHeight: 18, letterSpacing: -0.6, color: '#848484'}}>지적재산권 침해를 신고하는 경우를 제외하고{"\n"}회원님의 신고는 익명으로 처리됩니다.</Text>
         </View>
         <FlatList data={reportLists} renderItem={({item}) => {
           return (
@@ -67,11 +67,11 @@ const Report = ({ modalVisible, setModalVisible, reported, onReport }: ReportPro
         }}
         />
         </>) : (
-        <View style={{alignItems: 'center', justifyContent: 'center', margin: 50}}>
-          <Check color={'#67D393'} width={37} height={37} />
-          <Text style={{marginTop: 15, fontSize: 16, fontWeight: '700',  letterSpacing: -0.6, color: '#FF4C00'}}>{reported}</Text>
-          <Text style={{marginLeft: 8, fontSize: 16, fontWeight: '700',  letterSpacing: -0.6}}>이 글을 신고해주셔서 감사합니다.</Text>
-          <Text style={{textAlign: 'center', marginTop: 10, fontSize: 12, lineHeight: 18, letterSpacing: -0.6, color: '#848484'}}>글을 검토한 후 결과를 알려드리겠습니다.{'\n'}안전한 SASM 환경을 만들 수 있도록 도와주셔서 감사합니다.</Text>
+        <View style={{alignItems: 'center', justifyContent: 'center', width: '100%', height: '100%'}}>
+          <Check color={'#67D393'} width={50} height={50} />
+          <Text style={{marginTop: 15, fontSize: 18, fontWeight: '700',  letterSpacing: -0.6, color: '#FF4C00'}}>{reported}</Text>
+          <Text style={{marginLeft: 8, fontSize: 18, fontWeight: '700',  letterSpacing: -0.6}}>이 글을 신고해주셔서 감사합니다.</Text>
+          <Text style={{textAlign: 'center', marginTop: 10, fontSize: 14, lineHeight: 18, letterSpacing: -0.6, color: '#848484'}}>글을 검토한 후 결과를 알려드리겠습니다.{'\n'}안전한 SASM 환경을 만들 수 있도록 도와주셔서 감사합니다.</Text>
         </View>
         )}
       </BottomSheetModal>

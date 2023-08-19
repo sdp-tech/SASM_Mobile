@@ -1,5 +1,5 @@
 import React from 'react';
-import { StyleSheet, TextStyle, Image, ImageBackground } from 'react-native';
+import { StyleSheet, TextStyle, Image, ImageBackground, View } from 'react-native';
 import { TextPretendard as Text } from '../../common/CustomText';
 import styled from 'styled-components/native';
 import { CurationProps } from './CurationHome';
@@ -41,13 +41,15 @@ export function SearchItemCard({ style, data, onPress }: ItemCardProps): JSX.Ele
     <TouchableWithoutFeedback onPress={onPress ? onPress : () => { navigation.navigate('Detail', { id: data.id }) }}>
       <CardWrapper style={style}>
         <ImageBackground
-          style={{ width: '100%', height: '100%', justifyContent: 'flex-end' }}
+          style={{ width: '100%', height: '100%'}}
           source={{
             uri: data.rep_pic
           }}
         >
-        <Text style={TextStyles.writer}>{data.nickname}</Text>
-        <Text numberOfLines={2} style={TextStyles.title_email}>{data.title}</Text>
+        <View style={{backgroundColor: 'rgba(0,0,0,0.2)', width: '100%', height: '100%', justifyContent: 'flex-end' }}>
+          <Text style={TextStyles.writer}>{data.nickname}</Text>
+          <Text numberOfLines={2} style={TextStyles.title_email}>{data.title}</Text>
+        </View>
         </ImageBackground>
       </CardWrapper>
     </TouchableWithoutFeedback>

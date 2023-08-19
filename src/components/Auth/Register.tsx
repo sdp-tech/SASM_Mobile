@@ -51,11 +51,13 @@ export default function RegisterScreen({ navigation, route }: StackScreenProps<M
 
 function RegisterHome({ navigation, route }: StackScreenProps<RegisterParams>) {
   return (
-    <SafeAreaView style={{ flex: 1, backgroundColor: '#FFFFFF', display: 'flex', alignItems: 'center', width: '100%', justifyContent: 'center' }}>
-      <Logo width={56} height={56} style={{marginTop: 60}}/>
+    <SafeAreaView style={{ flex: 1, backgroundColor: '#FFFFFF', alignItems: 'center', justifyContent: 'space-around' }}>
+      <View style={{alignItems: 'center'}}>
+      <Logo width={56} height={56}/>
       <Text style={TextStyles.home_title}>SASM</Text>
       <Text style={TextStyles.home_subtitle}>당신의 발자국에 녹색을 더합니다</Text>
       <Text style={TextStyles.home_label}>지속가능한 공간들을 둘러보고 공유해보세요</Text>
+      </View>
       <SocialLogin type='register'/>
     </SafeAreaView>
   )
@@ -131,12 +133,13 @@ function RegisterEmail({ navigation, route }: StackScreenProps<RegisterParams>) 
   }
   return (
     <SafeAreaView style={{ backgroundColor: '#FFFFFF', flex: 1 }}>
-      <View style={{ position: 'relative', marginBottom: 30 }}>
+      <View style={{ position: 'relative', marginBottom: 30, marginTop: 10 }}>
         <Text style={TextStyles.header}>회원가입</Text>
-        <TouchableOpacity style={{ left: 10, marginBottom: 30, position: 'absolute' }} onPress={() => { navigation.goBack() }}>
+        <TouchableOpacity style={{ left: 10, top: 5, position: 'absolute' }} onPress={() => { navigation.goBack() }}>
           <Arrow width={20} height={20} transform={[{ rotateY: '180deg' }]} color={'black'} />
         </TouchableOpacity>
       </View>
+      <View style={{flex: 1}}>
       <View style={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
         <InputWithLabel
           containerStyle={{ width: '75%', paddingLeft: width * 0.15 / 8 }}
@@ -178,18 +181,19 @@ function RegisterEmail({ navigation, route }: StackScreenProps<RegisterParams>) 
           onChangeText={(text) => { setForm({ ...form, nickname: text }); setCheck({ ...check, nickname: false }) }}
         />
         <TouchableOpacity
-          style={{ width: '20%' }}
+          style={{ width: '20%', justifyContent: 'center', alignItems: 'center' }}
           onPress={() => { checkRepetition("nickname", form.nickname) }}>
           <Text style={TextStyles.button}>중복확인</Text>
         </TouchableOpacity>
       </View>
       <DatePicker
-        containerStyle={{ marginBottom: 200 }}
+        containerStyle={{ zIndex: 1}}
         callback={(date) => { setForm({ ...form, birthdate: `${date.year}-${date.month}-${date.date}` }) }}
         isBorder={true}
         label={true}
       />
-      <TouchableOpacity onPress={tryRegister}><Text style={TextStyles.submit}>지속가능한 공간 탐방하기</Text></TouchableOpacity>
+      </View>
+      <TouchableOpacity style={{marginBottom: 30}} onPress={tryRegister}><Text style={TextStyles.submit}>지속가능한 공간 탐방하기</Text></TouchableOpacity>
     </SafeAreaView>
   )
 }
@@ -199,8 +203,8 @@ const TextStyles = StyleSheet.create({
     alignSelf: 'center',
     width: '100%',
     textAlign: 'center',
-    padding: 10,
-    lineHeight: 14,
+    paddingHorizontal: 10,
+    paddingVertical: 8,
     borderRadius: 17,
     color: '#FFFFFF',
     fontWeight: '700',
@@ -237,7 +241,6 @@ const TextStyles = StyleSheet.create({
     letterSpacing: -0.6,
     fontWeight: '700',
     marginTop: 5,
-    marginBottom: 110
   },
   home_label: {
     fontSize: 14,

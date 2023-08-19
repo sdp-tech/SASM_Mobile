@@ -64,7 +64,7 @@ export default function MyForestItemCard({ props, edit, rerender }: { props: MyF
       {
         edit &&
         <View style={{ position: 'absolute', right: 5, top: 25 }}>
-          <Heart like={like} onPress={handlelike} size={20} white={true} />
+          <Heart like={like} onPress={handlelike} size={20} color={'white'} />
         </View>
       }
     </View>
@@ -80,15 +80,15 @@ const TextStyles = StyleSheet.create({
     color: '#373737'
   },
   preview: {
-    fontSize: 12,
-    lineHeight: 14.4,
+    fontSize: 14,
     letterSpacing: -0.6,
-    color: '#373737'
+    color: '#373737',
+    lineHeight: 20
   },
   writer: {
-    fontSize: 12,
-    lineHeight: 14.4,
+    fontSize: 14,
     color: '#67D393',
-    fontWeight: '600'
+    fontWeight: '600',
+    lineHeight: 20
   }
 })

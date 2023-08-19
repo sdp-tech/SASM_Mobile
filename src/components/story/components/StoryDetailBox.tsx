@@ -8,11 +8,12 @@ import { StackNavigationProp } from '@react-navigation/stack';
 import styled from 'styled-components/native';
 import RenderHTML from 'react-native-render-html';
 import Place from '../../../assets/img/Story/Place.svg';
-import ArrowWhite from '../../../assets/img/common/ArrowWhite.svg';
+import Arrow from '../../../assets/img/common/Arrow.svg';
 import CardView from '../../../common/CardView';
 import { CategoryIcon } from "../../../common/Category";
 import Settings from '../../../assets/img/MyPage/Settings.svg';
 import Logo from "../../../assets/img/common/Logo.svg"
+import { getStatusBarHeight } from 'react-native-status-bar-height';
 
 interface StoryDetailProps {
     data: any;
@@ -66,6 +67,7 @@ const StoryDetailBox = ({navigation, data, isLogin, onLayout, email, onRefresh, 
     const [dot, setDot] = useState<boolean>(false);
     const user = Boolean(data.writer === email)
     const navigationToTab = useNavigation<StackNavigationProp<TabProps>>();
+    const statusBarHeight = getStatusBarHeight();
     const request = new Request();
 
     const onFollow = async () => {
@@ -157,8 +159,8 @@ const StoryDetailBox = ({navigation, data, isLogin, onLayout, email, onRefresh, 
     return (
         <View onLayout={onLayout}>
             <View>
-                <TouchableOpacity style={{position: 'absolute', zIndex: 1, top: Platform.OS === 'ios' ? 60:30, left: 15, width: 30, height: 30}} onPress={() => {navigation.goBack()}}>
-                    <ArrowWhite width={18} height={18} strokeWidth={5} />
+                <TouchableOpacity style={{position: 'absolute', zIndex: 1, top: Platform.OS == 'ios' ? statusBarHeight + 10: statusBarHeight, left: 15, width: 40, height: 40}} onPress={() => {navigation.goBack()}}>
+                    <Arrow width={18} height={18} transform={[{ rotate: '180deg' }]} color={'white'} />
                 </TouchableOpacity>
                     {data!.extra_pics.length > 0 ? (
                         <CardView 
@@ -182,7 +184,7 @@ const StoryDetailBox = ({navigation, data, isLogin, onLayout, email, onRefresh, 
                             <View style={{backgroundColor: 'rgba(0,0,0,0.2)', width: width, height: 330}} />
                         </ImageBackground>
                     )}
-                <TouchableOpacity style={{position: 'absolute', zIndex: 1, top: Platform.OS === 'ios' ? 65:35, right: 20, width: 30, height: 30, alignItems: 'flex-end'}} onPress={() => setDot(!dot)}>
+                <TouchableOpacity style={{position: 'absolute', zIndex: 1, top: statusBarHeight+15, right: 20, width: 40, height: 40, alignItems: 'flex-end'}} onPress={() => setDot(!dot)}>
                     <Settings transform={[{ rotate: dot ? '90deg' : '0deg'}]} color={'white'} />
                 </TouchableOpacity>
                 { dot &&
@@ -207,7 +209,7 @@ const StoryDetailBox = ({navigation, data, isLogin, onLayout, email, onRefresh, 
                         <View style={{flex: 1, justifyContent: 'center'}}>
                             <Text style={textStyles.title}>{data!.title}</Text>
                             <Text style={textStyles.placename}>{data!.place_name}</Text>
-                            <Text style={textStyles.date}>작성: {data!.created.slice(0, 10)}</Text>
+                            <Text style={textStyles.date}>작성: {data!.created.slice(0, 10).replace(/-/gi, '.')}</Text>
                         </View>
                         <View style = {{alignItems: 'center'}}>
                             <Image source={{uri: data!.profile}} style={{width: 50, height: 50, borderRadius: 60, marginVertical: 5}} />
@@ -265,9 +267,7 @@ const textStyles = StyleSheet.create({
     },
     date: {
         fontSize: 12,
-        fontWeight: '400',
         lineHeight: 18,
-        letterSpacing: -0.6,
         color: '#676767'
     },
     writer: {

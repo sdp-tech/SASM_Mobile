@@ -1,6 +1,6 @@
 import React, { useState, useCallback } from 'react';
 import { ScrollView } from 'react-native-gesture-handler';
-import { Image, TouchableOpacity, View, StyleSheet, SafeAreaView } from "react-native";
+import { Image, TouchableOpacity, View, StyleSheet, SafeAreaView, Platform } from "react-native";
 import { TextPretendard as Text } from '../../../common/CustomText';
 import { Request } from '../../../common/requests';
 import { useFocusEffect } from '@react-navigation/native';
@@ -39,15 +39,15 @@ const Following = ({ navigation, route }: StackScreenProps<MyPageProps, 'followi
     }, [searchQuery, refresh]))
 
   return (
-    <SafeAreaView style={{ flex: 1, backgroundColor: 'white' }}>
-      <TouchableOpacity style={{ left: 10, marginBottom: 18, display: 'flex', flexDirection: 'row', alignItems: 'center' }} onPress={() => { navigation.goBack() }}>
+    <SafeAreaView style={{ flex: 1, backgroundColor: 'white', paddingTop: 10 }}>
+      <TouchableOpacity style={{ left: 10, marginBottom: 18, display: 'flex', flexDirection: 'row', alignItems: 'center', marginTop: Platform.OS == 'ios' ? 5 : 0 }} onPress={() => { navigation.goBack() }}>
         <Arrow width={20} height={20} transform={[{ rotateY: '180deg' }]} style={{ marginRight: 16 }} color={'black'}/>
         <Text style={{ fontSize: 16, lineHeight: 24, letteringSpace: -0.6 }} >팔로잉</Text>
       </TouchableOpacity>
       <SearchBar
         search={searchQuery}
         setSearch={setSearchQuery}
-        style={{ width: '90%' }}
+        style={{ width: '90%', backgroundColor: "#F4F4F4", }}
         placeholder='궁금한 프로필을 검색해보세요'
         keyboardType='email-address'
       />
@@ -64,7 +64,7 @@ const Following = ({ navigation, route }: StackScreenProps<MyPageProps, 'followi
                     <Image source={{ uri: user.profile_image }} style={styles.profileImage} />
                     <View style={styles.userInfo}>
                       <Text style={styles.username}>{user.nickname}</Text>
-                      <Text style={styles.useremail}>{user.email}</Text>
+                      {/* <Text style={styles.useremail}>{user.email}</Text> */}
                     </View>
                     <TouchableOpacity style={{ position: 'absolute', right: 20 }}
                       onPress={() => { undoFollowing(user.email) }}>

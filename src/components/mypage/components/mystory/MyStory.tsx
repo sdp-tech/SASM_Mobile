@@ -34,7 +34,7 @@ const styles = (isCategory?: boolean) => StyleSheet.create({
   },
   Story: {
     alignItems: 'center',
-    flex: 1
+    // flex: 1
   },
 });
 
@@ -114,7 +114,7 @@ const MyStory = () => {
             />
             <View style={styles().Story}>
               {(type ? storyList : written).length === 0 ? (
-                <View style={{ alignItems: 'center', marginVertical: 20 }}>
+                <View style={{ alignItems: 'center', marginVertical: 20, alignSelf: 'center' }}>
                   <NothingIcon />
                   <Text style={{ marginTop: 20 }}>해당하는 스토리가 없습니다</Text>
                 </View>
@@ -139,6 +139,7 @@ const MyStory = () => {
                   onEndReachedThreshold={0.3}
                   numColumns={2}
                   style={{ alignContent: 'space-between' }}
+                  showsVerticalScrollIndicator={false}
                 />
               )}
             </View>

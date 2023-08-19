@@ -45,7 +45,7 @@ const MyStoryItemCard = ({ data, edit, rerender }: { data: MyStroyItemCardProps,
 
   return (
     <View style={{ position: 'relative' }}>
-      <TouchableWithoutFeedback style={{ marginHorizontal: 10, marginBottom: 10 }} onPress={() => { navigationToTab.navigate('스토리', { id: id }) }}>
+      <TouchableWithoutFeedback style={{ marginHorizontal: 8, marginBottom: 10 }} onPress={() => { navigationToTab.navigate('스토리', { id: id }) }}>
         <ImageBackground
           source={{ uri: rep_pic }}
           style={{ width: 170, height: 220 }}
@@ -78,7 +78,7 @@ const MyStoryItemCard = ({ data, edit, rerender }: { data: MyStroyItemCardProps,
 
 const textStyles = StyleSheet.create({
   title: {
-    fontSize: 12,
+    fontSize: 14,
     color: "#F4F4F4",
     fontWeight: "700",
     lineHeight: 18,
@@ -92,14 +92,14 @@ const textStyles = StyleSheet.create({
     letterSpacing: -0.6
   },
   preview: {
-    fontSize: 10,
+    fontSize: 12,
     color: "#F4F4F4",
     fontWeight: "700",
     lineHeight: 18,
     letterSpacing: -0.6
   },
   writer: {
-    fontSize: 12,
+    fontSize: 14,
     fontWeight: "600",
     lineHeight: 18,
     letterSpacing: -0.6

@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useState } from 'react';
-import { SafeAreaView, Image, View, StyleSheet, TouchableOpacity, Touchable, ActivityIndicator, Alert } from 'react-native';
+import { SafeAreaView, Image, View, StyleSheet, TouchableOpacity, Platform, ActivityIndicator, Alert } from 'react-native';
 import { TextPretendard as Text } from '../../../../common/CustomText';
 import Arrow from '../../../../assets/img/common/Arrow.svg';
 import { StackScreenProps } from '@react-navigation/stack';
@@ -150,9 +150,9 @@ export default function ChangeForm({ navigation, route }: StackScreenProps<MyPag
 
   return (
     <SafeAreaView style={{ backgroundColor: '#FFFFFF', flex: 1, paddingTop: 10 }}>
-      <View style={{ position: 'relative', }}>
+      <View style={{ position: 'relative', marginTop: Platform.OS == 'ios' ? 5 : 0 }}>
         <Text style={TextStyles.header}>프로필 수정</Text>
-        <TouchableOpacity style={{ left: 10, marginBottom: 30, position: 'absolute', display: 'flex', flexDirection: 'row', alignItems: 'center' }} onPress={() => { navigation.goBack() }}>
+        <TouchableOpacity style={{ left: 10, top: 5, position: 'absolute', display: 'flex', flexDirection: 'row', alignItems: 'center' }} onPress={() => { navigation.goBack() }}>
           <Arrow width={20} height={20} transform={[{ rotateY: '180deg' }]} color={'black'} />
         </TouchableOpacity>
       </View>
@@ -184,7 +184,7 @@ export default function ChangeForm({ navigation, route }: StackScreenProps<MyPag
               placeholder='자기소개를 입력해주세요'
               onChangeText={(e) => { setForm({ ...form, introduction: e }) }}
             />
-            <Text style={{ width: '85%', textAlign: 'left', fontSize: 12, lineHeight: 18, letterSpacing: -0.6, alignSelf: 'center' }}>
+            <Text style={{ width: '85%', textAlign: 'left', fontSize: 14, lineHeight: 18, letterSpacing: -0.6, alignSelf: 'center' }}>
               성별
             </Text>
             <GenderSelector>
@@ -196,7 +196,7 @@ export default function ChangeForm({ navigation, route }: StackScreenProps<MyPag
                 </TouchableOpacity>
               ))}
             </GenderSelector>
-            <Text style={{ width: '85%', textAlign: 'left', fontSize: 12, lineHeight: 18, letterSpacing: -0.6, alignSelf: 'center' }}>
+            <Text style={{ width: '85%', textAlign: 'left', fontSize: 14, lineHeight: 18, letterSpacing: -0.6, alignSelf: 'center' }}>
               생년월일
             </Text>
             <DatePicker

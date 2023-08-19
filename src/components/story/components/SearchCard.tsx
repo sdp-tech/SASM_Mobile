@@ -82,7 +82,7 @@ const SearchCard = ({id, place_name, title, rep_pic, extra_pics, story_like, cat
     <View style={{flex: 1, width: width-30, marginBottom: 30}}>
       <View style={{flexDirection: 'row'}}>
         <Text style={[textStyles.writer, {color: verified ? '#209DF5' : '#67D393', flex: 1}]}>{nickname}</Text>
-        <Text style={textStyles.date}>{created.slice(0, 10)} 작성</Text>
+        <Text style={textStyles.date}>{created.slice(0, 10).replace(/-/gi, '.')} 작성</Text>
       </View>
       <TouchableOpacity style={{marginTop: 5}} onPress={onPress}>
         <View style={{flexDirection: 'row'}}>
@@ -131,11 +131,11 @@ const textStyles = StyleSheet.create({
     color: 'white'
   },
   writer: { 
-    fontSize: 12,
+    fontSize: 14,
     fontWeight: '600',
   },
   date: {
-    fontSize: 10,
+    fontSize: 12,
     fontWeight: '400',
     color: '#676767',
   }
