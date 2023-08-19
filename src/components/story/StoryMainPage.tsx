@@ -35,7 +35,7 @@ const StoryMainPage = ({ navigation, route }: StoryProps) => {
   const toggleItems = [
     { label: '조회수 순', value: 0, title: 'SASM의 추천 스토리', subtitle: '사슴이 직접 선정한 알찬 스토리를 둘러보세요.', order: 'oldest' },
     { label: '최신 순', value: 1, title: '방금 올라온 스토리', subtitle: '가장 생생한 장소의 이야기가 궁금하다면?', order: 'latest' },
-    { label: '인기 순', value: 2, title: '이번 달 인기 스토리', subtitle: '5월, 가장 많은 사람들의 관심을 받은 이야기를 둘러보세요.', order: 'hot' },
+    { label: '인기 순', value: 2, title: '이번 달 인기 스토리', subtitle: '가장 많은 사람들의 관심을 받은 이야기를 둘러보세요.', order: 'hot' },
   ]
   const {isLogin, setLogin} = useContext(LoginContext);
   const [item, setItem] = useState([] as any);
@@ -90,7 +90,7 @@ const StoryMainPage = ({ navigation, route }: StoryProps) => {
           navigation.navigate("StorySearch");
         }}
       />
-          <View style={{ flexDirection: "row", paddingHorizontal: 30, paddingVertical: height * 0.02 }}>
+          <View style={{ flexDirection: "row", paddingHorizontal: 20, paddingVertical: height * 0.02 }}>
             <View style={{ flex: 1 }}>
               <Text style={textStyles.title}>{toggleItems[orderList].title}</Text>
               <Text style={textStyles.subtitle}>{toggleItems[orderList].subtitle}</Text>
