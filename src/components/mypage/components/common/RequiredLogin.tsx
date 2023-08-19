@@ -28,8 +28,8 @@ const Login = styled.TouchableOpacity`
 export default function RequireLogin({ index }: { index: number }) {
   const navigation = useNavigation<StackNavigationProp<MyPageProps>>();
   return (
-    <View>
-      <Text style={{ ...TextStyles.label, marginTop: 180 }}>
+    <View style={{justifyContent: 'space-around', flex: 1}}>
+      <Text style={{ ...TextStyles.label, marginTop: 100 }}>
         {
           {
             0: 'SASM의 지속가능한 장소를 저장해보세요!',
@@ -39,8 +39,10 @@ export default function RequireLogin({ index }: { index: number }) {
           }[index]
         }
       </Text>
-      <Register onPress={() => navigation.navigate('register')}><Text style={TextStyles.button_regiter}>회원가입</Text></Register>
-      <Login onPress={() => navigation.navigate('login')}><Text style={TextStyles.button_login}>로그인</Text></Login>
+      <View>
+        <Register onPress={() => navigation.navigate('register')}><Text style={TextStyles.button_regiter}>회원가입</Text></Register>
+        <Login onPress={() => navigation.navigate('login')}><Text style={TextStyles.button_login}>로그인</Text></Login>
+      </View>
     </View>
   )
 }
@@ -50,7 +52,6 @@ const TextStyles = StyleSheet.create({
     fontSize: 16,
     lineHeight: 24,
     letterSpacing: -0.6,
-    marginBottom: 100,
     alignSelf: 'center'
   },
   button_regiter: {

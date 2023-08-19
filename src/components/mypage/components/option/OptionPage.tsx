@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useCallback, useContext } from 'react';
-import { View, TouchableOpacity, Alert, StyleSheet, SafeAreaView, Image, ImageBackground, Button, Dimensions } from "react-native";
+import { View, TouchableOpacity, Alert, StyleSheet, SafeAreaView, Platform } from "react-native";
 import { ScrollView } from 'react-native-gesture-handler';
 import { TextPretendard as Text } from '../../../../common/CustomText';
 import { getNickname, removeNickname, removeAccessToken, removeRefreshToken, } from '../../../../common/storage';
@@ -57,7 +57,7 @@ export default function Options({ navigation, route }: StackScreenProps<MyPagePr
 
     return (
         <SafeAreaView style={{ flex: 1, backgroundColor: '#FFFFFF', paddingTop: 10 }}>
-            <View style={{ position: 'relative', marginBottom: 30 }}>
+            <View style={{ position: 'relative', marginBottom: 30, marginTop: Platform.OS == 'ios' ? 5 : 0 }}>
                 <TouchableOpacity style={{ left: 10, marginBottom: 30, position: 'absolute', display: 'flex', flexDirection: 'row', alignItems: 'center' }} onPress={() => { navigation.goBack() }}>
                     <Arrow width={20} height={20} transform={[{ rotateY: '180deg' }]} color={'black'} />
                     <Text style={{ fontSize: 16, lineHeight: 24, marginLeft: 16 }}>설정</Text>

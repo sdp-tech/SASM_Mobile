@@ -90,7 +90,7 @@ const CategoryForm = ({ tab, setTab, navigation, post }: PostUploadParams) => {
           scrollEnabled={false}
         />
         {(selectedId) &&
-          <NextButton label="다음" style={{position: 'absolute', bottom: 30}} 
+          <NextButton label="다음" style={{marginTop: 20}}
             onPress={() => setTab(1)}
           />
         }

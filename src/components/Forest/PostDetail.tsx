@@ -32,6 +32,7 @@ import Settings from '../../assets/img/MyPage/Settings.svg';
 import { StackNavigationProp, StackScreenProps } from "@react-navigation/stack";
 import { useNavigation } from "@react-navigation/native";
 import { TabProps } from "../../../App";
+import { getStatusBarHeight } from "react-native-status-bar-height";
 
 interface Post {
   id: number;
@@ -89,7 +90,8 @@ const PostDetailSection = ({
 }: PostDetailSectionProps) => {
   const [dot, setDot] = useState<boolean>(false);
   const navigation = useNavigation<StackNavigationProp<TabProps>>();
-  const user = Boolean(post.writer.email === email)
+  const user = Boolean(post.writer.email === email);
+  const statusBarHeight = getStatusBarHeight();
   const markup = {
     html: `${post?.content}`
   }
@@ -120,27 +122,28 @@ const PostDetailSection = ({
         <View
           style={{
             flexDirection: "row",
-            marginTop: Platform.OS === 'ios' ? 45:15,
+            marginTop: Platform.OS == 'ios' ? statusBarHeight + 10: statusBarHeight,
             alignSelf: "center",
             flex: 1,
-            padding: 10
+            paddingHorizontal: 10
           }}
         >
           <TouchableOpacity style={{ marginTop: 5, width: 30, height: 30 }} onPress={() => { navigation.goBack() }}>
-            <Arrow width={18} height={18} transform={[{ rotate: '180deg' }]} color={'black'} />
+            <Arrow width={18} height={18} transform={[{ rotate: '180deg' }]} color={'white'} />
           </TouchableOpacity>
           <Text
             style={{
               fontSize: 20,
               fontWeight: "700",
               textAlign: 'center',
-              flex: 1
+              flex: 1,
+              color: 'white'
             }}
           >
             {post.category.name}
           </Text>
           <TouchableOpacity style={{marginTop: 10, marginRight: 10, width: 30, height: 30, alignItems: 'flex-end'}} onPress={() => setDot(!dot)}>
-            <Settings transform={[{ rotate: dot ? '90deg' : '0deg'}]} color={'black'}/>
+            <Settings transform={[{ rotate: dot ? '90deg' : '0deg'}]} color={'white'}/>
           </TouchableOpacity>
           { dot &&
           <View style={{position: 'absolute', backgroundColor: 'white', top: 40, left: width-140, borderRadius: 4}}>
@@ -180,8 +183,8 @@ const PostDetailSection = ({
             {post.subtitle}
           </Text>
           <View style={{ flexDirection: "row" }}>
-            <Text style={{ color: '#F4F4F4', fontSize: 12, fontWeight: '400' }}>작성: {post.created.slice(0, 10)}</Text>
-            <Text style={{ color: '#F4F4F4', fontSize: 12, fontWeight: '400' }}> / 마지막 수정: {post.updated.slice(0, 10)}</Text>
+            <Text style={{ color: '#F4F4F4', fontSize: 12, fontWeight: '400' }}>작성: {post.created.slice(0, 10).replace(/-/gi, '.')}</Text>
+            <Text style={{ color: '#F4F4F4', fontSize: 12, fontWeight: '400' }}> / 마지막 수정: {post.updated.slice(0, 10).replace(/-/gi, '.')}</Text>
             <Text style={{ flex: 1, textAlign: 'right', color: '#67D393', fontSize: 14, fontWeight: '400' }}>{post.writer.nickname}</Text>
           </View>
         </View>
@@ -283,8 +286,8 @@ const UserInfoSection = ({
       </View>
       <View style={{ flex: 1, marginLeft: 20 }}>
         <View style={{ flexDirection: 'row', marginBottom: 15}}>
-          <Text style={{ fontSize: 12, fontWeight: '600', color: user.is_verified ? '#209DF5' : '#67D393' }}>{user.is_verified ? 'Editor' : 'User'}</Text>
-          <Text style={{ color: '#202020', fontSize: 12, fontWeight: '600' }}> {user.nickname}님의 다른 글</Text>
+          <Text style={{ fontSize: 14, fontWeight: '600', color: user.is_verified ? '#209DF5' : '#67D393' }}>{user.is_verified ? 'Editor' : 'User'}</Text>
+          <Text style={{ color: '#202020', fontSize: 14, fontWeight: '600' }}> {user.nickname}님의 다른 글</Text>
         </View>
         <FlatList data={posts.slice(0,4)} scrollEnabled={false} renderItem={({ item }: any) => {
           return (

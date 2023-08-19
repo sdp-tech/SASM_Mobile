@@ -16,7 +16,8 @@ const InputWrapper = styled.View`
     display: flex;
     align-items: center;
     width: 100%;
-    margin-top: 120px;
+    justifyContent: center;
+    flex: 1
 `
 
 const LoginScreen = () => {
@@ -54,8 +55,8 @@ const LoginScreen = () => {
   },[]))
 
   return (
-    <SafeAreaView style={{ backgroundColor: '#FFFFFF', width: '100%', height: '100%', alignItems: 'center' }}>
-      <View style={{ position: 'relative', marginBottom: 30, width:'100%', display:'flex', justifyContent:'center' }}>
+    <SafeAreaView style={{ backgroundColor: '#FFFFFF', flex: 1, alignItems: 'center' }}>
+      <View style={{ position: 'relative', marginBottom: 30, width:'100%', display:'flex', justifyContent:'center', marginTop: 10 }}>
         <Text style={TextStyles.header}>로그인</Text>
         <TouchableOpacity style={{ left: 10, marginBottom: 30, position: 'absolute' }} onPress={() => { navigation.goBack() }}>
           <Arrow width={20} height={20} transform={[{ rotateY: '180deg' }]} color={'black'} />
@@ -82,10 +83,10 @@ const LoginScreen = () => {
           alertLabel={alert.alertString}
           isAlert={alert.isAlert}
         />
-      </InputWrapper>
       <NextButton label='로그인' onPress={() => login()} style={{marginBottom: 10}}/>
       <TouchableOpacity style={{marginBottom: 30}} onPress={() => navigation.navigate('findidpw')}><Text style={TextStyles.find}>아이디/비밀번호 찾기</Text></TouchableOpacity>
       <SocialLogin type='login'/>
+      </InputWrapper>
     </SafeAreaView>
   )
 }
@@ -115,7 +116,7 @@ const TextStyles = StyleSheet.create({
     marginBottom: 15,
   },
   find: {
-    fontSize: 12,
+    fontSize: 14,
     lineHeight: 18,
     letterSpacing: -0.6
   },

@@ -227,7 +227,7 @@ const ForestForm = ({ tab, setTab, navigation, post }: PostUploadParams) => {
       <ScrollView>
       <ImageBackground source={(repPic && repPic.length == 0 && forest.rep_pic == '') ? images[category.id-1] : { uri: (repPic && repPic.length > 0) ? repPic[0].uri : (forest.rep_pic != '' ? forest.rep_pic : 'none')}} imageStyle={{width: width+30}} style={{width: width, height: width}}>
       <View style={{backgroundColor: 'rgba(0,0,0,0.2)', width: width, height: width}}>
-        <Text style={{fontSize: 20, fontWeight: '700', marginLeft: 10, marginVertical: 10}}>{category.name}</Text>
+        <Text style={{fontSize: 20, fontWeight: '700', marginLeft: 10, marginVertical: 10, color: 'white'}}>{category.name}</Text>
         <CardView data={semiCategories} offset={10} gap={0} pageWidth={100} dot={false} renderItem={({item}: any) => { return (
             <View style={{height: 25, borderRadius: 16, backgroundColor: '#67D393', paddingVertical: 4, paddingHorizontal: 16, margin: 4}}>
               <Text style={{color: 'white', fontSize: 14}}># {item.name}</Text>
