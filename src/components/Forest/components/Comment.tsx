@@ -100,7 +100,7 @@ const Comment = ({ data, reRenderScreen, post_id, email, isLogin, navigation, ca
                         <View style={{flexDirection: 'row', alignItems: 'center'}}>
                             <Text style={[textStyles.nickname, {color: data!.writer.is_verified? '#209DF5' : '#89C77F'}]}>{data!.writer.is_verified ? ('Editor') : ('User')}</Text>
                             <Text style={textStyles.nickname}> {data!.writer.nickname}</Text>
-                            <Text style={textStyles.date}>{date} 작성</Text>
+                            <Text style={textStyles.date}>{date.replace(/-/gi, '.')} 작성</Text>
                             { isWriter &&
                                 <TouchableOpacity style={{marginLeft: 5}} onPress={() => setModalVisible(!modalVisible)}>
                                     <Edit width={12} height={12} />
@@ -131,7 +131,7 @@ const Comment = ({ data, reRenderScreen, post_id, email, isLogin, navigation, ca
                 <Report reported={reported} modalVisible={reportVisible} setModalVisible={setReportVisible} onReport={onReport} />
             </View>
             {!isWriter &&
-                <TouchableOpacity style={{position: 'absolute', bottom: 5, right: 0}} onPress={() => setReportVisible(true)}>
+                <TouchableOpacity style={{position: 'absolute', bottom: 0, right: 0, width: 30, height: 30, justifyContent: 'center', alignItems: 'center'}} onPress={() => setReportVisible(true)}>
                     <Text style={{color: '#A8A8A8', fontSize: 12}}>신고</Text>
                 </TouchableOpacity>
             }
@@ -145,7 +145,7 @@ const textStyles = StyleSheet.create({
         fontWeight: '600',
     },
     date: {
-        fontSize: 10,
+        fontSize: 12,
         fontWeight: '400',
         color: '#676767',
         marginLeft: 8,

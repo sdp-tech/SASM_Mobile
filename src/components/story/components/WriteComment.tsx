@@ -129,14 +129,14 @@ const WriteComment = ({ id, reRenderScreen, data, isLogin, navigation, commentId
                 onPress = {uploadComment}
                 style = {{
                     backgroundColor: '#209DF5',
-                    width: 30,
-                    height: 20,
+                    width: 35,
+                    height: 25,
                     borderRadius: 24,
                     alignItems: 'center',
                     justifyContent: 'space-around',
-                    position: 'absolute', marginTop: 70, marginLeft: width - 80
+                    position: 'absolute', top: 70, right: 10
                 }}>
-                <Text style = {{ fontSize: 10, fontWeight: '600', color: '#FFFFFF' }}>등록</Text>
+                <Text style = {{ fontSize: 12, fontWeight: '600', color: '#FFFFFF' }}>등록</Text>
             </TouchableOpacity>
         </View>
     )

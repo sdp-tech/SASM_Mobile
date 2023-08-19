@@ -99,7 +99,7 @@ const Comment = ({ data, story_id, reRenderScreen, email, isLogin, navigation, c
                         <View style={{flexDirection: 'row', alignItems: 'center'}}>
                             <Text style={[textStyles.nickname, {color: data!.writer_is_verified ? '#209DF5' : '#89C77F'}]}>{data!.writer_is_verified ? ('Editor') : ('User')}</Text>
                             <Text style={textStyles.nickname}> {data!.nickname}</Text>
-                            <Text style={textStyles.date}>{date} 작성</Text>
+                            <Text style={textStyles.date}>{date.replace(/-/gi, '.')} 작성</Text>
                             { isWriter &&
                                 <TouchableOpacity style={{marginLeft: 5}} onPress={() => setModalVisible(!modalVisible)}>
                                     <Edit width={12} height={12} />
@@ -144,7 +144,7 @@ const textStyles = StyleSheet.create({
         fontWeight: '600',
     },
     date: {
-        fontSize: 10,
+        fontSize: 12,
         fontWeight: '400',
         color: '#676767',
         marginLeft: 8,

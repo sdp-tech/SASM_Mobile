@@ -59,18 +59,18 @@ const PostCommentsScreen = ({ navigation, route }: NativeStackScreenProps<Forest
       <Loading />
     ) : (
     <SafeAreaView style={{flex: 1, backgroundColor: 'white'}}>
+      <View style={{height: 50, alignItems: 'center', justifyContent: 'center'}}>
+        <TouchableOpacity style={{position: 'absolute', left: 10}} onPress={() => {navigation.goBack()}}>
+          <Arrow width={20} height={20} transform={[{rotateY: '180deg'}]} color={'black'}/>
+        </TouchableOpacity>
+        <Text style={{textAlign: 'center', textAlignVertical: 'center', fontSize: 20, fontWeight: '700'}}>한줄평</Text>
+      </View>
+      <View style={{borderBottomColor: '#D9D9D9', width: width, borderBottomWidth: 1, marginBottom: 20}} />
       <FlatList
         data={comment}
         refreshing={refreshing}
         onRefresh={onRefresh}
         ListHeaderComponent={<>
-          <View style={{height: 50, alignItems: 'center', justifyContent: 'center'}}>
-            <TouchableOpacity style={{position: 'absolute', left: 10}} onPress={() => {navigation.goBack()}}>
-              <Arrow width={20} height={20} transform={[{rotateY: '180deg'}]} color={'black'}/>
-            </TouchableOpacity>
-            <Text style={{textAlign: 'center', textAlignVertical: 'center', fontSize: 20, fontWeight: '700'}}>한줄평</Text>
-          </View>
-          <View style={{borderBottomColor: '#D9D9D9', width: width, borderBottomWidth: 1, marginBottom: 20}} />
           <WriteComment id={id} reRenderScreen={reRenderScreen} data={updateText} commentId={commentId} isLogin={isLogin} navigation={navigation}/>
         </>}
         renderItem={({item}) => { 
