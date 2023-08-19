@@ -7,7 +7,7 @@ import {
   StyleSheet,
   ImageBackground,
   Dimensions,
-  ActivityIndicator,
+  Platform,
   Alert
 } from "react-native";
 import { TextPretendard as Text } from "../../common/CustomText";
@@ -107,15 +107,15 @@ const PostSearchScreen = ({
 
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: "white", paddingTop: 10 }}>
-      <View style={{flexDirection: 'row'}}>
+      <View style={{flexDirection: 'row', marginTop: Platform.OS == 'ios' ? 5 : 0}}>
       <TouchableOpacity style={{justifyContent: 'center', marginLeft: 10}} onPress={()=>{navigation.goBack();}}>
         <Arrow width={18} height={18} transform={[{rotate: '180deg'}]} color={'black'}/>
       </TouchableOpacity>
       <SearchBar
         search={search}
         setSearch={setSearch}
-        style={{ backgroundColor: "#F4F4F4", width: 330 }}
-        placeholder={"무엇을 검색하시겠습니까"}
+        style={{ backgroundColor: "#F4F4F4", width: '85%' }}
+        placeholder={"궁금한 포레스트를 검색해보세요"}
         placeholderTextColor={'#848484'}
       />
       </View>

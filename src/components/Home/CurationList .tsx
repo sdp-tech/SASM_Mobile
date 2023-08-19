@@ -67,18 +67,18 @@ export default function CurationList({ navigation, route }: StackScreenProps<Hom
   }, [page, search]))
 
   return (
-    <SafeAreaView style={{ backgroundColor: "#FFFFFF", flex: 1 }}>
-      <View style={{ display: 'flex', flexDirection: 'row', alignItems: 'center', marginTop: Platform.OS == 'android' ? 10 : 0 }}>
+    <SafeAreaView style={{ backgroundColor: "#FFFFFF", flex: 1, paddingTop: 10 }}>
+      <View style={{ display: 'flex', flexDirection: 'row', alignItems: 'center', marginTop: Platform.OS == 'ios' ? 5 : 0}}>
         <TouchableOpacity style={{marginLeft: 3}} onPress={navigation.goBack}>
           <Arrow width={20} height={20} transform={[{ rotateY: '180deg' }]} color={'black'}/>
         </TouchableOpacity>
         <SearchBar
-          textAlign='center'
-          placeholder='큐레이션 검색'
+          placeholder='궁금한 큐레이션을 검색해보세요'
           search={search}
           setSearch={setSearch}
           setPage={setPage}
-          style={{ width: '80%', backgroundColor: '#F1F1F1' }}
+          style={{ width: '85%', backgroundColor: "#F4F4F4" }}
+          placeholderTextColor={'#848484'}
         />
       </View>
       <FlatList
