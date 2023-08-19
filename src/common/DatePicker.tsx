@@ -51,7 +51,7 @@ export default function DatePicker({ callback, isBorder, label, containerStyle, 
   return (
     <View style={{ ...containerStyle, height: 80, display: 'flex', alignItems: 'center' }}>
       {label &&
-        <Text style={{ width: '85%', textAlign: 'left', fontSize: 12, lineHeight: 18, letterSpacing: -0.6 }}>
+        <Text style={{ width: '85%', textAlign: 'left', fontSize: 14, lineHeight: 18, letterSpacing: -0.6 }}>
           생년월일
         </Text>
       }

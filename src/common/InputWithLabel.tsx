@@ -28,7 +28,7 @@ interface InputProps extends TextInputProps {
 export default function InputWithLabel({ isAlert, alertLabel, isRequired, containerStyle, label, onChangeText, placeholder, value, children, ...rest }: InputProps): JSX.Element {
   return (
     <View style={{ ...containerStyle, height: 80, display: 'flex', alignItems: 'center', position: 'relative' }}>
-      <Text style={{ width: '85%', textAlign: 'left', fontSize: 12, lineHeight: 18, letterSpacing: -0.6 }}>
+      <Text style={{ width: '85%', textAlign: 'left', fontSize: 14, lineHeight: 18, letterSpacing: -0.6 }}>
         {label}
         <Text style={{ color: '#FF4D00', lineHeight: 18 }}>{isRequired && ' *'}</Text>
       </Text>

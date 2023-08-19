@@ -63,7 +63,7 @@ const ListCard = ({id, place_name, title, rep_pic, extra_pics, story_like, creat
     <View style={{flex: 1, width: width-30, paddingBottom: 20, marginBottom: 20, borderBottomColor: 'rgba(203, 203, 203, 1)', borderBottomWidth: 1 }}>
       <View style={{flexDirection: 'row'}}>
         <Text style={[textStyles.writer, {color: verified ? '#209DF5' : '#67D393', flex: 1}]}>{nickname}</Text>
-        <Text style={textStyles.date}>{created.slice(0, 10)} 작성</Text>
+        <Text style={textStyles.date}>{created.slice(0, 10).replace(/-/gi, '.')} 작성</Text>
       </View>
       <TouchableOpacity style={{marginTop: 5}} onPress={onPress}>
         <View style={{flexDirection: 'row', marginBottom: 10}}>
@@ -109,11 +109,11 @@ const textStyles = StyleSheet.create({
     letterSpacing: -0.6
   },
   writer: { 
-    fontSize: 12,
+    fontSize: 14,
     fontWeight: '600',
   },
   date: {
-    fontSize: 10,
+    fontSize: 12,
     fontWeight: '400',
     color: '#676767',
   }

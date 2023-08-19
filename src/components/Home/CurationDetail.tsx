@@ -14,6 +14,7 @@ import Heart from '../../common/Heart';
 import ShareButton from "../../common/ShareButton";
 import CommentIcon from '../../assets/img/Story/Comment.svg';
 import { LoginContext } from '../../common/Context';
+import { getStatusBarHeight } from 'react-native-status-bar-height';
 
 const { width, height } = Dimensions.get('window');
 
@@ -41,12 +42,11 @@ const StoryInfoBox = styled.View`
   padding-horizontal: 25px;
 `
 const GotoStory = styled.TouchableOpacity`
-  background-color: #75E59B;
-  border-radius: 5px;
+  flex-direction: row;
   padding: 2px 8px;
-  margin-left: 25px;
+  margin-right: 10px;
+  align-self: flex-end;
   align-items: center;
-  align-self: flex-start;
 `
 const StoryContentBox = styled.View`
   padding-horizontal: 25px;
@@ -137,6 +137,7 @@ export default function CurationDetail({ navigation, route }: StackScreenProps<H
   const [mapImageSize, setMapImageSize] = useState<{ width: number; height: number; }>({
     width: 1, height: 1
   })
+  const statusBarHeight = getStatusBarHeight();
   const getCurationDetail = async () => {
     const response_detail = await request.get(`/curations/curation_detail/${route.params.id}/`);
     setCurationDetail(response_detail.data.data);
@@ -184,18 +185,21 @@ export default function CurationDetail({ navigation, route }: StackScreenProps<H
   return (
     <>
       <ScrollView style={{ backgroundColor: '#FFFFFF' }}>
-        <TouchableOpacity style={{ position: 'absolute', top: Platform.OS == 'ios' ? 50 : 30, left: 10, zIndex: 2 }} onPress={navigation.goBack}>
+        <TouchableOpacity style={{ position: 'absolute', top: statusBarHeight + 10, left: 10, zIndex: 2 }} onPress={navigation.goBack}>
           <Arrow width={18} height={18} transform={[{ rotate: '180deg' }]} color={'white'} />
         </TouchableOpacity>
           <ImageBackground source={{ uri: curationDetail.rep_pic }} style={{ width: width, height: width * (reppicSize.height / reppicSize.width), position:'relative' }}>
-            <View style={{width:'100%', height:'100%', backgroundColor:'rgba(0,0,0,0.3)', position:'absolute', zIndex:2}}/>
-            <Text style={TextStyles.title} numberOfLines={4}>{curationDetail.title}</Text>
+            <View style={{width:'100%', height:'100%', backgroundColor:'rgba(0,0,0,0.3)', justifyContent: 'flex-end', padding: 20}}>
+              <Text style={TextStyles.title} numberOfLines={4}>{curationDetail.title}</Text>
+              <Text style={[TextStyles.created, {color: '#D7D7D7', marginLeft: 3}]}>작성 : {curationDetail.created.slice(0, 10).replace(/-/gi, '.')}</Text>
+              {/* <Text style={{ color: '#F4F4F4', fontSize: 12, fontWeight: '400' }}> / 마지막 수정: {curationDetail.updated.slice(0, 10).replace(/-/gi, '.')}</Text> */}
+            </View>
           </ImageBackground>
         <InfoBox>
-          <Image source={{ uri: curationDetail.profile_image }} style={{ width: 50, height: 50, borderRadius: 25, marginRight: 20 }} />
+          <Image source={{ uri: curationDetail.profile_image }} style={{ width: 50, height: 50, borderRadius: 25, marginRight: 10 }} />
           <View>
             <Text style={TextStyles.writer}>{curationDetail.nickname}</Text>
-            <Text style={TextStyles.created}>{curationDetail.created.slice(0, 10).replace(/-/gi, '.')}작성</Text>
+            <Text style={TextStyles.created}>{curationDetail.created.slice(0, 10).replace(/-/gi, '.')} 작성</Text>
           </View>
           <TouchableOpacity style={{ position: 'absolute', right: 25 }}
             onPress={() => { handleFollow(curationDetail.writer_email, isLogin, navigationTab, following, setFollowing) }}>
@@ -213,20 +217,19 @@ export default function CurationDetail({ navigation, route }: StackScreenProps<H
         <GotoMap onPress={() => { navigationTab.navigate('맵', {}) }}>
           <Text style={TextStyles.gotomap}>맵페이지로 이동</Text>
         </GotoMap>
-
-        <View style={{ flexDirection: "row", padding: 10 }}>
-          <View style={{ flexDirection: 'row', flex: 1, alignItems: 'center' }}>
-            <Heart color={'#202020'} like={like} onPress={handleLike} size={18} ></Heart>
-            {/* <Text style={{ fontSize: 14, color: '#202020', lineHeight: 20, marginLeft: 3, marginRight: 10 }}>{curationDetail.like_cnt}</Text> */}
-          </View>
-          <ShareButton color={'black'} message={`[SASM Curation] ${curationDetail.title}`} />
-        </View>
         {
           curatedStory.map(data =>
             <Storys data={data} navigation={navigationTab} />
           )
         }
       </ScrollView>
+      <View style={{ flexDirection: "row", padding: 10, backgroundColor: 'white' }}>
+        <View style={{ flexDirection: 'row', flex: 1, alignItems: 'center' }}>
+          <Heart color={'#202020'} like={like} onPress={handleLike} size={18} ></Heart>
+          {/* <Text style={{ fontSize: 14, color: '#202020', lineHeight: 20, marginLeft: 3, marginRight: 10 }}>{curationDetail.like_cnt}</Text> */}
+        </View>
+        <ShareButton color={'black'} message={`[SASM Curation] ${curationDetail.title}`} />
+      </View>
     </>
   )
 }
@@ -273,13 +276,13 @@ const Storys = ({ navigation, data }: { navigation: StackNavigationProp<TabProps
           <Text style={TextStyles.place_name}>{data.place_name}</Text>
           <TouchableOpacity><Heart color={'#202020'} like={like} onPress={handleLike} /></TouchableOpacity>
         </View>
-        <Text style={{ fontSize: 12 }}>{data.place_address}</Text>
+        <Text style={{ fontSize: 14 }}>{data.place_address}</Text>
       </StoryInfoBox>
       <InfoBox>
-        <Image source={{ uri: data.profile_image }} style={{ width: 50, height: 50, borderRadius: 25, marginRight: 20 }} />
+        <Image source={{ uri: data.profile_image }} style={{ width: 50, height: 50, borderRadius: 25, marginRight: 10 }} />
         <View>
           <Text style={TextStyles.writer}>{data.nickname}</Text>
-          <Text style={TextStyles.created}>{data.created.slice(0, 10).replace(/-/gi, '.')}작성</Text>
+          <Text style={TextStyles.created}>{data.created.slice(0, 10).replace(/-/gi, '.')} 작성</Text>
         </View>
         <TouchableOpacity style={{ position: 'absolute', right: 25 }}
           onPress={() => { handleFollow(data.writer_email, isLogin, navigation, followed, setFollowed) }}>
@@ -307,7 +310,8 @@ const Storys = ({ navigation, data }: { navigation: StackNavigationProp<TabProps
         <Text style={TextStyles.hashtags}>{data.hashtags}</Text>
       </StoryContentBox>
       <GotoStory onPress={() => { navigation.navigate('스토리', { id: data.story_id }) }}>
-        <Text style={{ fontSize: 12, color: '#FFFFFF' }}>스토리 보러 가기</Text>
+        <Text style={{ fontSize: 14, color: 'black' }}>스토리 보러 가기</Text>
+        <Arrow width={14} height={14} style={{marginLeft: 5}} color={'black'} />
       </GotoStory>
     </StorySection>
   )
@@ -315,29 +319,29 @@ const Storys = ({ navigation, data }: { navigation: StackNavigationProp<TabProps
 
 const TextStyles = StyleSheet.create({
   title: {
-    fontSize: 32,
+    fontSize: 28,
     fontWeight: '700',
-    position: 'absolute',
-    paddingHorizontal: 20,
-    bottom: 20,
     color: '#FFFFFF',
-    width: '100%',
-    zIndex: 2
   },
   content: {
     color: '#6B6B6B',
-    fontSize: 12
+    fontSize: 16,
+    lineHeight: 24,
+    letterSpacing: -0.6
   },
   writer: {
-    fontSize: 12,
+    fontSize: 16,
     fontWeight: '600',
+    color: '#67D393',
+
   },
   created: {
     color: '#676767',
-    fontSize: 8,
+    fontSize: 12,
+    lineHeight: 18
   },
   gotomap: {
-    fontSize: 12,
+    fontSize: 14,
     color: '#545454'
   },
   story_review: {
@@ -352,11 +356,11 @@ const TextStyles = StyleSheet.create({
     alignSelf: 'flex-start',
   },
   hashtags: {
-    fontSize: 12,
+    fontSize: 14,
     marginVertical: 20,
   },
   category: {
-    fontSize: 10,
+    fontSize: 12,
     color: '#707070',
     borderColor: '#707070',
     borderWidth: 1,
@@ -375,7 +379,7 @@ const TextStyles = StyleSheet.create({
     color: '#FFFFFF',
     backgroundColor: '#4DB1F7',
     letterSpacing: -0.6,
-    fontSize: 12,
+    fontSize: 14,
     lineHeight: 28,
     textAlign: 'center',
     overflow: 'hidden'
@@ -387,7 +391,7 @@ const TextStyles = StyleSheet.create({
     borderColor: '#4DB1F7',
     borderWidth: 1,
     letterSpacing: -0.6,
-    fontSize: 12,
+    fontSize: 14,
     lineHeight: 28,
     textAlign: 'center',
     overflow: 'hidden'

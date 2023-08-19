@@ -145,8 +145,10 @@ const PostItem = ({
               <Text
                 style={{
                   fontSize: 12,
-                  fontWeight: "200",
-                  color: '#434343',
+                  lineHeight: 20,
+                  letterSpacing: 0.24, 
+                  fontWeight: "300",
+                  color: '#202020',
                   marginBottom: 8,
                 }}
                 numberOfLines={2}
@@ -169,7 +171,7 @@ const PostItem = ({
         )}
       </View>
       <TouchableOpacity onPress={() => setPressed(!pressed)}
-        style={{ width: width-30, marginHorizontal: 15, borderBottomWidth: 1, borderBottomColor: "#373737", alignItems: 'center', paddingBottom: 10 }}
+        style={{ width: width-30, marginHorizontal: 15, borderBottomWidth: 1, borderBottomColor: 'rgba(0, 0, 0, 0.40)', alignItems: 'center', paddingBottom: 10 }}
       >
         {pressed ?
           <Arrow transform={[{ rotate: "270deg" }]} width={15} height={15} color={'#373737'}/>
@@ -254,10 +256,10 @@ export const HotPostItem = ({
               fontSize: 12,
               lineHeight: 20,
               letterSpacing: 0.24, 
-              fontWeight: "200",
-              color: '#373737',
-              opacity: 0.6,
+              fontWeight: "300",
+              color: '#202020',
               marginBottom: 15,
+              marginTop: 5
             }}
             numberOfLines={6}
           >
