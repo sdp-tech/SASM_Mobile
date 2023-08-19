@@ -139,6 +139,7 @@ const MyStory = () => {
                   onEndReachedThreshold={0.3}
                   numColumns={2}
                   style={{ alignContent: 'space-between' }}
+                  showsVerticalScrollIndicator={false}
                 />
               )}
             </View>

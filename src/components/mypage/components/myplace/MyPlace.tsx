@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback, useContext } from "react";
-import { View, StyleSheet, FlatList, } from "react-native";
+import { View, StyleSheet, FlatList, Dimensions } from "react-native";
 import { TextPretendard as Text } from '../../../../common/CustomText';
 import NothingIcon from "../../../../assets/img/nothing.svg";
 import { Request } from "../../../../common/requests";
@@ -9,9 +9,11 @@ import RequireLogin from "../common/RequiredLogin";
 import { SearchNCategory } from "../common/SearchNCategory";
 import MyPlaceItemCard, { MyPlaceItemCardProps } from "./MyPlaceItemCard";
 
-const styles = (isCategory?: boolean) => StyleSheet.create({
+const { width, height } = Dimensions.get('window')
+
+const styles = StyleSheet.create({
   Container: {
-    flex: 1
+    flex: 1,
   },
   Title: {
     height: 50,
@@ -20,19 +22,8 @@ const styles = (isCategory?: boolean) => StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center'
   },
-  Searchbox: {
-    height: 50,
-    justifyContent: isCategory ? "flex-start" : "flex-end",
-    paddingRight: 15,
-    alignItems: "center",
-    flexDirection: 'row',
-    //flex: 1,
-    zIndex: 1
-  },
   Place: {
-    alignItems: 'flex-start',
-    paddingHorizontal: 5,
-    flex: 1
+    alignItems: 'center',
   },
 });
 
@@ -69,7 +60,6 @@ const MyPlace = () => {
   };
 
   const getWrittenReview = async () => {
-    console.error(page);
     const response = await request.get('/mypage/my_reviewed_place/');
     setMax(Math.ceil(response.data.data.count / 6));
     setWritten(response.data.data.results);
@@ -83,7 +73,7 @@ const MyPlace = () => {
   }, [isLogin, page, search, checkedList, type, refresh]))
 
   return (
-    <View style={styles().Container}>
+    <View style={styles.Container}>
       {
         isLogin ?
           <>
@@ -95,7 +85,7 @@ const MyPlace = () => {
               setEdit={setEdit} edit={edit}
               label="내 리뷰"
             />
-            <View style={styles().Place}>
+            <View style={styles.Place}>
               {(type ? placeList : written).length === 0 ? (
                 <View style={{ alignItems: 'center', marginVertical: 20, alignSelf: 'center' }}>
                   <NothingIcon />
@@ -118,7 +108,7 @@ const MyPlace = () => {
                   }}
                   onEndReachedThreshold={0.3}
                   numColumns={3}
-                  style={{ alignContent: 'space-between' }}
+                  showsVerticalScrollIndicator={false}
                 />
               )}
             </View>

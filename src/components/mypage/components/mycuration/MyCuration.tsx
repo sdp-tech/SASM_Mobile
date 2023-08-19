@@ -93,7 +93,7 @@ const MyStory = () => {
                       props={item}
                     />
                   )}
-
+                  showsVerticalScrollIndicator={false}
                   numColumns={2}
                 />
               )}

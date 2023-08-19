@@ -105,6 +105,7 @@ export default function MyForest() {
                 }}
                 onEndReachedThreshold={0.3}
                 style={{ alignContent: 'space-between' }}
+                showsVerticalScrollIndicator={false}
               />
 
             </>

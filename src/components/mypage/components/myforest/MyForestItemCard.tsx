@@ -81,14 +81,14 @@ const TextStyles = StyleSheet.create({
   },
   preview: {
     fontSize: 14,
-    lineHeight: 14.4,
     letterSpacing: -0.6,
-    color: '#373737'
+    color: '#373737',
+    lineHeight: 20
   },
   writer: {
     fontSize: 14,
-    lineHeight: 14.4,
     color: '#67D393',
-    fontWeight: '600'
+    fontWeight: '600',
+    lineHeight: 20
   }
 })
