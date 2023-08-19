@@ -63,8 +63,8 @@ export function CategoryIcon({data}:{data:string}): JSX.Element {
 
 
 interface CategoryProps {
-  checkedList: string[];
-  setCheckedList: (list: string[]) => void;
+  checkedList: any[];
+  setCheckedList: (list: any[]) => void;
   story?: boolean;
   setPage?: Dispatch<SetStateAction<number>>;
   style?: ViewStyle;
@@ -114,8 +114,15 @@ export default function Category({ checkedList, setCheckedList, story, setPage, 
 }
 
 export function ForestCategory({ checkedList, setCheckedList, setPage, style }: CategoryProps) {
-  const category = ['시사', '문화', '라이프스타일', '뷰티', '푸드', '액티비티'];
-  const handleCheckedList = (data: string): void => {
+  const category = [
+    {id: 1, name: '시사'},
+    {id: 2, name: '문화'},
+    {id: 3, name: '라이프스타일'},
+    {id: 4, name: '뷰티'},
+    {id: 5, name: '푸드'},
+    {id: 6, name: '액티비티'},
+  ];
+  const handleCheckedList = (data: number): void => {
     if(setPage) setPage(1);
     if (checkedList.includes(data)) {
       setCheckedList(checkedList.filter(element => element != data));
@@ -127,15 +134,15 @@ export function ForestCategory({ checkedList, setCheckedList, setPage, style }: 
 
   return (
     <FlatList
-      style={{ marginVertical: 10, ...style, }}
+      style={{ marginVertical: 10, ...style }}
       showsHorizontalScrollIndicator={false}
       data={category}
       horizontal
       renderItem={({ item }) => {
-        const isSelected = checkedList.includes(item);
+        const isSelected = checkedList.includes(item.id);
         return (
-            <TouchableOpacity onPress={()=>handleCheckedList(item)}>
-            <Text style={{...TextStyles.forestCategory, backgroundColor: (isSelected ? '#D7D7D7' : '#FFFFFF')}}>{item}</Text>
+            <TouchableOpacity style={{justifyContent: 'center'}} onPress={()=>handleCheckedList(item.id)}>
+            <Text style={{...TextStyles.forestCategory, backgroundColor: (isSelected ? '#D7D7D7' : '#FFFFFF')}}>{item.name}</Text>
             </TouchableOpacity>
         )
       }}
@@ -147,7 +154,7 @@ const TextStyles = StyleSheet.create({
   forestCategory : {
     marginHorizontal: 4.5,
     fontSize: 14,
-    lineHeight: 28,
+    paddingVertical: 4,
     paddingHorizontal: 9,
     borderRadius: 12,
     borderColor:'rgba(203, 203, 203, 1)',

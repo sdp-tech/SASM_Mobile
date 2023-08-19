@@ -32,7 +32,6 @@ export default function MyForest() {
   }
 
   const getForest = async () => {
-
     let params = new URLSearchParams();
     for (const category of checkedList) {
       params.append('category_filter', category);
@@ -48,7 +47,7 @@ export default function MyForest() {
     for (const category of checkedList) {
       params.append('category_filter', category);
     }
-    const response = await request.get(`/mypage/my_forest/?${params.toString()}`, { page: writtenPage, search: search, category_filter: checkedList });
+    const response = await request.get(`/mypage/my_forest/?${params.toString()}`, { page: writtenPage, search: search });
     setWrittenMax(Math.ceil(response.data.data.count / 4))
     if (writtenPage == 1) setWritten(response.data.data.results);
     else setForestList([...written, ...response.data.data.results]);
