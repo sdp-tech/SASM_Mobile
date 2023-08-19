@@ -22,9 +22,6 @@ const SemiCategoryForm = ({ tab, setTab, post }: PostUploadParams) => {
 
   useEffect(() => {
     getSemiCategories();
-    if (post.category.id !== 0 && post.category.id !== category.id) {
-      setSemiCategories([]);
-    }
     setSelectedIds(semiCategories.map((category: any) => category.id))
   }, [category])
 

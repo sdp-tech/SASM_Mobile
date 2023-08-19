@@ -11,7 +11,7 @@ import NextButton from '../../../common/NextButton';
 
 const CategoryForm = ({ tab, setTab, navigation, post }: PostUploadParams) => {
   const request = new Request();
-  const { category, setCategory, semiCategories, forest } = useContext(ForestContext);
+  const { category, setCategory, semiCategories, setSemiCategories, forest } = useContext(ForestContext);
   const [boardLists, setBoardLists] = useState([] as any);
   const [selectedId, setSelectedId] = useState<number | null>(null);
   const hasUnsavedChanges = Boolean(category.id !== 0 || semiCategories.length > 0 || forest.title.length > 0 || forest.hashtags.length > 0 || forest.subtitle.length > 0 || forest.content.length > 0 )
@@ -26,6 +26,7 @@ const CategoryForm = ({ tab, setTab, navigation, post }: PostUploadParams) => {
     getBoardItems();
     if (category.id !== 0) {
       setSelectedId(category.id)
+      setSemiCategories([])
     }
   }, [category]);
 
