@@ -14,6 +14,7 @@ interface SearchCardProps {
   title: string;
   category: string;
   preview: string;
+  summary: string;
   writer: string;
   nickname: string;
   created: string;
@@ -23,7 +24,7 @@ interface SearchCardProps {
   navigation: any;
 }
 
-const SearchCard = ({id, place_name, title, rep_pic, extra_pics, story_like, category, preview, writer, nickname, created, writer_is_verified, isLogin, sameStory, navigation} : SearchCardProps) => {
+const SearchCard = ({id, place_name, title, rep_pic, extra_pics, story_like, category, preview, summary, writer, nickname, created, writer_is_verified, isLogin, sameStory, navigation} : SearchCardProps) => {
   const { width, height } = Dimensions.get('screen');
   const [like, setLike] = useState<boolean>(false);
   const [verified, setVerified] = useState<boolean>(writer_is_verified);
@@ -95,7 +96,7 @@ const SearchCard = ({id, place_name, title, rep_pic, extra_pics, story_like, cat
                   <Text style={textStyles.title}>{title}</Text>
                   <Text style={textStyles.placename}>{place_name}</Text>
               </View>
-              <Text style={textStyles.preview} numberOfLines={6} ellipsizeMode={'tail'}>{preview}</Text>
+              <Text style={textStyles.preview} numberOfLines={3} ellipsizeMode={'tail'}>{summary}</Text>
             </View>
           </ImageBackground>
           <View style={{marginLeft: 8}}>

@@ -12,6 +12,7 @@ export interface MainCardProps {
   title: string;
   category: string;
   preview: string;
+  summary: string;
   writer: string;
   nickname: string;
   profile: string;
@@ -20,7 +21,7 @@ export interface MainCardProps {
   navigation: any;
 }
 
-const MainCard = ({id, place_name, title, rep_pic, story_like, category, preview, writer, nickname, profile, writer_is_verified, isLogin, navigation}: MainCardProps) => {
+const MainCard = ({id, place_name, title, rep_pic, story_like, category, preview, summary, writer, nickname, profile, writer_is_verified, isLogin, navigation}: MainCardProps) => {
   const { width, height } = Dimensions.get('window');
   const [verified, setVerified] = useState<boolean>(writer_is_verified);
   const [like, setLike] = useState<boolean>(false);
@@ -83,7 +84,7 @@ const MainCard = ({id, place_name, title, rep_pic, story_like, category, preview
         </View>
       </ImageBackground>
       <View style={{width: width*0.9, height: 130, borderBottomRightRadius:5, borderBottomLeftRadius: 5, backgroundColor: 'white', shadowColor: 'black', shadowOpacity: 0.25, shadowOffset: { width: 0, height: 4}, paddingVertical: 20, paddingHorizontal: 25}}>
-        <Text numberOfLines={4} ellipsizeMode={'tail'} style={textStyles.preview}>{preview}</Text>
+        <Text numberOfLines={4} ellipsizeMode={'tail'} style={textStyles.preview}>{summary}</Text>
       </View>
       <View style={{position:'absolute', top: width*0.76, marginLeft: 280, width: 50, alignItems: 'center'}}>
         <Image source={{uri: profile}} style={{borderRadius:60, backgroundColor: 'white', width:50, height:50, marginBottom: 5}} />

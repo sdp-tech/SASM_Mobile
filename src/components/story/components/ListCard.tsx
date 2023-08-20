@@ -12,6 +12,7 @@ interface ListCardProps {
   story_like: boolean;
   title: string;
   preview: string;
+  summary: string;
   writer: string;
   nickname: string;
   created: string;
@@ -20,7 +21,7 @@ interface ListCardProps {
   navigation: any;
 }
 
-const ListCard = ({id, place_name, title, rep_pic, extra_pics, story_like, created, preview, writer, nickname, writer_is_verified, isLogin, navigation}: ListCardProps) => {
+const ListCard = ({id, place_name, title, rep_pic, extra_pics, story_like, created, preview, summary, writer, nickname, writer_is_verified, isLogin, navigation}: ListCardProps) => {
   const { width, height } = Dimensions.get('screen');
   const [verified, setVerified] = useState<boolean>(writer_is_verified);
   const [like, setLike] = useState<boolean>(false);
@@ -81,7 +82,7 @@ const ListCard = ({id, place_name, title, rep_pic, extra_pics, story_like, creat
             <View style={{backgroundColor: '#D9D9D9', width: 60, height: 60, borderRadius: 4}} />
           )}
         </View>
-        <Text style={textStyles.preview}>{preview}</Text>
+        <Text style={textStyles.preview} numberOfLines={3}>{summary}</Text>
       </TouchableOpacity>
     </View>
   )
