@@ -32,7 +32,7 @@ const { width, height } = Dimensions.get('window');
 
 const TextBox = styled.View`
   position: absolute;
-  top: 220px
+  top: 200px
   left: 0px;
   padding-horizontal: 27px;
 `

@@ -4,6 +4,7 @@ import { TextPretendard as Text } from '../../../common/CustomText';
 import { ItemCardProps } from './ItemCard';
 import styled from 'styled-components/native';
 import { Request } from '../../../common/requests';
+import { CategoryIcon } from '../../../common/Category';
 
 const { width, height } = Dimensions.get('screen');
 
@@ -38,18 +39,21 @@ export default function RecommendItemCard({ placeData, setSheetMode, setDetailDa
   return (
     <StyledCard onPress={getDetail}>
       <TextBox>
-        <Text style={TextStyles.common}>{placeData.category}</Text>
+        <View style={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
+          <CategoryIcon data={placeData.category} />
+          <Text style={[TextStyles.common, {marginLeft: 8.5}]}>{placeData.category}</Text>
+        </View>
         <Text style={{...TextStyles.common, fontWeight:'700'}}>{placeData.place_name}</Text>
         <Text style={TextStyles.common}>{placeData.place_review}</Text>
         <Text style={TextStyles.page}>{index+1}/{max}</Text>
       </TextBox>
       <Image source={{ uri: placeData.rep_pic }} style={{ width: '100%', height: '100%' }} />
+      <View style={{ position: 'absolute', width: '100%', height: 350, backgroundColor: 'rgba(0,0,0,0.3)' }} />
     </StyledCard>
   )
 }
 
-const TextStyles = StyleSheet.create({
-  
+const TextStyles = StyleSheet.create({ 
   common: {
     fontSize: 16,
     lineHeight: 24,
