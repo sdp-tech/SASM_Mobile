@@ -120,7 +120,7 @@ export default function CurationHome({ navigation, route }: StackScreenProps<Hom
               <TextBox>
                 <Text style={TextStyles.Title}>큐레이션</Text>
                 <Text style={TextStyles.Sub}>장소를 모아 놓은 코스를 추천받아보세요.</Text>
-                <TouchableOpacity onPress={() => { navigation.navigate('List', { from: 'admin' }) }}><Text style={TextStyles.SubBlack}>모두보기 <Arrow color={'black'}/></Text></TouchableOpacity>
+                <TouchableOpacity onPress={() => { navigation.navigate('List', { from: 'admin' }) }}><Text style={TextStyles.SubBlack}>더보기 <Arrow color={'black'}/></Text></TouchableOpacity>
               </TextBox>
               <CardView
                 gap={15}
@@ -140,7 +140,7 @@ export default function CurationHome({ navigation, route }: StackScreenProps<Hom
               <TextBox>
                 <Text style={TextStyles.Title}>이 큐레이션은 어때요?</Text>
                 <Text style={TextStyles.Sub}>유저가 직접 작성한 큐레이션</Text>
-                <TouchableOpacity onPress={() => { navigation.navigate('List', { from: 'verify' }) }}><Text style={TextStyles.SubBlack}>모두보기 <Arrow color={'black'} /></Text></TouchableOpacity>
+                <TouchableOpacity onPress={() => { navigation.navigate('List', { from: 'verify' }) }}><Text style={TextStyles.SubBlack}>더보기 <Arrow color={'black'} /></Text></TouchableOpacity>
               </TextBox>
               {
                 verifedList.map((data, index) =>
@@ -270,19 +270,17 @@ const TextStyles = StyleSheet.create({
   Sub: {
     width: '70%',
     fontWeight: "400",
-    fontSize: 10,
-    lineHeight: 12,
+    fontSize: 12,
     color: '#595959',
   },
   SubBlack: {
     fontWeight: "400",
-    fontSize: 10,
-    lineHeight: 12,
+    fontSize: 12,
   },
   recommend: {
     color: '#FFFFFF',
     backgroundColor: '#67D393',
-    fontSize: 12,
+    fontSize: 14,
     paddingHorizontal: 6,
     paddingVertical: 3,
     borderRadius: 8,

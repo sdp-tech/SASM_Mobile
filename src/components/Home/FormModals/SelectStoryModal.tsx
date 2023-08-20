@@ -11,6 +11,7 @@ import { BottomSheetModal, BottomSheetModalProvider, BottomSheetBackdrop } from 
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { CATEGORY_LIST } from "../../../common/Category";
 import Filter from "../../../assets/img/common/Filter.svg";
+import FormHeader from "../../../common/FormHeader";
 
 const { width, height } = Dimensions.get('window');
 
@@ -91,12 +92,8 @@ export default function SelectStoryModal({ setSelectStoryModal, selectedStory, s
   
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
-      <SafeAreaView style={{ flex: 1 }}>
-        <TouchableOpacity onPress={() => { setSelectStoryModal(false) }} style={{marginTop:Platform.OS == 'android' ? 10 : 0, marginLeft: 3}}>
-          <Arrow width={20} height={20} transform={[{ rotateY: '180deg' }]} color={'black'} />
-        </TouchableOpacity>
+        <FormHeader onLeft={() => setSelectStoryModal(false)} title="장소 검색" begin onRight={null} />
         <View style={{ paddingHorizontal: 15, marginVertical: 10 }}>
-          <Text style={{ ...TextStyles.title, fontSize: 20, marginBottom: 20 }}>장소 검색</Text>
           <SearchBar style={{ width: '100%', backgroundColor: '#F1F1F1' }} placeholder="장소 검색" search={search} setSearch={setSearch} setPage={setPage} />
           <FilterButton onPress={() => { filterRef.current?.present() }}>
             <Text>필터</Text>
@@ -138,7 +135,6 @@ export default function SelectStoryModal({ setSelectStoryModal, selectedStory, s
         <Modal visible={storyListModal}>
           <StoryListModal setSelectedPlace={setSelectedPlace} selectedPlace={selectedPlace} target={target} setStoryListModal={setStoryListModal} selectedStory={selectedStory} setSelectedStory={setSelectedStory} />
         </Modal>
-      </SafeAreaView>
     </GestureHandlerRootView>
   )
 }
@@ -219,18 +215,18 @@ const FilterScreen = ({ close, checkedList, setCheckedList, setPage }: FilterPro
 
 const TextStyles = StyleSheet.create({
   place_name: {
-    fontSize: 16,
+    fontSize: 18,
     fontWeight: '600',
   },
   address: {
     color: '#7B7B7B',
-    fontSize: 10
+    fontSize: 12
   },
   title: {
-    fontSize: 10,
+    fontSize: 14,
     fontWeight: '600',
   },
   detail: {
-    fontSize: 8,
+    fontSize: 10,
   },
 })
