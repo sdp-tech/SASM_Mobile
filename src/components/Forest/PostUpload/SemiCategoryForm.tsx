@@ -27,7 +27,7 @@ const SemiCategoryForm = ({ tab, setTab, post }: PostUploadParams) => {
 
   return (
     <View>
-      <FormHeader title='포레스트 작성' onLeft={() => setTab(tab-1)} onRight={selectedIds.length > 0 ? () => setTab(tab+1) : () => Alert.alert('세부 카테고리를 선택해주세요')} />
+      <FormHeader title='포레스트 작성' onLeft={() => setTab(tab-1)} onRight={selectedIds.length > 0 ? () => setTab(tab+1) : null} />
       <View style={{alignItems: 'center', justifyContent: 'center', paddingVertical: height * 0.2}}>
         <Text style={{fontSize: 16, color: '#202020', marginBottom: 80}}>세부 카테고리를 선택해 주세요</Text>
         <FlatList

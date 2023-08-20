@@ -228,10 +228,10 @@ const StoryDetailBox = ({navigation, data, isLogin, onLayout, email, onRefresh, 
                     <Place />
                     <Text style={textStyles.gotomap}>{data!.place_name}</Text>
                 </TouchableOpacity>
-                <View style={{alignItems: 'center', paddingVertical: 50}}>
+                {data!.story_review.length > 2 && <View style={{alignItems: 'center', paddingVertical: 50}}>
                     <Logo />
                     <Text style={textStyles.review}>{data!.story_review}</Text>
-                </View>
+                </View>}
                 <RenderHTML
                     contentWidth = {width}
                     source = {markup}

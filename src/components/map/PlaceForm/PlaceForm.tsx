@@ -1,5 +1,5 @@
 import React, { Dispatch, ReactElement, ReactNode, SetStateAction, useEffect, useState } from 'react';
-import { Button, SafeAreaView, StyleSheet, TouchableOpacity, View } from 'react-native';
+import { Button, SafeAreaView, StyleSheet, TouchableOpacity, View, Alert } from 'react-native';
 import { TextPretendard as Text } from '../../../common/CustomText';
 import Close from "../../../assets/img/common/Close.svg";
 import styled from 'styled-components/native';
@@ -68,14 +68,33 @@ export default function PlaceForm({ setPlaceformModal }: PlaceFormProps): JSX.El
     getSNSList();
   }, [])
 
+  useEffect(() => {
+    if(closePopup){
+      Alert.alert(
+      '나가시겠습니까?',
+      '입력하신 정보는 저장되지 않습니다.',
+      [
+        { text: "머무르기", style: 'cancel', onPress: () => {} },
+        {
+          text: '나가기',
+          style: 'destructive',
+          // If the user confirmed, then we dispatch the action we blocked earlier
+          // This will continue the action that had triggered the removal of the screen
+          onPress: () => setPlaceformModal(false),
+        },
+      ])
+    }
+  }, [closePopup])
+
   return (
     <View>
-      <HeaderPlaceForm color={tab == 1 ? '#67D393' : '#FFFFFF'}>
+      {/* <HeaderPlaceForm color={tab == 1 ? '#67D393' : '#FFFFFF'}>
         <Text style={{ ...TextStyles.Link, fontSize: 24 }}>장소 제보하기</Text>
         <TouchableOpacity onPress={() => { tab == 0 ? setPlaceformModal(false) : setClosePopup(true) }}>
           <Close color={tab == 1 ? '#FFFFFF' : '#000000'} />
         </TouchableOpacity>
-      </HeaderPlaceForm>
+      </HeaderPlaceForm> */}
+      <FormHeader title='장소 제보하기' onLeft={() => {tab == 0 ? setPlaceformModal(false) : setClosePopup(true) }} onRight={null} begin />
       <Section>
         {
           {
@@ -101,7 +120,7 @@ export default function PlaceForm({ setPlaceformModal }: PlaceFormProps): JSX.El
         }
 
       </Section>
-      <Popup visible={closePopup} setVisible={setClosePopup} setModal={setPlaceformModal} />
+      {/* <Popup visible={closePopup} setVisible={setClosePopup} setModal={setPlaceformModal} /> */}
     </View >
   )
 }

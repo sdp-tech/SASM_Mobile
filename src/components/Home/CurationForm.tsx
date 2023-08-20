@@ -12,6 +12,7 @@ import { launchImageLibrary, launchCamera, ImagePickerResponse } from 'react-nat
 import AddColor from "../../assets/img/common/AddColor.svg";
 import { getStatusBarHeight } from 'react-native-status-bar-height';
 import FormHeader from '../../common/FormHeader';
+import FinishModal from '../../common/FinishModal';
 
 const { width, height } = Dimensions.get('window');
 
@@ -23,12 +24,12 @@ const ReppicBox = styled.TouchableOpacity`
   background: #DADADA;
 `
 const InputTitle = styled.TextInput`
-  border-color: #000000;
+  border-color: white;
   border-bottom-width: 1px;
   position: absolute;
   bottom: 20px;
   width: 100%;
-  color: #000000;
+  color: white;
   font-size: 32px;
   padding-horizontal: 15px;
   font-weight: 700;
@@ -97,6 +98,9 @@ export default function CurationForm({ navigation, route }: StackScreenProps<Hom
   const request = new Request();
   const statusBarHeight = getStatusBarHeight();
   const iOS = Boolean(Platform.OS === 'ios');
+  const hasUnsavedChanges = Boolean(form.title.length > 0 || form.contents.length > 0 || selectedStory.length > 0 || rep_pic[0].uri != '');
+  const [modalVisible, setModalVisible] = useState(false);
+  const [curationId, setCurationId] = useState<number>(0);
   
   const handleCheckedList = (id: number): void => {
     setSelectedStory(selectedStory.filter(element => element.id != id));
@@ -130,18 +134,19 @@ export default function CurationForm({ navigation, route }: StackScreenProps<Hom
       return;
     }
     const response = await request.post('/curations/curation_create/', formData, { "Content-Type": "multipart/form-data" });
-    navigation.goBack();
+    setCurationId(response.data.data.id);
+    setModalVisible(true);
   }
 
   const handleRepPic = () => {
     Alert.alert('대표 사진 선택', '', [
       {
         text: '카메라',
-        onPress: () => { launchCamera({ mediaType: 'photo', maxHeight: height / 2, maxWidth: width }, response => response.didCancel != true && setRep_pic(response.assets)) }
+        onPress: () => { launchCamera({ mediaType: 'photo', maxHeight: height / 2, maxWidth: width }, response => response.didCancel != true && (response && response.assets) && setRep_pic(response.assets)) }
       },
       {
         text: '앨범',
-        onPress: () => { launchImageLibrary({ mediaType: 'photo', selectionLimit: 1, maxHeight: height / 2, maxWidth: width }, response => response.didCancel != true && setRep_pic(response.assets)) }
+        onPress: () => { launchImageLibrary({ mediaType: 'photo', selectionLimit: 1, maxHeight: height / 2, maxWidth: width }, response => response.didCancel != true && (response && response.assets) && setRep_pic(response.assets)) }
       },
       {
         text: '취소',
@@ -154,21 +159,54 @@ export default function CurationForm({ navigation, route }: StackScreenProps<Hom
     console.log(selectedStory);
   }, [selectedStory])
 
+  useEffect(
+    () =>
+      navigation.addListener('beforeRemove', (e: any) => {
+        if (!hasUnsavedChanges || curationId) {
+          return;
+        }
+
+        // Prevent default behavior of leaving the screen
+        e.preventDefault();
+
+        // Prompt the user before leaving the screen
+        Alert.alert(
+          '나가시겠습니까?',
+          '입력하신 정보는 저장되지 않습니다.',
+          [
+            { text: "머무르기", style: 'cancel', onPress: () => {} },
+            {
+              text: '나가기',
+              style: 'destructive',
+              // If the user confirmed, then we dispatch the action we blocked earlier
+              // This will continue the action that had triggered the removal of the screen
+              onPress: () => navigation.dispatch(e.data.action),
+            },
+          ]
+        );
+      }),
+    [navigation, hasUnsavedChanges, curationId]
+  );
+
   return (
     <KeyboardAvoidingView behavior={'height'} keyboardVerticalOffset={iOS ? 0 : statusBarHeight+88} style={{flex: 1, backgroundColor: '#FFFFFF'}}>
+      <Modal visible={modalVisible}>
+        <FinishModal
+          navigation={()=>navigation.replace('Detail', {id: curationId})}
+          setModal={setModalVisible}
+          title={ '작성 완료 !'}
+          subtitle={['작성한 큐레이션은', '마이페이지 > 큐레이션 > 내가 쓴 큐레이션', '에서 확인할 수 있어요']}
+        />
+      </Modal>
     <FormHeader title='큐레이션 작성' onLeft={() => navigation.goBack()} onRight={uploadCuration} begin={true} end={true} />
     <ScrollView>
       <ReppicBox onPress={handleRepPic}>
-        <ImageBackground source={require('../../assets/img/Home/form_example.png')} imageStyle={{height: (height*0.9)/2}} style={{ flex: 1, opacity: 0.5 }} resizeMode='cover' />
-        {
-          rep_pic[0].uri != '' &&
-          <Image style={{ width: width, height: (height*0.9) / 2 }}
-            source={{ uri: rep_pic[0].uri }}
-            alt='대표 사진'
-            resizeMode='contain' />
-        }
-        <InputTitle placeholder='제목을 입력해주세요 *' placeholderTextColor={'#000000'} onChangeText={(e) => { setForm({ ...form, title: e }) }} maxLength={45} />
+        <ImageBackground source={rep_pic[0].uri != '' ? {uri: rep_pic[0].uri} : require('../../assets/img/Home/form_example.png')}
+          imageStyle={{height: (height*0.9)/2}} style={{ flex: 1 }} resizeMode={'cover'} alt='대표 사진' />
+        <View style={{backgroundColor: 'rgba(0,0,0,0.3)', width: width, height: (height*0.9)/2}}>
+        <InputTitle placeholder='제목을 입력해주세요 *' placeholderTextColor={'white'} onChangeText={(e) => { setForm({ ...form, title: e }) }} maxLength={45} />
         <Text style={{ position: 'absolute', bottom: 25, right: 10 }}>{form.title.length}/45</Text>
+        </View>
       </ReppicBox>
       <Section>
         <Text style={TextStyles.List}>선택된 스토리</Text>
@@ -212,7 +250,7 @@ const TextStyles = StyleSheet.create({
     position: 'absolute',
     right: 0,
     color: '#FFFFFF',
-    fontSize: 10,
+    fontSize: 12,
     backgroundColor: '#67D393',
     paddingHorizontal: 5,
     paddingVertical: 2,
@@ -222,7 +260,7 @@ const TextStyles = StyleSheet.create({
     fontWeight: '500'
   },
   place_name: {
-    fontSize: 10,
+    fontSize: 12,
     lineHeight: 18,
     letterSpacing: -0.6,
     alignSelf: 'center'

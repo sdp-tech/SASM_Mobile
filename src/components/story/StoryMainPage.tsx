@@ -118,6 +118,7 @@ const StoryMainPage = ({ navigation, route }: StoryProps) => {
                     story_like={item.story_like}
                     category={item.category}
                     preview={item.preview}
+                    summary={item.summary}
                     writer={item.writer}
                     nickname={item.nickname}
                     profile={item.profile}

@@ -19,7 +19,7 @@ export default function WriteStoryPage({ navigation, route }: StoryProps) {
   const post = route.params?.story;
   const [places, setPlaces] = useState([] as any);
   const [repPic, setRepPic] = useState([] as any);
-  const [story, setStory] = useState({ title: "", tag: "", preview: "", place: 0, story_review: "", html_content: "", photoList: [], rep_pic: "" });
+  const [story, setStory] = useState({ title: "", tag: "", preview: ".", place: 0, story_review: "", html_content: "", photoList: [], rep_pic: "" });
   const [photoList, setPhotoList] = useState([] as any);
   const [modalVisible, setModalVisible] = useState(false);
   const [storyId, setStoryId] = useState<number>(0);
@@ -41,7 +41,7 @@ export default function WriteStoryPage({ navigation, route }: StoryProps) {
     if (!post) return;
     else {
       let _place = 0;
-      const { title, tag, preview, story_review, html_content, rep_pic, place_name } = post;
+      const { title, tag, story_review, html_content, rep_pic, place_name } = post;
       for (const place of response_places.data.data) {
         if (place_name === place.place_name){
           _place = place.id
@@ -49,7 +49,7 @@ export default function WriteStoryPage({ navigation, route }: StoryProps) {
       }
       setStory({
         ...story,
-        title: title, tag: tag, preview: preview, story_review: story_review, place: _place,
+        title: title, tag: tag, story_review: story_review, place: _place,
         html_content: html_content, rep_pic: rep_pic
       });
     }
@@ -102,7 +102,7 @@ export default function WriteStoryPage({ navigation, route }: StoryProps) {
       Alert.alert('장소를 설정해주세요.');
       return;
     }
-    if(story.title.length == 0 || story.tag.length == 0 || story.preview.length == 0 || story.html_content.length == 0){
+    if(story.title.length == 0 || story.tag.length == 0 || story.tag.length == 0 || story.html_content.length == 0){
       Alert.alert('빈 칸을 전부 채워주세요.');
       return;
     }
@@ -136,7 +136,7 @@ export default function WriteStoryPage({ navigation, route }: StoryProps) {
       Alert.alert('장소를 설정해주세요.');
       return;
     }
-    if(story.title.length == 0 || story.tag.length == 0 || story.preview.length == 0 || story.html_content.length == 0){
+    if(story.title.length == 0 || story.tag.length == 0 || story.tag.length == 0 || story.html_content.length == 0){
       Alert.alert('빈 칸을 전부 채워주세요.');
       return;
     }
@@ -264,19 +264,19 @@ export default function WriteStoryPage({ navigation, route }: StoryProps) {
                 )}
               </TouchableOpacity>
             </View>
-            <TextInput
+            {/* <TextInput
               value={story.preview}
               onChangeText={(preview) => { setStory({ ...story, preview: preview }) }}
               placeholder='프리뷰 *'
               placeholderTextColor={'#bcbcbe'}
               style={{padding: 10, borderTopColor: '#D9D9D9', borderBottomColor: '#D9D9D9', borderTopWidth: 1, borderBottomWidth: 1, height: 40}}
-            />
+            /> */}
             <TextInput
               value={story.tag}
               onChangeText={(tag) => { setStory({ ...story, tag: tag }) }}
               placeholder='#해시태그를 #작성해주세요 *'
               placeholderTextColor={'#bcbcbe'}
-              style={{padding: 10, borderBottomColor: '#D9D9D9', borderBottomWidth: 1, height: 40}}
+              style={{padding: 10, borderTopColor: '#D9D9D9', borderTopWidth: 1, borderBottomColor: '#D9D9D9', borderBottomWidth: 1, height: 40}}
             />
                 </>
           </TouchableWithoutFeedback>

@@ -408,7 +408,7 @@ const BottomSheetMemo = memo(
     //modal의 ref
     const modalRef = useRef(null);
     //BottomSheet 중단점
-    const snapPoints = useMemo(() => [15, 500, height - 127], []);
+    const snapPoints = useMemo(() => [15, height * 0.6, height - 127], []);
     useEffect(() => {
       if (sheetMode) setIndex(1)
     }, [sheetMode])
@@ -428,7 +428,7 @@ const BottomSheetMemo = memo(
             buttonAnimatedPosition.value = 750;
           }
           else {
-            buttonAnimatedPosition.value = 520;
+            buttonAnimatedPosition.value = height * 0.7;
             // setIdx(1);
           }
         }}

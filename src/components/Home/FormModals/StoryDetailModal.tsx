@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { StoryDetail } from "../../story/components/StoryDetailBox";
 import { Request } from "../../../common/requests";
-import { View, ActivityIndicator, Dimensions, StyleSheet } from "react-native";
+import { View, ActivityIndicator, Dimensions, StyleSheet, ImageBackground } from "react-native";
 import { TextPretendard as Text } from "../../../common/CustomText";
 import RenderHTML from "react-native-render-html";
 import { ScrollView } from "react-native-gesture-handler";
@@ -40,6 +40,21 @@ export default function StoryDetailModal({ id }: { id: number }) {
       enableExperimentalPercentWidth: true
     }
   };
+  const tagsStyles = {
+    p: {
+        fontSize: 16,
+        lineHeight: 30,
+        letterSpacing: -0.6
+    },
+    h6: {
+        fontSize: 12,
+        lineHeight: 30,
+        letterSpacing: -0.6
+    },
+    img: {
+        width: width,
+    }
+}
   const getStoryDetail = async () => {
     setLoading(true);
     const response_detail = await request.get(`/stories/story_detail/${id}/`);
@@ -66,7 +81,7 @@ export default function StoryDetailModal({ id }: { id: number }) {
                 <Text style={StoryTextStyles.date}>{detailData.created.slice(0, 10).replace(/-/gi, '.')} 작성</Text>
               </View>
               <View style={{ display: 'flex', alignItems: 'center' }}>
-                <View style={{ width: 50, height: 50, borderRadius: 60, backgroundColor: '#CCCCCC' }}></View>
+                <ImageBackground source={{uri: detailData.profile}} style={{ width: 50, height: 50, borderRadius: 60 }}></ImageBackground>
                 <View style={{ position: 'absolute', width: 34, height: 12, backgroundColor: detailData.writer_is_verified ? '#209DF5' : '#89C77F', borderRadius: 10, top: 42, left: 8.5 }}>
                   <Text style={StoryTextStyles.verified}>{detailData!.writer_is_verified ? 'Editor' : 'User'}</Text>
                 </View>
@@ -78,6 +93,7 @@ export default function StoryDetailModal({ id }: { id: number }) {
               <RenderHTML
                 source={markup}
                 renderersProps={renderersProps}
+                tagsStyles = {tagsStyles}
               />
             </View>
           </ScrollView>
@@ -93,11 +109,12 @@ const StoryTextStyles = StyleSheet.create({
     marginVertical: 5,
   },
   semi_title: {
-    fontSize: 12,
+    fontSize: 14,
     fontWeight: '400',
+    width: '90%'
   },
   date: {
-    fontSize: 10,
+    fontSize: 12,
     fontWeight: '400',
     marginTop: 4,
     color: '#676767'

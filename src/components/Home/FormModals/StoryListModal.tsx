@@ -9,6 +9,7 @@ import { GestureHandlerRootView } from "react-native-gesture-handler";
 import Arrow from "../../../assets/img/common/Arrow.svg";
 import StoryDetailModal from "./StoryDetailModal";
 import DropDown from "../../../common/DropDown";
+import FormHeader from "../../../common/FormHeader";
 
 const { width, height } = Dimensions.get('window');
 
@@ -95,13 +96,9 @@ export default function StoryListModal({ target, setStoryListModal, selectedStor
 
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
-      <SafeAreaView style={{ flex: 1 }}>
-        <TouchableOpacity onPress={() => { setStoryListModal(false) }} style={{marginTop: Platform.OS == 'android' ? 10 : 0, marginLeft: 3}}>
-          <Arrow width={20} height={20} transform={[{ rotateY: '180deg' }]} color={'black'} />
-        </TouchableOpacity>
+        <FormHeader onLeft={() => setStoryListModal(false)} title="장소 검색" onRight={null} />
         <View style={{ paddingHorizontal: 15, marginTop: 10, zIndex: 2 }}>
-          <Text style={{ ...ListTextStyles.title, fontSize: 20, marginBottom: 20 }}>스토리 선택</Text>
-          <Text style={{ ...ListTextStyles.title, fontSize: 20 }}>{target.place_name}</Text>
+          <Text style={{ ...ListTextStyles.title, fontSize: 20, lineHeight: 26 }}>{target.place_name}</Text>
           <Text style={{ ...ListTextStyles.address, fontSize: 12, marginVertical: 5 }}>{target.address}</Text>
           <View style={{ width: 100, marginVertical: 10, alignSelf: 'flex-end' }}>
             <DropDown value={dropValue} setValue={setDropValue} isBorder={false} items={toggleItems} />
@@ -113,11 +110,11 @@ export default function StoryListModal({ target, setStoryListModal, selectedStor
             <ItemCard selected={selectedStory.filter(el => el.id == item.id).length > 0} onPress={() => { handleSelectedStory(item.id, item.rep_pic, item.place_name) }}>
               <Image source={{ uri: item.rep_pic }} style={{ height: 100, width: 100, marginRight: 15, borderRadius: 3 }} />
               <TextBox>
-                <Text style={ListTextStyles.title}>{item.title}</Text>
-                <Text style={ListTextStyles.place_name}>{item.place_name}</Text>
-                <Text style={ListTextStyles.detail}>{item.semi_category}</Text>
+                <Text style={ListTextStyles.title} numberOfLines={1}>{item.title}</Text>
+                <Text style={ListTextStyles.place_name} numberOfLines={1}>{item.place_name}</Text>
+                {/* <Text style={ListTextStyles.detail}>{item.semi_category}</Text> */}
                 <Text style={ListTextStyles.detail} numberOfLines={3} ellipsizeMode='tail'>{item.preview}</Text>
-                <TouchableOpacity onPress={() => {
+                <TouchableOpacity style={{marginTop: 3}} onPress={() => {
                   storyRef.current?.present();
                   setStoryId(item.id);
                 }}><Text style={ListTextStyles.detail}>더보기</Text></TouchableOpacity>
@@ -146,7 +143,7 @@ export default function StoryListModal({ target, setStoryListModal, selectedStor
             <StoryDetailModal id={storyId} />
           </BottomSheetModal>
         </BottomSheetModalProvider>
-      </SafeAreaView></GestureHandlerRootView>
+      </GestureHandlerRootView>
   )
 }
 
@@ -154,16 +151,18 @@ const ListTextStyles = StyleSheet.create({
   place_name: {
     fontSize: 16,
     fontWeight: '600',
+    lineHeight: 22
   },
   address: {
     color: '#7B7B7B',
-    fontSize: 10
+    fontSize: 12
   },
   title: {
-    fontSize: 10,
+    fontSize: 14,
     fontWeight: '600',
+    lineHeight: 20
   },
   detail: {
-    fontSize: 8,
+    fontSize: 12,
   },
 })
