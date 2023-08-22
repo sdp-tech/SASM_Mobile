@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useCallback, useContext } from 'react';
-import { View, TouchableOpacity, Alert, StyleSheet, SafeAreaView, Platform } from "react-native";
+import { View, TouchableOpacity, Alert, StyleSheet, SafeAreaView, Platform, Linking } from "react-native";
 import { ScrollView } from 'react-native-gesture-handler';
 import { TextPretendard as Text } from '../../../../common/CustomText';
 import { getNickname, removeNickname, removeAccessToken, removeRefreshToken, } from '../../../../common/storage';
@@ -31,6 +31,12 @@ export default function Options({ navigation, route }: StackScreenProps<MyPagePr
         setLogin(false);
         navigation.navigate('mypage');
     }
+
+    const goToPrivacyPolicy = () => {
+        Linking.openURL(
+          "https://docs.google.com/document/d/1XUnFl4SQpN9LPr4369pISpkqZU6WuRwQ9tjzZlrg9LI/edit?usp=sharing"
+        );
+      };
     
     const buttonAction: { label: string, onPress?: () => void }[] = [
         {
@@ -44,6 +50,10 @@ export default function Options({ navigation, route }: StackScreenProps<MyPagePr
         {
             label: '의견 보내기',
             onPress: () => { navigation.navigate('feedback') }
+        },
+        {
+            label: '개인 정보 처리 방침',
+            onPress: goToPrivacyPolicy
         },
         {
             label: '로그아웃',
