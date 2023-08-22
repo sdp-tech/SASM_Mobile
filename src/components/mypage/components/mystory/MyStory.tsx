@@ -23,18 +23,9 @@ const styles = (isCategory?: boolean) => StyleSheet.create({
     borderTopWidth: 1,
     flexDirection: 'row'
   },
-  Searchbox: {
-    height: 50,
-    justifyContent: isCategory ? "flex-start" : "flex-end",
-    paddingRight: 15,
-    alignItems: "center",
-    flexDirection: 'row',
-    //flex: 1,
-    zIndex: 1
-  },
   Story: {
     alignItems: 'center',
-    // flex: 1
+    flex: 1
   },
 });
 

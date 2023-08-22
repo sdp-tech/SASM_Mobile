@@ -55,7 +55,9 @@ const StoryContentBox = styled.View`
 interface CurationDetailProps {
   contents: string;
   created: string;
+  updated: string;
   like_curation: boolean;
+  like_cnt: number;
   nickname: string;
   profile_image: string;
   map_image: string;
@@ -111,17 +113,68 @@ const handleFollow = async (target: string, isLogin: boolean, navigation: StackN
   if (response.data.status == 'fail') Alert.alert(response.data.message)
 }
 
+const BottomBarSection = ({ id, post, isLogin, onRefresh, navigation }:{id: number; post: CurationDetailProps, isLogin: boolean, onRefresh: () => void, navigation: any;}) => {
+  const [like, setLike] = useState<boolean>(false)
+  const request = new Request();
+
+  useEffect(()=> {
+    post.like_curation ? setLike(true) : setLike(false)
+  }, [post.like_curation])
+
+  const toggleLike = async () => {
+    if (isLogin) {
+      const response = await request.post(`/curations/curation_like/${id}/`);
+      setLike(!like);
+      onRefresh();
+    } else {
+      Alert.alert(
+        "로그인이 필요합니다.",
+        "로그인 항목으로 이동하시겠습니까?",
+        [
+          {
+            text: "이동",
+            onPress: () => navigation.navigate('마이페이지')
+
+          },
+          {
+            text: "취소",
+            onPress: () => { },
+            style: "cancel"
+          },
+        ],
+        { cancelable: false }
+      );
+    }
+  };
+  return (
+    <View style={{ flexDirection: "row", padding: 10, backgroundColor: 'white' }}>
+      <View style={{ flexDirection: 'row', flex: 1, alignItems: 'center' }}>
+        <Heart color={'#202020'} like={like} onPress={toggleLike} size={18} ></Heart>
+        <Text style={{fontSize: 14, color: '#202020', lineHeight: 20, marginLeft: 3, marginRight: 10}}>{post.like_cnt}</Text>
+        {/* <TouchableOpacity onPress={scrollToComment}>
+          <CommentIcon color={'#202020'} />
+        </TouchableOpacity>
+        <Text style={{fontSize: 14, color: '#202020', lineHeight: 20, marginLeft: 3}}>{post.comment_cnt}</Text> */}
+      </View>
+      <ShareButton color={'black'} message={`[SASM Story] ${post.title} - ${post.title}`} />
+    </View>
+  )
+}
+
 export default function CurationDetail({ navigation, route }: StackScreenProps<HomeStackParams, 'Detail'>): JSX.Element {
   const { isLogin, setLogin } = useContext(LoginContext);
   const navigationTab = useNavigation<StackNavigationProp<TabProps>>();
   const request = new Request();
   const [like, setLike] = useState<boolean>(false);
   const [following, setFollowing] = useState<boolean>(false);
+  const [refreshing, setRefreshing] = useState<boolean>(false);
   const [curatedStory, setCuratedStory] = useState<CuratedStoryProps[]>([]);
   const [curationDetail, setCurationDetail] = useState<CurationDetailProps>({
     contents: '',
     created: '',
+    updated: '',
     like_curation: false,
+    like_cnt: 0,
     map_image: '',
     rep_pic: '',
     title: '',
@@ -177,10 +230,15 @@ export default function CurationDetail({ navigation, route }: StackScreenProps<H
     setLike(!like);
   }
 
+  const onRefresh = () => {
+    setRefreshing(true);
+    setRefreshing(false);
+  }
+
   useFocusEffect(useCallback(() => {
     getCurationDetail();
     getCurationStoryDetail();
-  }, []))
+  }, [refreshing]))
 
   return (
     <>
@@ -191,8 +249,9 @@ export default function CurationDetail({ navigation, route }: StackScreenProps<H
           <ImageBackground source={{ uri: curationDetail.rep_pic }} style={{ width: width, height: width * (reppicSize.height / reppicSize.width), position:'relative' }}>
             <View style={{width:'100%', height:'100%', backgroundColor:'rgba(0,0,0,0.3)', justifyContent: 'flex-end', padding: 20}}>
               <Text style={TextStyles.title} numberOfLines={4}>{curationDetail.title}</Text>
-              <Text style={[TextStyles.created, {color: '#D7D7D7', marginLeft: 3}]}>작성 : {curationDetail.created.slice(0, 10).replace(/-/gi, '.')}</Text>
-              {/* <Text style={{ color: '#F4F4F4', fontSize: 12, fontWeight: '400' }}> / 마지막 수정: {curationDetail.updated.slice(0, 10).replace(/-/gi, '.')}</Text> */}
+              <Text style={[TextStyles.created, {color: '#D7D7D7', marginLeft: 3}]}>
+                작성 : {curationDetail.created.slice(0, 10).replace(/-/gi, '.')}  / 마지막 수정: {curationDetail.updated.slice(0, 10).replace(/-/gi, '.')}
+              </Text>
             </View>
           </ImageBackground>
         <InfoBox>
@@ -223,13 +282,14 @@ export default function CurationDetail({ navigation, route }: StackScreenProps<H
           )
         }
       </ScrollView>
-      <View style={{ flexDirection: "row", padding: 10, backgroundColor: 'white' }}>
+      {/* <View style={{ flexDirection: "row", padding: 10, backgroundColor: 'white' }}>
         <View style={{ flexDirection: 'row', flex: 1, alignItems: 'center' }}>
           <Heart color={'#202020'} like={like} onPress={handleLike} size={18} ></Heart>
-          {/* <Text style={{ fontSize: 14, color: '#202020', lineHeight: 20, marginLeft: 3, marginRight: 10 }}>{curationDetail.like_cnt}</Text> */}
+          <Text style={{ fontSize: 14, color: '#202020', lineHeight: 20, marginLeft: 3, marginRight: 10 }}>{curationDetail.like_cnt}</Text>
         </View>
         <ShareButton color={'black'} message={`[SASM Curation] ${curationDetail.title}`} />
-      </View>
+      </View> */}
+      <BottomBarSection id={route.params.id} post={curationDetail} isLogin={isLogin} onRefresh={onRefresh} navigation={navigation} />
     </>
   )
 }
