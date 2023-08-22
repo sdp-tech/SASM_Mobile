@@ -24,6 +24,7 @@ const styles = StyleSheet.create({
   },
   Place: {
     alignItems: 'center',
+    flex: 1
   },
 });
 
