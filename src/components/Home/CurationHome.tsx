@@ -16,7 +16,7 @@ import CustomHeader from "../../common/CustomHeader";
 import PlusButton from "../../common/PlusButton";
 import { LoginContext } from "../../common/Context";
 
-const { width, height } = Dimensions.get('screen');
+const { width, height } = Dimensions.get('window');
 
 const Section = styled.View`
   width: 100%;
