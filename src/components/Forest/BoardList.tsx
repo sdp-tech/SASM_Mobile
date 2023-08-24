@@ -27,7 +27,7 @@ import { StackNavigationProp } from "@react-navigation/stack";
 import { TabProps } from "../../../App";
 import Arrow from '../../assets/img/common/Arrow.svg';
 
-const { width, height } = Dimensions.get("window");
+const { width, height } = Dimensions.get("screen");
 
 const BoardListScreen = ({
   navigation,

@@ -21,7 +21,7 @@ interface PostItemProps {
   navigation: any;
 }
 
-const { width, height } = Dimensions.get("window");
+const { width, height } = Dimensions.get("screen");
 
 const PostItem = ({
   post_id,
