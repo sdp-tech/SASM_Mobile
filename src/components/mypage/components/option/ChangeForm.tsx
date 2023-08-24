@@ -196,7 +196,7 @@ export default function ChangeForm({ navigation, route }: StackScreenProps<MyPag
                 </TouchableOpacity>
               ))}
             </GenderSelector>
-            <Text style={{ width: '85%', textAlign: 'left', fontSize: 14, lineHeight: 18, letterSpacing: -0.6, alignSelf: 'center' }}>
+            {/* <Text style={{ width: '85%', textAlign: 'left', fontSize: 14, lineHeight: 18, letterSpacing: -0.6, alignSelf: 'center' }}>
               생년월일
             </Text>
             <DatePicker
@@ -211,7 +211,7 @@ export default function ChangeForm({ navigation, route }: StackScreenProps<MyPag
               }}
               containerStyle={{ zIndex: 2 }}
               defaultDate={form.birthdate}
-            />
+            /> */}
             <NextButton onPress={updateInfo} label='저장' style={{alignSelf: 'center'}} />
           </Section>
       }

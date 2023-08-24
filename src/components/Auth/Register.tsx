@@ -186,12 +186,12 @@ function RegisterEmail({ navigation, route }: StackScreenProps<RegisterParams>) 
           <Text style={TextStyles.button}>중복확인</Text>
         </TouchableOpacity>
       </View>
-      <DatePicker
+      {/* <DatePicker
         containerStyle={{ zIndex: 1}}
         callback={(date) => { setForm({ ...form, birthdate: `${date.year}-${date.month}-${date.date}` }) }}
         isBorder={true}
         label={true}
-      />
+      /> */}
       </View>
       <TouchableOpacity style={{marginBottom: 30}} onPress={tryRegister}><Text style={TextStyles.submit}>지속가능한 공간 탐방하기</Text></TouchableOpacity>
     </SafeAreaView>
