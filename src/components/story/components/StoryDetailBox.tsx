@@ -217,7 +217,7 @@ const StoryDetailBox = ({navigation, data, isLogin, onLayout, email, onRefresh, 
                                 <Text style={[textStyles.writer, {color: data!.writer_is_verified ? '#209DF5' : '#67D393'}]}>{data!.writer_is_verified ? 'Editor' : 'User'}</Text>
                                 <Text style={textStyles.writer}> {data!.nickname}</Text>
                             </View>
-                            <TouchableOpacity style={{ width: 75, borderColor: '#67D393', borderWidth: 1, borderRadius: 12, alignItems: 'center', justifyContent: 'center', paddingVertical: 5, paddingHorizontal: 15, marginTop: 10 }} onPress={onFollow}>
+                            <TouchableOpacity style={{ borderColor: '#67D393', borderWidth: 1, borderRadius: 12, alignItems: 'center', justifyContent: 'center', paddingVertical: 5, paddingHorizontal: 15, marginTop: 10 }} onPress={onFollow}>
                                 <Text style={{ color: '#202020', fontSize: 12 }}>{follow ? '팔로잉' : '+ 팔로우'}</Text>
                             </TouchableOpacity>
                         </View>
