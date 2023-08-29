@@ -8,6 +8,9 @@ Properties properties = new Properties()
 properties.load(project.rootProject.file('local.properties').newDataInputStream())
 def naverMapClientId = properties.getProperty('NAVER_MAP_CLIENT_ID')
 def kakaoNativeAppKey = properties.getProperty('KAKAO_NATIVE_APP_KEY')
+def releaseStorePassword = properties.getProperty('release_storePassword')
+def releaseKeyAlias = properties.getProperty('release_keyAlias')
+def releaseKeyPassword = properties.getProperty('release_keyPassword')
 
 /**
  * This is the configuration block to customize your React Native Android app.
@@ -132,9 +135,9 @@ android {
         }
         release {
             storeFile file('release.keystore')
-            storePassword localProperties['release_storePassword']
-            keyAlias localProperties['release_keyAlias']
-            keyPassword localProperties['release_keyPassword']
+            storePassword release_storePassword
+            keyAlias release_keyAlias
+            keyPassword release_keyPassword
         }
     }
     buildTypes {
