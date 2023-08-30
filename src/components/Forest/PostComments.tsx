@@ -1,6 +1,6 @@
 import { useEffect, useState, useContext } from 'react';
 import { TextPretendard as Text } from '../../common/CustomText';
-import { SafeAreaView, View, TouchableOpacity, Dimensions, FlatList, Modal, Pressable } from 'react-native';
+import { SafeAreaView, View, TouchableOpacity, Dimensions, FlatList, KeyboardAvoidingView, Platform } from 'react-native';
 import { Request } from '../../common/requests';
 import Comment from './components/Comment';
 import WriteComment from './components/WriteComment';
@@ -54,6 +54,7 @@ const PostCommentsScreen = ({ navigation, route }: NativeStackScreenProps<Forest
   }, [refreshing])
 
   return (
+    <KeyboardAvoidingView behavior='height' keyboardVerticalOffset={0} style={{flex: 1, backgroundColor: '#FFFFFF'}}>
     <BottomSheetModalProvider>
     <>{loading ? (
       <Loading />
@@ -83,6 +84,7 @@ const PostCommentsScreen = ({ navigation, route }: NativeStackScreenProps<Forest
     </SafeAreaView>
   )}</>
   </BottomSheetModalProvider>
+  </KeyboardAvoidingView>
   )
 }
 

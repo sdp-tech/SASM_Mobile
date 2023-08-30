@@ -1,4 +1,4 @@
-import { SafeAreaView, View, StyleSheet, TouchableOpacity, Dimensions, ScrollView, FlatList, Image, Share, Alert, ImageBackground, ActivityIndicator } from 'react-native';
+import { SafeAreaView, View, StyleSheet, TouchableOpacity, Dimensions, ScrollView, FlatList, Alert, ImageBackground, ActivityIndicator, KeyboardAvoidingView, Platform } from 'react-native';
 import { TextPretendard as Text } from '../../common/CustomText';
 import { useState, useEffect, useRef, useContext } from 'react';
 import { Request } from '../../common/requests';
@@ -252,6 +252,7 @@ const StoryDetailPage = ({ navigation, route }: StoryProps) => {
 
 
   return (
+    <KeyboardAvoidingView behavior='height' keyboardVerticalOffset={0} style={{flex: 1, backgroundColor: '#FFFFFF'}}>
     <BottomSheetModalProvider>
     <View style={{flex: 1, backgroundColor: 'white'}}>
         {data == undefined ? (
@@ -302,6 +303,7 @@ const StoryDetailPage = ({ navigation, route }: StoryProps) => {
         )}
     </View>
     </BottomSheetModalProvider>
+    </KeyboardAvoidingView>
 )}
 
 export default StoryDetailPage;

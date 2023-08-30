@@ -8,7 +8,7 @@ import CardView from '../../../common/CardView';
 import Camera from '../../../assets/img/Forest/Camera.svg';
 import FinishModal from '../../../common/FinishModal';
 import { ForestContext } from './ForestContext';
-import { getStatusBarHeight } from 'react-native-status-bar-height';
+import { getStatusBarHeight } from 'react-native-safearea-height';
 
 import { Request } from '../../../common/requests';
 import { PostUploadParams } from '../PostUpload';
@@ -212,7 +212,7 @@ const ForestForm = ({ tab, setTab, navigation, post }: PostUploadParams) => {
   ]
 
   return (
-    <KeyboardAvoidingView behavior={iOS ? 'padding' : 'height'} keyboardVerticalOffset={iOS ? 10 : statusBarHeight+100} style={{flex: 1}}>
+    <KeyboardAvoidingView behavior={'height'} keyboardVerticalOffset={iOS ? 0 : statusBarHeight+100} style={{flex: 1}}>
       <Modal visible={modalVisible}>
         <FinishModal
           navigation={()=>navigation.replace('PostDetail', {post_id: postId})}
