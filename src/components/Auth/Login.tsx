@@ -1,5 +1,5 @@
 import React, { useCallback, useContext, useEffect, useState } from 'react';
-import { Platform, TouchableOpacity, View, TextInput, StyleSheet, SafeAreaView, Alert, Dimensions } from "react-native";
+import { Platform, TouchableOpacity, View, TextInput, StyleSheet, SafeAreaView, Alert, KeyboardAvoidingView } from "react-native";
 import { TextPretendard as Text } from '../../common/CustomText';
 import styled, { css } from 'styled-components/native';
 import { NavigationScreenProp } from 'react-navigation';
@@ -55,6 +55,7 @@ const LoginScreen = () => {
   },[]))
 
   return (
+    <KeyboardAvoidingView behavior={Platform.OS == 'ios' ? 'height' : undefined} keyboardVerticalOffset={0} style={{flex: 1}}>
     <SafeAreaView style={{ backgroundColor: '#FFFFFF', flex: 1, alignItems: 'center' }}>
       <View style={{ position: 'relative', marginBottom: 30, width:'100%', display:'flex', justifyContent:'center', marginTop: 10 }}>
         <Text style={TextStyles.header}>로그인</Text>
@@ -88,6 +89,7 @@ const LoginScreen = () => {
       <SocialLogin type='login'/>
       </InputWrapper>
     </SafeAreaView>
+    </KeyboardAvoidingView>
   )
 }
 

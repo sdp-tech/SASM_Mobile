@@ -8,7 +8,7 @@ import FormHeader from '../../common/FormHeader';
 import FinishModal from '../../common/FinishModal';
 import ModalSelector from 'react-native-modal-selector-searchable';
 import { StoryProps } from '../../pages/Story';
-import { getStatusBarHeight } from 'react-native-status-bar-height';
+import { getStatusBarHeight } from 'react-native-safearea-height';
 
 const { width, height } = Dimensions.get('window');
 
@@ -241,8 +241,9 @@ export default function WriteStoryPage({ navigation, route }: StoryProps) {
           optionStyle={{height: 40}}
           selectStyle={{borderRadius: 0, borderTopColor: '#D9D9D9', borderBottomColor: '#D9D9D9', borderLeftWidth:0, borderRightWidth:0, borderBottomWidth: 1, alignItems: 'flex-start', padding: 10, height: 40}}
           selectTextStyle={{fontSize: 14, color: 'black'}}
-          optionContainerStyle={{height: height-statusBarHeight-100}}
+          optionContainerStyle={{height: height-statusBarHeight}}
           cancelText='취소'
+          renderItem={() => {return null}}
         />
           </>
         </TouchableWithoutFeedback>

@@ -10,7 +10,7 @@ import { HomeStackParams } from '../../pages/Home';
 import SelectStoryModal from './FormModals/SelectStoryModal';
 import { launchImageLibrary, launchCamera, ImagePickerResponse } from 'react-native-image-picker';
 import AddColor from "../../assets/img/common/AddColor.svg";
-import { getStatusBarHeight } from 'react-native-status-bar-height';
+import { getStatusBarHeight } from 'react-native-safearea-height';
 import FormHeader from '../../common/FormHeader';
 import FinishModal from '../../common/FinishModal';
 

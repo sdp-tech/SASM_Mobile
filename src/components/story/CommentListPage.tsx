@@ -1,6 +1,6 @@
 import { useEffect, useState, useContext } from 'react';
 import { TextPretendard as Text } from '../../common/CustomText';
-import { SafeAreaView, View, TouchableOpacity, Dimensions, FlatList, Modal, Pressable } from 'react-native';
+import { SafeAreaView, View, TouchableOpacity, Dimensions, FlatList, KeyboardAvoidingView } from 'react-native';
 import { Request } from '../../common/requests';
 import { StoryProps } from '../../pages/Story';
 import Comment from './components/Comment';
@@ -53,6 +53,7 @@ const CommentListPage = ({ navigation, route }: StoryProps) => {
   }, [refreshing])
 
   return (
+    <KeyboardAvoidingView behavior='height' keyboardVerticalOffset={0} style={{flex: 1, backgroundColor: '#FFFFFF'}}>
     <BottomSheetModalProvider>
       <>{loading ? (
         <Loading />
@@ -82,6 +83,7 @@ const CommentListPage = ({ navigation, route }: StoryProps) => {
       </SafeAreaView>
     )}</>
   </BottomSheetModalProvider>
+  </KeyboardAvoidingView>
   )
 }
 

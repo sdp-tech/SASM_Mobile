@@ -102,13 +102,13 @@ const MyPageTabView = ({ navigation }: StackScreenProps<MyPageProps, 'mypage'>) 
               <Image source={{ uri: info?.profile_image }} style={{ width: 80, height: 80, borderRadius: 60 }} />
               <View style={{ paddingVertical: 10, marginLeft: 10 }}>
                 <Text style={{ fontWeight: "700", fontSize: 16 }}>{info?.nickname}</Text>
-                <Text style={{ fontWeight: "400", fontSize: 12, marginTop: 10 }}>자기소개</Text>
+                <Text style={{ fontWeight: "400", fontSize: 12, marginTop: 10 }}>{info?.introduction.length > 0 ? info?.introduction : `자기소개`}</Text>
                 <View style={{ flexDirection: "row" }}>
                   <TouchableOpacity onPress={() => { navigation.navigate('follower', { email: info.email }) }}>
-                    <Text style={{ fontWeight: "400", fontSize: 10, color: "#848484", marginTop: 10 }}>팔로워 {follower.num}  |  </Text>
+                    <Text style={{ fontWeight: "400", fontSize: 12, color: "#848484", marginTop: 10 }}>팔로워 {follower.num}  |  </Text>
                   </TouchableOpacity>
                   <TouchableOpacity onPress={() => { navigation.navigate('following', { email: info.email }) }}>
-                    <Text style={{ fontWeight: "400", fontSize: 10, color: "#848484", marginTop: 10 }}>팔로잉 {following.num}</Text>
+                    <Text style={{ fontWeight: "400", fontSize: 12, color: "#848484", marginTop: 10 }}>팔로잉 {following.num}</Text>
                   </TouchableOpacity>
                 </View>
               </View>

@@ -1,7 +1,7 @@
 import { useNavigation } from '@react-navigation/native';
 import { StackNavigationProp } from '@react-navigation/stack';
 import React, { Dispatch, SetStateAction, useEffect, useState } from 'react';
-import { Alert, Modal, SafeAreaView, StyleSheet, TouchableOpacity, View } from 'react-native';
+import { Alert, Modal, SafeAreaView, StyleSheet, TouchableOpacity, View, KeyboardAvoidingView, Platform } from 'react-native';
 import { TextPretendard as Text } from '../../common/CustomText';
 import { Request } from '../../common/requests';
 import { MyPageProps } from '../../pages/MyPage';
@@ -41,6 +41,7 @@ export default function SetNewPassword(): JSX.Element {
     }
   }
   return (
+    <KeyboardAvoidingView behavior={Platform.OS == 'ios' ? 'height' : undefined} keyboardVerticalOffset={0} style={{flex: 1}}>
     <SafeAreaView style={{ flex: 1, backgroundColor: '#FFFFFF', display: 'flex', justifyContent: 'center' }}>
       <Modal visible={finishModal}>
         <FinishModal
@@ -76,6 +77,7 @@ export default function SetNewPassword(): JSX.Element {
       ><Text style={TextStyles.button}>비밀번호 변경</Text>
       </TouchableOpacity>
     </SafeAreaView>
+    </KeyboardAvoidingView>
   )
 }
 

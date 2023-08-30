@@ -13,7 +13,7 @@ import CardView from '../../../common/CardView';
 import { CategoryIcon } from "../../../common/Category";
 import Settings from '../../../assets/img/MyPage/Settings.svg';
 import Logo from "../../../assets/img/common/Logo.svg"
-import { getStatusBarHeight } from 'react-native-status-bar-height';
+import { getStatusBarHeight } from 'react-native-safearea-height';
 
 interface StoryDetailProps {
     data: any;
@@ -159,7 +159,7 @@ const StoryDetailBox = ({navigation, data, isLogin, onLayout, email, onRefresh, 
     return (
         <View onLayout={onLayout}>
             <View>
-                <TouchableOpacity style={{position: 'absolute', zIndex: 1, top: Platform.OS == 'ios' ? statusBarHeight + 10: statusBarHeight, left: 15, width: 40, height: 40}} onPress={() => {navigation.goBack()}}>
+                <TouchableOpacity style={{position: 'absolute', zIndex: 1, top: statusBarHeight, left: 15, width: 40, height: 40}} onPress={() => {navigation.goBack()}}>
                     <Arrow width={18} height={18} transform={[{ rotate: '180deg' }]} color={'white'} />
                 </TouchableOpacity>
                     {data!.extra_pics.length > 0 ? (
@@ -184,7 +184,7 @@ const StoryDetailBox = ({navigation, data, isLogin, onLayout, email, onRefresh, 
                             <View style={{backgroundColor: 'rgba(0,0,0,0.2)', width: width, height: 330}} />
                         </ImageBackground>
                     )}
-                <TouchableOpacity style={{position: 'absolute', zIndex: 1, top: statusBarHeight+15, right: 20, width: 40, height: 40, alignItems: 'flex-end'}} onPress={() => setDot(!dot)}>
+                <TouchableOpacity style={{position: 'absolute', zIndex: 1, top: statusBarHeight+5, right: 20, width: 40, height: 40, alignItems: 'flex-end'}} onPress={() => setDot(!dot)}>
                     <Settings transform={[{ rotate: dot ? '90deg' : '0deg'}]} color={'white'} />
                 </TouchableOpacity>
                 { dot &&

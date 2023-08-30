@@ -1,6 +1,6 @@
 import { StackNavigationProp, StackScreenProps } from '@react-navigation/stack';
 import React, { useEffect, useState } from 'react';
-import { ScrollView, TextInput, TouchableOpacity, View, Alert, SafeAreaView, StyleSheet, Dimensions } from 'react-native';
+import { ScrollView, TextInput, TouchableOpacity, View, Alert, SafeAreaView, StyleSheet, Dimensions, KeyboardAvoidingView, Platform } from 'react-native';
 import { TextPretendard as Text } from '../../common/CustomText';
 import styled from 'styled-components/native';
 import { Request } from '../../common/requests';
@@ -132,6 +132,7 @@ function RegisterEmail({ navigation, route }: StackScreenProps<RegisterParams>) 
     }
   }
   return (
+    <KeyboardAvoidingView behavior={Platform.OS == 'ios' ? 'height' : undefined} keyboardVerticalOffset={0} style={{flex: 1}}>
     <SafeAreaView style={{ backgroundColor: '#FFFFFF', flex: 1 }}>
       <View style={{ position: 'relative', marginBottom: 30, marginTop: 10 }}>
         <Text style={TextStyles.header}>회원가입</Text>
@@ -195,6 +196,7 @@ function RegisterEmail({ navigation, route }: StackScreenProps<RegisterParams>) 
       </View>
       <TouchableOpacity style={{marginBottom: 30}} onPress={tryRegister}><Text style={TextStyles.submit}>지속가능한 공간 탐방하기</Text></TouchableOpacity>
     </SafeAreaView>
+    </KeyboardAvoidingView>
   )
 }
 

@@ -1,6 +1,6 @@
 import { createStackNavigator, StackScreenProps } from '@react-navigation/stack';
 import React, { useCallback, useEffect, useState } from 'react';
-import { Alert, SafeAreaView, StyleSheet, Text, TouchableOpacity, View, Platform } from 'react-native';
+import { Alert, SafeAreaView, StyleSheet, Text, TouchableOpacity, View, Platform, KeyboardAvoidingView } from 'react-native';
 import styled from 'styled-components/native';
 import { Request } from '../../common/requests';
 import FindId from './function/FindId';
@@ -108,6 +108,7 @@ const FindIDPW = ({ navigation, route }: StackScreenProps<findScreenProps, 'home
   },[route]))
 
   return (
+    <KeyboardAvoidingView behavior={Platform.OS == 'ios' ? 'height' : undefined} keyboardVerticalOffset={0} style={{flex: 1}}>
     <SafeAreaView style={{ backgroundColor: 'white', flex: 1, paddingTop: 10 }}>
       <View style={{ position: 'relative', marginTop: Platform.OS == 'ios' ? 5 : 0}}>
         <Text style={TextStyles.title}>아이디 / 비밀번호 찾기</Text>
@@ -150,6 +151,7 @@ const FindIDPW = ({ navigation, route }: StackScreenProps<findScreenProps, 'home
           </View>
       }
     </SafeAreaView>
+    </KeyboardAvoidingView>
   )
 }
 

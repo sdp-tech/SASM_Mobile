@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useState } from 'react';
-import { SafeAreaView, Image, View, StyleSheet, TouchableOpacity, Platform, ActivityIndicator, Alert } from 'react-native';
+import { SafeAreaView, Image, View, StyleSheet, TouchableOpacity, Platform, ActivityIndicator, Alert, KeyboardAvoidingView } from 'react-native';
 import { TextPretendard as Text } from '../../../../common/CustomText';
 import Arrow from '../../../../assets/img/common/Arrow.svg';
 import { StackScreenProps } from '@react-navigation/stack';
@@ -149,6 +149,7 @@ export default function ChangeForm({ navigation, route }: StackScreenProps<MyPag
   }
 
   return (
+    <KeyboardAvoidingView behavior={Platform.OS == 'ios' ? 'height' : undefined} keyboardVerticalOffset={0} style={{flex: 1}}>
     <SafeAreaView style={{ backgroundColor: '#FFFFFF', flex: 1, paddingTop: 10 }}>
       <View style={{ position: 'relative', marginTop: Platform.OS == 'ios' ? 5 : 0 }}>
         <Text style={TextStyles.header}>프로필 수정</Text>
@@ -216,6 +217,7 @@ export default function ChangeForm({ navigation, route }: StackScreenProps<MyPag
           </Section>
       }
     </SafeAreaView>
+    </KeyboardAvoidingView>
   )
 }
 

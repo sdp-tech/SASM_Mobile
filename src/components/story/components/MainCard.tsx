@@ -84,7 +84,7 @@ const MainCard = ({id, place_name, title, rep_pic, story_like, category, preview
         </View>
       </ImageBackground>
       <View style={{width: width*0.9, height: 130, borderBottomRightRadius:5, borderBottomLeftRadius: 5, backgroundColor: 'white', shadowColor: 'black', shadowOpacity: 0.25, shadowOffset: { width: 0, height: 4}, paddingVertical: 20, paddingHorizontal: 25}}>
-        <Text numberOfLines={4} ellipsizeMode={'tail'} style={textStyles.preview}>{summary}</Text>
+        <Text numberOfLines={3} ellipsizeMode={'tail'} style={textStyles.preview}>{summary}</Text>
       </View>
       <View style={{position:'absolute', top: width*0.76, marginLeft: width*0.74, width: 50, alignItems: 'center'}}>
         <Image source={{uri: profile}} style={{borderRadius:60, backgroundColor: 'white', width:50, height:50, marginBottom: 5}} />

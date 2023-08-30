@@ -14,7 +14,7 @@ import Heart from '../../common/Heart';
 import ShareButton from "../../common/ShareButton";
 import CommentIcon from '../../assets/img/Story/Comment.svg';
 import { LoginContext } from '../../common/Context';
-import { getStatusBarHeight } from 'react-native-status-bar-height';
+import { getStatusBarHeight } from 'react-native-safearea-height';
 
 const { width, height } = Dimensions.get('window');
 
@@ -243,7 +243,7 @@ export default function CurationDetail({ navigation, route }: StackScreenProps<H
   return (
     <>
       <ScrollView style={{ backgroundColor: '#FFFFFF' }}>
-        <TouchableOpacity style={{ position: 'absolute', top: Platform.OS == 'ios' ? statusBarHeight + 10: statusBarHeight, left: 10, zIndex: 2 }} onPress={navigation.goBack}>
+        <TouchableOpacity style={{ position: 'absolute', top: statusBarHeight, left: 10, zIndex: 2 }} onPress={navigation.goBack}>
           <Arrow width={18} height={18} transform={[{ rotate: '180deg' }]} color={'white'} />
         </TouchableOpacity>
           <ImageBackground source={{ uri: curationDetail.rep_pic }} style={{ width: width, height: width * (reppicSize.height / reppicSize.width), position:'relative' }}>

@@ -26,7 +26,6 @@ const SearchHereButton = styled.TouchableOpacity`
   padding: 5px;
   border-radius: 20px;
   background-color: #FFFFFF;
-  margin-bottom: 10px;
 `
 const Circle = styled.TouchableOpacity<{ width: number }>`
 	width: ${props => props.width}px;
