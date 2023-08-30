@@ -16,7 +16,7 @@ import { LoginContext } from "../../common/Context";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { TabProps } from "../../../App";
 import { ScrollView } from "react-native-gesture-handler";
-import { getStatusBarHeight } from "react-native-status-bar-height";
+import { getStatusBarHeight } from "react-native-safearea-height";
 
 export interface StoryListProps {
   id: number;

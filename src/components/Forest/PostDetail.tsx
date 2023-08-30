@@ -11,7 +11,8 @@ import {
   Alert,
   ImageBackground,
   Dimensions,
-  Platform
+  Platform,
+  KeyboardAvoidingView
 } from "react-native";
 import type { NativeStackScreenProps } from "@react-navigation/native-stack";
 import RenderHTML from 'react-native-render-html';
@@ -32,7 +33,7 @@ import Settings from '../../assets/img/MyPage/Settings.svg';
 import { StackNavigationProp, StackScreenProps } from "@react-navigation/stack";
 import { useNavigation } from "@react-navigation/native";
 import { TabProps } from "../../../App";
-import { getStatusBarHeight } from "react-native-status-bar-height";
+import { getStatusBarHeight } from 'react-native-safearea-height';
 
 interface Post {
   id: number;
@@ -122,7 +123,7 @@ const PostDetailSection = ({
         <View
           style={{
             flexDirection: "row",
-            marginTop: Platform.OS == 'ios' ? statusBarHeight + 10: statusBarHeight,
+            marginTop: statusBarHeight,
             alignSelf: "center",
             flex: 1,
             paddingHorizontal: 10
@@ -505,6 +506,7 @@ const PostDetailScreen = ({
   }, [refreshing]);
 
   return (
+    <KeyboardAvoidingView behavior='height' keyboardVerticalOffset={0} style={{flex: 1, backgroundColor: '#FFFFFF'}}>
     <BottomSheetModalProvider>
     <View style={styles.container}>
       {post == undefined ? (
@@ -557,6 +559,7 @@ const PostDetailScreen = ({
       )}
     </View>
     </BottomSheetModalProvider>
+    </KeyboardAvoidingView>
   );
 };
 
