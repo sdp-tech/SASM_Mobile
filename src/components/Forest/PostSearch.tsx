@@ -14,7 +14,7 @@ import { TextPretendard as Text } from "../../common/CustomText";
 import type { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { useFocusEffect, useNavigation } from "@react-navigation/native";
 import { LoginContext } from "../../common/Context";
-
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import { ForestStackParams } from "../../pages/Forest";
 import { Request } from "../../common/requests";
 import SearchBar from "../../common/SearchBar";
@@ -105,6 +105,55 @@ const PostSearchScreen = ({
     '슬로우 패션', '비건', 'ESG', '비건 레시피', '비건 레스토랑', '자연', '숲', '한강'
   ]
 
+  const [recentSearches, setRecentSearches] = useState([] as any);
+
+  useEffect(() => {
+    if(search.length == 0) loadRecentSearches();
+  }, []);
+
+  const loadRecentSearches = async () => {
+    try {
+      const searches = await AsyncStorage.getItem('recentSearches_forest');
+      console.log(searches)
+      if (searches) {
+        const searchesArray = JSON.parse(searches);
+        setRecentSearches(searchesArray);
+      }
+    } catch (error) {
+      console.error('Error loading recent searches:', error);
+    }
+  };
+
+  const saveRecentSearches = async (search: any) => {
+    try {
+      await AsyncStorage.setItem('recentSearches_forest', JSON.stringify(search));
+    } catch (error) {
+      console.error('Error saving recent searches:', error);
+    }
+  };
+
+  const handleSearchSubmit = () => {
+    if (search.trim() === '') return;
+    const updatedSearches = [search, ...recentSearches];
+    setRecentSearches(updatedSearches);
+    saveRecentSearches(updatedSearches);
+  };
+
+  const handleDeleteSearch = (search: string) => {
+    const updatedSearches = recentSearches.filter((item: any) => item !== search);
+    setRecentSearches(updatedSearches);
+    saveRecentSearches(updatedSearches);
+  };
+  
+  const handleDeleteAll = async () => {
+    try {
+      await AsyncStorage.removeItem('recentSearches_forest');
+    } catch (e) {
+      console.error(e)
+    }
+    setRecentSearches([])
+  }
+
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: "white", paddingTop: 10 }}>
       <View style={{flexDirection: 'row', marginTop: Platform.OS == 'ios' ? 5 : 0}}>
@@ -117,6 +166,8 @@ const PostSearchScreen = ({
         style={{ backgroundColor: "#F4F4F4", width: '85%' }}
         placeholder={"궁금한 포레스트를 검색해보세요"}
         placeholderTextColor={'#848484'}
+        onSubmitEditing={handleSearchSubmit}
+        returnKeyType='search'
       />
       </View>
       {search.length > 0 ? (
@@ -212,34 +263,35 @@ const PostSearchScreen = ({
             <Text style={{color: '#3C3C3C', fontSize: 16, fontWeight: '700', marginBottom: 15}}>추천 검색어</Text>
             <View style={{flex: 1, flexDirection: 'row', flexWrap: 'wrap', }}>
               {recommendData.map((item) => (
-                <TouchableOpacity onPress={()=>{setSearch(item)}}
+                <TouchableOpacity onPress={()=>{setSearch(item); handleSearchSubmit()}}
                   style={{height: 30, borderRadius: 16, borderColor: '#67D393', borderWidth: 1, paddingVertical: 4, paddingHorizontal: 16, marginRight: 8, marginBottom: 8, justifyContent: 'center'}}>
                   <Text style={{color: '#202020', fontSize: 14}}>{item}</Text>
                 </TouchableOpacity>
               ))}
             </View>
           </View>
-          {/* <View style={{flex: 4, padding: 20}}>
+          <View style={{flex: 4, padding: 20}}>
             <View style={{ flexDirection: "row" }}>
               <Text style={{flex: 1, color: '#3C3C3C', fontSize: 16, fontWeight: '700', marginBottom: 15, lineHeight: 20}}>최근 검색어</Text>
-              <TouchableOpacity>
+              <TouchableOpacity onPress={handleDeleteAll}>
                 <Text style={{color: '#848484', fontSize: 14, fontWeight: '500', lineHeight: 20}}>전체삭제</Text>
               </TouchableOpacity>
             </View>
             <FlatList
-              data={[{ title: "비건 레시피" }, { title: "맛있는" }]}
+              data={recentSearches}
               renderItem={({ item }: any) => (
                 <View style={{ flexDirection: "row", borderBottomColor: '#A8A8A8', borderBottomWidth: 1, width: width-40, paddingVertical: 5 }}>
-                  <TouchableOpacity style={{flex: 1}}>
-                    <Text style={{color: '#373737', lineHeight: 20}}>{item.title}</Text>
+                  <TouchableOpacity style={{flex: 1}} onPress={() => setSearch(item)}>
+                    <Text style={{color: '#373737', lineHeight: 20}}>{item}</Text>
                   </TouchableOpacity>
-                  <TouchableOpacity>
+                  <TouchableOpacity onPress={() => handleDeleteSearch(item)}>
                     <Text style={{color: '#A8A8A8'}}>X</Text>
                   </TouchableOpacity>
                 </View>
               )}
+              keyExtractor={(item, index) => index.toString()}
             />
-          </View> */}
+          </View>
         </>
       )}
       <PlusButton
