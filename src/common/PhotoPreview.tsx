@@ -1,14 +1,11 @@
 import React, { useState, useEffect } from "react";
-import { StyleSheet, SafeAreaView, Image, Dimensions } from "react-native";
-import type { NativeStackScreenProps } from "@react-navigation/native-stack";
-import styled from "styled-components/native";
-
-import { ForestStackParams } from "../../pages/Forest";
+import { StyleSheet, SafeAreaView, Image, Dimensions, TouchableOpacity } from "react-native";
+import Close from '../assets/img/common/Close.svg'
 
 const PhotoPreviewScreen = ({
   navigation,
   route,
-}: NativeStackScreenProps<ForestStackParams, "PhotoPreview">) => {
+}: {navigation: any, route: any}) => {
   const [width, setWidth] = useState(0);
   const [height, setHeight] = useState(0);
 
@@ -25,6 +22,9 @@ const PhotoPreviewScreen = ({
 
   return (
     <SafeAreaView style={styles.container}>
+      <TouchableOpacity onPress={() => navigation.goBack()} style={{position: 'absolute', top: 50, right: 10}}>
+        <Close color={'black'}/>
+      </TouchableOpacity>
       <Image
         source={{ uri: photoUri }}
         style={{ width: width, height: height }}

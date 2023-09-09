@@ -111,7 +111,7 @@ const Map = ({ mapView, setSheetMode, placeData, setTempCoor, setDetailData, cen
     })
   }
   const getDetail = async (id: number) => {
-    const response_detail = await request.get('/places/place_detail/', { id: id });
+    const response_detail = await request.get(`/places/place_detail/${id}`);
     setDetailData(response_detail.data.data);
     setCenter({
       latitude: response_detail.data.data.latitude,

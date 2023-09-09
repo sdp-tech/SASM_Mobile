@@ -170,13 +170,15 @@ const StoryDetailBox = ({navigation, data, isLogin, onLayout, email, onRefresh, 
                             pageWidth={width}
                             dot={false}
                             renderItem={({item}: any) => (
-                                <ImageBackground
-                                    style={{width: 280, height: 330, marginRight: 15}}
-                                    source={{uri: item}}
-                                    resizeMode='cover'
-                                >
-                                    <View style={{backgroundColor: 'rgba(0,0,0,0.2)', width: 280, height: 330}} />
-                                </ImageBackground>
+                                <TouchableOpacity onPress={() => navigation.navigate('PhotoPreview', { photoUri: item})}>
+                                    <ImageBackground
+                                        style={{width: 280, height: 330, marginRight: 15}}
+                                        source={{uri: item}}
+                                        resizeMode='cover'
+                                    >
+                                        <View style={{backgroundColor: 'rgba(0,0,0,0.2)', width: 280, height: 330}} />
+                                    </ImageBackground>
+                                </TouchableOpacity>
                             )}
                         />
                     ) : (

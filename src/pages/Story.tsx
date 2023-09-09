@@ -9,6 +9,7 @@ import StoryDetailPage from '../components/story/StoryDetailPage';
 import WriteStoryPage from '../components/story/WriteStoryPage';
 import CommentListPage from '../components/story/CommentListPage';
 import RecommendListPage from '../components/story/RecommendListPage';
+import PhotoPreviewScreen from '../common/PhotoPreview';
 import { TabProps } from '../../App';
 
 export interface StoryProps {
@@ -27,6 +28,9 @@ export type StoryStackParams = {
   RecommendList: {
     data: any;
     type: boolean;
+  }
+  PhotoPreview: {
+    photoUri: any;
   }
 }
 
@@ -52,6 +56,7 @@ const StoryScreen = ({ navigation, route }: StackScreenProps<TabProps, '스토�
       <Stack.Screen name = "WriteStory" component={WriteStoryPage} />
       <Stack.Screen name = "CommentList" component={CommentListPage} />
       <Stack.Screen name = "RecommendList" component={RecommendListPage} />
+      <Stack.Screen name="PhotoPreview" component={PhotoPreviewScreen} />
     </Stack.Navigator>
   )
 }

@@ -8,6 +8,7 @@ import CurationList from '../components/Home/CurationList ';
 import CurationDetail from '../components/Home/CurationDetail';
 import CurationForm from '../components/Home/CurationForm';
 import CurationHome, { CurationProps } from '../components/Home/CurationHome';
+import PhotoPreviewScreen from '../common/PhotoPreview';
 import { TabProps } from '../../App';
 
 const { width, height } = Dimensions.get('screen');
@@ -21,6 +22,9 @@ export type HomeStackParams = {
     id: number;
   }
   "Form": undefined;
+  "PhotoPreview": {
+    photoUri: any;
+  }
 }
 
 export default function HomeScreen({navigation, route}:StackScreenProps<TabProps, '홈'>): JSX.Element {
@@ -43,6 +47,7 @@ export default function HomeScreen({navigation, route}:StackScreenProps<TabProps
       <HomeStack.Screen name="List" component={CurationList} />
       <HomeStack.Screen name="Detail" component={CurationDetail} />
       <HomeStack.Screen name="Form" component={CurationForm} />
+      <HomeStack.Screen name="PhotoPreview" component={PhotoPreviewScreen} />
     </HomeStack.Navigator>
   )
 }
