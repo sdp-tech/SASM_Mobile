@@ -298,6 +298,7 @@ const Storys = ({ navigation, data }: { navigation: StackNavigationProp<TabProps
   const { isLogin, setLogin } = useContext(LoginContext);
   const [like, setLike] = useState<boolean>(false);
   const [followed, setFollowed] = useState<boolean>(false);
+  const previewNavigation = useNavigation<StackNavigationProp<HomeStackParams>>();
 
   const request = new Request();
   const handleLike = async () => {
@@ -358,7 +359,11 @@ const Storys = ({ navigation, data }: { navigation: StackNavigationProp<TabProps
         <CardView
           pageWidth={250}
           data={data.rep_photos}
-          renderItem={({ item }: any) => <Image source={{ uri: item }} style={{ width: 250, height: 300, marginHorizontal: 5 }} />}
+          renderItem={({ item }: any) => 
+            <TouchableOpacity onPress={() => previewNavigation.navigate('PhotoPreview', { photoUri: item })}>
+              <Image source={{ uri: item }} style={{ width: 250, height: 300, marginHorizontal: 5 }} />
+            </TouchableOpacity>
+            }
           gap={10}
           offset={15}
           dot={false} />
