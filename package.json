@@ -33,6 +33,7 @@
     "react-native-geolocation-service": "^5.3.1",
     "react-native-gesture-handler": "2.9.0",
     "react-native-image-picker": "^5.1.0",
+    "react-native-kakao-share-link": "^1.0.10",
     "react-native-keychain": "^8.1.1",
     "react-native-modal-selector": "^2.1.2",
     "react-native-modal-selector-searchable": "^2.1.4",

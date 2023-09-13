@@ -121,6 +121,9 @@ const BottomBarSection = ({ id, post, isLogin, onRefresh, navigation }:{id: numb
     post.like_curation ? setLike(true) : setLike(false)
   }, [post.like_curation])
 
+  useEffect(() => {
+    console.error(post.rep_pic);
+  }, [])
   const toggleLike = async () => {
     if (isLogin) {
       const response = await request.post(`/curations/curation_like/${id}/`);
@@ -156,7 +159,7 @@ const BottomBarSection = ({ id, post, isLogin, onRefresh, navigation }:{id: numb
         </TouchableOpacity>
         <Text style={{fontSize: 14, color: '#202020', lineHeight: 20, marginLeft: 3}}>{post.comment_cnt}</Text> */}
       </View>
-      <ShareButton color={'black'} message={`[SASM Story] ${post.title} - ${post.title}`} />
+      <ShareButton color={'black'} message={`[SASM Curation] ${post.title}`} image={post.rep_pic} description={post.contents} id={id} />
     </View>
   )
 }
@@ -277,8 +280,8 @@ export default function CurationDetail({ navigation, route }: StackScreenProps<H
           <Text style={TextStyles.gotomap}>맵페이지로 이동</Text>
         </GotoMap>
         {
-          curatedStory.map(data =>
-            <Storys data={data} navigation={navigationTab} />
+          curatedStory.map((data, index) =>
+            <Storys key={index} data={data} navigation={navigationTab} />
           )
         }
       </ScrollView>
