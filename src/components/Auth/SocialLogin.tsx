@@ -160,13 +160,13 @@ export default function SocialLogin({ type }: { type: string }) {
           'login': '로그인'
         }[type]}</Text>
       </Button>
-      {/* <Button style={{ backgroundColor: '#FEE500' }} onPress={() => kakao_login()}>
+      <Button style={{ backgroundColor: '#FEE500' }} onPress={() => kakao_login()}>
         <Kakao width={18} height={16} style={{ position: 'absolute', top: 16, left: 16 }} />
         <Text style={TextStyles.button}>카카오로 {{
           'register': '회원가입',
           'login': '로그인'
         }[type]}</Text>
-      </Button> */}
+      </Button>
       {Platform.OS == 'ios' && <Button style={{ backgroundColor: '#000000' }} onPress={() => apple_login()}>
         <Apple width={30} height={30} style={{ position: 'absolute', left: 10 }} />
         <Text style={{ ...TextStyles.button, color: '#FFFFFF' }}>Apple로 {{
