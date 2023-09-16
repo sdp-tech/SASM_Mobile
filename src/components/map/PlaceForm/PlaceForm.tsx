@@ -22,22 +22,27 @@ import PlaceFormOwner from "./PlaceFormOwner";
 import PlaceUser from "../../../assets/img/Map/PlaceUser.svg";
 import { Request } from "../../../common/requests";
 import Popup from "../../../common/Popup";
-import FormHeader from "../../../common/FormHeader";
-import PlaceFormStack from "./PlaceFormStack";
+import PlaceFormHeader from "./PlaceFormHeader";
+import PlaceProfileForm from "./PlaceProfileForm";
+import { useNavigation } from "@react-navigation/native";
 
 export const HeaderPlaceForm = styled.View<{ color: string }>`
   background-color: ${(props) => props.color};
-  height: 12.5%;
+  height: 10%;
   display: flex;
-  padding: 0 20px;
+  padding-top: 40px;
+  padding-left: 20px;
+  padding-right: 20px;
   justify-content: space-between;
-  align-items: center;
+  align-items: flex-start;
   flex-flow: row;
 `;
 const Section = styled.View`
-  height: 87.5%;
+  height: 100%;
   display: flex;
-  align-items: center;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: flex-end;
 `;
 const Link = styled.TouchableOpacity`
   width: 100%;
@@ -53,10 +58,10 @@ const Link = styled.TouchableOpacity`
 `;
 const MenuWrapper = styled.View`
   width: 85%;
-  margin: 40% auto;
-  height: 40%;
+  margin: auto;
+  height: 60%;
   display: flex;
-  justify-content: space-around;
+  flex-flow: column;
 `;
 interface PlaceFormProps {
   setPlaceformModal: Dispatch<SetStateAction<boolean>>;
@@ -68,6 +73,37 @@ export interface SNSListProps {
   key: number;
 }
 
+interface NextBtnProps {
+  setTab: Dispatch<SetStateAction<number>>;
+  marginTop: number;
+}
+
+function NextBtn({ setTab, marginTop }: NextBtnProps) {
+  return (
+    <TouchableOpacity
+      style={{
+        backgroundColor: "#67d393",
+        marginBottom: 20,
+        width: "40%",
+        height: 40,
+        borderRadius: 10,
+      }}
+      onPress={() => setTab((prevTab) => prevTab + 1)}
+    >
+      <Text
+        style={{
+          ...TextStyles.Link,
+          textAlign: "center",
+          fontWeight: "400",
+          margin: 0,
+        }}
+      >
+        다음
+      </Text>
+    </TouchableOpacity>
+  );
+}
+
 export default function PlaceForm({
   setPlaceformModal,
 }: PlaceFormProps): JSX.Element {
@@ -75,6 +111,7 @@ export default function PlaceForm({
   const [snsList, setSNSList] = useState<SNSListProps[]>([]);
   const [closePopup, setClosePopup] = useState<boolean>(false);
   const request = new Request();
+  const navigation = useNavigation();
 
   const getSNSList = async () => {
     const response_sns_list = await request.get("/places/sns_types/");
@@ -93,7 +130,11 @@ export default function PlaceForm({
   useEffect(() => {
     if (closePopup) {
       Alert.alert("나가시겠습니까?", "입력하신 정보는 저장되지 않습니다.", [
-        { text: "머무르기", style: "cancel", onPress: () => {} },
+        {
+          text: "머무르기",
+          style: "cancel",
+          onPress: () => setClosePopup(false),
+        },
         {
           text: "나가기",
           style: "destructive",
@@ -106,73 +147,74 @@ export default function PlaceForm({
   }, [closePopup]);
 
   return (
-    <View>
-      <HeaderPlaceForm color={tab == 1 ? "#67D393" : "#FFFFFF"}>
-        <Text style={{ ...TextStyles.Link, fontSize: 24 }}>장소 제보하기</Text>
+    <Section>
+      {tab == 0 ? (
         <TouchableOpacity
           onPress={() => {
             tab == 0 ? setPlaceformModal(false) : setClosePopup(true);
           }}
         >
-          <Close color={tab == 1 ? "#FFFFFF" : "#000000"} />
+          <Close style={{ top: "60%", margin: "8%" }} color="#000000" />
         </TouchableOpacity>
-      </HeaderPlaceForm>
-      {/* <TouchableOpacity onPress={() => setClosePopup(true)}>
-        <Close color="#000000" />
-      </TouchableOpacity> */}
+      ) : (
+        <PlaceFormHeader
+          onLeft={() => setTab((prevTab) => prevTab - 1)}
+          onRight={() => setClosePopup(true)}
+        />
+      )}
 
-      <Section>
+      {
         {
-          {
-            0: (
-              <MenuWrapper>
-                <View>
-                  <Text style={TextStyles.title}>SASM에 없는</Text>
-                  <Text style={TextStyles.title}>장소를 제보해주세요</Text>
-                </View>
-                <Text style={TextStyles.content}>건당 ---P 지급해드려요</Text>
-                <Link
-                  onPress={() => {
-                    setTab(1);
+          0: (
+            <MenuWrapper>
+              <View>
+                <Text style={TextStyles.title}>SASM에 없는</Text>
+                <Text style={TextStyles.title}>장소를 제보해주세요</Text>
+              </View>
+              <Text style={TextStyles.content}>건당 ---P 지급해드려요</Text>
+              <Link
+                onPress={() => {
+                  setTab(1);
+                }}
+              >
+                <Text
+                  style={{
+                    ...TextStyles.title,
+                    color: "#FFFFFF",
+                    marginLeft: 0,
                   }}
                 >
-                  <Text
-                    style={{
-                      ...TextStyles.title,
-                      color: "#FFFFFF",
-                      marginLeft: 0,
-                    }}
-                  >
-                    이미지로 제보하기
-                  </Text>
-                  <PlaceUser />
-                </Link>
-                <Link
-                  onPress={() => {
-                    setTab(2);
+                  이미지로 제보하기
+                </Text>
+                <PlaceUser />
+              </Link>
+              <Link
+                onPress={() => {
+                  setTab(2);
+                }}
+              >
+                <Text
+                  style={{
+                    ...TextStyles.title,
+                    color: "#FFFFFF",
+                    marginLeft: 0,
                   }}
                 >
-                  <Text
-                    style={{
-                      ...TextStyles.title,
-                      color: "#FFFFFF",
-                      marginLeft: 0,
-                    }}
-                  >
-                    사업주입니다!
-                  </Text>
-                  <PlaceUser />
-                </Link>
-              </MenuWrapper>
-            ),
-            1: <PlaceFormStack />,
-            2: <PlaceFormStack />,
-            // 2: <PlaceFormOwner setPlaceformModal={setPlaceformModal} />
-          }[tab]
-        }
-      </Section>
-      {/* <Popup visible={closePopup} setVisible={setClosePopup} setModal={setPlaceformModal} /> */}
-    </View>
+                  사업주입니다!
+                </Text>
+                <PlaceUser />
+              </Link>
+            </MenuWrapper>
+          ),
+          1: (
+            <PlaceProfileForm
+              NextBtn={<NextBtn setTab={setTab} marginTop={60} />}
+            />
+          ),
+          // 2: <PlaceFormOwner setPlaceformModal={setPlaceformModal} />
+        }[tab]
+      }
+    </Section>
   );
 }
 
@@ -187,6 +229,8 @@ const TextStyles = StyleSheet.create({
     fontSize: 12,
     fontWeight: "400",
     color: "#000000",
+    marginTop: 15,
+    marginBottom: 25,
     marginLeft: 25,
   },
   title: {
