@@ -67,12 +67,12 @@ react {
  * use App Bundles (https://developer.android.com/guide/app-bundle/)
  * and want to have separate APKs to upload to the Play Store.
  */
-def enableSeparateBuildPerCPUArchitecture = false
+def enableSeparateBuildPerCPUArchitecture = true
 
 /**
  * Set this to true to Run Proguard on Release builds to minify the Java bytecode.
  */
-def enableProguardInReleaseBuilds = false
+def enableProguardInReleaseBuilds = true
 
 /**
  * The preferred build flavor of JavaScriptCore (JSC)
@@ -122,11 +122,6 @@ android {
         }
     }
     signingConfigs {
-        Properties localProperties = new Properties()
-        localProperties.load(new FileInputStream("$project.rootDir/local.properties"))
-        localProperties.each { prop ->
-            project.ext.set(prop.key, prop.value)
-        }
         debug {
             storeFile file('debug.keystore')
             storePassword 'android'
@@ -135,9 +130,9 @@ android {
         }
         release {
             storeFile file('release.keystore')
-            storePassword release_storePassword
-            keyAlias release_keyAlias
-            keyPassword release_keyPassword
+            storePassword releaseStorePassword
+            keyAlias releaseKeyAlias
+            keyPassword releaseKeyPassword
         }
     }
     buildTypes {
