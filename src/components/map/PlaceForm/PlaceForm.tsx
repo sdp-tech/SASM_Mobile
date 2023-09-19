@@ -24,6 +24,9 @@ import { Request } from "../../../common/requests";
 import Popup from "../../../common/Popup";
 import PlaceFormHeader from "./PlaceFormHeader";
 import PlaceProfileForm from "./PlaceProfileForm";
+import PlaceImageForm from "./PlaceImageForm";
+import PlaceTimeForm from "./PlaceTimeForm";
+import PlaceOwnerForm from "./PlaceOwnerForm";
 import { useNavigation } from "@react-navigation/native";
 
 export const HeaderPlaceForm = styled.View<{ color: string }>`
@@ -75,18 +78,18 @@ export interface SNSListProps {
 
 interface NextBtnProps {
   setTab: Dispatch<SetStateAction<number>>;
-  marginTop: number;
 }
 
-function NextBtn({ setTab, marginTop }: NextBtnProps) {
+function NextBtn({ setTab }: NextBtnProps) {
   return (
     <TouchableOpacity
       style={{
         backgroundColor: "#67d393",
-        marginBottom: 20,
-        width: "40%",
-        height: 40,
+        marginTop: "auto",
+        width: "45%",
+        height: 45,
         borderRadius: 10,
+        justifyContent: "center",
       }}
       onPress={() => setTab((prevTab) => prevTab + 1)}
     >
@@ -174,7 +177,7 @@ export default function PlaceForm({
               <Text style={TextStyles.content}>건당 ---P 지급해드려요</Text>
               <Link
                 onPress={() => {
-                  setTab(1);
+                  setTab(2);
                 }}
               >
                 <Text
@@ -190,7 +193,7 @@ export default function PlaceForm({
               </Link>
               <Link
                 onPress={() => {
-                  setTab(2);
+                  setTab(1);
                 }}
               >
                 <Text
@@ -206,12 +209,10 @@ export default function PlaceForm({
               </Link>
             </MenuWrapper>
           ),
-          1: (
-            <PlaceProfileForm
-              NextBtn={<NextBtn setTab={setTab} marginTop={60} />}
-            />
-          ),
-          // 2: <PlaceFormOwner setPlaceformModal={setPlaceformModal} />
+          1: <PlaceOwnerForm NextBtn={<NextBtn setTab={setTab} />} />,
+          2: <PlaceProfileForm NextBtn={<NextBtn setTab={setTab} />} />,
+          3: <PlaceImageForm NextBtn={<NextBtn setTab={setTab} />} />,
+          4: <PlaceTimeForm NextBtn={<NextBtn setTab={setTab} />} />,
         }[tab]
       }
     </Section>

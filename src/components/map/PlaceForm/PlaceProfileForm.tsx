@@ -17,8 +17,9 @@ import { TextPretendard as Text } from "../../../common/CustomText";
 import Postcode from "@actbase/react-daum-postcode";
 
 const Section = styled.View`
-  height: 100%;
+  height: 90%;
   width: 100%;
+  padding-bottom: 20%;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -120,7 +121,12 @@ export default function PlaceProfileScreen({ NextBtn }: TabProps) {
       </InputWithLabel>
       <InputWrapper>
         <Text style={TextStyles.labelSmall}>카테고리 선택</Text>
-        <Category checkedList={checkedList} setCheckedList={setCheckedList} />
+        <Category
+          story={true}
+          checkedList={checkedList}
+          setCheckedList={setCheckedList}
+          style={{ marginTop: 20 }}
+        />
       </InputWrapper>
       {NextBtn}
       <Modal visible={postModal}>
