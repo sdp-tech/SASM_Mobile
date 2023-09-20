@@ -17,13 +17,13 @@ interface CommentProps {
     callback?: any;
 }
 
-const Comment = ({ data, story_id, reRenderScreen, email, isLogin, navigation, callback }: CommentProps) => {
+export function Comment ({ data, story_id, reRenderScreen, email, isLogin, navigation, callback }: CommentProps)  {
     const date = data.created_at.slice(0, 10);
     const { width, height } = Dimensions.get('window');
     const [modalVisible, setModalVisible] = useState<boolean>(false);
     const [reported, setReported] = useState<string>('');
     const [reportVisible, setReportVisible] = useState<boolean>(false);
-    const [like, setLike] = useState<boolean>(data.user_likes);
+    const [like, setLike] = useState<boolean>(false);
     const request = new Request();
 
     const onReport = async (item: any) => {
@@ -37,8 +37,22 @@ const Comment = ({ data, story_id, reRenderScreen, email, isLogin, navigation, c
     const toggleLike = async () => {
         if(isLogin){
         const response = await request.post(`/stories/${story_id}/comments/${data.id}/like/`, {}, {});
-        setLike(!like);
+
+        //console.error(response.data);
+        console.error(response.data.data.likes);
+        //setLike(response.data.data.likes);
+        //사용자 like상태로 like 바꿈
+        //ha... 안바뀝니다 왜지요?
+        //setLike(response.data.data.likes)
+        if(response.data.data.likes!=like){
+            setLike(!like);
+        }
+        //setLike(!like);
         reRenderScreen();
+
+        console.error("like는",like);
+        
+
         } else {
             Alert.alert(
               "로그인이 필요합니다.",
@@ -160,4 +174,4 @@ const textStyles = StyleSheet.create({
     }
 })
 
-export default Comment;
+// export default Comment;
