@@ -12,10 +12,7 @@ import { useState } from "react";
 import InputWithLabel, {
   InputTouchWithLabel,
 } from "../../../common/InputWithLabel";
-import Close from "../../../assets/img/common/Close.svg";
-import Category from "../../../common/Category";
 import { TextPretendard as Text } from "../../../common/CustomText";
-import Postcode from "@actbase/react-daum-postcode";
 
 const Section = styled.View`
   height: 90%;
@@ -38,18 +35,11 @@ const InputStyle = {
   marginVertical: 15,
 };
 
-interface BtnProps {
-  setPostModal: any;
-}
-
 interface TabProps {
   NextBtn: any;
 }
 
 export default function PlaceAddinfoForm({ NextBtn }: TabProps) {
-  const [postModal, setPostModal] = useState(false);
-  const [checkedList, setCheckedList] = useState<string[]>([]);
-
   return (
     <Section>
       <Text style={{ ...TextStyles.label, marginTop: 30, fontWeight: 700 }}>

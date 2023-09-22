@@ -129,7 +129,6 @@ const TextStyles = StyleSheet.create({
     marginTop: 5,
     lineHeight: 24,
     letterSpacing: -0.6,
-    marginLeft: 23,
   },
   labelSmall: {
     fontSize: 14,
