@@ -12,6 +12,7 @@ import { useState } from "react";
 import InputWithLabel, {
   InputTouchWithLabel,
 } from "../../../common/InputWithLabel";
+import Close from "../../../assets/img/common/Close.svg";
 import Category from "../../../common/Category";
 import { TextPretendard as Text } from "../../../common/CustomText";
 import Postcode from "@actbase/react-daum-postcode";
@@ -130,17 +131,56 @@ export default function PlaceProfileScreen({ NextBtn }: TabProps) {
       </InputWrapper>
       {NextBtn}
       <Modal visible={postModal}>
-        <Postcode
-          style={{ width: "100%", height: "100%", marginTop: 50 }}
-          onError={() => {
-            Alert.alert("주소 검색에 실패하였습니다.");
+        <TouchableOpacity
+          onPress={() => setPostModal(false)}
+        ></TouchableOpacity>
+        <View
+          style={{
+            paddingVertical: "40%",
+            height: "100%",
+            width: "100%",
           }}
-          jsOptions={{ animation: true, hideMapBtn: true }}
-          onSelected={(data) => {
-            // setForm({ ...form, address: data.address })
-            setPostModal(false);
-          }}
-        />
+        >
+          <View
+            style={{
+              display: "flex",
+              flexDirection: "row",
+              alignContent: "center",
+              justifyContent: "space-between",
+              paddingHorizontal: 20,
+              height: 40,
+            }}
+          >
+            <Text
+              style={{
+                ...TextStyles.label,
+              }}
+            >
+              우편번호 검색
+            </Text>
+            <TouchableOpacity
+              onPress={() => {
+                setPostModal(false);
+              }}
+            >
+              <Close width={20} height={20} color="#000000" />
+            </TouchableOpacity>
+          </View>
+          <Postcode
+            style={{
+              width: "100%",
+              height: "100%",
+            }}
+            onError={() => {
+              Alert.alert("주소 검색에 실패하였습니다.");
+            }}
+            jsOptions={{ animation: true, hideMapBtn: true }}
+            onSelected={(data) => {
+              // setForm({ ...form, address: data.address })
+              setPostModal(false);
+            }}
+          />
+        </View>
       </Modal>
     </Section>
   );
