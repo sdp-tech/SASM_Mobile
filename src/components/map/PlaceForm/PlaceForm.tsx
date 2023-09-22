@@ -27,6 +27,7 @@ import PlaceProfileForm from "./PlaceProfileForm";
 import PlaceImageForm from "./PlaceImageForm";
 import PlaceTimeForm from "./PlaceTimeForm";
 import PlaceOwnerForm from "./PlaceOwnerForm";
+import PlaceAddinfoForm from "./PlaceAddinfoForm";
 import { useNavigation } from "@react-navigation/native";
 
 export const HeaderPlaceForm = styled.View<{ color: string }>`
@@ -213,6 +214,7 @@ export default function PlaceForm({
           2: <PlaceProfileForm NextBtn={<NextBtn setTab={setTab} />} />,
           3: <PlaceImageForm NextBtn={<NextBtn setTab={setTab} />} />,
           4: <PlaceTimeForm NextBtn={<NextBtn setTab={setTab} />} />,
+          5: <PlaceAddinfoForm NextBtn={<NextBtn setTab={setTab} />} />,
         }[tab]
       }
     </Section>
