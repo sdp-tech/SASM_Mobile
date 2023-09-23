@@ -9,9 +9,7 @@ import {
   Modal,
 } from "react-native";
 import { useState } from "react";
-import InputWithLabel, {
-  InputTouchWithLabel,
-} from "../../../common/InputWithLabel";
+import InputWithLabel from "../../../common/InputWithLabel";
 import Close from "../../../assets/img/common/Close.svg";
 import Category from "../../../common/Category";
 import { TextPretendard as Text } from "../../../common/CustomText";
@@ -46,33 +44,6 @@ interface TabProps {
   NextBtn: any;
 }
 
-function ModalBtn({ setPostModal }: BtnProps) {
-  return (
-    <TouchableOpacity
-      style={{
-        width: 70,
-        height: 35,
-        borderRadius: 10,
-        backgroundColor: "#C0C0C0",
-        alignSelf: "flex-end",
-      }}
-      onPress={() => setPostModal(true)}
-    >
-      <Text
-        style={{
-          ...TextStyles.label,
-          width: "100%",
-          alignSelf: "center",
-          color: "#FFFFFF",
-          textAlign: "center",
-        }}
-      >
-        주소검색
-      </Text>
-    </TouchableOpacity>
-  );
-}
-
 export default function PlaceProfileScreen({ NextBtn }: TabProps) {
   const [postModal, setPostModal] = useState(false);
   const [checkedList, setCheckedList] = useState<string[]>([]);
@@ -97,6 +68,9 @@ export default function PlaceProfileScreen({ NextBtn }: TabProps) {
       >
         <TouchableOpacity
           style={{
+            display: "flex",
+            flexDirection: "row",
+            alignContent: "center",
             position: "absolute",
             top: 20,
             right: 30,

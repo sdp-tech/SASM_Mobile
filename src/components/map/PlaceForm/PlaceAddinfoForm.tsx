@@ -9,9 +9,7 @@ import {
   Modal,
 } from "react-native";
 import { useState } from "react";
-import InputWithLabel, {
-  InputTouchWithLabel,
-} from "../../../common/InputWithLabel";
+import InputWithLabel from "../../../common/InputWithLabel";
 import { TextPretendard as Text } from "../../../common/CustomText";
 
 const Section = styled.View`
@@ -21,13 +19,6 @@ const Section = styled.View`
   display: flex;
   flex-direction: column;
   align-items: center;
-`;
-
-const InputWrapper = styled.View`
-  width: 85%;
-  display: flex;
-  align-items: flex-start;
-  margin: 10px auto;
 `;
 
 const InputStyle = {

@@ -33,6 +33,12 @@ const CategoryWrapper = styled.TouchableOpacity<{
   border: 1px solid #67d393;
 `;
 
+const TextWrapper = styled.View`
+  height: 100%;
+  display: flex;
+  flex-direction: row;
+`;
+
 interface ListProps {
   id: number;
   name: string;
@@ -117,7 +123,16 @@ export default function PlaceProfileScreen({ NextBtn }: TabProps) {
       >
         영업시간
       </Text>
-
+      <TextWrapper>
+        <Text
+          style={{
+            ...TextStyles.labelSmall,
+            alignSelf: "flex-start",
+          }}
+        >
+          브레이크타임
+        </Text>
+      </TextWrapper>
       {NextBtn}
     </Section>
   );

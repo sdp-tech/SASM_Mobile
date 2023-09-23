@@ -23,18 +23,6 @@ const Section = styled.View`
   align-items: center;
 `;
 
-const InputWrapper = styled.View`
-  width: 85%;
-  display: flex;
-  align-items: flex-start;
-  margin: 10px auto;
-`;
-
-const InputStyle = {
-  width: "100%",
-  marginVertical: 20,
-};
-
 interface TabProps {
   NextBtn: any;
 }

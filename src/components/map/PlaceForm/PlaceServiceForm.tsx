@@ -9,9 +9,6 @@ import {
   Modal,
 } from "react-native";
 import { Dispatch, SetStateAction, useState } from "react";
-import InputWithLabel, {
-  InputTouchWithLabel,
-} from "../../../common/InputWithLabel";
 import FinishModal from "../../../common/FinishModal";
 import { NextBtn } from "./PlaceForm";
 import { TextPretendard as Text } from "../../../common/CustomText";
@@ -23,13 +20,6 @@ const Section = styled.View`
   display: flex;
   flex-direction: column;
   align-items: center;
-`;
-
-const InputWrapper = styled.View`
-  width: 85%;
-  display: flex;
-  align-items: flex-start;
-  margin: 10px auto;
 `;
 
 const SelectWrapper = styled.View`
@@ -56,11 +46,6 @@ const SelectItem = styled.TouchableOpacity<{
   border-color: #82daa6;
   border-width: 1;
 `;
-
-const InputStyle = {
-  width: "100%",
-  marginVertical: 15,
-};
 
 interface TabProps {
   finish: () => void;

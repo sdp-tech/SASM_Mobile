@@ -17,8 +17,6 @@ import {
 import { TextPretendard as Text } from "../../../common/CustomText";
 import Close from "../../../assets/img/common/Close.svg";
 import styled from "styled-components/native";
-import PlaceFormUser from "./PlaceFormUser";
-import PlaceFormOwner from "./PlaceFormOwner";
 import PlaceUser from "../../../assets/img/Map/PlaceUser.svg";
 import { Request } from "../../../common/requests";
 import Popup from "../../../common/Popup";
@@ -72,12 +70,6 @@ interface PlaceFormProps {
   setPlaceformModal: Dispatch<SetStateAction<boolean>>;
 }
 
-export interface SNSListProps {
-  id: number;
-  name: string;
-  key: number;
-}
-
 interface NextBtnProps {
   onPress: () => void;
   text?: string;
@@ -117,8 +109,6 @@ export default function PlaceForm({
 
   const [tab, setTab] = useState<number>(0);
   const [closePopup, setClosePopup] = useState<boolean>(false);
-  const request = new Request();
-  const navigation = useNavigation();
 
   useEffect(() => {
     if (closePopup) {
