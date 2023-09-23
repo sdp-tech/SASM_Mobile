@@ -159,7 +159,7 @@ const BottomBarSection = ({ id, post, isLogin, onRefresh, navigation }:{id: numb
         </TouchableOpacity>
         <Text style={{fontSize: 14, color: '#202020', lineHeight: 20, marginLeft: 3}}>{post.comment_cnt}</Text> */}
       </View>
-      <ShareButton color={'black'} message={`[SASM Curation] ${post.title}`} image={post.rep_pic} description={post.contents} id={id} />
+      <ShareButton color={'black'} message={`[SASM Curation] ${post.title}`} image={post.rep_pic} description={post.contents} id={id} from='curation' />
     </View>
   )
 }

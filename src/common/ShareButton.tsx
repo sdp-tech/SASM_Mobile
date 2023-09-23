@@ -9,10 +9,11 @@ interface ShareButtonProps {
     description: string;
     color: 'black' | 'white';
     id: Number;
+    from: string;
 }
 
 // TODO: 카카오톡 공유하기 등 기능 확장 필요
-export default function ShareButton({ message, color, image, description, id }: ShareButtonProps): JSX.Element {
+export default function ShareButton({ message, color, image, description, id, from }: ShareButtonProps): JSX.Element {
     const getPreview = (description: string) => {
         return description
             .replace(/<.*?>/g, ' ') // 그외 html 태그 치환
@@ -37,12 +38,20 @@ export default function ShareButton({ message, color, image, description, id }: 
                     {
                         title: "SASM 앱에서 확인해보세요!",
                         link: {
+                            // androidExecutionParams: [
+                            //     { key: "id", value: id.toString() },
+                            // ],
+                            // iosExecutionParams: [
+                            //     { key: "id", value: id.toString() },
+                            // ],
                             androidExecutionParams: [
-                                { key: "id", value: id.toString() },
+                                { key: 'from', value: from },
+                                { key: 'id', value: id.toString() }
                             ],
                             iosExecutionParams: [
-                                { key: "id", value: id.toString() },
-                            ],
+                                { key: 'from', value: from },
+                                { key: 'id', value: id.toString() }
+                            ]
                         },
                     },
                 ],
