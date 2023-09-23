@@ -79,7 +79,7 @@ export default function PlaceProfileScreen({ NextBtn }: TabProps) {
 
   return (
     <Section>
-      <Text style={{ ...TextStyles.label, marginTop: 80, marginBottom: 50 }}>
+      <Text style={{ ...TextStyles.label, marginTop: 85, marginBottom: 50 }}>
         어떤 장소인지 알려주세요.
       </Text>
       <InputWithLabel
@@ -189,7 +189,6 @@ export default function PlaceProfileScreen({ NextBtn }: TabProps) {
 const TextStyles = StyleSheet.create({
   label: {
     fontSize: 16,
-    marginTop: 5,
     lineHeight: 24,
     letterSpacing: -0.6,
   },

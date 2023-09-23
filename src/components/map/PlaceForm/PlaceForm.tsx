@@ -113,25 +113,12 @@ export function NextBtn({ onPress, text = "다음" }: NextBtnProps) {
 export default function PlaceForm({
   setPlaceformModal,
 }: PlaceFormProps): JSX.Element {
+  const [owner, setOwner] = useState(false);
+
   const [tab, setTab] = useState<number>(0);
-  const [snsList, setSNSList] = useState<SNSListProps[]>([]);
   const [closePopup, setClosePopup] = useState<boolean>(false);
   const request = new Request();
   const navigation = useNavigation();
-
-  const getSNSList = async () => {
-    const response_sns_list = await request.get("/places/sns_types/");
-    setSNSList([
-      ...response_sns_list.data.data.results.filter(
-        (el: SNSListProps) => el.name != ""
-      ),
-      { id: 0, name: "기타" },
-    ]);
-  };
-
-  useEffect(() => {
-    getSNSList();
-  }, []);
 
   useEffect(() => {
     if (closePopup) {
@@ -157,14 +144,19 @@ export default function PlaceForm({
       {tab == 0 ? (
         <TouchableOpacity
           onPress={() => {
-            tab == 0 ? setPlaceformModal(false) : setClosePopup(true);
+            setPlaceformModal(false);
           }}
         >
           <Close style={{ top: "60%", margin: "8%" }} color="#000000" />
         </TouchableOpacity>
       ) : (
         <PlaceFormHeader
-          onLeft={() => setTab((prevTab) => prevTab - 1)}
+          onLeft={() =>
+            setTab((prevTab) => {
+              if (prevTab == 2 && !owner) return 0;
+              else return prevTab - 1;
+            })
+          }
           onRight={() => setClosePopup(true)}
         />
       )}
@@ -180,6 +172,7 @@ export default function PlaceForm({
               <Text style={TextStyles.content}>건당 ---P 지급해드려요</Text>
               <Link
                 onPress={() => {
+                  setOwner(false);
                   setTab(2);
                 }}
               >
@@ -196,6 +189,7 @@ export default function PlaceForm({
               </Link>
               <Link
                 onPress={() => {
+                  setOwner(true);
                   setTab(1);
                 }}
               >

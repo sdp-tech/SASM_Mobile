@@ -23,17 +23,15 @@ const Section = styled.View`
   align-items: center;
 `;
 
-const InputWrapper = styled.View`
-  width: 85%;
+const Btn = styled.TouchableOpacity`
   display: flex;
-  align-items: flex-start;
-  margin: 10px auto;
+  flex-direction: row;
+  align-items: center;
+  border-radius: 12;
+  background-color: #d7d7d7;
+  width: 80%;
+  height: 50px;
 `;
-
-const InputStyle = {
-  width: "100%",
-  marginVertical: 20,
-};
 
 interface TabProps {
   NextBtn: any;
@@ -42,9 +40,21 @@ interface TabProps {
 export default function PlaceProfileScreen({ NextBtn }: TabProps) {
   return (
     <Section>
-      <Text style={{ ...TextStyles.label, marginTop: 50, marginBottom: 100 }}>
+      <Text style={{ ...TextStyles.label, marginTop: 85, marginBottom: 100 }}>
         사업자 등록증을 업로드해주세요.
       </Text>
+      <Btn style={{ marginTop: 75 }}>
+        <Text
+          style={{
+            ...TextStyles.label,
+            color: "#202020",
+            width: "100%",
+            textAlign: "center",
+          }}
+        >
+          업로드하기
+        </Text>
+      </Btn>
       {NextBtn}
     </Section>
   );
@@ -53,8 +63,6 @@ export default function PlaceProfileScreen({ NextBtn }: TabProps) {
 const TextStyles = StyleSheet.create({
   label: {
     fontSize: 16,
-    marginTop: 5,
-    lineHeight: 24,
     letterSpacing: -0.6,
   },
   labelSmall: {
