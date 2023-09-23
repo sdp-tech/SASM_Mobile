@@ -60,7 +60,7 @@ const CardView = ({ gap, offset, data, pageWidth, renderItem, dot, onEndReached,
       <FlatList
         data={data}
         renderItem={renderItem}
-        keyExtractor={(item: any) => item.id}
+        keyExtractor={(item, index) => index.toString()}
         horizontal
         pagingEnabled
         onScroll={onScroll}
