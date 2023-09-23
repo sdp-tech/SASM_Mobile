@@ -79,10 +79,11 @@ export interface SNSListProps {
 }
 
 interface NextBtnProps {
-  setTab: Dispatch<SetStateAction<number>>;
+  onPress: () => void;
+  text?: string;
 }
 
-function NextBtn({ setTab }: NextBtnProps) {
+export function NextBtn({ onPress, text = "다음" }: NextBtnProps) {
   return (
     <TouchableOpacity
       style={{
@@ -93,7 +94,7 @@ function NextBtn({ setTab }: NextBtnProps) {
         borderRadius: 10,
         justifyContent: "center",
       }}
-      onPress={() => setTab((prevTab) => prevTab + 1)}
+      onPress={onPress}
     >
       <Text
         style={{
@@ -103,7 +104,7 @@ function NextBtn({ setTab }: NextBtnProps) {
           margin: 0,
         }}
       >
-        다음
+        {text}
       </Text>
     </TouchableOpacity>
   );
@@ -211,12 +212,62 @@ export default function PlaceForm({
               </Link>
             </MenuWrapper>
           ),
-          1: <PlaceOwnerForm NextBtn={<NextBtn setTab={setTab} />} />,
-          2: <PlaceProfileForm NextBtn={<NextBtn setTab={setTab} />} />,
-          3: <PlaceImageForm NextBtn={<NextBtn setTab={setTab} />} />,
-          4: <PlaceTimeForm NextBtn={<NextBtn setTab={setTab} />} />,
-          5: <PlaceAddinfoForm NextBtn={<NextBtn setTab={setTab} />} />,
-          6: <PlaceServiceForm NextBtn={<NextBtn setTab={setTab} />} />,
+          1: (
+            <PlaceOwnerForm
+              NextBtn={
+                <NextBtn
+                  onPress={() => {
+                    setTab((prev) => prev + 1);
+                  }}
+                />
+              }
+            />
+          ),
+          2: (
+            <PlaceProfileForm
+              NextBtn={
+                <NextBtn
+                  onPress={() => {
+                    setTab((prev) => prev + 1);
+                  }}
+                />
+              }
+            />
+          ),
+          3: (
+            <PlaceImageForm
+              NextBtn={
+                <NextBtn
+                  onPress={() => {
+                    setTab((prev) => prev + 1);
+                  }}
+                />
+              }
+            />
+          ),
+          4: (
+            <PlaceTimeForm
+              NextBtn={
+                <NextBtn
+                  onPress={() => {
+                    setTab((prev) => prev + 1);
+                  }}
+                />
+              }
+            />
+          ),
+          5: (
+            <PlaceAddinfoForm
+              NextBtn={
+                <NextBtn
+                  onPress={() => {
+                    setTab((prev) => prev + 1);
+                  }}
+                />
+              }
+            />
+          ),
+          6: <PlaceServiceForm finish={() => setPlaceformModal(false)} />,
         }[tab]
       }
     </Section>

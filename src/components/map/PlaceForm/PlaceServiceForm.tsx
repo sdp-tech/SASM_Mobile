@@ -12,6 +12,8 @@ import { Dispatch, SetStateAction, useState } from "react";
 import InputWithLabel, {
   InputTouchWithLabel,
 } from "../../../common/InputWithLabel";
+import FinishModal from "../../../common/FinishModal";
+import { NextBtn } from "./PlaceForm";
 import { TextPretendard as Text } from "../../../common/CustomText";
 
 const Section = styled.View`
@@ -61,10 +63,11 @@ const InputStyle = {
 };
 
 interface TabProps {
-  NextBtn: any;
+  finish: () => void;
 }
 
-export default function PlaceAddinfoForm({ NextBtn }: TabProps) {
+export default function PlaceAddinfoForm({ finish }: TabProps) {
+  const [modal, setModal] = useState(false);
   const [selectedServ, setSelectedServ] = useState<number[]>([]);
   const [selectedEvent, setSelectedEvent] = useState<number[]>([]);
 
@@ -174,8 +177,24 @@ export default function PlaceAddinfoForm({ NextBtn }: TabProps) {
           );
         })}
       </SelectWrapper>
-
-      {NextBtn}
+      <Modal visible={modal}>
+        <FinishModal
+          setModal={setModal}
+          navigation={finish}
+          title="제보 완료 !"
+          subtitle={[
+            "제보해주신 장소는",
+            "SASM에서 검토한 후",
+            "최종 등록됩니다",
+          ]}
+        />
+      </Modal>
+      <NextBtn
+        onPress={() => {
+          setModal(true);
+        }}
+        text="제보하기"
+      />
     </Section>
   );
 }
