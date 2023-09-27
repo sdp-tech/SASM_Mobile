@@ -1,14 +1,39 @@
 import BottomSheet from "@gorhom/bottom-sheet";
-import React, { useEffect, useRef, useState, useMemo, SetStateAction, Dispatch, useCallback, memo, useContext } from 'react';
-import { TouchableOpacity, View, Button, StyleSheet, SafeAreaView, Dimensions, ActivityIndicator, Modal, Alert } from "react-native";
-import NaverMapView, { Align, Marker } from './NaverMap';
+import React, {
+  useEffect,
+  useRef,
+  useState,
+  useMemo,
+  SetStateAction,
+  Dispatch,
+  useCallback,
+  memo,
+  useContext,
+} from "react";
+import {
+  TouchableOpacity,
+  View,
+  Button,
+  StyleSheet,
+  SafeAreaView,
+  Dimensions,
+  ActivityIndicator,
+  Modal,
+  Alert,
+} from "react-native";
+import NaverMapView, { Align, Marker } from "./NaverMap";
 import styled from "styled-components/native";
-import SearchBar from '../../common/SearchBar';
-import Category, { MatchCategory } from '../../common/Category';
-import MapList from './SpotList';
-import { Request } from '../../common/requests';
+import SearchBar from "../../common/SearchBar";
+import Category, { MatchCategory } from "../../common/Category";
+import MapList from "./SpotList";
+import { Request } from "../../common/requests";
 import { Coord } from "react-native-nmap";
-import Animated, { SharedValue, useAnimatedStyle, useSharedValue, withTiming } from "react-native-reanimated";
+import Animated, {
+  SharedValue,
+  useAnimatedStyle,
+  useSharedValue,
+  withTiming,
+} from "react-native-reanimated";
 import PlaceForm from "./PlaceForm/PlaceForm";
 import AddColor from "../../assets/img/common/AddColor.svg";
 import { StackScreenProps } from "@react-navigation/stack";
@@ -19,31 +44,30 @@ import { LoginContext } from "../../common/Context";
 import PlusButton from "../../common/PlusButton";
 import DetailCard from "./SpotDetail/DetailCard";
 
-const { width, height } = Dimensions.get('window');
+const { width, height } = Dimensions.get("window");
 
 const SearchHereButton = styled.TouchableOpacity`
   align-self: center;
   padding: 5px;
   border-radius: 20px;
-  background-color: #FFFFFF;
-`
+  background-color: #ffffff;
+`;
 const Circle = styled.TouchableOpacity<{ width: number }>`
-	width: ${props => props.width}px;
-	height: ${props => props.width}px;
-	border-radius: ${props => props.width / 2}px;
-	background-color: #209DF5;
-`
+  width: ${(props) => props.width}px;
+  height: ${(props) => props.width}px;
+  border-radius: ${(props) => props.width / 2}px;
+  background-color: #209df5;
+`;
 const MoveToCenterButton = styled(Circle)`
-	background-color: #FFFFFF;
-	display: flex;
-	align-items: center;
-	justify-content: center;
-	position: absolute;
+  background-color: #ffffff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: absolute;
   z-index: 0;
   top: ${height / 2};
   right: 15;
-`
-
+`;
 
 // 최소 단위 interface
 export interface DataTypes {
@@ -101,33 +125,42 @@ interface MapProps {
   nowCoor: Coord;
 }
 
-const Map = ({ mapView, setSheetMode, placeData, setTempCoor, setDetailData, center, setCenter, nowCoor }: MapProps) => {
+const Map = ({
+  mapView,
+  setSheetMode,
+  placeData,
+  setTempCoor,
+  setDetailData,
+  center,
+  setCenter,
+  nowCoor,
+}: MapProps) => {
   const request = new Request();
   //지도가 이동할때마다 지도의 중심 좌표를 임시로 저장
   const onChangeCenter = (event: any) => {
     setTempCoor({
       latitude: event.latitude,
       longitude: event.longitude,
-    })
-  }
+    });
+  };
   const getDetail = async (id: number) => {
     const response_detail = await request.get(`/places/place_detail/${id}`);
     setDetailData(response_detail.data.data);
     setCenter({
       latitude: response_detail.data.data.latitude,
       longitude: response_detail.data.data.longitude,
-    })
+    });
     setSheetMode(false);
-  }
+  };
 
   return (
     <>
       <NaverMapView
         ref={mapView}
-        style={{ width: '100%', height: '100%', position: 'relative' }}
+        style={{ width: "100%", height: "100%", position: "relative" }}
         showsMyLocationButton={false}
         center={{ ...center, zoom: 13 }}
-        onCameraChange={e => onChangeCenter(e)}
+        onCameraChange={(e) => onChangeCenter(e)}
         scaleBar={false}
         zoomControl={false}
         zoomGesturesEnabled={true}
@@ -136,54 +169,69 @@ const Map = ({ mapView, setSheetMode, placeData, setTempCoor, setDetailData, cen
           key={0}
           coordinate={nowCoor}
           image={require(`../../assets/img/Map/Markers/MarkerNow.png`)}
-          width={20} height={30} />
-        {
-          placeData.map((data: placeDataProps, index: number) => {
-            const coor: Coord = { latitude: data.latitude, longitude: data.longitude }
-            const category = MatchCategory(data.category);
-            let image;
-            switch (category) {
-              case 0:
-                image = require(`../../assets/img/Map/Markers/Marker0.png`);
-                break;
-              case 1:
-                image = require(`../../assets/img/Map/Markers/Marker1.png`);
-                break;
-              case 2:
-                image = require(`../../assets/img/Map/Markers/Marker2.png`);
-                break;
-              case 3:
-                image = require(`../../assets/img/Map/Markers/Marker3.png`);
-                break;
-              case 4:
-                image = require(`../../assets/img/Map/Markers/Marker4.png`);
-                break;
-              case 5:
-                image = require(`../../assets/img/Map/Markers/Marker5.png`);
-                break;
-            }
-            return (
-              <Marker
-                key={index}
-                coordinate={coor}
-                image={image}
-                onClick={() => { getDetail(data.id) }}
-                width={20} height={30}
-                caption={{
-                  text: `${data.place_name}`, align: Align.Bottom, textSize: 15, color: "black"
-                }} />
-            )
-          })}
+          width={20}
+          height={30}
+        />
+        {placeData.map((data: placeDataProps, index: number) => {
+          const coor: Coord = {
+            latitude: data.latitude,
+            longitude: data.longitude,
+          };
+          const category = MatchCategory(data.category);
+          let image;
+          switch (category) {
+            case 0:
+              image = require(`../../assets/img/Map/Markers/Marker0.png`);
+              break;
+            case 1:
+              image = require(`../../assets/img/Map/Markers/Marker1.png`);
+              break;
+            case 2:
+              image = require(`../../assets/img/Map/Markers/Marker2.png`);
+              break;
+            case 3:
+              image = require(`../../assets/img/Map/Markers/Marker3.png`);
+              break;
+            case 4:
+              image = require(`../../assets/img/Map/Markers/Marker4.png`);
+              break;
+            case 5:
+              image = require(`../../assets/img/Map/Markers/Marker5.png`);
+              break;
+          }
+          return (
+            <Marker
+              key={index}
+              coordinate={coor}
+              image={image}
+              onClick={() => {
+                getDetail(data.id);
+              }}
+              width={20}
+              height={30}
+              caption={{
+                text: `${data.place_name}`,
+                align: Align.Bottom,
+                textSize: 15,
+                color: "black",
+              }}
+            />
+          );
+        })}
       </NaverMapView>
     </>
-  )
+  );
 };
 
-interface MapContainerProps extends StackScreenProps<TabProps, '맵'> {
+interface MapContainerProps extends StackScreenProps<TabProps, "맵"> {
   nowCoor: Coord;
 }
 
-export default function MapContainer({ nowCoor, navigation, route }: MapContainerProps): JSX.Element {
+export default function MapContainer({
+  nowCoor,
+  navigation,
+  route,
+}: MapContainerProps): JSX.Element {
   const { isLogin, setLogin } = useContext(LoginContext);
   //지도의 Ref
   const mapView = useRef<any>(null);
@@ -194,33 +242,33 @@ export default function MapContainer({ nowCoor, navigation, route }: MapContaine
   const [total, setTotal] = useState<number>(0);
   const [detailData, setDetailData] = useState<detailDataProps>({
     id: 0,
-    place_name: '',
-    category: '',
-    open_hours: '',
-    mon_hours: '',
-    tues_hours: '',
-    wed_hours: '',
-    thurs_hours: '',
-    fri_hours: '',
-    sat_hours: '',
-    sun_hours: '',
-    etc_hours: '',
-    place_review: '',
-    address: '',
-    rep_pic: '',
-    short_cur: '',
+    place_name: "",
+    category: "",
+    open_hours: "",
+    mon_hours: "",
+    tues_hours: "",
+    wed_hours: "",
+    thurs_hours: "",
+    fri_hours: "",
+    sat_hours: "",
+    sun_hours: "",
+    etc_hours: "",
+    place_review: "",
+    address: "",
+    rep_pic: "",
+    short_cur: "",
     latitude: 0,
     longitude: 0,
     photos: [{}],
     sns: [{}],
     story_id: 0,
-    place_like: '',
+    place_like: "",
     category_statistics: [],
-    vegan_category: '',
+    vegan_category: "",
     tumblur_category: null,
     reusable_con_category: null,
     pet_category: false,
-    phone_num: '',
+    phone_num: "",
   });
 
   //장소 작성 모달
@@ -232,7 +280,7 @@ export default function MapContainer({ nowCoor, navigation, route }: MapContaine
   //checkedList => 카테고리 체크 복수 체크 가능
   const [checkedList, setCheckedList] = useState<string[]>([]);
   //search => 검색어
-  const [search, setSearch] = useState<string>('')
+  const [search, setSearch] = useState<string>("");
   const [page, setPage] = useState<number>(1);
   //searchHere => 특정 좌표에서 검색할때 tempCoor의 좌표를 기반으로 검색
   const [searchHere, setSearchHere] = useState<Coord>({ ...nowCoor });
@@ -240,7 +288,7 @@ export default function MapContainer({ nowCoor, navigation, route }: MapContaine
   //좌표, 검색어, 필터를 기반으로 장소들의 데이터 검색
   const getPlaces = async () => {
     setLoading(true);
-    const response = await request.get('/places/place_search/', {
+    const response = await request.get("/places/place_search/", {
       left: searchHere.latitude,
       right: searchHere.longitude,
       search: search,
@@ -251,28 +299,31 @@ export default function MapContainer({ nowCoor, navigation, route }: MapContaine
       setPlaceData(response.data.data.results);
       setTotal(response.data.data.count);
     }
-    if(response.data.data.count == 1) {
-      mapView?.current.animateToCoordinate({latitude: response.data.data.results[0].latitude, longitude: response.data.data.results[0].longitude});
-  }
+    if (response.data.data.count == 1) {
+      mapView?.current.animateToCoordinate({
+        latitude: response.data.data.results[0].latitude,
+        longitude: response.data.data.results[0].longitude,
+      });
+    }
     setLoading(false);
-  }
+  };
 
   //searchHere, page가 변할 시 데이터 재검색
-  useFocusEffect(useCallback(() => {
-    //좌표가 있으면 좌표로 이동
-    if (route.params.coor) {
-      mapView?.current.animateToCoordinate(route.params.coor)
-    }
-    else {
-      //현재 위치로 이동
-      mapView?.current.animateToCoordinate(nowCoor);
-      //스토리에서 넘어왔을 경우 해당 장소로 이동
-      if(route.params.place_name && search != route.params.place_name) {
-        setSearch(route.params.place_name);
+  useFocusEffect(
+    useCallback(() => {
+      //좌표가 있으면 좌표로 이동
+      if (route.params.coor) {
+        mapView?.current.animateToCoordinate(route.params.coor);
+      } else {
+        //현재 위치로 이동
+        mapView?.current.animateToCoordinate(nowCoor);
+        //스토리에서 넘어왔을 경우 해당 장소로 이동
+        if (route.params.place_name && search != route.params.place_name) {
+          setSearch(route.params.place_name);
+        } else getPlaces();
       }
-      else getPlaces();
-    }
-  }, [route.params, searchHere, page, search, checkedList]))
+    }, [route.params, searchHere, page, search, checkedList])
+  );
 
   /////////////////////////////////////////////////////// BottomSheet
   //BottomSheet에서 list(true)를 보일지 detail(false)을 보일지
@@ -281,19 +332,21 @@ export default function MapContainer({ nowCoor, navigation, route }: MapContaine
   const buttonAnimatedPosition = useSharedValue(45);
   const buttonAnimatedStyle = useAnimatedStyle(() => {
     return {
-      position: 'absolute',
+      position: "absolute",
       bottom: withTiming(buttonAnimatedPosition.value, { duration: 350 }),
     };
-  })
+  });
 
   //현재 위치로 돌아가기 버튼
   const handleToCenter = (): void => {
     mapView?.current.animateToCoordinate(nowCoor);
-  }
+  };
 
-  useFocusEffect(useCallback(() => {
-    setSheetMode(true);
-  }, []))
+  useFocusEffect(
+    useCallback(() => {
+      setSheetMode(true);
+    }, [])
+  );
 
   return (
     <View>
@@ -308,10 +361,8 @@ export default function MapContainer({ nowCoor, navigation, route }: MapContaine
         nowCoor={nowCoor}
       />
 
-      <MoveToCenterButton width={29}
-        onPress={handleToCenter}>
-        <Circle width={9}
-          onPress={handleToCenter} />
+      <MoveToCenterButton width={29} onPress={handleToCenter}>
+        <Circle width={9} onPress={handleToCenter} />
       </MoveToCenterButton>
       <BottomSheetMemo
         sheetMode={sheetMode}
@@ -328,18 +379,25 @@ export default function MapContainer({ nowCoor, navigation, route }: MapContaine
       />
 
       <Animated.View style={buttonAnimatedStyle}>
-        {
-          (searchHere.latitude.toFixed(8) != tempCoor.latitude.toFixed(8) || searchHere.longitude.toFixed(8) != tempCoor.longitude.toFixed(8)) &&
-          <SearchHereButton onPress={() => { setSearchHere(tempCoor) }}><SearchHere /></SearchHereButton>
-        }
+        {(searchHere.latitude.toFixed(8) != tempCoor.latitude.toFixed(8) ||
+          searchHere.longitude.toFixed(8) != tempCoor.longitude.toFixed(8)) && (
+          <SearchHereButton
+            onPress={() => {
+              setSearchHere(tempCoor);
+            }}
+          >
+            <SearchHere />
+          </SearchHereButton>
+        )}
         <Category
           setPage={setPage}
           checkedList={checkedList}
-          setCheckedList={setCheckedList} />
+          setCheckedList={setCheckedList}
+        />
         <SearchBar
           search={search}
           setSearch={setSearch}
-          style={{ backgroundColor: "#FFFFFF", width: '95%', marginBottom: 10 }}
+          style={{ backgroundColor: "#FFFFFF", width: "95%", marginBottom: 10 }}
           placeholder="장소를 검색해주세요"
           setPage={setPage}
         />
@@ -347,44 +405,64 @@ export default function MapContainer({ nowCoor, navigation, route }: MapContaine
       <PlusButton
         position="rightbottom"
         onPress={() => {
-          if (!isLogin) {
-            Alert.alert(
-              "로그인이 필요합니다.",
-              "로그인 항목으로 이동하시겠습니까?",
-              [
-                {
-                  text: "이동",
-                  onPress: () => navigation.navigate('마이페이지')
-      
-                },
-                {
-                  text: "취소",
-                  onPress: () => { },
-                  style: "cancel"
-                },
-              ],
-              { cancelable: false }
-            );
-            return;
-          }
+          // 확인을 위해 임시로 로그인 체크 해제. 이후 주석 풀기
+          // if (!isLogin) {
+          //   Alert.alert(
+          //     "로그인이 필요합니다.",
+          //     "로그인 항목으로 이동하시겠습니까?",
+          //     [
+          //       {
+          //         text: "이동",
+          //         onPress: () => navigation.navigate('마이페이지')
+
+          //       },
+          //       {
+          //         text: "취소",
+          //         onPress: () => { },
+          //         style: "cancel"
+          //       },
+          //     ],
+          //     { cancelable: false }
+          //   );
+          //   return;
+          // }
           setPlaceformModal(true);
-        }} />
+        }}
+      />
       <Modal visible={placeformModal}>
         <PlaceForm setPlaceformModal={setPlaceformModal} />
       </Modal>
     </View>
-  )
+  );
 }
 
 const CustomHandle = ({ mode }: { mode: boolean }) => {
-
   return (
-    <View style={{ backgroundColor: mode ? '#FFFFFF' : 'none', position: 'absolute', width: width, height: 39, borderTopEndRadius: 10, borderTopStartRadius: 10, display: 'flex', justifyContent: 'flex-start' }}>
-      <View style={{ width: 60, height: 5, alignSelf: 'center', backgroundColor: '#D9D9D9', borderRadius: 2.5, marginTop: 5 }}></View>
+    <View
+      style={{
+        backgroundColor: mode ? "#FFFFFF" : "none",
+        position: "absolute",
+        width: width,
+        height: 39,
+        borderTopEndRadius: 10,
+        borderTopStartRadius: 10,
+        display: "flex",
+        justifyContent: "flex-start",
+      }}
+    >
+      <View
+        style={{
+          width: 60,
+          height: 5,
+          alignSelf: "center",
+          backgroundColor: "#D9D9D9",
+          borderRadius: 2.5,
+          marginTop: 5,
+        }}
+      ></View>
     </View>
   );
 };
-
 
 interface BottomSheetMemoProps {
   sheetMode: boolean;
@@ -401,16 +479,28 @@ interface BottomSheetMemoProps {
 }
 //좌표가 바뀌어서 바텀시트가 올라가는것을 방지
 const BottomSheetMemo = memo(
-  ({ sheetMode, setSheetMode, buttonAnimatedPosition, loading, page, setPage, setCenter, setDetailData, placeData, total, detailData }: BottomSheetMemoProps) => {
+  ({
+    sheetMode,
+    setSheetMode,
+    buttonAnimatedPosition,
+    loading,
+    page,
+    setPage,
+    setCenter,
+    setDetailData,
+    placeData,
+    total,
+    detailData,
+  }: BottomSheetMemoProps) => {
     const [index, setIndex] = useState(1);
-    const { width, height } = Dimensions.get('window');
+    const { width, height } = Dimensions.get("window");
     //modal의 ref
     const modalRef = useRef(null);
     //BottomSheet 중단점
     const snapPoints = useMemo(() => [15, height * 0.6, height - 127], []);
     useEffect(() => {
-      if (sheetMode) setIndex(1)
-    }, [sheetMode])
+      if (sheetMode) setIndex(1);
+    }, [sheetMode]);
     return (
       <BottomSheet
         ref={modalRef}
@@ -422,38 +512,35 @@ const BottomSheetMemo = memo(
           if ((fromIndex == 1 || fromIndex == 2) && toIndex == 0) {
             if (!sheetMode) setSheetMode(true);
             else buttonAnimatedPosition.value = 45;
-          }
-          else if (toIndex == 2) {
+          } else if (toIndex == 2) {
             buttonAnimatedPosition.value = 750;
-          }
-          else {
+          } else {
             buttonAnimatedPosition.value = height * 0.7;
             // setIdx(1);
           }
         }}
       >
-        {
-          loading ?
-            <ActivityIndicator style={{ flex: 1 }} /> :
-            <>
-              {
-                sheetMode ?
-                  <MapList
-                    setIndex={setIndex}
-                    page={page}
-                    setPage={setPage}
-                    total={total}
-                    placeData={placeData}
-                    setDetailData={setDetailData}
-                    setSheetMode={setSheetMode}
-                    setCenter={setCenter} />
-                  :
-                  <DetailCard
-                    setIndex={setIndex}
-                    detailData={detailData}
-                  />
-              }</>
-        }
+        {loading ? (
+          <ActivityIndicator style={{ flex: 1 }} />
+        ) : (
+          <>
+            {sheetMode ? (
+              <MapList
+                setIndex={setIndex}
+                page={page}
+                setPage={setPage}
+                total={total}
+                placeData={placeData}
+                setDetailData={setDetailData}
+                setSheetMode={setSheetMode}
+                setCenter={setCenter}
+              />
+            ) : (
+              <DetailCard setIndex={setIndex} detailData={detailData} />
+            )}
+          </>
+        )}
       </BottomSheet>
     );
-  });
+  }
+);
