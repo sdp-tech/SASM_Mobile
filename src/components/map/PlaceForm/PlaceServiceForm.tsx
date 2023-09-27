@@ -178,7 +178,7 @@ export default function PlaceAddinfoForm({ finish }: TabProps) {
         onPress={() => {
           setModal(true);
         }}
-        text="제보하기"
+        text="제보 완료"
       />
     </Section>
   );

@@ -51,7 +51,7 @@ const Link = styled.TouchableOpacity`
   width: 100%;
   height: 100px;
   background-color: #67d393;
-  margin-vertical: 10px;
+  margin-vertical: 50px;
   padding-horizontal: 20px;
   display: flex;
   flex-direction: row;
@@ -177,7 +177,7 @@ export default function PlaceForm({
                 </Text>
                 <PlaceUser />
               </Link>
-              <Link
+              {/* <Link
                 onPress={() => {
                   setOwner(true);
                   setTab(1);
@@ -193,7 +193,7 @@ export default function PlaceForm({
                   사업주입니다!
                 </Text>
                 <PlaceUser />
-              </Link>
+              </Link> */}
             </MenuWrapper>
           ),
           1: (
