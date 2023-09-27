@@ -26,6 +26,8 @@ import PlusButton from "../../common/PlusButton";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { TabProps } from "../../../App";
 import Arrow from '../../assets/img/common/Arrow.svg';
+import AddCategory from '../../assets/img/Forest/AddCategory.svg';
+import UserCategories from "./components/UserCategories";
 
 const { width, height } = Dimensions.get("screen");
 
@@ -40,6 +42,10 @@ const BoardListScreen = ({
   const [posts, setPosts] = useState([] as any);
   const [hotPosts, setHotPosts] = useState([] as any);
   const [newPosts, setNewPosts] = useState([] as any);
+  const [modalVisible, setModalVisible] = useState<boolean>(false);
+  const [userCategories, setUserCategories] = useState([] as any);
+  const [checkedList, setCheckedList] = useState([] as any);
+  const [selectedIds, setSelectedIds] = useState<number[]>([]);
   const {isLogin, setLogin} = useContext(LoginContext);
 
   const navigationToTab = useNavigation<StackNavigationProp<TabProps>>();
@@ -56,10 +62,19 @@ const BoardListScreen = ({
     setBoardLists(response.data.data.results);
   }
 
+  const getUserCategories = async () => {
+    const response = await request.get('/forest/user_categories/get/');
+    setUserCategories([...response.data.data.results, {id: 0, name: '+'}]);
+  }
+
   const getPosts = async () => {
-    const response = await request.get('/forest/', {}, null);
-    const response_hot = await request.get('/forest/', { order: 'hot' }, null);
-    const response_new = await request.get('/forest/', { order: 'latest' }, null);
+    let params = new URLSearchParams();
+    for (const category of checkedList){
+      params.append('semi_category_filters', category.id);
+    }
+    const response = await request.get(`/forest/?${params.toString()}`, {}, null);
+    const response_hot = await request.get(`/forest/?${params.toString()}`, { order: 'hot' }, null);
+    const response_new = await request.get(`/forest/?${params.toString()}`, { order: 'latest' }, null);
     setPosts(response.data.data.results);
     setHotPosts(response_hot.data.data.results);
     setNewPosts(response_new.data.data.results);
@@ -90,12 +105,16 @@ const BoardListScreen = ({
   }, [refreshing]);
 
   useFocusEffect(useCallback(() => {
-    if(isLogin) getUserInfo();
-  }, [isLogin]))
+    if(isLogin) {
+      getUserInfo();
+      getUserCategories();
+    }
+  }, [isLogin, modalVisible]))
 
   useFocusEffect(useCallback(() => {
     getPosts();
-  }, [refreshing]))
+    console.log(checkedList)
+  }, [refreshing, checkedList]))
 
   return (
     <SafeAreaView style={styles.container}>
@@ -120,10 +139,72 @@ const BoardListScreen = ({
             style={{
               backgroundColor: "#F1FCF5",
               alignItems: "center",
-              height: 240,
+              minHeight: 240,
               justifyContent: "flex-end",
             }}
-          />
+          >
+            { isLogin &&
+              <View 
+                style={{
+                  flexDirection: 'row',
+                  backgroundColor: 'white',
+                  width: 360, 
+                  borderWidth: 1, 
+                  borderColor: '#E3E3E3', 
+                  borderRadius: 4, 
+                  paddingVertical: 5, 
+                  marginTop: 240,
+                  marginBottom: 30,
+                  alignItems: 'center', 
+                  justifyContent: 'center'
+                }}
+              >
+                { userCategories.length > 0 ?
+                  <>
+                    <FlatList
+                      data={userCategories}
+                      renderItem={({ item }: any) => {
+                        if(item.id === 0){
+                          return (
+                            <TouchableOpacity onPress={() => setModalVisible(true)}>
+                              <AddCategory />
+                            </TouchableOpacity>
+                          )
+                        } else {
+                          return (
+                            <TouchableOpacity style={{ borderRadius: 16, borderColor: '#67D393', borderWidth: 1, paddingVertical: 4, paddingHorizontal: 16, marginRight: 8, marginVertical: 4, backgroundColor: selectedIds.includes(item.id) ? '#67D393' : 'white' }}
+                              onPress={() => {
+                                if (selectedIds.includes(item.id)) {
+                                  setSelectedIds(selectedIds.filter(id => id !== item.id));
+                                  setCheckedList(checkedList.filter((category: any) => category.id !== item.id));
+                                } else {
+                                  setSelectedIds([...selectedIds, item.id]);
+                                  setCheckedList([...checkedList, item]);
+                                }
+                              }}
+                            >
+                              <Text style={{ color: selectedIds.includes(item.id) ? 'white' : '#67D393', fontSize: 14, fontWeight: '700' }}># {item.name}</Text>
+                            </TouchableOpacity>
+                          )
+                        }}
+                      }
+                      contentContainerStyle={{ flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'center', padding: 10, alignItems: 'center' }}
+                      keyExtractor={(item) => item.id.toString()}
+                    />
+                  </>
+                  :
+                  <>
+                    <Text style={{color: '#848484', fontSize: 16, fontWeight: '700', marginRight: 10}}>
+                      {nickname}님의 카테고리를 추가해보세요.
+                    </Text>
+                    <TouchableOpacity onPress={() => setModalVisible(true)}>
+                      <AddCategory />
+                    </TouchableOpacity>
+                  </>
+                }
+              </View>
+            }
+          </View>
           <View
             style={{
               position: "absolute",
@@ -162,6 +243,20 @@ const BoardListScreen = ({
             paddingVertical: 15,
           }}
         >
+          {checkedList.length > 0 &&
+            <View style={{flexDirection: 'row', paddingHorizontal: 15, paddingBottom: 5}}>
+              {checkedList.map((category: any) => 
+                (
+                  <Text style={{color: '#67D393', fontWeight: '700', fontSize: 16}}>
+                    #{category.name+' '}
+                  </Text>
+                )
+              )}
+              <Text style={{color: '#67D393', fontWeight: '700', fontSize: 16}}>
+                과 관련된 정보들
+              </Text>
+            </View>
+          }
           <View style={{flexDirection: 'row', paddingHorizontal: 15}}>
             <Text
               style={{
@@ -407,6 +502,7 @@ const BoardListScreen = ({
           }
         }}
         position="rightbottom" />
+      <UserCategories modalVisible={modalVisible} setModalVisible={setModalVisible} categories={boardLists} />
     </SafeAreaView>
   );
 };
