@@ -11,6 +11,7 @@ import {
 import { useState } from "react";
 import InputWithLabel from "../../../common/InputWithLabel";
 import { TextPretendard as Text } from "../../../common/CustomText";
+import { formDataProps } from "./PlaceForm";
 
 const Section = styled.View`
   height: 90%;
@@ -28,9 +29,15 @@ const InputStyle = {
 
 interface TabProps {
   NextBtn: any;
+  formData: formDataProps;
+  setFormData: React.Dispatch<React.SetStateAction<formDataProps>>;
 }
 
-export default function PlaceAddinfoForm({ NextBtn }: TabProps) {
+export default function PlaceAddinfoForm({
+  NextBtn,
+  formData,
+  setFormData,
+}: TabProps) {
   return (
     <Section>
       <Text style={{ ...TextStyles.label, marginTop: 30, fontWeight: 700 }}>
@@ -44,13 +51,20 @@ export default function PlaceAddinfoForm({ NextBtn }: TabProps) {
         isRequired={true}
         placeholder="전화번호를 입력해주세요."
         containerStyle={InputStyle}
-        // onChangeText={(e) => { setForm({ ...form, place_name: e }) }}
+        value={formData.phone_num}
+        onChangeText={(e) => {
+          setFormData({ ...formData, phone_num: e });
+        }}
       />
       <InputWithLabel
         label="링크"
         isRequired={false}
         placeholder="장소와 관련된 링크를 입력해주세요."
         containerStyle={InputStyle}
+        value={formData.snsList === null ? undefined : formData.snsList[0]}
+        onChangeText={(e) => {
+          setFormData({ ...formData, snsList: [e] });
+        }}
       />
       <InputWithLabel
         label="덧붙이는 말"

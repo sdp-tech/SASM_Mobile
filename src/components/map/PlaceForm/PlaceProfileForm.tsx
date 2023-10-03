@@ -8,12 +8,13 @@ import {
   Alert,
   Modal,
 } from "react-native";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import InputWithLabel from "../../../common/InputWithLabel";
 import Close from "../../../assets/img/common/Close.svg";
 import Category from "../../../common/Category";
 import { TextPretendard as Text } from "../../../common/CustomText";
 import Postcode from "@actbase/react-daum-postcode";
+import { formDataProps } from "./PlaceForm";
 
 const Section = styled.View`
   height: 90%;
@@ -42,11 +43,26 @@ interface BtnProps {
 
 interface TabProps {
   NextBtn: any;
+  formData: formDataProps;
+  setFormData: React.Dispatch<React.SetStateAction<formDataProps>>;
 }
 
-export default function PlaceProfileScreen({ NextBtn }: TabProps) {
+export default function PlaceProfileScreen({
+  NextBtn,
+  formData,
+  setFormData,
+}: TabProps) {
   const [postModal, setPostModal] = useState(false);
   const [checkedList, setCheckedList] = useState<string[]>([]);
+
+  useEffect(() => {
+    if (checkedList.length > 1) {
+      Alert.alert("카테고리는 최대 1개까지만 선택 가능합니다.");
+      setCheckedList([]);
+    } else {
+      setFormData({ ...formData, category: checkedList[0] });
+    }
+  }, [checkedList]);
 
   return (
     <Section>
@@ -58,13 +74,18 @@ export default function PlaceProfileScreen({ NextBtn }: TabProps) {
         isRequired={true}
         placeholder="장소명을 입력해주세요."
         containerStyle={InputStyle}
-        // onChangeText={(e) => { setForm({ ...form, place_name: e }) }}
+        value={formData.place_name}
+        onChangeText={(e) => {
+          setFormData({ ...formData, place_name: e });
+        }}
       />
       <InputWithLabel
         label="주소등록"
+        value={formData.address}
         isRequired={true}
         placeholder="주소를 검색해주세요."
         containerStyle={InputStyle}
+        readonly
       >
         <TouchableOpacity
           style={{
@@ -150,7 +171,7 @@ export default function PlaceProfileScreen({ NextBtn }: TabProps) {
             }}
             jsOptions={{ animation: true, hideMapBtn: true }}
             onSelected={(data) => {
-              // setForm({ ...form, address: data.address })
+              setFormData({ ...formData, address: data.address });
               setPostModal(false);
             }}
           />

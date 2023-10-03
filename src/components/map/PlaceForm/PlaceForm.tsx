@@ -74,6 +74,28 @@ interface NextBtnProps {
   onPress: () => void;
   text?: string;
 }
+export interface formDataProps {
+  place_name: string;
+  category: string;
+  vegan_category: string | null;
+  tumblur_category: boolean | null;
+  reusable_con_category: boolean | null;
+  pet_category: boolean | null;
+  mon_hours: string;
+  tues_hours: string;
+  wed_hours: string;
+  thurs_hours: string;
+  fri_hours: string;
+  sat_hours: string;
+  sun_hours: string;
+  etc_hours: string;
+  place_review: string;
+  address: string;
+  short_cur: string;
+  phone_num: string;
+  imageList: string[] | null;
+  snsList: string[] | null;
+}
 
 export function NextBtn({ onPress, text = "다음" }: NextBtnProps) {
   return (
@@ -109,6 +131,28 @@ export default function PlaceForm({
 
   const [tab, setTab] = useState<number>(0);
   const [closePopup, setClosePopup] = useState<boolean>(false);
+  const [formData, setFormData] = useState<formDataProps>({
+    place_name: "",
+    category: "",
+    vegan_category: null,
+    tumblur_category: null,
+    reusable_con_category: null,
+    pet_category: null,
+    mon_hours: "",
+    tues_hours: "",
+    wed_hours: "",
+    thurs_hours: "",
+    fri_hours: "",
+    sat_hours: "",
+    sun_hours: "",
+    etc_hours: "",
+    place_review: "",
+    address: "",
+    short_cur: "",
+    phone_num: "",
+    imageList: null,
+    snsList: null,
+  });
 
   useEffect(() => {
     if (closePopup) {
@@ -216,6 +260,8 @@ export default function PlaceForm({
                   }}
                 />
               }
+              formData={formData}
+              setFormData={setFormData}
             />
           ),
           3: (
@@ -249,6 +295,8 @@ export default function PlaceForm({
                   }}
                 />
               }
+              formData={formData}
+              setFormData={setFormData}
             />
           ),
           6: <PlaceServiceForm finish={() => setPlaceformModal(false)} />,
