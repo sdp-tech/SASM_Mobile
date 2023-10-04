@@ -92,7 +92,7 @@ const StoryDetailBox = ({navigation, data, isLogin, onLayout, email, onRefresh, 
             [
                 {
                     text: "이동",
-                    onPress: () => navigation.navigate('마이페이지')
+                    onPress: () => navigation.navigate('마이페이지', {})
     
                 },
                 {

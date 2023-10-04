@@ -92,7 +92,7 @@ const handleFollow = async (target: string, isLogin: boolean, navigation: StackN
       [
         {
           text: "로그인",
-          onPress: () => navigation.navigate('마이페이지'),
+          onPress: () => navigation.navigate('마이페이지', {}),
           style: "cancel"
         },
         {
@@ -136,7 +136,7 @@ const BottomBarSection = ({ id, post, isLogin, onRefresh, navigation }:{id: numb
         [
           {
             text: "이동",
-            onPress: () => navigation.navigate('마이페이지')
+            onPress: () => navigation.navigate('마이페이지', {})
 
           },
           {
@@ -215,7 +215,7 @@ export default function CurationDetail({ navigation, route }: StackScreenProps<H
         [
           {
             text: "이동",
-            onPress: () => navigationTab.navigate('마이페이지')
+            onPress: () => navigationTab.navigate('마이페이지', {})
 
           },
           {
@@ -312,7 +312,7 @@ const Storys = ({ navigation, data }: { navigation: StackNavigationProp<TabProps
         [
           {
             text: "이동",
-            onPress: () => navigation.navigate('마이페이지')
+            onPress: () => navigation.navigate('마이페이지', {})
 
           },
           {

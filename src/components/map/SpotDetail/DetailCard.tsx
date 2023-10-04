@@ -180,7 +180,7 @@ export default function DetailCard({ detailData, setIndex }: DetailCardProps): J
         [
           {
             text: "이동",
-            onPress: () => navigationToTab.navigate('마이페이지')
+            onPress: () => navigationToTab.navigate('마이페이지', {})
 
           },
           {
@@ -204,7 +204,7 @@ export default function DetailCard({ detailData, setIndex }: DetailCardProps): J
         [
           {
             text: "이동",
-            onPress: () => navigationToTab.navigate('마이페이지')
+            onPress: () => navigationToTab.navigate('마이페이지', {})
 
           },
           {
@@ -277,7 +277,7 @@ export default function DetailCard({ detailData, setIndex }: DetailCardProps): J
                     [
                       {
                         text: "이동",
-                        onPress: () => navigationToTab.navigate('마이페이지')
+                        onPress: () => navigationToTab.navigate('마이페이지', {})
             
                       },
                       {
@@ -295,7 +295,7 @@ export default function DetailCard({ detailData, setIndex }: DetailCardProps): J
                 <PlusWhite />
               </TouchableOpacity>
               <Heart like={likePlace} onPress={handlePlaceLike} color={'white'} size={20}/>
-              <ShareButton color='white' message={`[SASM Map] ${detailData.place_name}(${detailData.category}) - ${detailData.place_review}`} />
+              <ShareButton color='white' message={`[SASM Map] ${detailData.place_name} - ${detailData.category}`} image={detailData.rep_pic} description={detailData.place_review} id={detailData.id} from='place' />
             </ButtonBox>
             <TextBox>
               <View style={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
