@@ -42,7 +42,7 @@ const MainCard = ({id, place_name, title, rep_pic, story_like, category, preview
         [
             {
                 text: "이동",
-                onPress: () => navigation.navigate('마이페이지'),
+                onPress: () => navigation.navigate('마이페이지', {}),
 
             },
             {

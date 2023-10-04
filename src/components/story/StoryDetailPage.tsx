@@ -121,7 +121,7 @@ const BottomBarSection = ({ post, email, scrollToComment, onRefresh, navigation 
         [
           {
             text: "이동",
-            onPress: () => navigation.navigate('마이페이지')
+            onPress: () => navigation.navigate('마이페이지', {})
 
           },
           {
