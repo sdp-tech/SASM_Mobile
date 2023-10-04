@@ -224,6 +224,7 @@ const PostDetailSection = ({
   );
 };
 
+
 const UserInfoSection = ({
   user, posts, isLogin, navigation, onRefresh, writer_is_followed
 }: UserInfoSectionProps) => {
@@ -263,6 +264,7 @@ const UserInfoSection = ({
       );
     }
   }
+  const navigationToTab = useNavigation<StackNavigationProp<TabProps>>();
   return (
     <View
       style={{
@@ -274,13 +276,18 @@ const UserInfoSection = ({
         borderBottomColor: "#E3E3E3",
       }}
     >
+      
       <View style={{ alignItems: 'center' }}>
+        <TouchableOpacity onPress={() => { navigationToTab.navigate('마이페이지', { email: user.email }) }}> 
+        {/*email은 user에 들어있음(user.writer)*/}
         <Image
           style={{ width: 56, height: 56, borderRadius: 60 }}
           source={{
             uri: user.profile,
           }}
         />
+        </TouchableOpacity>
+
         <TouchableOpacity style={{ width: 75, borderColor: '#67D393', borderWidth: 1, borderRadius: 12, alignItems: 'center', justifyContent: 'center', paddingVertical: 5, paddingHorizontal: 15, marginTop: 15 }} onPress={onFollow}>
           <Text style={{ color: '#202020', fontSize: 12 }}>{follow ? '팔로잉' : '+ 팔로우'}</Text>
         </TouchableOpacity>

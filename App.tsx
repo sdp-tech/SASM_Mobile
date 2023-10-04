@@ -146,7 +146,10 @@ export type TabProps = {
   포레스트:{
     id: number | undefined;
   }
-  마이페이지: undefined;
+  /*add email parameter*/
+  마이페이지: {
+    email?: string; 
+  }
 };
 
 const CustomTab = ({ state, descriptors, navigation }: BottomTabBarProps) => {
