@@ -212,6 +212,7 @@ const CustomTab = ({ state, descriptors, navigation }: BottomTabBarProps) => {
         };
         return (
           <TouchableOpacity
+            key={index}
             onPress={onPress}
             style={{
               width: "20%",

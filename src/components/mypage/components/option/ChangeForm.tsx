@@ -190,7 +190,7 @@ export default function ChangeForm({ navigation, route }: StackScreenProps<MyPag
             </Text>
             <GenderSelector>
               {genderOption.map(data => (
-                <TouchableOpacity onPress={() => { setForm({ ...form, gender: data.option }) }}>
+                <TouchableOpacity key={data.name} onPress={() => { setForm({ ...form, gender: data.option }) }}>
                   <GenderText selected={form.gender == data.option}>
                     {data.name}
                   </GenderText>

@@ -26,9 +26,9 @@ const SectionCuration = styled(Section)`
   margin-top: 20px;
 `
 const RecommendPlace = styled.TouchableOpacity`
-  width: ${width / 5};
-  height: ${width / 5};
-  border-radius: ${width / 10};
+  width: ${width / 5}px;
+  height: ${width / 5}px;
+  border-radius: ${width / 10}px;
 `
 const RecommendWrapper = styled.View`
   display: flex;

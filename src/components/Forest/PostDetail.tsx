@@ -97,19 +97,25 @@ const PostDetailSection = ({
     html: `${post?.content}`
   }
 
-  const renderersProps = {
-    img: {
-      enableExperimentalPercentWidth: true
-    }
-  };
+  const renderersProps = useMemo(
+    () => ({
+      img: {
+        enableExperimentalPercentWidth: true
+      }
+    }),
+    [post]
+  )
 
-  const tagsStyles = {
-    div: {
-      fontSize: 16,
-      lineHeight: 30,
-      letterSpacing: -0.6
-    }
-  }
+  const tagsStyles = useMemo(
+    () => ({
+      div: {
+        fontSize: 16,
+        lineHeight: 30,
+        letterSpacing: -0.6
+      }
+    }),
+    [post]
+  )
 
   return (
     <View onLayout={onLayout}>
@@ -279,7 +285,6 @@ const UserInfoSection = ({
       
       <View style={{ alignItems: 'center' }}>
         <TouchableOpacity onPress={() => { navigationToTab.navigate('마이페이지', { email: user.email }) }}> 
-        {/*email은 user에 들어있음(user.writer)*/}
         <Image
           style={{ width: 56, height: 56, borderRadius: 60 }}
           source={{
@@ -288,7 +293,7 @@ const UserInfoSection = ({
         />
         </TouchableOpacity>
 
-        <TouchableOpacity style={{ width: 75, borderColor: '#67D393', borderWidth: 1, borderRadius: 12, alignItems: 'center', justifyContent: 'center', paddingVertical: 5, paddingHorizontal: 15, marginTop: 15 }} onPress={onFollow}>
+        <TouchableOpacity style={{ borderColor: '#67D393', borderWidth: 1, borderRadius: 12, alignItems: 'center', justifyContent: 'center', paddingVertical: 5, paddingHorizontal: 15, marginTop: 15 }} onPress={onFollow}>
           <Text style={{ color: '#202020', fontSize: 12 }}>{follow ? '팔로잉' : '+ 팔로우'}</Text>
         </TouchableOpacity>
       </View>
