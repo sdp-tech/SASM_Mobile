@@ -9,8 +9,10 @@ import {
   Modal,
 } from "react-native";
 import { Dispatch, SetStateAction, useState } from "react";
+import { Request } from "../../../common/requests";
 import FinishModal from "../../../common/FinishModal";
 import { NextBtn } from "./PlaceForm";
+import { formDataProps } from "./PlaceForm";
 import { TextPretendard as Text } from "../../../common/CustomText";
 
 const Section = styled.View`
@@ -49,12 +51,19 @@ const SelectItem = styled.TouchableOpacity<{
 
 interface TabProps {
   finish: () => void;
+  formData: formDataProps;
+  setFormData: React.Dispatch<React.SetStateAction<formDataProps>>;
 }
 
-export default function PlaceAddinfoForm({ finish }: TabProps) {
+export default function PlaceServiceForm({
+  finish,
+  formData,
+  setFormData,
+}: TabProps) {
   const [modal, setModal] = useState(false);
   const [selectedServ, setSelectedServ] = useState<number[]>([]);
   const [selectedEvent, setSelectedEvent] = useState<number[]>([]);
+  const request = new Request();
 
   const SERVICE_LIST = [
     { id: 0, name: "배달" },
@@ -82,6 +91,17 @@ export default function PlaceAddinfoForm({ finish }: TabProps) {
     if (selectedList.includes(target))
       setSelectedList(selectedList.filter((item) => item != target));
     else setSelectedList([...selectedList, target]);
+  }
+
+  async function handleSubmit() {
+    const form = new FormData();
+    for (let i of Object.keys(formData)) {
+      if (i == "snsList") continue;
+      form.append(`${i}`, `${formData[i]}`);
+    }
+    const response = await request.post("/places/create/", formData, {
+      "Content-Type": "multipart/form-data",
+    });
   }
 
   return (
@@ -176,6 +196,7 @@ export default function PlaceAddinfoForm({ finish }: TabProps) {
       </Modal>
       <NextBtn
         onPress={() => {
+          handleSubmit();
           setModal(true);
         }}
         text="제보 완료"
