@@ -42,12 +42,10 @@ export function Comment ({ data, story_id, reRenderScreen, email, isLogin, navig
         console.error(response.data.data.likes);
         //setLike(response.data.data.likes);
         //사용자 like상태로 like 바꿈
-        //ha... 안바뀝니다 왜지요?
-        //setLike(response.data.data.likes)
-        if(response.data.data.likes!=like){
-            setLike(!like);
-        }
+        setLike(response.data.data.likes)   
         //setLike(!like);
+        console.error(like)
+        //like상태 안바뀜.. ㅠㅠ
         reRenderScreen();
 
         console.error("like는",like);

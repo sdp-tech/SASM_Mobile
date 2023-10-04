@@ -17,13 +17,13 @@ interface CommentProps {
     callback?: any;
 }
 
-export function Comment ({ data, reRenderScreen, post_id, email, isLogin, navigation, callback }: CommentProps) {
+export function Comment ({ data, reRenderScreen, post_id, email, isLogin, navigation, callback, userlikes }: CommentProps) {
     const date = data.created.slice(0, 10);
     const { width, height } = Dimensions.get('screen');
     const [modalVisible, setModalVisible] = useState<boolean>(false);
     const [reported, setReported] = useState<string>('');
     const [reportVisible, setReportVisible] = useState<boolean>(false);
-    const [like, setLike] = useState<boolean>(false);
+    const [like, setLike] = useState<boolean>(userlikes);
     //default로 설정해두고 userlike의 변화에 따라서 바꾸기
     const request = new Request();
 
@@ -38,11 +38,12 @@ export function Comment ({ data, reRenderScreen, post_id, email, isLogin, naviga
     const toggleLike = async () => {
         if(isLogin){
         const response = await request.post(`/forest/${post_id}/comments/${data.id}/like/`, {}, {});
-        ///
-        const likes=request.get(`/forest/${post_id}/comments/${data.id}/like/`, {}, {});
-        console.error(likes);
-        // setLike(!like);
-        setLike(!likes);
+        ///기존 코드
+        //setLike(!like); 
+        console.error('userlikes',like)
+        console.error(response.data.data.likes)
+        setLike(response.data.data.likes)
+        //console.error(like)
         reRenderScreen();
         } else {
             Alert.alert(

@@ -1,17 +1,9 @@
 import { useEffect, useState,useContext, useRef, useMemo, useCallback, Dispatch, SetStateAction } from "react";
-import type { NativeStackScreenProps } from "@react-navigation/native-stack";
-import RenderHTML from 'react-native-render-html';
 import { TextPretendard as Text } from './CustomText';
 import { useFocusEffect } from '@react-navigation/native';
 import { View ,TouchableOpacity, Image, Alert, StyleSheet, FlatList, Dimensions, Modal, Pressable, ActivityIndicator } from 'react-native';
 import { Request } from './requests';
 import { BottomSheetModal, BottomSheetModalProvider, BottomSheetBackdrop } from "@gorhom/bottom-sheet";
-import Edit from '../../../assets/img/Story/Edit.svg';
-import Heart from './Heart';
-import ReportIcon from '../../../assets/img/common/Report.svg';
-import Report from './Report';
-import { StackNavigationProp, StackScreenProps } from "@react-navigation/stack";
-import { useNavigation } from "@react-navigation/native";
 import CommentIcon from '../assets/img/Story/Comment.svg';
 import Arrow from "../assets/img/common/Arrow.svg";
 import { Comment as ForestComment}  from "../components/Forest/components/Comment";

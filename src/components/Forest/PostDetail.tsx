@@ -430,7 +430,6 @@ const PostDetailScreen = ({
   const [headerHeight, setHeaderHeight] = useState<number>(0);
   const [recommend, setRecommend] = useState([] as any);
   const {isLogin, setLogin} = useContext(LoginContext);
-
   const request = new Request();
   const post_id = route.params.post_id;
 
@@ -504,12 +503,6 @@ const PostDetailScreen = ({
     setHeaderHeight(height);
   }
 
-  // const scrollToComment = () => {
-  //   if (scrollRef.current) {
-  //     scrollRef.current.scrollToOffset({ animated: true, offset: headerHeight })
-  //   }
-  // }
-
   useEffect(() => {
     if (isLogin) checkUser();
   }, [isLogin]);
@@ -562,7 +555,7 @@ const PostDetailScreen = ({
             }
             renderItem={({ item }) => {
               return (
-                <Comment data={item} reRenderScreen={reRenderScreen} post_id={post_id} email={user.email} isLogin={isLogin} navigation={navigation} callback={callback} />
+                <Comment data={item} reRenderScreen={reRenderScreen} post_id={post_id} email={user.email} isLogin={isLogin} navigation={navigation} callback={callback}/>
               )
             }}
           />
