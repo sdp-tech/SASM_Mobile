@@ -65,8 +65,8 @@ const MoveToCenterButton = styled(Circle)`
   justify-content: center;
   position: absolute;
   z-index: 0;
-  top: ${height / 2};
-  right: 15;
+  top: ${height / 2}px;
+  right: 15px;
 `;
 
 // 최소 단위 interface
