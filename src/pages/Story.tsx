@@ -37,11 +37,11 @@ export type StoryStackParams = {
 const Stack = createNativeStackNavigator<StoryStackParams>();
 
 const StoryScreen = ({ navigation, route }: StackScreenProps<TabProps, '스토리'>) => {
-  const navigationToStory = useNavigation<StackNavigationProp<StoryStackParams>>();
+  const navigationToStory = useNavigation<StackNavigationProp<StoryStackParams>>(); /*네비게이션 설정*/
   useEffect(() => {
     if(route.params.id) {
       // navigationToStory.reset({routes: [{name: "StoryDetail", params: { id: route.params.id }}]});
-      navigationToStory.push('StoryDetail', { id : route.params.id})
+      navigationToStory.push('StoryDetail', { id : route.params.id}) /*넘어갈 페이지 설정*/
     }
   }, [route.params.id])
   return (
