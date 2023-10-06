@@ -9,6 +9,7 @@ import {
 } from "react-native";
 import { FlatList } from "react-native-gesture-handler";
 import { useState } from "react";
+import { formDataProps } from "./PlaceForm";
 import { TextPretendard as Text } from "../../../common/CustomText";
 
 const Section = styled.View`
@@ -47,9 +48,15 @@ interface ListProps {
 
 interface TabProps {
   NextBtn: any;
+  formData: formDataProps;
+  setFormData: React.Dispatch<React.SetStateAction<formDataProps>>;
 }
 
-export default function PlaceProfileScreen({ NextBtn }: TabProps) {
+export default function PlaceProfileScreen({
+  NextBtn,
+  formData,
+  setFormData,
+}: TabProps) {
   const DAY_LIST: ListProps[] = [
     { id: 0, name: "공휴일", selected: false },
     { id: 1, name: "월요일", selected: false },
@@ -78,7 +85,7 @@ export default function PlaceProfileScreen({ NextBtn }: TabProps) {
   return (
     <Section>
       <Text style={{ ...TextStyles.label, marginTop: 30, fontWeight: 700 }}>
-        공간 이름
+        {formData.place_name}
       </Text>
       <Text style={{ ...TextStyles.label, marginTop: 50, marginBottom: 40 }}>
         언제 열리는 장소인가요?
@@ -123,16 +130,6 @@ export default function PlaceProfileScreen({ NextBtn }: TabProps) {
       >
         영업시간
       </Text>
-      <TextWrapper>
-        <Text
-          style={{
-            ...TextStyles.labelSmall,
-            alignSelf: "flex-start",
-          }}
-        >
-          브레이크타임
-        </Text>
-      </TextWrapper>
       {NextBtn}
     </Section>
   );

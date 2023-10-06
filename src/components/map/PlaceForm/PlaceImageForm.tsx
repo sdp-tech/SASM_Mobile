@@ -12,6 +12,7 @@ import {
 } from "react-native";
 import { useState } from "react";
 import { PhotoResultProps, PhotoSelector } from "../../../common/PhotoOptions";
+import { formDataProps } from "./PlaceForm";
 import { TextPretendard as Text } from "../../../common/CustomText";
 
 const Section = styled.View`
@@ -25,9 +26,15 @@ const Section = styled.View`
 
 interface TabProps {
   NextBtn: any;
+  formData: formDataProps;
+  setFormData: React.Dispatch<React.SetStateAction<formDataProps>>;
 }
 
-export default function PlaceProfileScreen({ NextBtn }: TabProps) {
+export default function PlaceProfileScreen({
+  NextBtn,
+  formData,
+  setFormData,
+}: TabProps) {
   const { width, height } = Dimensions.get("window");
 
   const [rep_pic, setRep_pic] = useState<PhotoResultProps[]>([
@@ -42,7 +49,7 @@ export default function PlaceProfileScreen({ NextBtn }: TabProps) {
   return (
     <Section>
       <Text style={{ ...TextStyles.label, marginTop: 30, fontWeight: 700 }}>
-        공간 이름
+        {formData.place_name}
       </Text>
       <Text style={{ ...TextStyles.label, marginTop: 50, marginBottom: 100 }}>
         장소의 사진을 등록해주세요.
@@ -52,18 +59,7 @@ export default function PlaceProfileScreen({ NextBtn }: TabProps) {
         setPhoto={setRep_pic}
         width={width * 0.5}
         height={width * 0.5}
-      >
-        <Image
-          style={{
-            width: width - 70,
-            height: ((width - 70) / rep_pic[0].width) * rep_pic[0].height,
-            maxHeight: width - 120,
-          }}
-          source={{ uri: rep_pic[0].uri }}
-          alt="대표 사진"
-          resizeMode="contain"
-        />
-      </PhotoSelector>
+      />
       {NextBtn}
     </Section>
   );

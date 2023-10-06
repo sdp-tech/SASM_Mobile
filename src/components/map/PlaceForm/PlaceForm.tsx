@@ -95,6 +95,7 @@ export interface formDataProps {
   phone_num: string;
   imageList: string[] | null;
   snsList: string[] | null;
+  [index: string]: any;
 }
 
 export function NextBtn({ onPress, text = "다음" }: NextBtnProps) {
@@ -273,6 +274,8 @@ export default function PlaceForm({
                   }}
                 />
               }
+              formData={formData}
+              setFormData={setFormData}
             />
           ),
           4: (
@@ -284,6 +287,8 @@ export default function PlaceForm({
                   }}
                 />
               }
+              formData={formData}
+              setFormData={setFormData}
             />
           ),
           5: (
@@ -299,7 +304,13 @@ export default function PlaceForm({
               setFormData={setFormData}
             />
           ),
-          6: <PlaceServiceForm finish={() => setPlaceformModal(false)} />,
+          6: (
+            <PlaceServiceForm
+              formData={formData}
+              setFormData={setFormData}
+              finish={() => setPlaceformModal(false)}
+            />
+          ),
         }[tab]
       }
     </Section>

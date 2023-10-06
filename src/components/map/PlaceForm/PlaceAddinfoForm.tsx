@@ -41,7 +41,7 @@ export default function PlaceAddinfoForm({
   return (
     <Section>
       <Text style={{ ...TextStyles.label, marginTop: 30, fontWeight: 700 }}>
-        공간 이름
+        {formData.place_name}
       </Text>
       <Text style={{ ...TextStyles.label, marginTop: 50, marginBottom: 60 }}>
         추가 정보를 입력해주세요.
@@ -57,9 +57,9 @@ export default function PlaceAddinfoForm({
         }}
       />
       <InputWithLabel
-        label="링크"
-        isRequired={false}
-        placeholder="장소와 관련된 링크를 입력해주세요."
+        label="리뷰"
+        isRequired={true}
+        placeholder="장소의 리뷰를 작성해주세요."
         containerStyle={InputStyle}
         value={formData.snsList === null ? undefined : formData.snsList[0]}
         onChangeText={(e) => {
@@ -67,7 +67,7 @@ export default function PlaceAddinfoForm({
         }}
       />
       <InputWithLabel
-        label="덧붙이는 말"
+        label="한줄평"
         isRequired={false}
         placeholder="하고 싶은 말이 있으시다면 적어주세요."
         containerStyle={InputStyle}

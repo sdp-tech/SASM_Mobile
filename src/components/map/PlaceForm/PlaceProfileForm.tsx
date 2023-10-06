@@ -60,7 +60,9 @@ export default function PlaceProfileScreen({
       Alert.alert("카테고리는 최대 1개까지만 선택 가능합니다.");
       setCheckedList([]);
     } else {
-      setFormData({ ...formData, category: checkedList[0] });
+      setFormData((prev) => {
+        return { ...prev, category: checkedList[0] };
+      });
     }
   }, [checkedList]);
 
@@ -76,7 +78,9 @@ export default function PlaceProfileScreen({
         containerStyle={InputStyle}
         value={formData.place_name}
         onChangeText={(e) => {
-          setFormData({ ...formData, place_name: e });
+          setFormData((prev) => {
+            return { ...prev, place_name: e };
+          });
         }}
       />
       <InputWithLabel
@@ -85,7 +89,7 @@ export default function PlaceProfileScreen({
         isRequired={true}
         placeholder="주소를 검색해주세요."
         containerStyle={InputStyle}
-        readonly
+        editable={false}
       >
         <TouchableOpacity
           style={{
@@ -116,7 +120,10 @@ export default function PlaceProfileScreen({
         </TouchableOpacity>
       </InputWithLabel>
       <InputWrapper>
-        <Text style={TextStyles.labelSmall}>카테고리 선택</Text>
+        <Text style={{ ...TextStyles.labelSmall }}>
+          카테고리 선택
+          <Text style={{ color: "#FF4D00", lineHeight: 18 }}> *</Text>
+        </Text>
         <Category
           story={true}
           checkedList={checkedList}
