@@ -42,7 +42,7 @@ const ListCard = ({id, place_name, title, rep_pic, extra_pics, story_like, creat
         [
             {
                 text: "이동",
-                onPress: () => navigation.navigate('마이페이지'),
+                onPress: () => navigation.navigate('마이페이지', {}),
 
             },
             {

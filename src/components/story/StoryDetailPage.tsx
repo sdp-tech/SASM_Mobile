@@ -122,7 +122,7 @@ const BottomBarSection = ({ post, email, onRefresh, navigation }: BottomBarSecti
         [
           {
             text: "이동",
-            onPress: () => navigation.navigate('마이페이지')
+            onPress: () => navigation.navigate('마이페이지', {})
 
           },
           {
@@ -148,10 +148,8 @@ const BottomBarSection = ({ post, email, onRefresh, navigation }: BottomBarSecti
         </TouchableOpacity>
         <Text style={{fontSize: 14, color: '#202020', lineHeight: 20, marginLeft: 3}}>{post.comment_cnt}</Text>
       </View>
-      {commentPopupVisible && (
-          <PopComment
+      <PopComment
             data={post} post_id={post.id} email={email} isLogin={!!email} navigation={navigation} repo={false} modalVisible={commentPopupVisible}  setModalVisible={setCommentPopupVisible}/>
-        )}
       <ShareButton color={'black'} message={`[SASM Story] ${post.title} - ${post.html_content}`} />
     </View>
   )

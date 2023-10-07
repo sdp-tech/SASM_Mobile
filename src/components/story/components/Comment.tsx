@@ -58,7 +58,7 @@ export function Comment ({ data, story_id, reRenderScreen, email, isLogin, navig
               [
                   {
                       text: "이동",
-                      onPress: () => navigation.navigate('마이페이지')
+                      onPress: () => navigation.navigate('마이페이지', {})
       
                   },
                   {

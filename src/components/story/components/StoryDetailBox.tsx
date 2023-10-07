@@ -1,6 +1,6 @@
 import { View, StyleSheet, TouchableOpacity, Dimensions, Image, Alert, ImageBackground, Platform } from 'react-native';
 import { TextPretendard as Text } from '../../../common/CustomText';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { Request } from '../../../common/requests';
 import { useNavigation } from '@react-navigation/native';
 import { TabProps } from '../../../../App';
@@ -58,7 +58,7 @@ const CategoryWrapper = styled.View`
   padding-horizontal: 10px;
   background-color: '#FFFFFF';
   border-color: 'rgba(203, 203, 203, 1)';
-  border-width: 1;
+  border-width: 1px;
 `
 
 const StoryDetailBox = ({navigation, data, isLogin, onLayout, email, onRefresh, onReport, onUpdate, onDelete}: StoryDetailProps) => {
@@ -92,7 +92,7 @@ const StoryDetailBox = ({navigation, data, isLogin, onLayout, email, onRefresh, 
             [
                 {
                     text: "이동",
-                    onPress: () => navigation.navigate('마이페이지')
+                    onPress: () => navigation.navigate('마이페이지', {})
     
                 },
                 {
@@ -121,15 +121,14 @@ const StoryDetailBox = ({navigation, data, isLogin, onLayout, email, onRefresh, 
         html: `${data?.html_content}`
     }
 
-    const renderersProps = {
-        img: {
-          enableExperimentalPercentWidth: false,
-          initialDimensions: {
-            width: width,
-            height: 400
+    const renderersProps = useMemo(
+        () => ({
+          img: {
+            enableExperimentalPercentWidth: true
           }
-        }
-    };
+        }),
+        [data]
+      )
 
     const tagsStyles = {
         p: {
@@ -170,13 +169,15 @@ const StoryDetailBox = ({navigation, data, isLogin, onLayout, email, onRefresh, 
                             pageWidth={width}
                             dot={false}
                             renderItem={({item}: any) => (
-                                <ImageBackground
-                                    style={{width: 280, height: 330, marginRight: 15}}
-                                    source={{uri: item}}
-                                    resizeMode='cover'
-                                >
-                                    <View style={{backgroundColor: 'rgba(0,0,0,0.2)', width: 280, height: 330}} />
-                                </ImageBackground>
+                                <TouchableOpacity onPress={() => navigation.navigate('PhotoPreview', { photoUri: item})}>
+                                    <ImageBackground
+                                        style={{width: 280, height: 330, marginRight: 15}}
+                                        source={{uri: item}}
+                                        resizeMode='cover'
+                                    >
+                                        <View style={{backgroundColor: 'rgba(0,0,0,0.2)', width: 280, height: 330}} />
+                                    </ImageBackground>
+                                </TouchableOpacity>
                             )}
                         />
                     ) : (

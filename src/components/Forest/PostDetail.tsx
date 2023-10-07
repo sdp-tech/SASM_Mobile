@@ -99,19 +99,25 @@ const PostDetailSection = ({
     html: `${post?.content}`
   }
 
-  const renderersProps = {
-    img: {
-      enableExperimentalPercentWidth: true
-    }
-  };
+  const renderersProps = useMemo(
+    () => ({
+      img: {
+        enableExperimentalPercentWidth: true
+      }
+    }),
+    [post]
+  )
 
-  const tagsStyles = {
-    div: {
-      fontSize: 16,
-      lineHeight: 30,
-      letterSpacing: -0.6
-    }
-  }
+  const tagsStyles = useMemo(
+    () => ({
+      div: {
+        fontSize: 16,
+        lineHeight: 30,
+        letterSpacing: -0.6
+      }
+    }),
+    [post]
+  )
 
   return (
     <View onLayout={onLayout}>
@@ -226,6 +232,7 @@ const PostDetailSection = ({
   );
 };
 
+
 const UserInfoSection = ({
   user, posts, isLogin, navigation, onRefresh, writer_is_followed
 }: UserInfoSectionProps) => {
@@ -252,7 +259,7 @@ const UserInfoSection = ({
         [
           {
             text: "이동",
-            onPress: () => navigation.navigate('마이페이지')
+            onPress: () => navigation.navigate('마이페이지', {})
 
           },
           {
@@ -265,6 +272,7 @@ const UserInfoSection = ({
       );
     }
   }
+  const navigationToTab = useNavigation<StackNavigationProp<TabProps>>();
   return (
     <View
       style={{
@@ -276,14 +284,18 @@ const UserInfoSection = ({
         borderBottomColor: "#E3E3E3",
       }}
     >
+      
       <View style={{ alignItems: 'center' }}>
+        <TouchableOpacity onPress={() => { navigationToTab.navigate('마이페이지', { email: user.email }) }}> 
         <Image
           style={{ width: 56, height: 56, borderRadius: 60 }}
           source={{
             uri: user.profile,
           }}
         />
-        <TouchableOpacity style={{ width: 75, borderColor: '#67D393', borderWidth: 1, borderRadius: 12, alignItems: 'center', justifyContent: 'center', paddingVertical: 5, paddingHorizontal: 15, marginTop: 15 }} onPress={onFollow}>
+        </TouchableOpacity>
+
+        <TouchableOpacity style={{ borderColor: '#67D393', borderWidth: 1, borderRadius: 12, alignItems: 'center', justifyContent: 'center', paddingVertical: 5, paddingHorizontal: 15, marginTop: 15 }} onPress={onFollow}>
           <Text style={{ color: '#202020', fontSize: 12 }}>{follow ? '팔로잉' : '+ 팔로우'}</Text>
         </TouchableOpacity>
       </View>
@@ -374,7 +386,7 @@ const BottomBarSection = ({ post, email, onRefresh, navigation }: BottomBarSecti
         [
           {
             text: "이동",
-            onPress: () => navigation.navigate('마이페이지')
+            onPress: () => navigation.navigate('마이페이지', {})
 
           },
           {
@@ -393,23 +405,19 @@ const BottomBarSection = ({ post, email, onRefresh, navigation }: BottomBarSecti
   };
 
   return (
-    //<BottomSheetModalProvider>
-      <View style={{ flexDirection: "row", padding: 10 }}>
-        <View style={{ flexDirection: 'row', flex: 1, alignItems: 'center' }}>
-          <Heart color={'#202020'} like={like} onPress={toggleLike} size={18} ></Heart>
-          <Text style={{ fontSize: 14, color: '#202020', lineHeight: 20, marginLeft: 3, marginRight: 10 }}>{post.like_cnt}</Text>
-          <TouchableOpacity onPress={openCommentPopup} style={{ flexDirection: 'row', padding: 15, borderTopColor: '#E3E3E3', borderTopWidth: 1, alignItems: 'center' }}>
-            <CommentIcon color={'#202020'} />
-          </TouchableOpacity>
-          <Text style={{ fontSize: 14, color: '#202020', lineHeight: 20, marginLeft: 3 }}>{post.comment_cnt}</Text>
-        </View>
-        <ShareButton color={'black'} message={`[SASM Forest] ${post.title} - ${post.content}`} />
-        {commentPopupVisible && (
-          <PopComment
-            data={post} post_id={post.id} email={email} isLogin={!!email} navigation={navigation} repo={true} modalVisible={commentPopupVisible}  setModalVisible={setCommentPopupVisible}/>
-        )}
+    <View style={{ flexDirection: "row", padding: 10 }}>
+      <View style={{ flexDirection: 'row', flex: 1, alignItems: 'center' }}>
+        <Heart color={'#202020'} like={like} onPress={toggleLike} size={18} ></Heart>
+        <Text style={{ fontSize: 14, color: '#202020', lineHeight: 20, marginLeft: 3, marginRight: 10 }}>{post.like_cnt}</Text>
+        <TouchableOpacity onPress={openCommentPopup} style={{ flexDirection: 'row', padding: 15, borderTopColor: '#E3E3E3', borderTopWidth: 1, alignItems: 'center' }}>
+          <CommentIcon color={'#202020'} />
+        </TouchableOpacity>
+        <Text style={{ fontSize: 14, color: '#202020', lineHeight: 20, marginLeft: 3 }}>{post.comment_cnt}</Text>
       </View>
-    //</BottomSheetModalProvider>
+      <ShareButton color={'black'} message={`[SASM Forest] ${post.title} - ${post.content}`} />
+      <PopComment
+            data={post} post_id={post.id} email={email} isLogin={!!email} navigation={navigation} repo={true} modalVisible={commentPopupVisible}  setModalVisible={setCommentPopupVisible}/>
+    </View>
   )
 }
 
