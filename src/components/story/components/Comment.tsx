@@ -17,13 +17,13 @@ interface CommentProps {
     callback?: any;
 }
 
-const Comment = ({ data, story_id, reRenderScreen, email, isLogin, navigation, callback }: CommentProps) => {
+export function Comment ({ data, story_id, reRenderScreen, email, isLogin, navigation, callback }: CommentProps)  {
     const date = data.created_at.slice(0, 10);
     const { width, height } = Dimensions.get('window');
     const [modalVisible, setModalVisible] = useState<boolean>(false);
     const [reported, setReported] = useState<string>('');
     const [reportVisible, setReportVisible] = useState<boolean>(false);
-    const [like, setLike] = useState<boolean>(data.user_likes);
+    const [like, setLike] = useState<boolean>(false);
     const request = new Request();
 
     const onReport = async (item: any) => {
@@ -39,6 +39,7 @@ const Comment = ({ data, story_id, reRenderScreen, email, isLogin, navigation, c
         const response = await request.post(`/stories/${story_id}/comments/${data.id}/like/`, {}, {});
         setLike(!like);
         reRenderScreen();
+    
         } else {
             Alert.alert(
               "로그인이 필요합니다.",
@@ -46,7 +47,7 @@ const Comment = ({ data, story_id, reRenderScreen, email, isLogin, navigation, c
               [
                   {
                       text: "이동",
-                      onPress: () => navigation.navigate('마이페이지')
+                      onPress: () => navigation.navigate('마이페이지', {})
       
                   },
                   {
@@ -88,6 +89,11 @@ const Comment = ({ data, story_id, reRenderScreen, email, isLogin, navigation, c
     if (data.email == email) {
         isWriter = true;
     }
+
+    useEffect(()=>{
+        setLike(data.user_likes? true: false);
+    },[data.user_likes])
+
     return (
         <View style={{borderBottomColor: '#D9D9D9', borderBottomWidth: 1, width: width-40, alignSelf: 'center', flex: 1}}>
             <View style = {{ flexDirection: 'row', paddingVertical: 25, alignItems: 'center'}}>
@@ -160,4 +166,4 @@ const textStyles = StyleSheet.create({
     }
 })
 
-export default Comment;
+// export default Comment;

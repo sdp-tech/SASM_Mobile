@@ -180,7 +180,7 @@ export default function DetailCard({ detailData, setIndex }: DetailCardProps): J
         [
           {
             text: "이동",
-            onPress: () => navigationToTab.navigate('마이페이지')
+            onPress: () => navigationToTab.navigate('마이페이지', {})
 
           },
           {
@@ -204,7 +204,7 @@ export default function DetailCard({ detailData, setIndex }: DetailCardProps): J
         [
           {
             text: "이동",
-            onPress: () => navigationToTab.navigate('마이페이지')
+            onPress: () => navigationToTab.navigate('마이페이지', {})
 
           },
           {
@@ -264,7 +264,7 @@ export default function DetailCard({ detailData, setIndex }: DetailCardProps): J
         renderItem={({ item: detailData }: { item: detailDataProps }) =>
           <View>
             <View style={{ position: 'relative' }}>
-              <ImageBackground source={{ uri: detailData.rep_pic }} style={{ width: '100%', height: 350 }}>
+              <ImageBackground source={{ uri: detailData!.rep_pic }} style={{ width: '100%', height: 350 }}>
                 <View style={{ width: '100%', height: 350, backgroundColor: 'rgba(0,0,0,0.4)' }} />
               </ImageBackground>
             </View>
@@ -277,7 +277,7 @@ export default function DetailCard({ detailData, setIndex }: DetailCardProps): J
                     [
                       {
                         text: "이동",
-                        onPress: () => navigationToTab.navigate('마이페이지')
+                        onPress: () => navigationToTab.navigate('마이페이지', {})
             
                       },
                       {
@@ -295,7 +295,7 @@ export default function DetailCard({ detailData, setIndex }: DetailCardProps): J
                 <PlusWhite />
               </TouchableOpacity>
               <Heart like={likePlace} onPress={handlePlaceLike} color={'white'} size={20}/>
-              <ShareButton color='white' message={`[SASM Map] ${detailData.place_name}(${detailData.category}) - ${detailData.place_review}`} />
+              <ShareButton color='white' message={`[SASM Map] ${detailData.place_name} - ${detailData.category}`} image={detailData.rep_pic} description={detailData.place_review} id={detailData.id} from='place' />
             </ButtonBox>
             <TextBox>
               <View style={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
@@ -369,7 +369,7 @@ export default function DetailCard({ detailData, setIndex }: DetailCardProps): J
                           gap={8}
                           dot={false}
                           data={detailData.photos}
-                          renderItem={({ item }: any) => <Image source={{ uri: item.image }} style={{ width: 160, height: 160, marginHorizontal: 4 }} />}
+                          renderItem={({ item }: any) => <Image source={{ uri: item!.image }} style={{ width: 160, height: 160, marginHorizontal: 4 }} />}
                         />
                       </Box>
                       <Box>
@@ -395,7 +395,7 @@ export default function DetailCard({ detailData, setIndex }: DetailCardProps): J
                         {
                           detailData.story_id != null &&
                           <StorySection onPress={() => { navigationToTab.navigate('스토리', { id: detailData.story_id }) }}>
-                            <Image source={{ uri: storyData.rep_pic }} style={{ width: '100%', height: 450 }} />
+                            <Image source={{ uri: storyData!.rep_pic }} style={{ width: '100%', height: 450 }} />
                             <View style={{ backgroundColor: 'rgba(0, 0, 0, 0.3)', position: 'absolute', width: '100%', height: '100%', paddingVertical: 35, paddingHorizontal: 20 }}>
                               <Text style={TextStyles.story_title}>{storyData.title}</Text>
                               <Text style={TextStyles.story_place_name}>{storyData.place_name}</Text>
@@ -423,7 +423,7 @@ export default function DetailCard({ detailData, setIndex }: DetailCardProps): J
                       {
                         detailData.story_id == null ? <Text style={{ margin: 15, fontWeight: '700', color: '#000000' }}>스토리가 없습니다.</Text> :
                           <StorySection onPress={() => { navigationToTab.navigate('스토리', { id: detailData.story_id }) }}>
-                            <Image source={{ uri: storyData.rep_pic }} style={{ width: '100%', height: 450 }} />
+                            <Image source={{ uri: storyData!.rep_pic }} style={{ width: '100%', height: 450 }} />
                             <View style={{ backgroundColor: 'rgba(0, 0, 0, 0.3)', position: 'absolute', width: '100%', height: '100%', paddingVertical: 35, paddingHorizontal: 20 }}>
                               <Text style={TextStyles.story_title}>{storyData.title}</Text>
                               <Text style={TextStyles.story_place_name}>{storyData.place_name}</Text>

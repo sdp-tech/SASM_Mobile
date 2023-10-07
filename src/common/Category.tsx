@@ -19,7 +19,7 @@ const CategoryWrapper = styled.TouchableOpacity<{ selected: boolean, color: stri
   border-radius: 12px;
   margin: ${props => props.story ? '0 5px' : '0 10px'};
   border-color: 'rgba(203, 203, 203, 1)';
-  border-width: ${props => props.story ? 1 : 0};
+  border-width: ${props => props.story ? 1 : 0}px;
 `
 
 interface ListProps {

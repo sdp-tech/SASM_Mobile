@@ -9,7 +9,7 @@ import { CategoryIcon } from '../../../common/Category';
 const { width, height } = Dimensions.get('screen');
 
 const StyledCard = styled.TouchableOpacity`
-  width: ${width};
+  width: ${width}px;
   height: 350px;
 `
 const TextBox = styled.View`

@@ -485,7 +485,7 @@ const BoardListScreen = ({
               [
                 {
                   text: "이동",
-                  onPress: () => navigationToTab.navigate('마이페이지')
+                  onPress: () => navigationToTab.navigate('마이페이지', {})
       
                 },
                 {

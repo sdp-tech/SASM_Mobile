@@ -92,7 +92,7 @@ const handleFollow = async (target: string, isLogin: boolean, navigation: StackN
       [
         {
           text: "로그인",
-          onPress: () => navigation.navigate('마이페이지'),
+          onPress: () => navigation.navigate('마이페이지', {}),
           style: "cancel"
         },
         {
@@ -121,9 +121,6 @@ const BottomBarSection = ({ id, post, isLogin, onRefresh, navigation }:{id: numb
     post.like_curation ? setLike(true) : setLike(false)
   }, [post.like_curation])
 
-  useEffect(() => {
-    console.error(post.rep_pic);
-  }, [])
   const toggleLike = async () => {
     if (isLogin) {
       const response = await request.post(`/curations/curation_like/${id}/`);
@@ -136,7 +133,7 @@ const BottomBarSection = ({ id, post, isLogin, onRefresh, navigation }:{id: numb
         [
           {
             text: "이동",
-            onPress: () => navigation.navigate('마이페이지')
+            onPress: () => navigation.navigate('마이페이지', {})
 
           },
           {
@@ -207,32 +204,6 @@ export default function CurationDetail({ navigation, route }: StackScreenProps<H
     setCuratedStory(response_story_detail.data.data);
   }
 
-  const handleLike = async () => {
-    if (!isLogin) {
-      Alert.alert(
-        "로그인이 필요합니다.",
-        "로그인 항목으로 이동하시겠습니까?",
-        [
-          {
-            text: "이동",
-            onPress: () => navigationTab.navigate('마이페이지')
-
-          },
-          {
-            text: "취소",
-            onPress: () => { },
-            style: "cancel"
-          },
-        ],
-        { cancelable: false }
-      );
-      return;
-    }
-    const response = await request.post(`/curations/curation_like/${route.params.id}/`);
-    setCurationDetail({ ...curationDetail, like_curation: !curationDetail.like_curation });
-    setLike(!like);
-  }
-
   const onRefresh = () => {
     setRefreshing(true);
     setRefreshing(false);
@@ -249,7 +220,7 @@ export default function CurationDetail({ navigation, route }: StackScreenProps<H
         <TouchableOpacity style={{ position: 'absolute', top: statusBarHeight, left: 10, zIndex: 2 }} onPress={navigation.goBack}>
           <Arrow width={18} height={18} transform={[{ rotate: '180deg' }]} color={'white'} />
         </TouchableOpacity>
-          <ImageBackground source={{ uri: curationDetail.rep_pic }} style={{ width: width, height: width * (reppicSize.height / reppicSize.width), position:'relative' }}>
+          <ImageBackground source={{ uri: curationDetail!.rep_pic }} style={{ width: width, height: width * (reppicSize.height / reppicSize.width), position:'relative' }}>
             <View style={{width:'100%', height:'100%', backgroundColor:'rgba(0,0,0,0.3)', justifyContent: 'flex-end', padding: 20}}>
               <Text style={TextStyles.title} numberOfLines={4}>{curationDetail.title}</Text>
               <Text style={[TextStyles.created, {color: '#D7D7D7', marginLeft: 3}]}>
@@ -258,7 +229,7 @@ export default function CurationDetail({ navigation, route }: StackScreenProps<H
             </View>
           </ImageBackground>
         <InfoBox>
-          <Image source={{ uri: curationDetail.profile_image }} style={{ width: 50, height: 50, borderRadius: 25, marginRight: 10 }} />
+          <Image source={{ uri: curationDetail!.profile_image }} style={{ width: 50, height: 50, borderRadius: 25, marginRight: 10 }} />
           <View>
             <Text style={TextStyles.writer}>{curationDetail.nickname}</Text>
             <Text style={TextStyles.created}>{curationDetail.created.slice(0, 10).replace(/-/gi, '.')} 작성</Text>
@@ -275,7 +246,7 @@ export default function CurationDetail({ navigation, route }: StackScreenProps<H
         <ContentBox>
           <Text style={TextStyles.content}>{curationDetail.contents}</Text>
         </ContentBox>
-        <Image source={{ uri: curationDetail.map_image }} style={{ width: width, height: width * (mapImageSize.height / mapImageSize.width) }} />
+        <Image source={{ uri: curationDetail!.map_image }} style={{ width: width, height: width * (mapImageSize.height / mapImageSize.width) }} />
         <GotoMap onPress={() => { navigationTab.navigate('맵', {}) }}>
           <Text style={TextStyles.gotomap}>맵페이지로 이동</Text>
         </GotoMap>
@@ -285,13 +256,6 @@ export default function CurationDetail({ navigation, route }: StackScreenProps<H
           )
         }
       </ScrollView>
-      {/* <View style={{ flexDirection: "row", padding: 10, backgroundColor: 'white' }}>
-        <View style={{ flexDirection: 'row', flex: 1, alignItems: 'center' }}>
-          <Heart color={'#202020'} like={like} onPress={handleLike} size={18} ></Heart>
-          <Text style={{ fontSize: 14, color: '#202020', lineHeight: 20, marginLeft: 3, marginRight: 10 }}>{curationDetail.like_cnt}</Text>
-        </View>
-        <ShareButton color={'black'} message={`[SASM Curation] ${curationDetail.title}`} />
-      </View> */}
       <BottomBarSection id={route.params.id} post={curationDetail} isLogin={isLogin} onRefresh={onRefresh} navigation={navigation} />
     </>
   )
@@ -312,7 +276,7 @@ const Storys = ({ navigation, data }: { navigation: StackNavigationProp<TabProps
         [
           {
             text: "이동",
-            onPress: () => navigation.navigate('마이페이지')
+            onPress: () => navigation.navigate('마이페이지', {})
 
           },
           {
@@ -343,7 +307,7 @@ const Storys = ({ navigation, data }: { navigation: StackNavigationProp<TabProps
         <Text style={{ fontSize: 14 }}>{data.place_address}</Text>
       </StoryInfoBox>
       <InfoBox>
-        <Image source={{ uri: data.profile_image }} style={{ width: 50, height: 50, borderRadius: 25, marginRight: 10 }} />
+        <Image source={{ uri: data!.profile_image }} style={{ width: 50, height: 50, borderRadius: 25, marginRight: 10 }} />
         <View>
           <Text style={TextStyles.writer}>{data.nickname}</Text>
           <Text style={TextStyles.created}>{data.created.slice(0, 10).replace(/-/gi, '.')} 작성</Text>
@@ -364,7 +328,7 @@ const Storys = ({ navigation, data }: { navigation: StackNavigationProp<TabProps
           data={data.rep_photos}
           renderItem={({ item }: any) => 
             <TouchableOpacity onPress={() => previewNavigation.navigate('PhotoPreview', { photoUri: item })}>
-              <Image source={{ uri: item }} style={{ width: 250, height: 300, marginHorizontal: 5 }} />
+              <Image source={{ uri: item! }} style={{ width: 250, height: 300, marginHorizontal: 5 }} />
             </TouchableOpacity>
             }
           gap={10}

@@ -3,11 +3,12 @@ import { TextPretendard as Text } from '../../common/CustomText';
 import { useState, useEffect, useRef, useContext } from 'react';
 import { Request } from '../../common/requests';
 import Heart from '../../common/Heart';
-import Comment from './components/Comment';
-import WriteComment from './components/WriteComment';
+import {Comment} from './components/Comment';
+import {WriteComment} from './components/WriteComment';
 import Arrow from '../../assets/img/common/Arrow.svg';
 import CardView from '../../common/CardView';
 import CommentIcon from '../../assets/img/Story/Comment.svg';
+import PopComment from "../../common/PopComment";
 import StoryDetailBox, { StoryDetail } from './components/StoryDetailBox';
 import { StoryProps } from '../../pages/Story';
 import { LoginContext } from '../../common/Context';
@@ -28,7 +29,7 @@ interface PostRecommendSectionProps {
 interface BottomBarSectionProps {
   post: any;
   email: string;
-  scrollToComment: () => void;
+
   onRefresh: any;
   navigation: any;
 }
@@ -105,10 +106,10 @@ const PostRecommendSection = ({ curations, stories, navigation }: PostRecommendS
   )
 }
 
-const BottomBarSection = ({ post, email, scrollToComment, onRefresh, navigation }: BottomBarSectionProps) => {
+const BottomBarSection = ({ post, email, onRefresh, navigation }: BottomBarSectionProps) => {
   const [like, setLike] = useState<boolean>(post.story_like)
   const request = new Request();
-
+  const [commentPopupVisible, setCommentPopupVisible] = useState<boolean>(false);
   const toggleLike = async () => {
     if (email) {
       const response = await request.post(`/stories/${post.id}/story_like/`);
@@ -121,7 +122,7 @@ const BottomBarSection = ({ post, email, scrollToComment, onRefresh, navigation 
         [
           {
             text: "이동",
-            onPress: () => navigation.navigate('마이페이지')
+            onPress: () => navigation.navigate('마이페이지', {})
 
           },
           {
@@ -134,17 +135,22 @@ const BottomBarSection = ({ post, email, scrollToComment, onRefresh, navigation 
       );
     }
   };
+  const openCommentPopup = () => {
+    setCommentPopupVisible(true);
+  };
   return (
     <View style={{ flexDirection: "row", padding: 10 }}>
       <View style={{ flexDirection: 'row', flex: 1, alignItems: 'center' }}>
         <Heart color={'#202020'} like={like} onPress={toggleLike} size={18} ></Heart>
         <Text style={{fontSize: 14, color: '#202020', lineHeight: 20, marginLeft: 3, marginRight: 10}}>{post.like_cnt}</Text>
-        <TouchableOpacity onPress={scrollToComment}>
+        <TouchableOpacity onPress={openCommentPopup} style={{ flexDirection: 'row', padding: 15, borderTopColor: '#E3E3E3', borderTopWidth: 1, alignItems: 'center' }}>
           <CommentIcon color={'#202020'} />
         </TouchableOpacity>
         <Text style={{fontSize: 14, color: '#202020', lineHeight: 20, marginLeft: 3}}>{post.comment_cnt}</Text>
       </View>
-      <ShareButton color={'black'} message={`[SASM Story] ${post.title}`} image={post.rep_pic} description={post.html_content} id={post.id} from='story' />
+      <PopComment
+            data={post} post_id={post.id} email={email} isLogin={!!email} navigation={navigation} repo={false} modalVisible={commentPopupVisible}  setModalVisible={setCommentPopupVisible}/>
+      <ShareButton color={'black'} message={`[SASM Story] ${post.title} - ${post.html_content}`} />
     </View>
   )
 }
@@ -236,11 +242,11 @@ const StoryDetailPage = ({ navigation, route }: StoryProps) => {
     setHeaderHeight(height);
   }
 
-  const scrollToComment = () => {
-    if (scrollRef.current) {
-      scrollRef.current.scrollToOffset({ animated: true, offset: headerHeight })
-    }
-  }
+  // const scrollToComment = () => {
+  //   if (scrollRef.current) {
+  //     scrollRef.current.scrollToOffset({ animated: true, offset: headerHeight })
+  //   }
+  // }
 
   useEffect(() => {
     if (isLogin) checkUser();
@@ -297,7 +303,7 @@ const StoryDetailPage = ({ navigation, route }: StoryProps) => {
                     </View>
                 </>}
             />
-            <BottomBarSection post={data} email={email} navigation={navigation} scrollToComment={scrollToComment} onRefresh={reRenderScreen} />
+            <BottomBarSection post={data} email={email} navigation={navigation} onRefresh={reRenderScreen} />
             <Report reported={reported} modalVisible={modalVisible} setModalVisible={setModalVisible} onReport={onReport} />
             </>
         )}
