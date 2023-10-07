@@ -85,61 +85,16 @@ const PopComment = ({ data, post_id, email, isLogin, navigation, modalVisible, s
         if(modalVisible){
         openModal();
         }
-
-        loadComment();
         // console.log(comment);
     }, [modalVisible])
 
     useFocusEffect(
         useCallback(()=>{
         loadComment();
-        
-        
         }
-
         ,[refreshing])
     );
     
-
-    if(repo){
-    return (
-        <BottomSheetModal
-            ref={bottomSheetModalRef}
-            index={0}
-            snapPoints={snapPoints}
-            backdropComponent={renderBackdrop}
-            handleIndicatorStyle={{backgroundColor: '#D9D9D9'}}>
-                    <>
-                    <FlatList
-                        ref={scrollRef}
-                        data={comment.slice(0,3)}
-                        style={styles.container}
-                        onRefresh={reRenderScreen}
-                        refreshing={refreshing}
-                        ListHeaderComponent={
-                        <>
-                            { <View style={{ flexDirection: 'row', padding: 20, alignItems: 'center' }}>
-                            <View style={{ flexDirection: 'row', flex: 1 }}>
-                                <Text style={{ fontSize: 16, fontWeight: '700', marginRight: 10 }}>한줄평</Text>
-                                <CommentIcon color={'black'} />
-                            </View>
-                            <TouchableOpacity style={{ flexDirection: 'row', alignItems: 'center' }} onPress={() => { navigation.navigate('PostComments', { id: post_id, email: email }) }}>
-                                <Text style={{ fontSize: 12, fontWeight: '500', marginRight: 5 }}>더보기</Text>
-                                <Arrow width={12} height={12} color={'black'} />
-                            </TouchableOpacity>
-                            </View> }
-                            <ForestWrite id={post_id} reRenderScreen={reRenderScreen} data={updateText} commentId={commentId} isLogin={isLogin} navigation={navigation} />
-                        </>
-                        }
-                        renderItem={({ item }) => {
-                        return (
-                            <ForestComment data={item} reRenderScreen={reRenderScreen} post_id={post_id} email={email} isLogin={isLogin} navigation={navigation} callback={callback} />
-                        )
-                        }}
-                    />
-                    </> 
-        </BottomSheetModal>
-    )}
     return(
         <BottomSheetModal
             ref={bottomSheetModalRef}
@@ -161,17 +116,23 @@ const PopComment = ({ data, post_id, email, isLogin, navigation, modalVisible, s
                                 <Text style={{ fontSize: 16, fontWeight: '700', marginRight: 10 }}>한줄평</Text>
                                 <CommentIcon color={'black'} />
                             </View>
-                            <TouchableOpacity style={{ flexDirection: 'row', alignItems: 'center' }} onPress={() => { navigation.navigate('CommentList', { id: post_id, email: email }) }}>
+                            <TouchableOpacity style={{ flexDirection: 'row', alignItems: 'center' }} onPress={() => { repo?navigation.navigate('PostComments', { id: post_id, email: email }) :navigation.navigate('CommentList', { id: post_id, email: email }) }}>
                                 <Text style={{ fontSize: 12, fontWeight: '500', marginRight: 5 }}>더보기</Text>
                                 <Arrow width={12} height={12} color={'black'} />
                             </TouchableOpacity>
                             </View> }
+                            {repo?
+                            <ForestWrite id={post_id} reRenderScreen={reRenderScreen} data={updateText} commentId={commentId} isLogin={isLogin} navigation={navigation}/>
+                            :
                             <StoryWrite id={post_id} reRenderScreen={reRenderScreen} data={updateText} commentId={commentId} isLogin={isLogin} navigation={navigation} />
+                            }
                         </>
                         }
                         renderItem={({ item }) => {
                         return (
-                            <StoryComment data={item} reRenderScreen={reRenderScreen} story_id={post_id} email={email} isLogin={isLogin} navigation={navigation} callback={callback} />
+                            repo?
+                            <ForestComment data={item} reRenderScreen={reRenderScreen} post_id={post_id} email={email} isLogin={isLogin} navigation={navigation} callback={callback} />
+                            : <StoryComment data={item} reRenderScreen={reRenderScreen} story_id={post_id} email={email} isLogin={isLogin} navigation={navigation} callback={callback} /> 
                         )
                         }}
                     />
@@ -180,6 +141,7 @@ const PopComment = ({ data, post_id, email, isLogin, navigation, modalVisible, s
     )
     
 }
+
 
 const textStyles = StyleSheet.create({
     nickname: {

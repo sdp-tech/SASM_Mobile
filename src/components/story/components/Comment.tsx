@@ -37,20 +37,9 @@ export function Comment ({ data, story_id, reRenderScreen, email, isLogin, navig
     const toggleLike = async () => {
         if(isLogin){
         const response = await request.post(`/stories/${story_id}/comments/${data.id}/like/`, {}, {});
-
-        //console.error(response.data);
-        console.error(response.data.data.likes);
-        //setLike(response.data.data.likes);
-        //사용자 like상태로 like 바꿈
-        setLike(response.data.data.likes)   
-        //setLike(!like);
-        console.error(like)
-        //like상태 안바뀜.. ㅠㅠ
+        setLike(!like);
         reRenderScreen();
-
-        console.error("like는",like);
-        
-
+    
         } else {
             Alert.alert(
               "로그인이 필요합니다.",
@@ -100,6 +89,11 @@ export function Comment ({ data, story_id, reRenderScreen, email, isLogin, navig
     if (data.email == email) {
         isWriter = true;
     }
+
+    useEffect(()=>{
+        setLike(data.user_likes? true: false);
+    },[data.user_likes])
+
     return (
         <View style={{borderBottomColor: '#D9D9D9', borderBottomWidth: 1, width: width-40, alignSelf: 'center', flex: 1}}>
             <View style = {{ flexDirection: 'row', paddingVertical: 25, alignItems: 'center'}}>
