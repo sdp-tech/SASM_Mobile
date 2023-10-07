@@ -17,13 +17,14 @@ interface CommentProps {
     callback?: any;
 }
 
-const Comment = ({ data, reRenderScreen, post_id, email, isLogin, navigation, callback }: CommentProps) => {
+export function Comment ({ data, reRenderScreen, post_id, email, isLogin, navigation, callback }: CommentProps) {
     const date = data.created.slice(0, 10);
     const { width, height } = Dimensions.get('screen');
     const [modalVisible, setModalVisible] = useState<boolean>(false);
     const [reported, setReported] = useState<string>('');
     const [reportVisible, setReportVisible] = useState<boolean>(false);
-    const [like, setLike] = useState<boolean>(data.user_likes);
+    const [like, setLike] = useState<boolean>(false);
+    //default로 설정해두고 userlike의 변화에 따라서 바꾸기
     const request = new Request();
 
     const onReport = async (item: any) => {
@@ -37,7 +38,8 @@ const Comment = ({ data, reRenderScreen, post_id, email, isLogin, navigation, ca
     const toggleLike = async () => {
         if(isLogin){
         const response = await request.post(`/forest/${post_id}/comments/${data.id}/like/`, {}, {});
-        setLike(!like);
+        ///기존 코드
+        setLike(!like); 
         reRenderScreen();
         } else {
             Alert.alert(
@@ -89,6 +91,10 @@ const Comment = ({ data, reRenderScreen, post_id, email, isLogin, navigation, ca
         isWriter = true;
     }
 
+    useEffect(()=>{
+        setLike(data.user_likes? true: false);
+    },[data.user_likes])
+    
     return (
         <View style={{borderBottomColor: '#D9D9D9', borderBottomWidth: 1, width: width-40, alignSelf: 'center', flex: 1}}>
             <View style = {{ flexDirection: 'row', paddingVertical: 25, alignItems: 'center'}}>
@@ -160,4 +166,4 @@ const textStyles = StyleSheet.create({
     }
 })
 
-export default Comment;
+// export default Comment;
