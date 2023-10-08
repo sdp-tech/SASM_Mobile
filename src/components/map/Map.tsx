@@ -376,6 +376,7 @@ export default function MapContainer({
         placeData={placeData}
         total={total}
         detailData={detailData}
+        checkedList={checkedList}
       />
 
       <Animated.View style={buttonAnimatedStyle}>
@@ -443,7 +444,7 @@ const CustomHandle = ({ mode }: { mode: boolean }) => {
         backgroundColor: mode ? "#FFFFFF" : "none",
         position: "absolute",
         width: width,
-        height: 39,
+        height: 20,
         borderTopEndRadius: 10,
         borderTopStartRadius: 10,
         display: "flex",
@@ -476,6 +477,7 @@ interface BottomSheetMemoProps {
   setDetailData: Dispatch<SetStateAction<detailDataProps>>;
   setCenter: Dispatch<SetStateAction<Coord>>;
   detailData: detailDataProps;
+  checkedList: any[];
 }
 //좌표가 바뀌어서 바텀시트가 올라가는것을 방지
 const BottomSheetMemo = memo(
@@ -491,6 +493,7 @@ const BottomSheetMemo = memo(
     placeData,
     total,
     detailData,
+    checkedList
   }: BottomSheetMemoProps) => {
     const [index, setIndex] = useState(1);
     const { width, height } = Dimensions.get("window");
@@ -534,6 +537,7 @@ const BottomSheetMemo = memo(
                 setDetailData={setDetailData}
                 setSheetMode={setSheetMode}
                 setCenter={setCenter}
+                checkedList={checkedList}
               />
             ) : (
               <DetailCard setIndex={setIndex} detailData={detailData} />
