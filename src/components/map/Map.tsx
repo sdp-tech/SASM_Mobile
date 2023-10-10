@@ -105,7 +105,7 @@ export interface detailDataProps extends Coord, DataTypes {
   short_cur: string;
   photos: url[];
   sns: object[];
-  story_id: number;
+  story_id: number[];
   category_statistics: string[];
   pet_category: boolean;
   reusable_con_category: any;
@@ -261,7 +261,7 @@ export default function MapContainer({
     longitude: 0,
     photos: [{}],
     sns: [{}],
-    story_id: 0,
+    story_id: [],
     place_like: "",
     category_statistics: [],
     vegan_category: "",
