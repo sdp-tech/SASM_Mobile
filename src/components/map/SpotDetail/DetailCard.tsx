@@ -27,6 +27,7 @@ import { LoginContext } from '../../../common/Context';
 import ShareButton from "../../../common/ShareButton";
 import { CategoryIcon } from '../../../common/Category';
 import Arrow from '../../../assets/img/common/Arrow.svg';
+import { NumberArray } from 'react-native-svg';
 
 const { width, height } = Dimensions.get('window');
 
@@ -126,7 +127,7 @@ export default function DetailCard({ detailData, setIndex }: DetailCardProps): J
   const [reviewModal, setReviewModal] = useState<boolean>(false);
   const request = new Request();
   const [reviewData, setReviewData] = useState<reviewDataProps[]>();
-  const [storyData, setStoryData] = useState<StoryDetail>({
+  const [storyData, setStoryData] = useState<Array<StoryDetail>>([{
     id: 1,
     title: '',
     created: '',
@@ -146,9 +147,9 @@ export default function DetailCard({ detailData, setIndex }: DetailCardProps): J
     map_image: '',
     writer_is_verified: '',
     preview: '',
-  });
+  }]);
   const [likePlace, setLikePlace] = useState<boolean>(false);
-  const [likeStory, setLikeStory] = useState<boolean>(false);
+  const [likeStory, setLikeStory] = useState<Array<boolean>>([false]);
   const [refresh, setRefresh] = useState<boolean>(false);
 
   const tabs: { index: number, name: string }[] = [
@@ -196,7 +197,7 @@ export default function DetailCard({ detailData, setIndex }: DetailCardProps): J
     const response = await request.post('/places/place_like/', { id: detailData.id });
     setLikePlace(!likePlace);
   }
-  const handleStoryLike = async () => {
+  const handleStoryLike = async (id: number) => {
     if (!isLogin) {
       Alert.alert(
         "로그인이 필요합니다.",
@@ -217,8 +218,11 @@ export default function DetailCard({ detailData, setIndex }: DetailCardProps): J
       );
       return;
     }
-    const response = await request.post(`/stories/${detailData.story_id}/story_like/`);
-    setLikeStory(!likeStory);
+    const response = await request.post(`/stories/${id}/story_like/`);
+    const tmp = [...likeStory];
+    tmp[storyData.findIndex(item => item.id === id)] = !tmp;
+    setLikeStory(tmp);
+    rerenderScreen();
   }
 
   const getReview = async () => {
@@ -229,10 +233,16 @@ export default function DetailCard({ detailData, setIndex }: DetailCardProps): J
     setReviewData(response_review.data.data.results);
   };
   const getStory = async () => {
-    if (detailData.story_id != null) {
-      const response_story = await request.get(`/stories/story_detail/${detailData.story_id}/`);
-      setLikeStory(response_story.data.data.story_like);
-      setStoryData(response_story.data.data);
+    let stories = [];
+    let likes = [];
+    if (detailData.story_id.length > 0) {
+      for (const id of detailData.story_id){
+        const response_story = await request.get(`/stories/story_detail/${id}/`);
+        stories.push(response_story.data.data);
+        likes.push(response_story.data.data.story_like);
+      }
+      setLikeStory(likes);
+      setStoryData(stories);
     }
     else return;
   }
@@ -259,6 +269,7 @@ export default function DetailCard({ detailData, setIndex }: DetailCardProps): J
       </Modal>
       <FlatList
         data={[detailData]}
+        keyExtractor={(item) => item.id.toString()}
         onEndReachedThreshold={0.2}
         onEndReached={() => { setIndex(2); }}
         renderItem={({ item: detailData }: { item: detailDataProps }) =>
@@ -393,18 +404,20 @@ export default function DetailCard({ detailData, setIndex }: DetailCardProps): J
                           </TouchableOpacity>
                         </MenuBox>
                         {
-                          detailData.story_id != null &&
-                          <StorySection onPress={() => { navigationToTab.navigate('스토리', { id: detailData.story_id }) }}>
-                            <Image source={{ uri: storyData!.rep_pic }} style={{ width: '100%', height: 450 }} />
-                            <View style={{ backgroundColor: 'rgba(0, 0, 0, 0.3)', position: 'absolute', width: '100%', height: '100%', paddingVertical: 35, paddingHorizontal: 20 }}>
-                              <Text style={TextStyles.story_title}>{storyData.title}</Text>
-                              <Text style={TextStyles.story_place_name}>{storyData.place_name}</Text>
-                              <Text style={TextStyles.story_category}>{storyData.category}</Text>
-                              <Text style={TextStyles.story_writer}>{storyData.nickname}님의 이야기</Text>
-                              <Text numberOfLines={3} style={TextStyles.story_preview}>{storyData.preview}...더보기</Text>
-                            </View>
-                            <View style={{ position: 'absolute', top: 34, right: 30 }}><Heart color={'white'} size={20} like={likeStory} onPress={handleStoryLike} /></View>
-                          </StorySection>
+                          detailData.story_id.length > 0 && 
+                          <StorySection onPress={() => { navigationToTab.navigate('스토리', { id: storyData[0].id }) }}>
+                            <Image source={{ uri: storyData[0].rep_pic }} style={{ width: '100%', height: 450 }} />
+                              <View style={{ backgroundColor: 'rgba(0, 0, 0, 0.3)', position: 'absolute', width: '100%', height: '100%', paddingVertical: 35, paddingHorizontal: 20 }}>
+                                <Text style={TextStyles.story_title}>{storyData[0].title}</Text>
+                                <Text style={TextStyles.story_place_name}>{storyData[0].place_name}</Text>
+                                <Text style={TextStyles.story_category}>{storyData[0].category}</Text>
+                                <Text style={TextStyles.story_writer}>{storyData[0].nickname}님의 이야기</Text>
+                                <Text numberOfLines={3} style={TextStyles.story_preview}>{storyData[0].preview}...더보기</Text>
+                              </View>
+                              <View style={{ position: 'absolute', top: 34, right: 30 }}>
+                                <Heart color={'white'} size={20} like={likeStory[0]} onPress={() => handleStoryLike(storyData[0].id)} />
+                              </View>
+                            </StorySection>
                         }
                       </Box>
                     </Section>,
@@ -421,18 +434,27 @@ export default function DetailCard({ detailData, setIndex }: DetailCardProps): J
                     </Section>,
                     2: <Section>
                       {
-                        detailData.story_id == null ? <Text style={{ margin: 15, fontWeight: '700', color: '#000000' }}>스토리가 없습니다.</Text> :
-                          <StorySection onPress={() => { navigationToTab.navigate('스토리', { id: detailData.story_id }) }}>
-                            <Image source={{ uri: storyData!.rep_pic }} style={{ width: '100%', height: 450 }} />
-                            <View style={{ backgroundColor: 'rgba(0, 0, 0, 0.3)', position: 'absolute', width: '100%', height: '100%', paddingVertical: 35, paddingHorizontal: 20 }}>
-                              <Text style={TextStyles.story_title}>{storyData.title}</Text>
-                              <Text style={TextStyles.story_place_name}>{storyData.place_name}</Text>
-                              <Text style={TextStyles.story_category}>{storyData.category}</Text>
-                              <Text style={TextStyles.story_writer}>{storyData.nickname}님의 이야기</Text>
-                              <Text numberOfLines={3} style={TextStyles.story_preview}>{storyData.preview}...더보기</Text>
-                            </View>
-                            <View style={{ position: 'absolute', top: 34, right: 30 }}><Heart color={'white'} size={20} like={likeStory} onPress={handleStoryLike} /></View>
-                          </StorySection>
+                        detailData.story_id.length === 0 ? <Text style={{ margin: 15, fontWeight: '700', color: '#000000' }}>스토리가 없습니다.</Text> :
+                          <FlatList
+                            data = {storyData}
+                            renderItem = {({item}: any) => {
+                              const { id, rep_pic, title, place_name, category, nickname, preview } = item;
+                              return (
+                                <StorySection onPress={() => { navigationToTab.navigate('스토리', { id: id }) }}>
+                                  <Image source={{ uri: rep_pic }} style={{ width: '100%', height: 450 }} />
+                                  <View style={{ backgroundColor: 'rgba(0, 0, 0, 0.3)', position: 'absolute', width: '100%', height: '100%', paddingVertical: 35, paddingHorizontal: 20 }}>
+                                    <Text style={TextStyles.story_title}>{title}</Text>
+                                    <Text style={TextStyles.story_place_name}>{place_name}</Text>
+                                    <Text style={TextStyles.story_category}>{category}</Text>
+                                    <Text style={TextStyles.story_writer}>{nickname}님의 이야기</Text>
+                                    <Text numberOfLines={3} style={TextStyles.story_preview}>{preview}...더보기</Text>
+                                  </View>
+                                  <View style={{ position: 'absolute', top: 34, right: 30 }}>
+                                    <Heart color={'white'} size={20} like={likeStory[storyData.findIndex(item => item.id === id)]} onPress={() => handleStoryLike(id)} />
+                                  </View>
+                                </StorySection>
+                            )}}
+                          />
                       }
                     </Section>,
                   }[tab]
