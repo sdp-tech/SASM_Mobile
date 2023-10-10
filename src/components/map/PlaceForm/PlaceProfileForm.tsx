@@ -47,7 +47,7 @@ interface TabProps {
   setFormData: React.Dispatch<React.SetStateAction<formDataProps>>;
 }
 
-export default function PlaceProfileScreen({
+export default function PlaceProfileForm({
   NextBtn,
   formData,
   setFormData,
@@ -128,7 +128,7 @@ export default function PlaceProfileScreen({
           story={true}
           checkedList={checkedList}
           setCheckedList={setCheckedList}
-          style={{ marginTop: 20 }}
+          style={{ marginTop: 20, width: "100%" }}
         />
       </InputWrapper>
       {NextBtn}

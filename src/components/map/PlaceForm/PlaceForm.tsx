@@ -74,6 +74,14 @@ interface NextBtnProps {
   onPress: () => void;
   text?: string;
 }
+
+export interface ListProps {
+  id: number;
+  data: string;
+  name: string;
+  selected: boolean;
+}
+
 export interface formDataProps {
   place_name: string;
   category: string;
@@ -81,6 +89,7 @@ export interface formDataProps {
   tumblur_category: boolean | null;
   reusable_con_category: boolean | null;
   pet_category: boolean | null;
+  // week_hours: string | null;
   mon_hours: string;
   tues_hours: string;
   wed_hours: string;
@@ -93,7 +102,7 @@ export interface formDataProps {
   address: string;
   short_cur: string;
   phone_num: string;
-  imageList: string[] | null;
+  imageList: string[];
   snsList: string[] | null;
   [index: string]: any;
 }
@@ -128,6 +137,16 @@ export function NextBtn({ onPress, text = "다음" }: NextBtnProps) {
 export default function PlaceForm({
   setPlaceformModal,
 }: PlaceFormProps): JSX.Element {
+  const [selectedDay, setSelectedDay] = useState([
+    // { id: 0, name: "공휴일", selected: false },
+    { id: 1, data: "mon_hours", name: "월요일", selected: false },
+    { id: 2, data: "tues_hours", name: "화요일", selected: false },
+    { id: 3, data: "wed_hours", name: "수요일", selected: false },
+    { id: 4, data: "thurs_hours", name: "목요일", selected: false },
+    { id: 5, data: "fri_hours", name: "금요일", selected: false },
+    { id: 6, data: "sat_hours", name: "토요일", selected: false },
+    { id: 7, data: "sun_hours", name: "일요일", selected: false },
+  ]);
   const [owner, setOwner] = useState(false);
 
   const [tab, setTab] = useState<number>(0);
@@ -139,6 +158,7 @@ export default function PlaceForm({
     tumblur_category: null,
     reusable_con_category: null,
     pet_category: null,
+    week_hours: "",
     mon_hours: "",
     tues_hours: "",
     wed_hours: "",
@@ -151,7 +171,7 @@ export default function PlaceForm({
     address: "",
     short_cur: "",
     phone_num: "",
-    imageList: null,
+    imageList: [],
     snsList: null,
   });
 
@@ -287,6 +307,8 @@ export default function PlaceForm({
                   }}
                 />
               }
+              selectedDay={selectedDay}
+              setSelectedDay={setSelectedDay}
               formData={formData}
               setFormData={setFormData}
             />
