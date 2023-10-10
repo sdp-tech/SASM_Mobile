@@ -14,7 +14,7 @@ import Close from "../../../assets/img/common/Close.svg";
 import Category from "../../../common/Category";
 import { TextPretendard as Text } from "../../../common/CustomText";
 import Postcode from "@actbase/react-daum-postcode";
-import { formDataProps } from "./PlaceForm";
+import { formDataProps, NextBtn } from "./PlaceForm";
 
 const Section = styled.View`
   height: 90%;
@@ -42,23 +42,32 @@ interface BtnProps {
 }
 
 interface TabProps {
-  NextBtn: any;
+  setTab: React.Dispatch<React.SetStateAction<number>>;
   formData: formDataProps;
   setFormData: React.Dispatch<React.SetStateAction<formDataProps>>;
 }
 
 export default function PlaceProfileForm({
-  NextBtn,
+  setTab,
   formData,
   setFormData,
 }: TabProps) {
   const [postModal, setPostModal] = useState(false);
-  const [checkedList, setCheckedList] = useState<string[]>([]);
+  const [checkedList, setCheckedList] = useState<string[]>(
+    formData.category === "" ? [] : [formData.category]
+  );
 
   useEffect(() => {
     if (checkedList.length > 1) {
       Alert.alert("카테고리는 최대 1개까지만 선택 가능합니다.");
       setCheckedList([]);
+      setFormData((prev) => {
+        return { ...prev, category: "" };
+      });
+    } else if (checkedList.length < 1) {
+      setFormData((prev) => {
+        return { ...prev, category: "" };
+      });
     } else {
       setFormData((prev) => {
         return { ...prev, category: checkedList[0] };
@@ -131,7 +140,18 @@ export default function PlaceProfileForm({
           style={{ marginTop: 20, width: "100%" }}
         />
       </InputWrapper>
-      {NextBtn}
+      <NextBtn
+        onPress={() =>
+          setTab((prev) => {
+            return prev + 1;
+          })
+        }
+        disability={
+          formData.address === "" ||
+          formData.place_name === "" ||
+          formData.category === ""
+        }
+      />
       <Modal visible={postModal}>
         <TouchableOpacity
           onPress={() => setPostModal(false)}

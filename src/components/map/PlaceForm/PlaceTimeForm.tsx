@@ -10,7 +10,7 @@ import {
 } from "react-native";
 import { FlatList, ScrollView } from "react-native-gesture-handler";
 import { useEffect, useState } from "react";
-import { formDataProps, ListProps } from "./PlaceForm";
+import { formDataProps, ListProps, NextBtn } from "./PlaceForm";
 import CheckboxImg from "../../../assets/img/common/CheckBox.svg";
 import { TextPretendard as Text } from "../../../common/CustomText";
 
@@ -83,7 +83,7 @@ interface CheckboxProps {
 }
 
 interface TabProps {
-  NextBtn: any;
+  setTab: React.Dispatch<React.SetStateAction<number>>;
   selectedDay: ListProps[];
   setSelectedDay: React.Dispatch<React.SetStateAction<ListProps[]>>;
   formData: formDataProps;
@@ -142,7 +142,7 @@ function CheckBox({ name, checked, onPress }: CheckboxProps) {
 }
 
 export default function PlaceTimeForm({
-  NextBtn,
+  setTab,
   selectedDay,
   setSelectedDay,
   formData,
@@ -309,7 +309,23 @@ export default function PlaceTimeForm({
             }}
           />
         </InputWrapper>
-        {NextBtn}
+        <NextBtn
+          onPress={() =>
+            setTab((prev) => {
+              return prev + 1;
+            })
+          }
+          disability={
+            formData.mon_hours === "" ||
+            formData.tues_hours === "" ||
+            formData.wed_hours === "" ||
+            formData.thurs_hours === "" ||
+            formData.fri_hours === "" ||
+            formData.sat_hours === "" ||
+            formData.sun_hours === "" ||
+            (breaktime && formData.etc_hours === "")
+          }
+        />
       </ScrollView>
     </Section>
   );

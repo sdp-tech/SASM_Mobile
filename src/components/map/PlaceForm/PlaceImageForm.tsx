@@ -14,7 +14,7 @@ import { useState } from "react";
 import * as ImagePicker from "react-native-image-picker";
 import { CameraOptions, ImageLibraryOptions } from "react-native-image-picker";
 import { PhotoResultProps, PhotoSelector } from "../../../common/PhotoOptions";
-import { formDataProps } from "./PlaceForm";
+import { formDataProps, NextBtn } from "./PlaceForm";
 import PhotoIcon from "../../../assets/img/common/PhotoIcon.svg";
 import { TextPretendard as Text } from "../../../common/CustomText";
 
@@ -67,13 +67,13 @@ const SelectButton = styled.TouchableOpacity<{ width: number; height: number }>`
 `;
 
 interface TabProps {
-  NextBtn: any;
+  setTab: React.Dispatch<React.SetStateAction<number>>;
   formData: formDataProps;
   setFormData: React.Dispatch<React.SetStateAction<formDataProps>>;
 }
 
 export default function PlaceImageForm({
-  NextBtn,
+  setTab,
   formData,
   setFormData,
 }: TabProps) {
@@ -201,7 +201,14 @@ export default function PlaceImageForm({
           </TouchableOpacity>
         ))}
       </PhotoWrapper>
-      {NextBtn}
+      <NextBtn
+        onPress={() =>
+          setTab((prev) => {
+            return prev + 1;
+          })
+        }
+        disability={formData.imageList.length < 1}
+      />
     </Section>
   );
 }

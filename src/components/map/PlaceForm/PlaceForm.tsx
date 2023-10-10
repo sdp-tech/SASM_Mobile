@@ -72,6 +72,7 @@ interface PlaceFormProps {
 
 interface NextBtnProps {
   onPress: () => void;
+  disability?: boolean;
   text?: string;
 }
 
@@ -107,11 +108,16 @@ export interface formDataProps {
   [index: string]: any;
 }
 
-export function NextBtn({ onPress, text = "다음" }: NextBtnProps) {
+export function NextBtn({
+  onPress,
+  disability = false,
+  text = "다음",
+}: NextBtnProps) {
+  const color = disability ? "#ACEFC3" : "#67d393";
   return (
     <TouchableOpacity
       style={{
-        backgroundColor: "#67d393",
+        backgroundColor: color,
         marginTop: "auto",
         width: "45%",
         height: 45,
@@ -119,6 +125,7 @@ export function NextBtn({ onPress, text = "다음" }: NextBtnProps) {
         justifyContent: "center",
       }}
       onPress={onPress}
+      disabled={disability}
     >
       <Text
         style={{
@@ -268,45 +275,28 @@ export default function PlaceForm({
                   onPress={() => {
                     setTab((prev) => prev + 1);
                   }}
+                  disability={false}
                 />
               }
             />
           ),
           2: (
             <PlaceProfileForm
-              NextBtn={
-                <NextBtn
-                  onPress={() => {
-                    setTab((prev) => prev + 1);
-                  }}
-                />
-              }
+              setTab={setTab}
               formData={formData}
               setFormData={setFormData}
             />
           ),
           3: (
             <PlaceImageForm
-              NextBtn={
-                <NextBtn
-                  onPress={() => {
-                    setTab((prev) => prev + 1);
-                  }}
-                />
-              }
+              setTab={setTab}
               formData={formData}
               setFormData={setFormData}
             />
           ),
           4: (
             <PlaceTimeForm
-              NextBtn={
-                <NextBtn
-                  onPress={() => {
-                    setTab((prev) => prev + 1);
-                  }}
-                />
-              }
+              setTab={setTab}
               selectedDay={selectedDay}
               setSelectedDay={setSelectedDay}
               formData={formData}
@@ -315,13 +305,7 @@ export default function PlaceForm({
           ),
           5: (
             <PlaceAddinfoForm
-              NextBtn={
-                <NextBtn
-                  onPress={() => {
-                    setTab((prev) => prev + 1);
-                  }}
-                />
-              }
+              setTab={setTab}
               formData={formData}
               setFormData={setFormData}
             />

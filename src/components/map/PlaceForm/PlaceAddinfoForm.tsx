@@ -11,7 +11,7 @@ import {
 import { useState } from "react";
 import InputWithLabel from "../../../common/InputWithLabel";
 import { TextPretendard as Text } from "../../../common/CustomText";
-import { formDataProps } from "./PlaceForm";
+import { formDataProps, NextBtn } from "./PlaceForm";
 
 const Section = styled.View`
   height: 90%;
@@ -28,13 +28,13 @@ const InputStyle = {
 };
 
 interface TabProps {
-  NextBtn: any;
+  setTab: React.Dispatch<React.SetStateAction<number>>;
   formData: formDataProps;
   setFormData: React.Dispatch<React.SetStateAction<formDataProps>>;
 }
 
 export default function PlaceAddinfoForm({
-  NextBtn,
+  setTab,
   formData,
   setFormData,
 }: TabProps) {
@@ -61,9 +61,11 @@ export default function PlaceAddinfoForm({
         isRequired={true}
         placeholder="장소의 리뷰를 작성해주세요."
         containerStyle={InputStyle}
-        value={formData.snsList === null ? undefined : formData.snsList[0]}
+        value={formData.place_review}
         onChangeText={(e) => {
-          setFormData({ ...formData, snsList: [e] });
+          setFormData((prev) => {
+            return { ...prev, place_review: e };
+          });
         }}
       />
       <InputWithLabel
@@ -71,9 +73,22 @@ export default function PlaceAddinfoForm({
         isRequired={false}
         placeholder="하고 싶은 말이 있으시다면 적어주세요."
         containerStyle={InputStyle}
+        value={formData.short_cur}
+        onChangeText={(e) => {
+          setFormData((prev) => {
+            return { ...prev, short_cur: e };
+          });
+        }}
       />
 
-      {NextBtn}
+      <NextBtn
+        onPress={() =>
+          setTab((prev) => {
+            return prev + 1;
+          })
+        }
+        disability={formData.phone_num === "" || formData.place_review === ""}
+      />
     </Section>
   );
 }
