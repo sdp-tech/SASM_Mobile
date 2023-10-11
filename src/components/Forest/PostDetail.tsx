@@ -409,14 +409,13 @@ const BottomBarSection = ({ post, email, onRefresh, navigation }: BottomBarSecti
       <View style={{ flexDirection: 'row', flex: 1, alignItems: 'center' }}>
         <Heart color={'#202020'} like={like} onPress={toggleLike} size={18} ></Heart>
         <Text style={{ fontSize: 14, color: '#202020', lineHeight: 20, marginLeft: 3, marginRight: 10 }}>{post.like_cnt}</Text>
-        <TouchableOpacity onPress={openCommentPopup} style={{ flexDirection: 'row', padding: 15, borderTopColor: '#E3E3E3', borderTopWidth: 1, alignItems: 'center' }}>
+        <TouchableOpacity onPress={openCommentPopup}>
           <CommentIcon color={'#202020'} />
         </TouchableOpacity>
         <Text style={{ fontSize: 14, color: '#202020', lineHeight: 20, marginLeft: 3 }}>{post.comment_cnt}</Text>
       </View>
-      <ShareButton color={'black'} message={`[SASM Forest] ${post.title} - ${post.content}`} />
-      <PopComment
-            data={post} post_id={post.id} email={email} isLogin={!!email} navigation={navigation} repo={true} modalVisible={commentPopupVisible}  setModalVisible={setCommentPopupVisible}/>
+      <ShareButton color={'black'} message={`[SASM Forest] ${post.title}`} description={post.content} image={post.rep_pic} id={post.id} from='forest' />
+      <PopComment data={post} post_id={post.id} email={email} isLogin={!!email} navigation={navigation} repo={true} modalVisible={commentPopupVisible}  setModalVisible={setCommentPopupVisible}/>
     </View>
   )
 }

@@ -1,4 +1,4 @@
-import { useState, useRef } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { View } from 'react-native';
 import { FlatList } from 'react-native-gesture-handler';
 
@@ -37,6 +37,10 @@ const Dot = ({focused, green}: DotProps) => {
 const CardView = ({ gap, offset, data, pageWidth, renderItem, dot, onEndReached, onRefresh, refreshing, onEndDrag, green }: CardViewProps) => {
   const [page, setPage] = useState<number>(0);
   const prevScrollOffset = useRef<number>(0); // 이전 스크롤 위치를 저장할 ref
+
+  useEffect(() => {
+    setPage(0);
+  }, [data])
 
   const onScroll = (e: any) => {
     const newPage = Math.round(e.nativeEvent.contentOffset.x / (pageWidth + gap));
