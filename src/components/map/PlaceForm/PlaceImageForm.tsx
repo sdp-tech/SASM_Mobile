@@ -158,11 +158,11 @@ export default function PlaceImageForm({
                       } else if (response.errorCode) {
                         console.log("ImagePicker Error: ", response.errorCode);
                       } else if (response.assets !== undefined) {
-                        handleImageSelect(
-                          response.assets[0].uri !== undefined
-                            ? response.assets[0].uri
-                            : ""
-                        );
+                        response.assets.map((asset) => {
+                          if (asset.uri !== undefined) {
+                            handleImageSelect(asset.uri);
+                          }
+                        });
                       }
                     });
                   },
@@ -183,20 +183,35 @@ export default function PlaceImageForm({
                 {
                   text: "삭제하기",
                   onPress: () => {
-                    const newList = formData.imageList.splice(index, 0);
+                    const newList = formData.imageList;
+                    newList.splice(index, 1);
                     setFormData((prev) => {
                       return { ...prev, imageList: newList };
                     });
                   },
                 },
-                { text: "대표 사진으로 설정하기" },
+                {
+                  text: "대표 사진으로 설정하기",
+                  onPress: () => {
+                    const newList = [formData.imageList[index]];
+                    formData.imageList.map((str, idx) => {
+                      if (idx !== index) newList.push(str);
+                    });
+                    setFormData((prev) => {
+                      return { ...prev, imageList: newList };
+                    });
+                  },
+                },
                 { text: "취소", style: "destructive" },
               ])
             }
           >
             <Image
               source={{ uri: src }}
-              style={{ height: width * 0.2, width: width * 0.2 }}
+              style={{
+                height: width * 0.2,
+                width: width * 0.2,
+              }}
             />
           </TouchableOpacity>
         ))}
