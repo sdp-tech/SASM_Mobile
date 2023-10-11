@@ -16,6 +16,7 @@ import type { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { useFocusEffect, useNavigation } from "@react-navigation/native";
 import ListHeader from "./components/ListHeader";
 import { LoginContext } from "../../common/Context";
+import CustomHeader from "../../common/CustomHeader";
 
 import { ForestStackParams } from "../../pages/Forest";
 import { Request } from "../../common/requests";
@@ -23,8 +24,10 @@ import PostItem from "./components/PostItem";
 import PlusButton from "../../common/PlusButton";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { TabProps } from "../../../App";
+import { check } from "react-native-permissions";
 
 const { width, height } = Dimensions.get('window');
+const request = new Request();
 
 const PostListScreen = ({
   navigation,
@@ -42,17 +45,49 @@ const PostListScreen = ({
 
   const board_name = route.params?.board_name;
   const board_category = route.params?.board_category;
+  const [nickname, setNickname] = useState('');
+  const [boardLists, setBoardLists] = useState([] as any);
+  const [userCategories, setUserCategories] = useState([] as any);
+  const [checkedList, setCheckedList] = useState([] as any);
+  const [modalVisible, setModalVisible] = useState<boolean>(false);
+
+  // console.error('category는',board_category)
+  const getUserInfo = async () => {
+    const response = await request.get('/mypage/me/', {}, {});
+    setNickname(response.data.data.nickname);
+  }
+
+  const getBoardItems = async () => {
+    const response = await request.get('/forest/categories/');
+    setBoardLists(response.data.data.results);
+  }
+
+  const getUserCategories = async () => {
+    const response = await request.get('/forest/user_categories/get/');
+    setUserCategories([...response.data.data.results, {id: 0, name: '+'}]);
+  }
+
+  // const getPosts = async () => {
+  //   const response = await request.get('/forest/', {
+  //     order: order,
+  //     page: page,
+  //     category_filter: board_category?.id
+  //   }, null);
+  //   if (page == 1) setPosts(response.data.data.results);
+  //   else setPosts([...posts, ...response.data.data.results]);
+  //   setCount(response.data.data.count);
+  // }
 
   const getPosts = async () => {
-    const response = await request.get('/forest/', {
-      order: order,
-      page: page,
-      category_filter: board_category?.id
-    }, null);
-    if (page == 1) setPosts(response.data.data.results);
-    else setPosts([...posts, ...response.data.data.results]);
+    let params = new URLSearchParams();
+    for (const category of board_category){
+      params.append('semi_category_filters', category.id);
+    }
+    const response = await request.get(`/forest/?${params.toString()}`, {}, null);
+    setPosts(response.data.data.results);
     setCount(response.data.data.count);
-  }
+
+  };
 
   const onRefresh = () => {
     setRefreshing(true);
@@ -68,24 +103,55 @@ const PostListScreen = ({
 
   useEffect(() => {
     if(board_name === '추천글' || board_name === '사슴의 추천글') setOrder('latest')
-    else if(board_name === '인기글' || board_name === '사슴의 인기글') setOrder('hot')
-    else if(board_name === '최신글' || board_name === '사슴의 최신글') setOrder('latest')
   }, [route.params?.board_name])
 
   useFocusEffect(useCallback(() => {
     getPosts();
-  }, [order, refreshing, page]));
+    console.error('길이',board_category.length)
+    //console.error(checkedList)
+  }, [order, refreshing, page, checkedList]));
+
+  useEffect(() => {
+    getBoardItems();
+  }, [refreshing]);
+
+  useFocusEffect(useCallback(() => {
+    if(isLogin) {
+      getUserInfo();
+      getUserCategories();
+    }
+  }, [isLogin, modalVisible]))
 
   return (
     <SafeAreaView style={styles.container}>
+      <CustomHeader
+        onSearch={() => {
+          navigation.navigate("PostSearch");
+        }}
+      />
       <ListHeader
         board_name={board_name!}
-        board_category={board_category}
+        // board_category={board_category}
         navigation={navigation}
       />
       <View style={{flexDirection: 'row', zIndex: 1, alignItems: 'center', padding: 15, backgroundColor: '#F1FCF5'}}>
         <Text style={{fontSize: 12, fontWeight: '400', flex: 1}}>전체 글 {count}개</Text>
       </View>
+      {/* 여기에 semicategory 추가하기 */}
+      {board_category.length > 0 &&
+            <View style={{flexDirection: 'row', paddingHorizontal: 15, paddingBottom: 5}}>
+              {board_category.map((category: any) => 
+                (
+                  <Text style={{color: '#67D393', fontWeight: '700', fontSize: 16}}>
+                    #{category.name+' '}
+                  </Text>
+                )
+              )}
+              <Text style={{color: '#67D393', fontWeight: '700', fontSize: 16}}>
+                과 관련된 정보들
+              </Text>
+            </View>
+          }
       <FlatList
         data={posts}
         style={{ flexGrow: 1 }}

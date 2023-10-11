@@ -113,7 +113,7 @@ const BoardListScreen = ({
 
   useFocusEffect(useCallback(() => {
     getPosts();
-    console.log(checkedList)
+    //console.error(checkedList)
   }, [refreshing, checkedList]))
 
   return (
@@ -270,6 +270,7 @@ const BoardListScreen = ({
             <TouchableOpacity style={{ flexDirection: 'row', alignItems: 'center' }} onPress={() => {
               navigation.navigate("PostList", {
                 board_name: "사슴의 추천글",
+                board_category:checkedList
               });
             }}>
               <Text style={{ fontSize: 12, fontWeight: '500', marginRight: 5 }}>더보기</Text>
