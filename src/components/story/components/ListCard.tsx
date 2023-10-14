@@ -3,6 +3,7 @@ import { SafeAreaView, View, TouchableOpacity, Image, StyleSheet, Dimensions, Al
 import { TextPretendard as Text } from '../../../common/CustomText';
 import { Request } from '../../../common/requests';
 import Heart from '../../../common/Heart';
+import FastImage from 'react-native-fast-image';
 
 interface ListCardProps {
   id: number;
@@ -75,9 +76,9 @@ const ListCard = ({id, place_name, title, rep_pic, extra_pics, story_like, creat
               <Heart like={like} onPress={toggleLike} size={20} color={'#202020'}/>
             </View>
           </View>
-          <Image source={{uri: rep_pic}} style={{width: 60, height: 60, borderRadius: 4, marginRight: 8, marginLeft: 20}} />
+          <FastImage source={{uri: rep_pic, priority: FastImage.priority.normal}} style={{width: 60, height: 60, borderRadius: 4, marginRight: 8, marginLeft: 20}} />
           { extra_pics!= null ? (
-            <Image source={{uri: extra_pics[0]}} style={{width: 60, height: 60, borderRadius: 4}} />
+            <FastImage source={{uri: extra_pics[0], priority: FastImage.priority.high}} style={{width: 60, height: 60, borderRadius: 4}} />
           ): (
             <View style={{backgroundColor: '#D9D9D9', width: 60, height: 60, borderRadius: 4}} />
           )}

@@ -28,6 +28,7 @@ import ShareButton from "../../../common/ShareButton";
 import { CategoryIcon } from '../../../common/Category';
 import Arrow from '../../../assets/img/common/Arrow.svg';
 import { NumberArray } from 'react-native-svg';
+import FastImage from 'react-native-fast-image';
 
 const { width, height } = Dimensions.get('window');
 
@@ -275,9 +276,9 @@ export default function DetailCard({ detailData, setIndex }: DetailCardProps): J
         renderItem={({ item: detailData }: { item: detailDataProps }) =>
           <View>
             <View style={{ position: 'relative' }}>
-              <ImageBackground source={{ uri: detailData!.rep_pic }} style={{ width: '100%', height: 350 }}>
+              <FastImage source={{ uri: detailData!.rep_pic, priority: FastImage.priority.normal }} style={{ width: '100%', height: 350 }}>
                 <View style={{ width: '100%', height: 350, backgroundColor: 'rgba(0,0,0,0.4)' }} />
-              </ImageBackground>
+              </FastImage>
             </View>
             <ButtonBox>
               <TouchableOpacity onPress={() => {
@@ -406,7 +407,7 @@ export default function DetailCard({ detailData, setIndex }: DetailCardProps): J
                         {
                           detailData.story_id.length > 0 && 
                           <StorySection onPress={() => { navigationToTab.navigate('스토리', { id: storyData[0].id }) }}>
-                            <Image source={{ uri: storyData[0].rep_pic }} style={{ width: '100%', height: 450 }} />
+                            <FastImage source={{ uri: storyData[0].rep_pic, priority: FastImage.priority.normal }} style={{ width: '100%', height: 450 }} />
                               <View style={{ backgroundColor: 'rgba(0, 0, 0, 0.3)', position: 'absolute', width: '100%', height: '100%', paddingVertical: 35, paddingHorizontal: 20 }}>
                                 <Text style={TextStyles.story_title}>{storyData[0].title}</Text>
                                 <Text style={TextStyles.story_place_name}>{storyData[0].place_name}</Text>
@@ -441,7 +442,7 @@ export default function DetailCard({ detailData, setIndex }: DetailCardProps): J
                               const { id, rep_pic, title, place_name, category, nickname, preview } = item;
                               return (
                                 <StorySection onPress={() => { navigationToTab.navigate('스토리', { id: id }) }}>
-                                  <Image source={{ uri: rep_pic }} style={{ width: '100%', height: 450 }} />
+                                  <FastImage source={{ uri: rep_pic, priority: FastImage.priority.normal }} style={{ width: '100%', height: 450 }} />
                                   <View style={{ backgroundColor: 'rgba(0, 0, 0, 0.3)', position: 'absolute', width: '100%', height: '100%', paddingVertical: 35, paddingHorizontal: 20 }}>
                                     <Text style={TextStyles.story_title}>{title}</Text>
                                     <Text style={TextStyles.story_place_name}>{place_name}</Text>

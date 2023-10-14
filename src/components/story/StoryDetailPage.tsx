@@ -19,6 +19,7 @@ import { StackNavigationProp } from '@react-navigation/stack';
 import { HomeStackParams } from '../../pages/Home';
 import { useNavigation } from '@react-navigation/native';
 import { TabProps } from '../../../App';
+import FastImage from 'react-native-fast-image';
 
 interface PostRecommendSectionProps {
   curations: any;
@@ -57,16 +58,15 @@ const PostRecommendSection = ({ curations, stories, navigation }: PostRecommendS
         dot={false}
         renderItem={({item}: any) => (
           <TouchableOpacity style={{marginHorizontal: 8}} onPress={() => { navigationHome.navigate('홈', { id: item.id }) }}>
-            <ImageBackground
-              style={{width: width*0.5, height: width*0.5}}
+            <FastImage
+              style={{width: width*0.5, height: width*0.5, borderRadius: 5}}
               source={{uri: item.rep_pic}}
-              imageStyle={{borderRadius: 5}}
               resizeMode='cover'
             >
               <View style={{width: width*0.5, height: width*0.5, borderRadius: 5, backgroundColor: 'rgba(0, 0, 0, 0.3)', justifyContent: 'flex-end'}}>
                 <Text style={{fontSize: 15, fontWeight: '700', marginBottom: 10, marginLeft: 10, color: 'white'}}>{item.title}</Text>
               </View>
-            </ImageBackground>
+            </FastImage>
           </TouchableOpacity>
         )}
       />
@@ -88,16 +88,15 @@ const PostRecommendSection = ({ curations, stories, navigation }: PostRecommendS
       dot={false}
       renderItem={({item}: any) => (
         <TouchableOpacity style={{marginHorizontal: 8}} onPress={() => navigation.push('StoryDetail', { id: item.id })}>
-          <ImageBackground
-            style={{width: width*0.5, height: width*0.25}}
+          <FastImage
+            style={{width: width*0.5, height: width*0.25, borderRadius: 5}}
             source={{uri: item.rep_pic}}
-            imageStyle={{borderRadius: 5}}
             resizeMode='cover'
           >
             <View style={{width: width*0.5, height: width*0.25, borderRadius: 5, backgroundColor: 'rgba(0, 0, 0, 0.3)', justifyContent: 'flex-end'}}>
               <Text style={{fontSize: 15, fontWeight: '700', marginBottom: 10, marginLeft: 10, color: 'white'}}>{item.title}</Text>
             </View>
-          </ImageBackground>
+          </FastImage>
         </TouchableOpacity>
       )}
     />

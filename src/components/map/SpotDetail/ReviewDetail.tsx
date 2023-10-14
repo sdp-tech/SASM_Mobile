@@ -8,6 +8,7 @@ import ArrowWhite from "../../../assets/img/common/ArrowWhite.svg";
 import { getNickname } from "../../../common/storage";
 import { Request } from '../../../common/requests';
 import WriteReview from './WriteReview';
+import FastImage from 'react-native-fast-image';
 
 const Section = styled.SafeAreaView`
   height: 100%;
@@ -60,8 +61,6 @@ export default function ReviewDetail({ reviewData, setDetailModal, rerender, cat
     checkisWriter();
   }, [])
 
-  console.error(reviewData);
-
   const deleteReview = async () => {
     const response_delete = await request.delete(`/places/place_review/${reviewData.id}/`);
     setDetailModal(false);
@@ -102,7 +101,7 @@ export default function ReviewDetail({ reviewData, setDetailModal, rerender, cat
           onScroll={(e) => { setCurrentIdx(Math.floor(e.nativeEvent.contentOffset.x / width)) }}
           data={reviewData.photos}
           pagingEnabled
-          renderItem={({ item }: any) => <Image source={{ uri: item.imgfile }} style={{ width: width, height: height * 0.3 }} />}
+          renderItem={({ item }: any) => <FastImage source={{ uri: item.imgfile, priority: FastImage.priority.normal }} style={{ width: width, height: height * 0.3 }} />}
           horizontal
         />
       </View>
