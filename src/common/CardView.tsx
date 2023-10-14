@@ -78,7 +78,7 @@ const CardView = ({ gap, offset, data, pageWidth, renderItem, dot, onEndReached,
         showsHorizontalScrollIndicator={false}
         onRefresh={onRefresh}
         refreshing={refreshing}
-        onEndReachedThreshold={0.1}
+        onEndReachedThreshold={0}
       />
       {dot ? (
         <View style = {{ flexDirection: 'row', alignItems: 'center', justifyContent: 'center', marginTop: 10 }}>

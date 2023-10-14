@@ -9,6 +9,7 @@ import { ForestStackParams } from '../../../../pages/Forest';
 import { TabProps } from '../../../../../App';
 import Heart from '../../../../common/Heart';
 import { Request } from '../../../../common/requests';
+import FastImage from 'react-native-fast-image';
 
 const Container = styled.View`
   display: flex;
@@ -58,7 +59,7 @@ export default function MyForestItemCard({ props, edit, rerender }: { props: MyF
             <Text style={TextStyles.preview} numberOfLines={2} ellipsizeMode='tail'>{preview}</Text>
             <Text style={TextStyles.writer}>{nickname}</Text>
           </TextBox>
-          <Image source={{ uri: rep_pic }} style={{ width: 88, height: 88 }} />
+          <FastImage source={{ uri: rep_pic, priority: FastImage.priority.normal }} style={{ width: 88, height: 88 }} />
         </Container>
       </TouchableWithoutFeedback>
       {

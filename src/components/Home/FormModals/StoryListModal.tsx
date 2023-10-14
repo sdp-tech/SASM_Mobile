@@ -10,6 +10,7 @@ import Arrow from "../../../assets/img/common/Arrow.svg";
 import StoryDetailModal from "./StoryDetailModal";
 import DropDown from "../../../common/DropDown";
 import FormHeader from "../../../common/FormHeader";
+import FastImage from "react-native-fast-image";
 
 const { width, height } = Dimensions.get('window');
 
@@ -108,7 +109,7 @@ export default function StoryListModal({ target, setStoryListModal, selectedStor
           data={storyList}
           renderItem={({ item }) =>
             <ItemCard selected={selectedStory.filter(el => el.id == item.id).length > 0} onPress={() => { handleSelectedStory(item.id, item.rep_pic, item.place_name) }}>
-              <Image source={{ uri: item.rep_pic }} style={{ height: 100, width: 100, marginRight: 15, borderRadius: 3 }} />
+              <FastImage source={{ uri: item.rep_pic, priority: FastImage.priority.normal }} style={{ height: 100, width: 100, marginRight: 15, borderRadius: 3 }} />
               <TextBox>
                 <Text style={ListTextStyles.title} numberOfLines={1}>{item.title}</Text>
                 <Text style={ListTextStyles.place_name} numberOfLines={1}>{item.place_name}</Text>

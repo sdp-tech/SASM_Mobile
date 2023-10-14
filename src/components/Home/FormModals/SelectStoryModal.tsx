@@ -12,6 +12,7 @@ import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { CATEGORY_LIST } from "../../../common/Category";
 import Filter from "../../../assets/img/common/Filter.svg";
 import FormHeader from "../../../common/FormHeader";
+import FastImage from "react-native-fast-image";
 
 const { width, height } = Dimensions.get('window');
 
@@ -104,7 +105,7 @@ export default function SelectStoryModal({ setSelectStoryModal, selectedStory, s
           data={placeList}
           renderItem={({ item }) =>
             <ItemCard selected={selectedPlace.includes(item.place_name)} onPress={() => { setStoryListModal(true); setTarget({ place_name: item.place_name, address: item.address }); }}>
-              <Image source={{ uri: item.rep_pic }} style={{ height: 50, width: 50, marginRight: 15, borderRadius: 3 }} />
+              <FastImage source={{ uri: item.rep_pic, priority: FastImage.priority.normal }} style={{ height: 50, width: 50, marginRight: 15, borderRadius: 3 }} />
               <TextBox>
                 <Text style={TextStyles.place_name}>{item.place_name}</Text>
                 <Text style={TextStyles.address}>{item.address}</Text>

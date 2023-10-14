@@ -30,6 +30,7 @@ const RecommendListPage = ({ navigation, route }: StoryProps) => {
         nickname = {item.nickname}
         created = {item.created}
         writer_is_verified = {item.writer_is_verified}
+        summary = {item.summary}
         isLogin = {isLogin}
         sameStory = {true}
         navigation = {navigation}
