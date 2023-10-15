@@ -76,7 +76,7 @@ export default function Options({ navigation, route }: StackScreenProps<MyPagePr
             <ScrollView>
                 {
                     buttonAction.map((action, index) =>
-                        <StyledButton onPress={action.onPress}>
+                        <StyledButton key={index} onPress={action.onPress}>
                             <Text style={styles.textStyle}>{action.label}</Text>
                         </StyledButton>
                     )

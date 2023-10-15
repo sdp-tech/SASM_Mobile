@@ -12,7 +12,7 @@ interface WriteCommentParams {
     navigation: any;
 }
 
-const WriteComment = ({ id, reRenderScreen, isLogin, data, commentId, navigation }: WriteCommentParams) => {
+export function WriteComment  ({ id, reRenderScreen, isLogin, data, commentId, navigation }: WriteCommentParams) {
     const textInputRef = useRef<TextInput>(null);
     const { width, height } = Dimensions.get('screen');
     const [comment, setComment] = useState<string>('');
@@ -48,7 +48,7 @@ const WriteComment = ({ id, reRenderScreen, isLogin, data, commentId, navigation
               [
                   {
                       text: "이동",
-                      onPress: () => navigation.navigate('마이페이지')
+                      onPress: () => navigation.navigate('마이페이지', {})
       
                   },
                   {
@@ -144,4 +144,4 @@ const WriteComment = ({ id, reRenderScreen, isLogin, data, commentId, navigation
     )
 }
 
-export default WriteComment;
+// export default WriteComment;

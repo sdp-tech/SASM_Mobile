@@ -5,6 +5,7 @@ import { View, ActivityIndicator, Dimensions, StyleSheet, ImageBackground } from
 import { TextPretendard as Text } from "../../../common/CustomText";
 import RenderHTML from "react-native-render-html";
 import { ScrollView } from "react-native-gesture-handler";
+import FastImage from "react-native-fast-image";
 
 const { width, height } = Dimensions.get('window');
 
@@ -81,7 +82,7 @@ export default function StoryDetailModal({ id }: { id: number }) {
                 <Text style={StoryTextStyles.date}>{detailData.created.slice(0, 10).replace(/-/gi, '.')} 작성</Text>
               </View>
               <View style={{ display: 'flex', alignItems: 'center' }}>
-                <ImageBackground source={{uri: detailData.profile}} style={{ width: 50, height: 50, borderRadius: 60 }}></ImageBackground>
+                <FastImage source={{uri: detailData.profile, priority: FastImage.priority.normal}} style={{ width: 50, height: 50, borderRadius: 60 }} />
                 <View style={{ position: 'absolute', width: 34, height: 12, backgroundColor: detailData.writer_is_verified ? '#209DF5' : '#89C77F', borderRadius: 10, top: 42, left: 8.5 }}>
                   <Text style={StoryTextStyles.verified}>{detailData!.writer_is_verified ? 'Editor' : 'User'}</Text>
                 </View>

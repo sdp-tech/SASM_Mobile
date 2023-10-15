@@ -8,7 +8,7 @@ import PostListScreen from '../components/Forest/PostList';
 import PostSearchScreen from '../components/Forest/PostSearch';
 import PostDetailScreen from '../components/Forest/PostDetail';
 import PostCommentsScreen from '../components/Forest/PostComments';
-import PhotoPreviewScreen from '../components/Forest/PhotoPreview';
+import PhotoPreviewScreen from '../common/PhotoPreview';
 import { StackNavigationProp, StackScreenProps } from '@react-navigation/stack';
 import { TabProps } from '../../App';
 import PostUploadScreen from '../components/Forest/PostUpload';

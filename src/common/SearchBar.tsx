@@ -18,8 +18,8 @@ const StyledInput = styled.TextInput`
 const ResetButton = styled.TouchableOpacity`
   position: absolute;
   height: 100%;
-  right: 0;
-  top: 0;
+  right: 0px;
+  top: 0px;
   width: 15%;
   display: flex;
   align-items: center;

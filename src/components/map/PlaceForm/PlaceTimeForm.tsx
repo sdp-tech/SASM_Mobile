@@ -146,7 +146,6 @@ export default function PlaceTimeForm({
   setFormData,
 }: TabProps) {
   const [breaktime, setBreaktime] = useState(formData.etc_hours !== "");
-
   function handleSelect(targetId: number) {
     setSelectedDay((prev) => {
       const newSelectedDay = prev.map((item) => {
@@ -324,6 +323,7 @@ export default function PlaceTimeForm({
           }
         />
       </ScrollView>
+
     </Section>
   );
 }

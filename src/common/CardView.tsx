@@ -1,4 +1,4 @@
-import { useState, useRef } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { View } from 'react-native';
 import { FlatList } from 'react-native-gesture-handler';
 
@@ -38,6 +38,10 @@ const CardView = ({ gap, offset, data, pageWidth, renderItem, dot, onEndReached,
   const [page, setPage] = useState<number>(0);
   const prevScrollOffset = useRef<number>(0); // 이전 스크롤 위치를 저장할 ref
 
+  useEffect(() => {
+    setPage(0);
+  }, [data])
+
   const onScroll = (e: any) => {
     const newPage = Math.round(e.nativeEvent.contentOffset.x / (pageWidth + gap));
     setPage(newPage);
@@ -60,7 +64,7 @@ const CardView = ({ gap, offset, data, pageWidth, renderItem, dot, onEndReached,
       <FlatList
         data={data}
         renderItem={renderItem}
-        keyExtractor={(item: any) => item.id}
+        keyExtractor={(item, index) => index.toString()}
         horizontal
         pagingEnabled
         onScroll={onScroll}
@@ -74,7 +78,7 @@ const CardView = ({ gap, offset, data, pageWidth, renderItem, dot, onEndReached,
         showsHorizontalScrollIndicator={false}
         onRefresh={onRefresh}
         refreshing={refreshing}
-        onEndReachedThreshold={0.1}
+        onEndReachedThreshold={0}
       />
       {dot ? (
         <View style = {{ flexDirection: 'row', alignItems: 'center', justifyContent: 'center', marginTop: 10 }}>

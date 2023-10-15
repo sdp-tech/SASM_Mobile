@@ -223,7 +223,6 @@ export default function PlaceServiceForm({
           });
         }}
       />
-
       <Modal visible={modal}>
         <FinishModal
           setModal={setModal}
