@@ -105,9 +105,9 @@ export default function PlaceImageForm({
     },
   ];
 
-  function handleImageSelect(uri: string) {
+  function handleImageSelect(img: ImagePicker.Asset) {
     setFormData((prev) => {
-      return { ...prev, imageList: [...prev.imageList, uri] };
+      return { ...prev, imageList: [...prev.imageList, img] };
     });
   }
 
@@ -144,7 +144,7 @@ export default function PlaceImageForm({
                         response.assets !== undefined &&
                         response.assets[0].uri !== undefined
                       ) {
-                        handleImageSelect(response.assets[0].uri);
+                        handleImageSelect(response.assets[0]);
                       } else Alert.alert("첨부할 수 없는 사진");
                     });
                   },
@@ -160,7 +160,7 @@ export default function PlaceImageForm({
                       } else if (response.assets !== undefined) {
                         response.assets.map((asset) => {
                           if (asset.uri !== undefined) {
-                            handleImageSelect(asset.uri);
+                            handleImageSelect(asset);
                           }
                         });
                       }
@@ -178,36 +178,51 @@ export default function PlaceImageForm({
       <PhotoWrapper height={width * 0.2}>
         {formData.imageList?.map((src, index) => (
           <TouchableOpacity
-            onPress={() =>
-              Alert.alert("사진 수정", "", [
-                {
-                  text: "삭제하기",
-                  onPress: () => {
-                    const newList = formData.imageList;
-                    newList.splice(index, 1);
-                    setFormData((prev) => {
-                      return { ...prev, imageList: newList };
-                    });
+            onPress={() => {
+              if (index === 0)
+                Alert.alert("사진 수정", "", [
+                  {
+                    text: "삭제하기",
+                    onPress: () => {
+                      const newList = formData.imageList;
+                      newList.splice(index, 1);
+                      setFormData((prev) => {
+                        return { ...prev, imageList: newList };
+                      });
+                    },
                   },
-                },
-                {
-                  text: "대표 사진으로 설정하기",
-                  onPress: () => {
-                    const newList = [formData.imageList[index]];
-                    formData.imageList.map((str, idx) => {
-                      if (idx !== index) newList.push(str);
-                    });
-                    setFormData((prev) => {
-                      return { ...prev, imageList: newList };
-                    });
+                  { text: "취소", style: "destructive" },
+                ]);
+              else
+                Alert.alert("사진 수정", "", [
+                  {
+                    text: "삭제하기",
+                    onPress: () => {
+                      const newList = formData.imageList;
+                      newList.splice(index, 1);
+                      setFormData((prev) => {
+                        return { ...prev, imageList: newList };
+                      });
+                    },
                   },
-                },
-                { text: "취소", style: "destructive" },
-              ])
-            }
+                  {
+                    text: "대표 사진으로 설정하기",
+                    onPress: () => {
+                      const newList = [formData.imageList[index]];
+                      formData.imageList.map((str, idx) => {
+                        if (idx !== index) newList.push(str);
+                      });
+                      setFormData((prev) => {
+                        return { ...prev, imageList: newList };
+                      });
+                    },
+                  },
+                  { text: "취소", style: "destructive" },
+                ]);
+            }}
           >
             <Image
-              source={{ uri: src }}
+              source={{ uri: src.uri }}
               style={{
                 height: width * 0.2,
                 width: width * 0.2,

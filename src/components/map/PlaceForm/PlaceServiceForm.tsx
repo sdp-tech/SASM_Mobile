@@ -79,10 +79,28 @@ export default function PlaceServiceForm({
   async function handleSubmit() {
     const form = new FormData();
     for (let i of Object.keys(formData)) {
-      if (i == "snsList") continue;
-      form.append(`${i}`, `${formData[i]}`);
+      if (i === "snsList" || i === "imageList") continue;
+      if (formData[i] === "") form.append(`${i}`, ".");
+      else form.append(`${i}`, `${formData[i]}`);
     }
-    const response = await request.post("/places/create/", formData, {
+    form.append("rep_pic", {
+      uri: formData.imageList[0].uri,
+      name: formData.imageList[0].fileName,
+      type: formData.imageList[0].uri.endsWith(".jpg")
+        ? "image/jpeg"
+        : "image/png",
+    });
+    for (let i = 1; i < formData.imageList.length; i++) {
+      form.append("imageList", {
+        uri: formData.imageList[i].uri,
+        name: formData.imageList[i].fileName,
+        type: formData.imageList[i].uri.endsWith(".jpg")
+          ? "image/jpeg"
+          : "image/png",
+      });
+    }
+    console.log(form);
+    const response = await request.post("/places/create/", form, {
       "Content-Type": "multipart/form-data",
     });
   }

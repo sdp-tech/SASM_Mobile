@@ -55,9 +55,6 @@ const Input = styled.TextInput`
   width: 40%;
   font-size: 16px;
   margin-left: 25px;
-  letter-spacing: 1;
-
-  /* border: 1px solid black; */
 `;
 
 const CheckboxWrapper = styled.View`

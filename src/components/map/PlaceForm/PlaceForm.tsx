@@ -103,7 +103,7 @@ export interface formDataProps {
   address: string;
   short_cur: string;
   phone_num: string;
-  imageList: string[];
+  imageList: any[];
   snsList: string[] | null;
   [index: string]: any;
 }
