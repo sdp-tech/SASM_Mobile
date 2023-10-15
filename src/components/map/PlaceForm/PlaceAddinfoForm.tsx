@@ -11,6 +11,7 @@ import {
 import { useState } from "react";
 import InputWithLabel from "../../../common/InputWithLabel";
 import { TextPretendard as Text } from "../../../common/CustomText";
+import { formDataProps, NextBtn } from "./PlaceForm";
 
 const Section = styled.View`
   height: 90%;
@@ -27,14 +28,20 @@ const InputStyle = {
 };
 
 interface TabProps {
-  NextBtn: any;
+  setTab: React.Dispatch<React.SetStateAction<number>>;
+  formData: formDataProps;
+  setFormData: React.Dispatch<React.SetStateAction<formDataProps>>;
 }
 
-export default function PlaceAddinfoForm({ NextBtn }: TabProps) {
+export default function PlaceAddinfoForm({
+  setTab,
+  formData,
+  setFormData,
+}: TabProps) {
   return (
     <Section>
       <Text style={{ ...TextStyles.label, marginTop: 30, fontWeight: 700 }}>
-        공간 이름
+        {formData.place_name}
       </Text>
       <Text style={{ ...TextStyles.label, marginTop: 50, marginBottom: 60 }}>
         추가 정보를 입력해주세요.
@@ -44,22 +51,44 @@ export default function PlaceAddinfoForm({ NextBtn }: TabProps) {
         isRequired={true}
         placeholder="전화번호를 입력해주세요."
         containerStyle={InputStyle}
-        // onChangeText={(e) => { setForm({ ...form, place_name: e }) }}
+        value={formData.phone_num}
+        onChangeText={(e) => {
+          setFormData({ ...formData, phone_num: e });
+        }}
       />
       <InputWithLabel
-        label="링크"
-        isRequired={false}
-        placeholder="장소와 관련된 링크를 입력해주세요."
+        label="리뷰"
+        isRequired={true}
+        placeholder="장소의 리뷰를 작성해주세요."
         containerStyle={InputStyle}
+        value={formData.place_review}
+        onChangeText={(e) => {
+          setFormData((prev) => {
+            return { ...prev, place_review: e };
+          });
+        }}
       />
       <InputWithLabel
-        label="덧붙이는 말"
+        label="한줄평"
         isRequired={false}
         placeholder="하고 싶은 말이 있으시다면 적어주세요."
         containerStyle={InputStyle}
+        value={formData.short_cur}
+        onChangeText={(e) => {
+          setFormData((prev) => {
+            return { ...prev, short_cur: e };
+          });
+        }}
       />
 
-      {NextBtn}
+      <NextBtn
+        onPress={() =>
+          setTab((prev) => {
+            return prev + 1;
+          })
+        }
+        disability={formData.phone_num === "" || formData.place_review === ""}
+      />
     </Section>
   );
 }

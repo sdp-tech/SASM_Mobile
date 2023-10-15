@@ -37,7 +37,7 @@ interface TabProps {
   NextBtn: any;
 }
 
-export default function PlaceProfileScreen({ NextBtn }: TabProps) {
+export default function PlaceOwnerForm({ NextBtn }: TabProps) {
   return (
     <Section>
       <Text style={{ ...TextStyles.label, marginTop: 85, marginBottom: 100 }}>
