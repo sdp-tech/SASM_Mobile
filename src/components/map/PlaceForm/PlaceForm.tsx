@@ -72,14 +72,52 @@ interface PlaceFormProps {
 
 interface NextBtnProps {
   onPress: () => void;
+  disability?: boolean;
   text?: string;
 }
 
-export function NextBtn({ onPress, text = "다음" }: NextBtnProps) {
+export interface ListProps {
+  id: number;
+  data: string;
+  name: string;
+  selected: boolean;
+}
+
+export interface formDataProps {
+  place_name: string;
+  category: string;
+  vegan_category: string | null;
+  tumblur_category: boolean | null;
+  reusable_con_category: boolean | null;
+  pet_category: boolean | null;
+  // week_hours: string | null;
+  mon_hours: string;
+  tues_hours: string;
+  wed_hours: string;
+  thurs_hours: string;
+  fri_hours: string;
+  sat_hours: string;
+  sun_hours: string;
+  etc_hours: string;
+  place_review: string;
+  address: string;
+  short_cur: string;
+  phone_num: string;
+  imageList: any[];
+  snsList: string[] | null;
+  [index: string]: any;
+}
+
+export function NextBtn({
+  onPress,
+  disability = false,
+  text = "다음",
+}: NextBtnProps) {
+  const color = disability ? "#ACEFC3" : "#67d393";
   return (
     <TouchableOpacity
       style={{
-        backgroundColor: "#67d393",
+        backgroundColor: color,
         marginTop: "auto",
         width: "45%",
         height: 45,
@@ -87,6 +125,7 @@ export function NextBtn({ onPress, text = "다음" }: NextBtnProps) {
         justifyContent: "center",
       }}
       onPress={onPress}
+      disabled={disability}
     >
       <Text
         style={{
@@ -105,10 +144,43 @@ export function NextBtn({ onPress, text = "다음" }: NextBtnProps) {
 export default function PlaceForm({
   setPlaceformModal,
 }: PlaceFormProps): JSX.Element {
+  const [selectedDay, setSelectedDay] = useState([
+    // { id: 0, name: "공휴일", selected: false },
+    { id: 1, data: "mon_hours", name: "월요일", selected: false },
+    { id: 2, data: "tues_hours", name: "화요일", selected: false },
+    { id: 3, data: "wed_hours", name: "수요일", selected: false },
+    { id: 4, data: "thurs_hours", name: "목요일", selected: false },
+    { id: 5, data: "fri_hours", name: "금요일", selected: false },
+    { id: 6, data: "sat_hours", name: "토요일", selected: false },
+    { id: 7, data: "sun_hours", name: "일요일", selected: false },
+  ]);
   const [owner, setOwner] = useState(false);
 
   const [tab, setTab] = useState<number>(0);
   const [closePopup, setClosePopup] = useState<boolean>(false);
+  const [formData, setFormData] = useState<formDataProps>({
+    place_name: "",
+    category: "",
+    vegan_category: null,
+    tumblur_category: null,
+    reusable_con_category: null,
+    pet_category: null,
+    week_hours: "",
+    mon_hours: "",
+    tues_hours: "",
+    wed_hours: "",
+    thurs_hours: "",
+    fri_hours: "",
+    sat_hours: "",
+    sun_hours: "",
+    etc_hours: "",
+    place_review: "",
+    address: "",
+    short_cur: "",
+    phone_num: "",
+    imageList: [],
+    snsList: null,
+  });
 
   useEffect(() => {
     if (closePopup) {
@@ -203,55 +275,48 @@ export default function PlaceForm({
                   onPress={() => {
                     setTab((prev) => prev + 1);
                   }}
+                  disability={false}
                 />
               }
             />
           ),
           2: (
             <PlaceProfileForm
-              NextBtn={
-                <NextBtn
-                  onPress={() => {
-                    setTab((prev) => prev + 1);
-                  }}
-                />
-              }
+              setTab={setTab}
+              formData={formData}
+              setFormData={setFormData}
             />
           ),
           3: (
             <PlaceImageForm
-              NextBtn={
-                <NextBtn
-                  onPress={() => {
-                    setTab((prev) => prev + 1);
-                  }}
-                />
-              }
+              setTab={setTab}
+              formData={formData}
+              setFormData={setFormData}
             />
           ),
           4: (
             <PlaceTimeForm
-              NextBtn={
-                <NextBtn
-                  onPress={() => {
-                    setTab((prev) => prev + 1);
-                  }}
-                />
-              }
+              setTab={setTab}
+              selectedDay={selectedDay}
+              setSelectedDay={setSelectedDay}
+              formData={formData}
+              setFormData={setFormData}
             />
           ),
           5: (
             <PlaceAddinfoForm
-              NextBtn={
-                <NextBtn
-                  onPress={() => {
-                    setTab((prev) => prev + 1);
-                  }}
-                />
-              }
+              setTab={setTab}
+              formData={formData}
+              setFormData={setFormData}
             />
           ),
-          6: <PlaceServiceForm finish={() => setPlaceformModal(false)} />,
+          6: (
+            <PlaceServiceForm
+              formData={formData}
+              setFormData={setFormData}
+              finish={() => setPlaceformModal(false)}
+            />
+          ),
         }[tab]
       }
     </Section>

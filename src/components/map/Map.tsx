@@ -406,27 +406,25 @@ export default function MapContainer({
       <PlusButton
         position="rightbottom"
         onPress={() => {
-          // 확인을 위해 임시로 로그인 체크 해제. 이후 주석 풀기
-          // if (!isLogin) {
-          //   Alert.alert(
-          //     "로그인이 필요합니다.",
-          //     "로그인 항목으로 이동하시겠습니까?",
-          //     [
-          //       {
-          //         text: "이동",
-          //         onPress: () => navigation.navigate('마이페이지', {})
-
-          //       },
-          //       {
-          //         text: "취소",
-          //         onPress: () => { },
-          //         style: "cancel"
-          //       },
-          //     ],
-          //     { cancelable: false }
-          //   );
-          //   return;
-          // }
+          if (!isLogin) {
+            Alert.alert(
+              "로그인이 필요합니다.",
+              "로그인 항목으로 이동하시겠습니까?",
+              [
+                {
+                  text: "이동",
+                  onPress: () => navigation.navigate("마이페이지"),
+                },
+                {
+                  text: "취소",
+                  onPress: () => {},
+                  style: "cancel",
+                },
+              ],
+              { cancelable: false }
+            );
+            return;
+          }
           setPlaceformModal(true);
         }}
       />

@@ -8,9 +8,12 @@ import {
   Alert,
   Modal,
 } from "react-native";
-import { Dispatch, SetStateAction, useState } from "react";
+import { Dispatch, SetStateAction, useState, useRef } from "react";
+import ModalSelector from "react-native-modal-selector";
+import { Request } from "../../../common/requests";
 import FinishModal from "../../../common/FinishModal";
 import { NextBtn } from "./PlaceForm";
+import { formDataProps } from "./PlaceForm";
 import { TextPretendard as Text } from "../../../common/CustomText";
 
 const Section = styled.View`
@@ -49,45 +52,63 @@ const SelectItem = styled.TouchableOpacity<{
 
 interface TabProps {
   finish: () => void;
+  formData: formDataProps;
+  setFormData: React.Dispatch<React.SetStateAction<formDataProps>>;
 }
 
-export default function PlaceAddinfoForm({ finish }: TabProps) {
+export default function PlaceServiceForm({
+  finish,
+  formData,
+  setFormData,
+}: TabProps) {
   const [modal, setModal] = useState(false);
-  const [selectedServ, setSelectedServ] = useState<number[]>([]);
-  const [selectedEvent, setSelectedEvent] = useState<number[]>([]);
+  const [veganModal, setVeganModal] = useState(false);
+  const selectorVeganRef = useRef<ModalSelector>(null);
+  const request = new Request();
 
-  const SERVICE_LIST = [
-    { id: 0, name: "배달" },
-    { id: 1, name: "방문접수" },
-    { id: 2, name: "단체석" },
-    { id: 3, name: "남/녀 화장실 구분" },
-    { id: 4, name: "주차 가능" },
-    { id: 5, name: "반려동물 동반" },
-    { id: 6, name: "발렛파킹" },
-    { id: 7, name: "예약" },
-    { id: 8, name: "포장" },
-    { id: 9, name: "장애인 편의시설" },
-  ];
-  const EVENT_LIST = [
-    { id: 0, name: "용기 지참시 할인" },
-    { id: 1, name: "SNS 업로드 할인" },
-    { id: 2, name: "장바구니 지참시 할인" },
+  const vegan_category = [
+    { type: "비건", key: 0 },
+    { type: "락토", key: 1 },
+    { type: "오보", key: 2 },
+    { type: "페스코", key: 3 },
+    { type: "폴로", key: 4 },
+    { type: "그 외", key: 5 },
+    { type: "없음", key: 6 },
   ];
 
-  function handlePress(
-    target: number,
-    selectedList: number[],
-    setSelectedList: Dispatch<SetStateAction<number[]>>
-  ) {
-    if (selectedList.includes(target))
-      setSelectedList(selectedList.filter((item) => item != target));
-    else setSelectedList([...selectedList, target]);
+  async function handleSubmit() {
+    const form = new FormData();
+    for (let i of Object.keys(formData)) {
+      if (i === "snsList" || i === "imageList") continue;
+      if (formData[i] === "") form.append(`${i}`, ".");
+      else form.append(`${i}`, `${formData[i]}`);
+    }
+    form.append("rep_pic", {
+      uri: formData.imageList[0].uri,
+      name: formData.imageList[0].fileName,
+      type: formData.imageList[0].uri.endsWith(".jpg")
+        ? "image/jpeg"
+        : "image/png",
+    });
+    for (let i = 1; i < formData.imageList.length; i++) {
+      form.append("imageList", {
+        uri: formData.imageList[i].uri,
+        name: formData.imageList[i].fileName,
+        type: formData.imageList[i].uri.endsWith(".jpg")
+          ? "image/jpeg"
+          : "image/png",
+      });
+    }
+    console.log(form);
+    const response = await request.post("/places/create/", form, {
+      "Content-Type": "multipart/form-data",
+    });
   }
 
   return (
     <Section>
       <Text style={{ ...TextStyles.label, marginTop: 30, fontWeight: 700 }}>
-        공간 이름
+        {formData.place_name}
       </Text>
       <Text
         style={{
@@ -101,67 +122,107 @@ export default function PlaceAddinfoForm({ finish }: TabProps) {
         제공 서비스
       </Text>
       <SelectWrapper>
-        {SERVICE_LIST.map((item) => {
-          const selected = selectedServ.includes(item.id);
-          const color = selected ? "#ffffff" : "#202020";
-          return (
-            <SelectItem
-              selected={selected}
-              onPress={() =>
-                handlePress(item.id, selectedServ, setSelectedServ)
-              }
-            >
-              <Text
-                style={{
-                  ...TextStyles.labelSmall,
-                  width: "100%",
-                  textAlign: "center",
-                  color: color,
-                }}
-              >
-                {item.name}
-              </Text>
-            </SelectItem>
-          );
-        })}
-      </SelectWrapper>
+        <SelectItem
+          selected={formData.vegan_category !== null}
+          onPress={() => {
+            if (selectorVeganRef.current) selectorVeganRef.current.open();
+          }}
+        >
+          <Text
+            style={{
+              ...TextStyles.labelSmall,
+              width: "100%",
+              textAlign: "center",
+              color: formData.vegan_category !== null ? "#ffffff" : "#202020",
+            }}
+          >
+            {formData.vegan_category !== null
+              ? `비건 메뉴: ${formData.vegan_category}`
+              : "비건 메뉴"}
+          </Text>
+        </SelectItem>
 
-      <Text
-        style={{
-          ...TextStyles.labelSmall,
-          width: "85%",
-          textAlign: "left",
-          marginTop: 40,
-          marginBottom: 15,
-        }}
-      >
-        이벤트
-      </Text>
-      <SelectWrapper>
-        {EVENT_LIST.map((item) => {
-          const selected = selectedEvent.includes(item.id);
-          const color = selected ? "#ffffff" : "#202020";
-          return (
-            <SelectItem
-              selected={selected}
-              onPress={() =>
-                handlePress(item.id, selectedEvent, setSelectedEvent)
-              }
-            >
-              <Text
-                style={{
-                  ...TextStyles.labelSmall,
-                  width: "100%",
-                  textAlign: "center",
-                  color: color,
-                }}
-              >
-                {item.name}
-              </Text>
-            </SelectItem>
-          );
-        })}
+        <SelectItem
+          selected={formData.pet_category === true}
+          onPress={() =>
+            setFormData((prev) => {
+              return { ...prev, pet_category: !prev.pet_category };
+            })
+          }
+        >
+          <Text
+            style={{
+              ...TextStyles.labelSmall,
+              width: "100%",
+              textAlign: "center",
+              color: formData.pet_category === true ? "#ffffff" : "#202020",
+            }}
+          >
+            반려동물 동반
+          </Text>
+        </SelectItem>
+        <SelectItem
+          selected={formData.reusable_con_category === true}
+          onPress={() =>
+            setFormData((prev) => {
+              return {
+                ...prev,
+                reusable_con_category: !prev.reusable_con_category,
+              };
+            })
+          }
+        >
+          <Text
+            style={{
+              ...TextStyles.labelSmall,
+              width: "100%",
+              textAlign: "center",
+              color:
+                formData.reusable_con_category === true ? "#ffffff" : "#202020",
+            }}
+          >
+            용기내 가능
+          </Text>
+        </SelectItem>
+        <SelectItem
+          selected={formData.tumblur_category === true}
+          onPress={() =>
+            setFormData((prev) => {
+              return { ...prev, tumblur_category: !prev.tumblur_category };
+            })
+          }
+        >
+          <Text
+            style={{
+              ...TextStyles.labelSmall,
+              width: "100%",
+              textAlign: "center",
+              color: formData.tumblur_category === true ? "#ffffff" : "#202020",
+            }}
+          >
+            텀블러 지참시 할인
+          </Text>
+        </SelectItem>
       </SelectWrapper>
+      <ModalSelector
+        ref={selectorVeganRef}
+        labelExtractor={(item) => item.type}
+        data={vegan_category}
+        cancelText="취소"
+        cancelTextStyle={{ fontSize: 14 }}
+        cancelContainerStyle={{ width: 300, alignSelf: "center" }}
+        optionContainerStyle={{ width: 300, alignSelf: "center" }}
+        optionTextStyle={{ color: "#000000", fontSize: 14 }}
+        selectStyle={{ display: "none" }}
+        onChange={(option) => {
+          setFormData(() => {
+            return {
+              ...formData,
+              vegan_category: option.type === "없음" ? null : option.type,
+            };
+          });
+        }}
+      />
       <Modal visible={modal}>
         <FinishModal
           setModal={setModal}
@@ -176,6 +237,7 @@ export default function PlaceAddinfoForm({ finish }: TabProps) {
       </Modal>
       <NextBtn
         onPress={() => {
+          handleSubmit();
           setModal(true);
         }}
         text="제보 완료"
