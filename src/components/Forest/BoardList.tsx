@@ -113,8 +113,6 @@ const BoardListScreen = ({
 
   useFocusEffect(useCallback(() => {
     getPosts();
-    console.error("ct_id",selectedIds)
-    //console.error(checkedList)
   }, [refreshing, checkedList]))
 
   return (

@@ -55,7 +55,7 @@ const PostListScreen = ({
   const getPosts = async () => {
     let params = new URLSearchParams();
     for (const category of checkedList){
-      params.append('user_category_filters', category.id);
+      params.append('semi_category_filters', category.id);
     }
     const response = await request.get(`/forest/?${params.toString()}`, {}, null);
     setPosts(response.data.data.results);
