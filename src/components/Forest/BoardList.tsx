@@ -362,7 +362,7 @@ const BoardListScreen = ({
             </Text>
             <TouchableOpacity style={{ flexDirection: 'row', alignItems: 'center' }} onPress={() => {
               navigation.navigate("PostList", {
-                board_name: "사슴의 인기글",
+                board_name: "사슴의 인기글"
               });
             }}>
               <Text style={{ fontSize: 12, fontWeight: '500', marginRight: 5 }}>더보기</Text>
@@ -434,6 +434,8 @@ const BoardListScreen = ({
             <TouchableOpacity style={{ flexDirection: 'row', alignItems: 'center' }} onPress={() => {
               navigation.navigate("PostList", {
                 board_name: "사슴의 최신글",
+                board_category:checkedList,
+                category_Ids:selectedIds
               });
             }}>
               <Text style={{ fontSize: 12, fontWeight: '500', marginRight: 5 }}>더보기</Text>

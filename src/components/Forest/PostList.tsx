@@ -23,6 +23,7 @@ import PostItem from "./components/PostItem";
 import PlusButton from "../../common/PlusButton";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { TabProps } from "../../../App";
+import ListHeader from "./components/ListHeader";
 const { width, height } = Dimensions.get('window');
 const request = new Request();
 
@@ -38,14 +39,14 @@ const PostListScreen = ({
   const {isLogin, setLogin} = useContext(LoginContext);
   const navigationToTab = useNavigation<StackNavigationProp<TabProps>>();
   const request = new Request();
-
+  const board_name = route.params?.board_name;
   const board_category = route.params?.board_category;
   const [userCategories, setUserCategories] = useState([] as any);
-  const [checkedList, setCheckedList] = useState(board_category);
+  const [checkedList, setCheckedList] = useState(board_category); 
   const [modalVisible, setModalVisible] = useState<boolean>(false);
   const tempid = route.params?.category_Ids;
   const [selectedIds,setSelectedIds]=useState<number[]>(tempid);
-
+  const [boardId, setBoardId]=useState<number>(0);
 
   const getUserCategories = async () => {
     const response = await request.get('/forest/user_categories/get/');
@@ -53,6 +54,7 @@ const PostListScreen = ({
   }
 
   const getPosts = async () => {
+    if(checkedList){
     let params = new URLSearchParams();
     for (const category of checkedList){
       params.append('semi_category_filters', category.id);
@@ -60,6 +62,16 @@ const PostListScreen = ({
     const response = await request.get(`/forest/?${params.toString()}`, {}, null);
     setPosts(response.data.data.results);
     setCount(response.data.data.count);
+    }
+    else{
+      const response = await request.get('/forest/', {
+        order: order,
+        page: page,
+        category_filter: board_category?.id
+      }, null);
+      setPosts(response.data.data.results);
+      setCount(response.data.data.count);
+    }
   };
 
   const onRefresh = () => {
@@ -86,17 +98,35 @@ const PostListScreen = ({
 
   useFocusEffect(useCallback(() => {
     getPosts();
+    
   }, [refreshing, page, checkedList]));
 
+  useEffect(() => {
+    if(board_name === '추천글' || board_name === '사슴의 추천글') {
+      setOrder('latest'); setBoardId(1);}
+    else if(board_name === '인기글' || board_name === '사슴의 인기글') 
+    {setOrder('hot'); setBoardId(2);}
+    else if(board_name === '최신글' || board_name === '사슴의 최신글') 
+    {setOrder('latest'); setBoardId(3);}
+  }, [route.params?.board_name])
 
   return (
     <SafeAreaView style={styles.container}>
+      {boardId==1?
       <CustomHeader
         onSearch={() => {
           navigation.navigate("PostSearch");
         }}
       />
-      <View style={{padding: 15, backgroundColor: '#F1FCF5'}}>
+      :
+      <ListHeader
+        board_name={board_name!}
+        board_category={board_category}
+        navigation={navigation}
+        />
+      }
+      {checkedList &&
+      <View style={{padding: 10, backgroundColor: '#F1FCF5'}}>
             <CardView gap={0} offset={0} pageWidth={width} dot={false} data={userCategories} renderItem={({item}: any) => {
               return (
                 <TouchableOpacity style={{borderRadius: 16, borderColor: '#67D393', borderWidth: 1, paddingVertical: 4, paddingHorizontal: 16, margin: 4, backgroundColor: selectedIds.includes(item.id) ? '#67D393' : 'white'}}
@@ -115,8 +145,9 @@ const PostListScreen = ({
               )}}
             />
           </View>
-      {checkedList.length > 0 &&
-            <View style={{flexDirection: 'row', paddingHorizontal: 15, paddingBottom: 5}}>
+      }
+      {checkedList? checkedList.length > 0 &&
+            <View style={{flexDirection: 'row', paddingHorizontal: 15, paddingBottom: 5, paddingTop: 10}}>
               {checkedList.map((category: any) => 
                 (
                   <Text style={{color: '#67D393', fontWeight: '700', fontSize: 16}}>
@@ -128,8 +159,10 @@ const PostListScreen = ({
                 과 관련된 정보들
               </Text>
             </View>
+            :<View></View>
       }
-      <View style={{flexDirection: 'row', paddingHorizontal: 15}}>
+      {boardId==1?
+      <View style={{flexDirection: 'row', paddingHorizontal: 20}}>
             <Text
               style={{
                 fontSize: 20,
@@ -139,18 +172,12 @@ const PostListScreen = ({
             >
               사슴의 추천글
             </Text>
-            {/* <TouchableOpacity style={{ flexDirection: 'row', alignItems: 'center' }} onPress={() => {
-              navigation.navigate("PostList", {
-                board_name: "사슴의 추천글",
-                board_category:checkedList
-              });
-            }}> 정렬로 수정하면 navigation도 바껴야함  */}
-              {/* 더보기버튼 -> 정렬로 수정필요 */}
-              {/* <Text style={{ fontSize: 12, fontWeight: '500', marginRight: 5 }}>더보기</Text>
-              <Arrow width={12} height={12} color={'black'} /> */}
-            {/* </TouchableOpacity> */}
           </View>
-      
+      :      
+      <View style={{flexDirection: 'row', zIndex: 1, alignItems: 'center', padding: 15, backgroundColor: '#F1FCF5'}}>
+      <Text style={{fontSize: 12, fontWeight: '400', flex: 1}}>전체 글 {count}개</Text>
+      </View>
+      }
       <FlatList
         data={posts}
         style={{ flexGrow: 1 }}
