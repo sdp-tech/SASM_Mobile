@@ -14,26 +14,22 @@ import {
 } from "react-native";
 import type { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { useFocusEffect, useNavigation } from "@react-navigation/native";
-import ListHeader from "./components/ListHeader";
 import { LoginContext } from "../../common/Context";
 import CustomHeader from "../../common/CustomHeader";
-
 import { ForestStackParams } from "../../pages/Forest";
 import { Request } from "../../common/requests";
+import CardView from "../../common/CardView";
 import PostItem from "./components/PostItem";
 import PlusButton from "../../common/PlusButton";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { TabProps } from "../../../App";
-import { check } from "react-native-permissions";
-
 const { width, height } = Dimensions.get('window');
 const request = new Request();
 
 const PostListScreen = ({
   navigation,
-  route,
+  route
 }: NativeStackScreenProps<ForestStackParams, "PostList">) => {
-  const [loading, setLoading] = useState(false);
   const [refreshing, setRefreshing] = useState(false);
   const [page, setPage] = useState(1);
   const [order, setOrder] = useState<string>('');
@@ -43,50 +39,27 @@ const PostListScreen = ({
   const navigationToTab = useNavigation<StackNavigationProp<TabProps>>();
   const request = new Request();
 
-  const board_name = route.params?.board_name;
   const board_category = route.params?.board_category;
-  const [nickname, setNickname] = useState('');
-  const [boardLists, setBoardLists] = useState([] as any);
   const [userCategories, setUserCategories] = useState([] as any);
-  const [checkedList, setCheckedList] = useState([] as any);
+  const [checkedList, setCheckedList] = useState(board_category);
   const [modalVisible, setModalVisible] = useState<boolean>(false);
+  const tempid = route.params?.category_Ids;
+  const [selectedIds,setSelectedIds]=useState<number[]>(tempid);
 
-  // console.error('category는',board_category)
-  const getUserInfo = async () => {
-    const response = await request.get('/mypage/me/', {}, {});
-    setNickname(response.data.data.nickname);
-  }
-
-  const getBoardItems = async () => {
-    const response = await request.get('/forest/categories/');
-    setBoardLists(response.data.data.results);
-  }
 
   const getUserCategories = async () => {
     const response = await request.get('/forest/user_categories/get/');
     setUserCategories([...response.data.data.results, {id: 0, name: '+'}]);
   }
 
-  // const getPosts = async () => {
-  //   const response = await request.get('/forest/', {
-  //     order: order,
-  //     page: page,
-  //     category_filter: board_category?.id
-  //   }, null);
-  //   if (page == 1) setPosts(response.data.data.results);
-  //   else setPosts([...posts, ...response.data.data.results]);
-  //   setCount(response.data.data.count);
-  // }
-
   const getPosts = async () => {
     let params = new URLSearchParams();
-    for (const category of board_category){
-      params.append('semi_category_filters', category.id);
+    for (const category of checkedList){
+      params.append('user_category_filters', category.id);
     }
     const response = await request.get(`/forest/?${params.toString()}`, {}, null);
     setPosts(response.data.data.results);
     setCount(response.data.data.count);
-
   };
 
   const onRefresh = () => {
@@ -101,26 +74,20 @@ const PostListScreen = ({
     }
   }
 
-  useEffect(() => {
-    if(board_name === '추천글' || board_name === '사슴의 추천글') setOrder('latest')
-  }, [route.params?.board_name])
+  useEffect(()=>{
+    onRefresh()
+  },[checkedList]);
+  
+  useFocusEffect(useCallback(()=>{
+    if(isLogin){
+      getUserCategories();
+    }
+  },[isLogin, modalVisible]))
 
   useFocusEffect(useCallback(() => {
     getPosts();
-    console.error('길이',board_category.length)
-    //console.error(checkedList)
-  }, [order, refreshing, page, checkedList]));
+  }, [refreshing, page, checkedList]));
 
-  useEffect(() => {
-    getBoardItems();
-  }, [refreshing]);
-
-  useFocusEffect(useCallback(() => {
-    if(isLogin) {
-      getUserInfo();
-      getUserCategories();
-    }
-  }, [isLogin, modalVisible]))
 
   return (
     <SafeAreaView style={styles.container}>
@@ -129,18 +96,28 @@ const PostListScreen = ({
           navigation.navigate("PostSearch");
         }}
       />
-      <ListHeader
-        board_name={board_name!}
-        // board_category={board_category}
-        navigation={navigation}
-      />
-      <View style={{flexDirection: 'row', zIndex: 1, alignItems: 'center', padding: 15, backgroundColor: '#F1FCF5'}}>
-        <Text style={{fontSize: 12, fontWeight: '400', flex: 1}}>전체 글 {count}개</Text>
-      </View>
-      {/* 여기에 semicategory 추가하기 */}
-      {board_category.length > 0 &&
+      <View style={{padding: 15, backgroundColor: '#F1FCF5'}}>
+            <CardView gap={0} offset={0} pageWidth={width} dot={false} data={userCategories} renderItem={({item}: any) => {
+              return (
+                <TouchableOpacity style={{borderRadius: 16, borderColor: '#67D393', borderWidth: 1, paddingVertical: 4, paddingHorizontal: 16, margin: 4, backgroundColor: selectedIds.includes(item.id) ? '#67D393' : 'white'}}
+                onPress={() => {
+                  if (selectedIds.includes(item.id)) {
+                    setSelectedIds(selectedIds.filter(id => id !== item.id));
+                    setCheckedList(checkedList.filter((category: any) => category.id !== item.id));
+                  } else {
+                    setSelectedIds([...selectedIds, item.id]);
+                    setCheckedList([...checkedList, item]);
+                  }
+                }}
+              >
+                <Text style={{color: selectedIds.includes(item.id) ? 'white' : '#202020', fontSize: 14, fontWeight: selectedIds.includes(item.id) ? '600' : '400'}}># {item.name}</Text>
+              </TouchableOpacity>
+              )}}
+            />
+          </View>
+      {checkedList.length > 0 &&
             <View style={{flexDirection: 'row', paddingHorizontal: 15, paddingBottom: 5}}>
-              {board_category.map((category: any) => 
+              {checkedList.map((category: any) => 
                 (
                   <Text style={{color: '#67D393', fontWeight: '700', fontSize: 16}}>
                     #{category.name+' '}
@@ -151,7 +128,29 @@ const PostListScreen = ({
                 과 관련된 정보들
               </Text>
             </View>
-          }
+      }
+      <View style={{flexDirection: 'row', paddingHorizontal: 15}}>
+            <Text
+              style={{
+                fontSize: 20,
+                fontWeight: "600",
+                flex: 1
+              }}
+            >
+              사슴의 추천글
+            </Text>
+            {/* <TouchableOpacity style={{ flexDirection: 'row', alignItems: 'center' }} onPress={() => {
+              navigation.navigate("PostList", {
+                board_name: "사슴의 추천글",
+                board_category:checkedList
+              });
+            }}> 정렬로 수정하면 navigation도 바껴야함  */}
+              {/* 더보기버튼 -> 정렬로 수정필요 */}
+              {/* <Text style={{ fontSize: 12, fontWeight: '500', marginRight: 5 }}>더보기</Text>
+              <Arrow width={12} height={12} color={'black'} /> */}
+            {/* </TouchableOpacity> */}
+          </View>
+      
       <FlatList
         data={posts}
         style={{ flexGrow: 1 }}

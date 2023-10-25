@@ -30,6 +30,7 @@ export type ForestStackParams = {
   PostList: {
     board_name?: string;
     board_category?: any;
+    category_Ids?:any;
   };
   PostSearch: any;
   PostDetail: {
