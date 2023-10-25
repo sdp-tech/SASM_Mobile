@@ -6,9 +6,12 @@ import {
   TouchableOpacity,
   View,
   Alert,
+  TextInput,
 } from "react-native";
-import { FlatList } from "react-native-gesture-handler";
-import { useState } from "react";
+import { FlatList, ScrollView } from "react-native-gesture-handler";
+import { useEffect, useState } from "react";
+import { formDataProps, ListProps, NextBtn } from "./PlaceForm";
+import CheckboxImg from "../../../assets/img/common/CheckBox.svg";
 import { TextPretendard as Text } from "../../../common/CustomText";
 
 const Section = styled.View`
@@ -39,33 +42,118 @@ const TextWrapper = styled.View`
   flex-direction: row;
 `;
 
-interface ListProps {
-  id: number;
+const InputWrapper = styled.View`
+  height: 60px;
+  width: 100%;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-items: flex-start;
+`;
+
+const Input = styled.TextInput`
+  width: 40%;
+  font-size: 16px;
+  margin-left: 25px;
+`;
+
+const CheckboxWrapper = styled.View`
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  margin-left: 25px;
+  height: 20px;
+  width: 45px;
+`;
+
+interface InputProps {
+  day: string;
+  value: string | null;
+  onChangeText: (text: string) => void;
+}
+
+interface CheckboxProps {
   name: string;
-  selected: boolean;
+  checked: boolean;
+  onPress: () => void;
 }
 
 interface TabProps {
-  NextBtn: any;
+  setTab: React.Dispatch<React.SetStateAction<number>>;
+  selectedDay: ListProps[];
+  setSelectedDay: React.Dispatch<React.SetStateAction<ListProps[]>>;
+  formData: formDataProps;
+  setFormData: React.Dispatch<React.SetStateAction<formDataProps>>;
 }
 
-export default function PlaceProfileScreen({ NextBtn }: TabProps) {
-  const DAY_LIST: ListProps[] = [
-    { id: 0, name: "공휴일", selected: false },
-    { id: 1, name: "월요일", selected: false },
-    { id: 2, name: "화요일", selected: false },
-    { id: 3, name: "수요일", selected: false },
-    { id: 4, name: "목요일", selected: false },
-    { id: 5, name: "금요일", selected: false },
-    { id: 6, name: "토요일", selected: false },
-    { id: 0, name: "일요일", selected: false },
-  ];
-  const [selectedDay, setSelectedDay] = useState(DAY_LIST);
+function TimeInput({ day, value, onChangeText }: InputProps) {
+  return (
+    <InputWrapper>
+      <Text
+        style={{
+          ...TextStyles.label,
+          marginTop: 0,
+          marginLeft: 23,
+          textAlign: "left",
+          width: 70,
+        }}
+      >
+        {day}
+      </Text>
+      {value !== null && (
+        <Input
+          placeholderTextColor={"#848484"}
+          placeholder="9:00 - 20:00"
+          inputMode="numeric"
+          value={value}
+          onChangeText={onChangeText}
+        />
+      )}
+    </InputWrapper>
+  );
+}
 
+function CheckBox({ name, checked, onPress }: CheckboxProps) {
+  return (
+    <CheckboxWrapper>
+      <Text style={{ ...TextStyles.label, marginTop: 0, lineHeight: 20 }}>
+        {name}
+      </Text>
+      {checked ? (
+        <CheckboxImg style={{ width: 16, height: 16 }} />
+      ) : (
+        <TouchableOpacity
+          style={{
+            width: 16,
+            height: 16,
+            borderWidth: 1,
+            borderColor: "#848484",
+            borderRadius: 100,
+          }}
+          onPress={onPress}
+        ></TouchableOpacity>
+      )}
+    </CheckboxWrapper>
+  );
+}
+
+export default function PlaceTimeForm({
+  setTab,
+  selectedDay,
+  setSelectedDay,
+  formData,
+  setFormData,
+}: TabProps) {
+  const [breaktime, setBreaktime] = useState(formData.etc_hours !== "");
   function handleSelect(targetId: number) {
     setSelectedDay((prev) => {
       const newSelectedDay = prev.map((item) => {
         if (item.id === targetId) {
+          const timeData = item.selected ? "" : "휴무";
+          setFormData((prev) => {
+            return { ...prev, [item.data]: timeData };
+          });
           return { ...item, selected: !item.selected };
         } else {
           return item;
@@ -75,65 +163,167 @@ export default function PlaceProfileScreen({ NextBtn }: TabProps) {
     });
   }
 
+  function handleChange(item: ListProps, newVal: string) {
+    setFormData((prev) => {
+      return { ...prev, [item.data]: newVal };
+    });
+    if (item.id < 6) {
+      setFormData((prev) => {
+        return { ...prev, week_hours: newVal };
+      });
+      selectedDay.map((day) => {
+        if (!day.selected && day.id > 0 && day.id < 6) {
+          if (formData[day.data] !== newVal) {
+            setFormData((prev) => {
+              return { ...prev, week_hours: null };
+            });
+          }
+        }
+      });
+    }
+  }
+
+  function handleWeekdayChange(newVal: string) {
+    selectedDay.map((item) => {
+      if (!item.selected && item.id < 6) {
+        setFormData((prev) => {
+          return { ...prev, [item.data]: newVal };
+        });
+      }
+    });
+  }
+
   return (
     <Section>
-      <Text style={{ ...TextStyles.label, marginTop: 30, fontWeight: 700 }}>
-        공간 이름
-      </Text>
-      <Text style={{ ...TextStyles.label, marginTop: 50, marginBottom: 40 }}>
-        언제 열리는 장소인가요?
-      </Text>
-      <Text
+      <ScrollView
         style={{
-          ...TextStyles.labelSmall,
-          alignSelf: "flex-start",
+          display: "flex",
+          flexDirection: "column",
         }}
+        contentContainerStyle={{ alignItems: "center" }}
       >
-        휴무일
-      </Text>
-      <FlatList
-        contentContainerStyle={{ paddingHorizontal: 15, marginTop: 10 }}
-        showsHorizontalScrollIndicator={false}
-        data={selectedDay}
-        horizontal
-        renderItem={({ item }) => {
-          return (
-            <CategoryWrapper
-              selected={item.selected}
-              onPress={() => handleSelect(item.id)}
-            >
-              <Text
-                style={{
-                  fontSize: 14,
-                  color: item.selected ? "#FFFFFF" : "#000000",
-                  marginHorizontal: 5,
-                }}
-              >
-                {item.name}
-              </Text>
-            </CategoryWrapper>
-          );
-        }}
-      />
-      <Text
-        style={{
-          ...TextStyles.labelSmall,
-          alignSelf: "flex-start",
-        }}
-      >
-        영업시간
-      </Text>
-      <TextWrapper>
+        <Text style={{ ...TextStyles.label, marginTop: 30, fontWeight: 700 }}>
+          {formData.place_name}
+        </Text>
+        <Text style={{ ...TextStyles.label, marginTop: 50, marginBottom: 40 }}>
+          언제 열리는 장소인가요?
+        </Text>
         <Text
           style={{
             ...TextStyles.labelSmall,
             alignSelf: "flex-start",
           }}
         >
-          브레이크타임
+          휴무일
         </Text>
-      </TextWrapper>
-      {NextBtn}
+        <FlatList
+          contentContainerStyle={{ paddingHorizontal: 15, marginVertical: 10 }}
+          showsHorizontalScrollIndicator={false}
+          data={selectedDay}
+          horizontal
+          renderItem={({ item }) => {
+            return (
+              <CategoryWrapper
+                selected={item.selected}
+                onPress={() => handleSelect(item.id)}
+              >
+                <Text
+                  style={{
+                    fontSize: 14,
+                    color: item.selected ? "#FFFFFF" : "#000000",
+                    marginHorizontal: 5,
+                  }}
+                >
+                  {item.name}
+                </Text>
+              </CategoryWrapper>
+            );
+          }}
+        />
+        <Text
+          style={{
+            ...TextStyles.labelSmall,
+            marginVertical: 30,
+            alignSelf: "flex-start",
+          }}
+        >
+          영업시간
+        </Text>
+        {/* <TimeInput
+          day="평일"
+          value={formData["week_hours"]}
+          onChangeText={(e) => {
+            handleWeekdayChange(e);
+          }}
+        /> */}
+        {selectedDay.map(
+          (item) =>
+            !item.selected &&
+            item.id > 0 && (
+              <TimeInput
+                day={item.name}
+                value={formData[item.data]}
+                onChangeText={(e) => {
+                  handleChange(item, e);
+                }}
+              />
+            )
+        )}
+        <InputWrapper style={{ marginVertical: 20 }}>
+          <Text
+            style={{ ...TextStyles.labelSmall, textAlign: "left", width: 70 }}
+          >
+            브레이크타임
+          </Text>
+          {breaktime ? (
+            <Input
+              placeholderTextColor={"#848484"}
+              placeholder="15:00 - 17:00"
+              inputMode="numeric"
+              value={formData.etc_hours}
+              onChangeText={(e) =>
+                setFormData((prev) => {
+                  return { ...prev, etc_hours: e };
+                })
+              }
+            />
+          ) : (
+            <CheckBox
+              name="유"
+              checked={breaktime}
+              onPress={() => setBreaktime(true)}
+            />
+          )}
+          <CheckBox
+            name="무"
+            checked={!breaktime}
+            onPress={() => {
+              setFormData((prev) => {
+                return { ...prev, etc_hours: "" };
+              });
+              setBreaktime(false);
+            }}
+          />
+        </InputWrapper>
+        <NextBtn
+          onPress={() =>
+            setTab((prev) => {
+              return prev + 1;
+            })
+          }
+          disability={
+            formData.mon_hours === "" ||
+            formData.tues_hours === "" ||
+            formData.wed_hours === "" ||
+            formData.thurs_hours === "" ||
+            formData.fri_hours === "" ||
+            formData.sat_hours === "" ||
+            formData.sun_hours === "" ||
+            (breaktime && formData.etc_hours === "")
+          }
+        />
+      </ScrollView>
+
     </Section>
   );
 }

@@ -8,6 +8,7 @@ import { TouchableWithoutFeedback } from 'react-native-gesture-handler';
 import Heart from '../../../../common/Heart';
 import { Request } from '../../../../common/requests';
 import { TabProps } from '../../../../../App';
+import FastImage from 'react-native-fast-image';
 
 export interface MyCurationItemCardProps {
   id: number;
@@ -31,7 +32,7 @@ const MyCurationItemCard = ({ props, edit, rerender }: { props: MyCurationItemCa
   return (
     <View style={{ position: 'relative' }} >
       <TouchableWithoutFeedback onPress={() => { navigationHome.navigate('홈', { id: props.id }) }}>
-        <ImageBackground source={{ uri: props.rep_pic }} style={{ width: width / 2, height: 240 }}>
+        <FastImage source={{ uri: props.rep_pic, priority: FastImage.priority.normal }} style={{ width: width / 2, height: 240 }}>
           <View style={{ backgroundColor: 'rgba(0,0,0,0.3)', width: width / 2, height: 240, padding: 10, justifyContent: 'flex-end' }}>
             <View style={{ flexDirection: "row" }}>
               {/* <Text style={[textStyles.writer, { color: props.verified ? '#209DF5' : '#89C77F' }]}>{props.verified ? ('Editor') : ('User')}</Text> */}
@@ -39,7 +40,7 @@ const MyCurationItemCard = ({ props, edit, rerender }: { props: MyCurationItemCa
             </View>
             <Text style={textStyles.title}>{props.title}</Text>
           </View>
-        </ImageBackground>
+        </FastImage>
       </TouchableWithoutFeedback>
       {
         edit &&

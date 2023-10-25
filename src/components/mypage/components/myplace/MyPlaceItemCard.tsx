@@ -8,6 +8,7 @@ import { useNavigation } from "@react-navigation/native";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { TabProps } from "../../../../../App";
 import { TouchableWithoutFeedback } from "react-native-gesture-handler";
+import FastImage from "react-native-fast-image";
 
 export interface MyPlaceItemCardProps {
   id: number;
@@ -38,8 +39,8 @@ const MyPlaceItemCard = ({ data, edit, rerender }: { data: MyPlaceItemCardProps,
   return (
     <View style={{ position: 'relative' }}>
       <TouchableWithoutFeedback style={{ marginHorizontal: 6, marginBottom: 10 }} onPress={handlePageGoToMap}>
-        <ImageBackground
-          source={{ uri: data.rep_pic }}
+        <FastImage
+          source={{ uri: data.rep_pic, priority: FastImage.priority.normal }}
           style={{ width: 110, height: 150 }}
         >
           <View style={{ width: '100%', height: '100%', backgroundColor: 'rgba(0,0,0,0.3)', padding: 5, justifyContent: 'flex-end' }}>
@@ -49,7 +50,7 @@ const MyPlaceItemCard = ({ data, edit, rerender }: { data: MyPlaceItemCardProps,
             </View>
             <Text numberOfLines={1} style={textStyles.place_name}>{data.place_name}</Text>
           </View>
-        </ImageBackground>
+        </FastImage>
       </TouchableWithoutFeedback>
       {
         edit &&
