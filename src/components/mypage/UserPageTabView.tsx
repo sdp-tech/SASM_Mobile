@@ -1,4 +1,3 @@
-/*다른유저의 마이페이지를 받아오는 페이지*/
 import { useState, useEffect, useCallback, useContext } from 'react';
 import { View, SafeAreaView, useWindowDimensions, Image, Alert, Platform } from 'react-native';
 import { TextPretendard as Text } from '../../common/CustomText';
@@ -6,8 +5,9 @@ import { TouchableOpacity } from 'react-native-gesture-handler';
 import { TabView, TabBar, SceneMap } from "react-native-tab-view";
 import { Request } from '../../common/requests';
 import MyPlace from './components/myplace/MyPlace';
-import MyStory from './components/mystory/MyStory';
-import MyCuration from './components/mycuration/MyCuration';
+import UserStory from './components/mystory/UserStory';
+import UserCuration from './components/mycuration/UserCuration';
+import UserForest from './components/myforest/UserForest';
 import { MyPageProps } from '../../pages/MyPage';
 import Profile from '../../assets/img/MyPage/Profile.svg';
 import Settings from '../../assets/img/MyPage/Settings.svg';
@@ -15,7 +15,6 @@ import { getAccessToken } from '../../common/storage';
 import { useFocusEffect } from '@react-navigation/native';
 import { StackScreenProps } from '@react-navigation/stack';
 import { LoginContext } from '../../common/Context';
-import MyForest from './components/myforest/MyForest';
 import { useNavigation } from '@react-navigation/native';
 import { StackNavigationProp } from '@react-navigation/stack';
 import { ForestStackParams } from '../../pages/Forest';
@@ -35,9 +34,13 @@ export interface IUserInfo {
   [key: string]: string | boolean | number;
 }
 
+export interface OtherUserInfo {
+  email : string;
+}
+
 /*연결해주는 타입 설정*/
 const UserPageTabView = ({ navigation, route}: StackScreenProps<MyPageProps, 'userpage'>) => {
-  
+  const [otherEmail, setOtherEmail] = useState(route.params.email)
   const { isLogin, setLogin } = useContext(LoginContext);
   const [info, setInfo] = useState<IUserInfo>({
     id: 0,
@@ -56,7 +59,7 @@ const UserPageTabView = ({ navigation, route}: StackScreenProps<MyPageProps, 'us
 
   const getUserinfo = async () => {
     const response_info = await request.get(`/mypage/user/`, {
-      email: route.params.email, 
+      email: otherEmail, 
     }); 
     setInfo(response_info.data.data) 
 
@@ -89,11 +92,11 @@ const UserPageTabView = ({ navigation, route}: StackScreenProps<MyPageProps, 'us
       case "place":
         return <MyPlace />;
       case "story":
-        return <MyStory />;
+        return <UserStory email={otherEmail}/>;
       case "curation":
-        return <MyCuration />;
+        return <UserCuration email={otherEmail}/>;
       case "forest":
-        return <MyForest />
+        return <UserForest email={otherEmail}/>
     }
   }
 

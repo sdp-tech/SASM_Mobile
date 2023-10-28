@@ -274,7 +274,9 @@ const UserInfoSection = ({
       );
     }
   }
+  
   const navigationToTab = useNavigation<StackNavigationProp<TabProps>>();
+  
   return (
     <View
       style={{
@@ -286,6 +288,7 @@ const UserInfoSection = ({
         borderBottomColor: "#E3E3E3",
       }}
     >
+      
       
       <View style={{ alignItems: 'center' }}>
         <TouchableOpacity onPress={() => { navigationToTab.navigate('마이페이지', { email: user.email }) }}> 
