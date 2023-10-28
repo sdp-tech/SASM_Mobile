@@ -14,6 +14,9 @@ interface CardViewProps {
   refreshing?: boolean;
   onEndDrag?: () => void;
   green?: boolean;
+  from?: string;
+  onNext?: () => void;
+  onPrev?: () => void;
 }
 
 interface DotProps {
@@ -34,7 +37,7 @@ const Dot = ({focused, green}: DotProps) => {
 )
 }
 
-const CardView = ({ gap, offset, data, pageWidth, renderItem, dot, onEndReached, onRefresh, refreshing, onEndDrag, green }: CardViewProps) => {
+const CardView = ({ gap, offset, data, pageWidth, renderItem, dot, onEndReached, onRefresh, refreshing, onEndDrag, onNext, onPrev, from, green }: CardViewProps) => {
   const [page, setPage] = useState<number>(0);
   const prevScrollOffset = useRef<number>(0); // 이전 스크롤 위치를 저장할 ref
 
@@ -54,8 +57,17 @@ const CardView = ({ gap, offset, data, pageWidth, renderItem, dot, onEndReached,
     const maxScrollOffset = (data.length - 1) * (pageWidth + gap);
 
     const scrollDiff = currentScrollOffset - maxScrollOffset
-    if (onEndDrag && currentPage === 2 && scrollDiff > (pageWidth / 4)) {
+    if (from === 'forest' && onEndDrag && currentPage === 2 && scrollDiff > (pageWidth / 4)) {
       onEndDrag();
+    }
+
+    if (from === 'story') {
+      if (currentPage === 0 && onPrev && currentScrollOffset < prevScrollOffset.current && currentScrollOffset < (pageWidth / 4)) {
+        onPrev();
+      }
+      if (currentPage === 3 && onNext && currentScrollOffset > prevScrollOffset.current && maxScrollOffset - currentScrollOffset < (pageWidth / 4)) {
+        onNext();
+      }
     }
   };
 
