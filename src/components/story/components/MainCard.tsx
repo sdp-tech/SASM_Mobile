@@ -3,6 +3,7 @@ import { View, TouchableOpacity, Image, StyleSheet, Dimensions, ImageBackground,
 import { TextPretendard as Text } from '../../../common/CustomText';
 import { Request } from '../../../common/requests';
 import Heart from '../../../common/Heart';
+import FastImage from 'react-native-fast-image';
 
 export interface MainCardProps {
   id: number;
@@ -42,7 +43,7 @@ const MainCard = ({id, place_name, title, rep_pic, story_like, category, preview
         [
             {
                 text: "이동",
-                onPress: () => navigation.navigate('마이페이지'),
+                onPress: () => navigation.navigate('마이페이지', {}),
 
             },
             {
@@ -67,10 +68,9 @@ const MainCard = ({id, place_name, title, rep_pic, story_like, category, preview
     <View style={{position: 'absolute', borderBottomLeftRadius: 5, top: 50+width*0.6, left: 0, width: 30, height: width*0.2, opacity: 0.3, backgroundColor: 'white', shadowColor: 'black', shadowOpacity: 0.3, shadowOffset: { width: 0, height: 5}}}/>
     <View style={{position: 'absolute', borderBottomLeftRadius: 5, top: 50+width*0.6, right: 0, width: 30, height: width*0.2, opacity: 0.3, backgroundColor: 'white', shadowColor: 'black', shadowOpacity: 0.3, shadowOffset: { width: 0, height: 5}}}/>
     <Pressable style={{alignSelf: 'center'}} onPress={onPress}>
-      <ImageBackground
-        source={{uri: rep_pic}}
-        style={{width: width*0.9, height:width*0.85}}
-        imageStyle={{borderTopLeftRadius: 5, borderTopRightRadius: 5}}
+      <FastImage
+        source={{uri: rep_pic, priority: FastImage.priority.high}}
+        style={{width: width*0.9, height:width*0.85, borderTopLeftRadius: 5, borderTopRightRadius: 5}}
         resizeMode='cover'
       >
         <View style={{width: width*0.9, height: width*0.85, borderTopLeftRadius: 5, borderTopRightRadius: 5, backgroundColor: 'rgba(0, 0, 0, 0.3)', flexDirection: 'row'}}>
@@ -82,7 +82,7 @@ const MainCard = ({id, place_name, title, rep_pic, story_like, category, preview
             <Heart like={like} onPress={toggleLike} color="white" size={20} />
           </View>
         </View>
-      </ImageBackground>
+      </FastImage>
       <View style={{width: width*0.9, height: 130, borderBottomRightRadius:5, borderBottomLeftRadius: 5, backgroundColor: 'white', shadowColor: 'black', shadowOpacity: 0.25, shadowOffset: { width: 0, height: 4}, paddingVertical: 20, paddingHorizontal: 25}}>
         <Text numberOfLines={3} ellipsizeMode={'tail'} style={textStyles.preview}>{summary}</Text>
       </View>

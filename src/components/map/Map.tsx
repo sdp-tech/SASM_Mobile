@@ -65,8 +65,8 @@ const MoveToCenterButton = styled(Circle)`
   justify-content: center;
   position: absolute;
   z-index: 0;
-  top: ${height / 2};
-  right: 15;
+  top: ${height / 2}px;
+  right: 15px;
 `;
 
 // 최소 단위 interface
@@ -105,7 +105,7 @@ export interface detailDataProps extends Coord, DataTypes {
   short_cur: string;
   photos: url[];
   sns: object[];
-  story_id: number;
+  story_id: number[];
   category_statistics: string[];
   pet_category: boolean;
   reusable_con_category: any;
@@ -261,7 +261,7 @@ export default function MapContainer({
     longitude: 0,
     photos: [{}],
     sns: [{}],
-    story_id: 0,
+    story_id: [],
     place_like: "",
     category_statistics: [],
     vegan_category: "",
@@ -376,6 +376,7 @@ export default function MapContainer({
         placeData={placeData}
         total={total}
         detailData={detailData}
+        checkedList={checkedList}
       />
 
       <Animated.View style={buttonAnimatedStyle}>
@@ -405,27 +406,25 @@ export default function MapContainer({
       <PlusButton
         position="rightbottom"
         onPress={() => {
-          // 확인을 위해 임시로 로그인 체크 해제. 이후 주석 풀기
-          // if (!isLogin) {
-          //   Alert.alert(
-          //     "로그인이 필요합니다.",
-          //     "로그인 항목으로 이동하시겠습니까?",
-          //     [
-          //       {
-          //         text: "이동",
-          //         onPress: () => navigation.navigate('마이페이지')
-
-          //       },
-          //       {
-          //         text: "취소",
-          //         onPress: () => { },
-          //         style: "cancel"
-          //       },
-          //     ],
-          //     { cancelable: false }
-          //   );
-          //   return;
-          // }
+          if (!isLogin) {
+            Alert.alert(
+              "로그인이 필요합니다.",
+              "로그인 항목으로 이동하시겠습니까?",
+              [
+                {
+                  text: "이동",
+                  onPress: () => navigation.navigate("마이페이지"),
+                },
+                {
+                  text: "취소",
+                  onPress: () => {},
+                  style: "cancel",
+                },
+              ],
+              { cancelable: false }
+            );
+            return;
+          }
           setPlaceformModal(true);
         }}
       />
@@ -443,7 +442,7 @@ const CustomHandle = ({ mode }: { mode: boolean }) => {
         backgroundColor: mode ? "#FFFFFF" : "none",
         position: "absolute",
         width: width,
-        height: 39,
+        height: 20,
         borderTopEndRadius: 10,
         borderTopStartRadius: 10,
         display: "flex",
@@ -476,6 +475,7 @@ interface BottomSheetMemoProps {
   setDetailData: Dispatch<SetStateAction<detailDataProps>>;
   setCenter: Dispatch<SetStateAction<Coord>>;
   detailData: detailDataProps;
+  checkedList: any[];
 }
 //좌표가 바뀌어서 바텀시트가 올라가는것을 방지
 const BottomSheetMemo = memo(
@@ -491,6 +491,7 @@ const BottomSheetMemo = memo(
     placeData,
     total,
     detailData,
+    checkedList
   }: BottomSheetMemoProps) => {
     const [index, setIndex] = useState(1);
     const { width, height } = Dimensions.get("window");
@@ -534,6 +535,7 @@ const BottomSheetMemo = memo(
                 setDetailData={setDetailData}
                 setSheetMode={setSheetMode}
                 setCenter={setCenter}
+                checkedList={checkedList}
               />
             ) : (
               <DetailCard setIndex={setIndex} detailData={detailData} />

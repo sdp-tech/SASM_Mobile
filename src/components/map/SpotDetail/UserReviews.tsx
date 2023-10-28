@@ -5,6 +5,7 @@ import styled from 'styled-components/native';
 import { reviewDataProps } from './DetailCard';
 import CardView from '../../../common/CardView';
 import ReviewDetail from './ReviewDetail';
+import FastImage from 'react-native-fast-image';
 
 const ReviewBox = styled.View`
   border-color: #DDDDDD;
@@ -38,7 +39,7 @@ export default function UserReviews({ reviewData, rerender, category }: UserRevi
             reviewData.photos.length != 0 &&
             <CardView
               data={reviewData.photos}
-              renderItem={({ item }: any) => <Image source={{ uri: item.imgfile }} style={{ height: 150, width: 200, marginHorizontal: 5 }} />}
+              renderItem={({ item }: any) => <FastImage source={{ uri: item.imgfile, priority: FastImage.priority.normal  }} style={{ height: 150, width: 200, marginHorizontal: 5 }} />}
               gap={8}
               offset={19}
               pageWidth={194}

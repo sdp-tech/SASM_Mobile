@@ -51,7 +51,7 @@ const Follower = ({ navigation, route }: StackScreenProps<MyPageProps, 'follower
             <>
             {
               followerList.map((user) => (
-                <View style={styles.userContainer}>
+                <View key={user.email} style={styles.userContainer}>
                   <Image source={{ uri: user.profile_image }} style={styles.profileImage} />
                   <View style={styles.userInfo}>
                     <Text style={styles.username}>{user.nickname}</Text>

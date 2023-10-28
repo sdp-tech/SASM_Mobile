@@ -21,6 +21,7 @@ import HomeScreen from "./src/pages/Home";
 import { Coord } from "react-native-nmap";
 import SplashScreen from "react-native-splash-screen";
 import { LoginProvider } from "./src/common/Context";
+import CodePush from 'react-native-code-push';
 
 export type AppProps = {
   Home: any;
@@ -211,6 +212,7 @@ const CustomTab = ({ state, descriptors, navigation }: BottomTabBarProps) => {
         };
         return (
           <TouchableOpacity
+            key={index}
             onPress={onPress}
             style={{
               width: "20%",
@@ -265,4 +267,15 @@ const HomeScreens = (): JSX.Element => {
   );
 };
 
-export default App;
+const codePushOptions = {
+  checkFrequency: CodePush.CheckFrequency.ON_APP_START,
+  updateDialog: { 
+    title: '...', 
+    optionalUpdateMessage: '...', 
+    optionalInstallButtonLabel: '업데이트', 
+    optionalIgnoreButtonLabel: '아니요.' 
+  },
+  installMode: CodePush.InstallMode.IMMEDIATE 
+}
+
+export default CodePush(codePushOptions)(App);

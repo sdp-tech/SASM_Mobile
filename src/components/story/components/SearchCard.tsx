@@ -4,6 +4,7 @@ import { TextPretendard as Text } from '../../../common/CustomText';
 import styled from 'styled-components';
 import { Request } from '../../../common/requests';
 import Heart from '../../../common/Heart';
+import FastImage from 'react-native-fast-image';
 
 interface SearchCardProps {
   id: number;
@@ -45,7 +46,7 @@ const SearchCard = ({id, place_name, title, rep_pic, extra_pics, story_like, cat
         [
             {
                 text: "이동",
-                onPress: () => navigation.navigate('마이페이지'),
+                onPress: () => navigation.navigate('마이페이지', {}),
 
             },
             {
@@ -71,7 +72,7 @@ const SearchCard = ({id, place_name, title, rep_pic, extra_pics, story_like, cat
     const array = []
     const length = extra_pics ? 2-extra_pics.length : 2
     {extra_pics && extra_pics.slice(0,2).map((uri: string, index: number) => (
-      array.push(<Image style={{width: width*0.34, height: width*0.34, marginBottom: 8}} source={{uri: uri}} />)
+      array.push(<FastImage style={{width: width*0.34, height: width*0.34, marginBottom: 8}} source={{uri: uri, priority: FastImage.priority.normal}} />)
     ))}
     for (let i = 0; i < length; i++){
       array.push(<View style={{width: width*0.34, height: width*0.34, marginBottom: 8, backgroundColor: '#D9D9D9'}} />)
