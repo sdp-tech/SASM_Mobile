@@ -274,7 +274,9 @@ const UserInfoSection = ({
       );
     }
   }
+  
   const navigationToTab = useNavigation<StackNavigationProp<TabProps>>();
+  
   return (
     <View
       style={{
@@ -287,8 +289,10 @@ const UserInfoSection = ({
       }}
     >
       
+      
       <View style={{ alignItems: 'center' }}>
         <TouchableOpacity onPress={() => { navigationToTab.navigate('마이페이지', { email: user.email }) }}> 
+        {/*email은 user에 들어있음(user.writer)*/}
         <Image
           style={{ width: 56, height: 56, borderRadius: 60 }}
           source={{

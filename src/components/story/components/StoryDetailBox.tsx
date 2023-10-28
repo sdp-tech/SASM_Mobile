@@ -214,7 +214,10 @@ const StoryDetailBox = ({navigation, data, isLogin, onLayout, email, onRefresh, 
                             <Text style={textStyles.date}>작성: {data!.created.slice(0, 10).replace(/-/gi, '.')}</Text>
                         </View>
                         <View style = {{alignItems: 'center'}}>
-                            <Image source={{uri: data!.profile}} style={{width: 50, height: 50, borderRadius: 60, marginVertical: 5}} />
+                            <TouchableOpacity onPress={() => { navigationToTab.navigate('마이페이지', { email: data.writer }) }}>
+                                <Image source={{uri: data!.profile}} style={{width: 50, height: 50, borderRadius: 60, marginVertical: 5}} />
+                            </TouchableOpacity>
+                            
                             <View style={{flexDirection: 'row'}}>
                                 <Text style={[textStyles.writer, {color: data!.writer_is_verified ? '#209DF5' : '#67D393'}]}>{data!.writer_is_verified ? 'Editor' : 'User'}</Text>
                                 <Text style={textStyles.writer}> {data!.nickname}</Text>
