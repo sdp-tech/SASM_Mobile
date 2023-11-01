@@ -266,7 +266,7 @@ export default function DetailCard({ detailData, setIndex }: DetailCardProps): J
   return (
     <View style={{ borderTopLeftRadius: 10, borderTopRightRadius: 10, overflow: 'hidden' }}>
       <Modal style={{ position: 'absolute' }} visible={reviewModal}>
-        <WriteReview rerender={rerenderScreen} id={detailData.id} category={detailData.category} setReviewModal={setReviewModal} setTab={setTab} />
+        <WriteReview rerender={rerenderScreen} id={detailData.id} place_name={detailData.place_name} category={detailData.category} setReviewModal={setReviewModal} setTab={setTab} />
       </Modal>
       <FlatList
         data={[detailData]}
@@ -393,7 +393,7 @@ export default function DetailCard({ detailData, setIndex }: DetailCardProps): J
                           </TouchableOpacity>
                         </MenuBox>
                         {
-                          reviewData && <UserReviews category={detailData.category} rerender={rerenderScreen} reviewData={reviewData[0]} />
+                          reviewData && <UserReviews category={detailData.category} place_name={detailData.place_name} rerender={rerenderScreen} reviewData={reviewData[0]} />
                         }
                       </Box>
                       <Box>
@@ -426,7 +426,7 @@ export default function DetailCard({ detailData, setIndex }: DetailCardProps): J
                       {
                         reviewData && (
                           reviewData.length != 0 ? reviewData.map((data: reviewDataProps) => (
-                            <UserReviews category={detailData.category} rerender={rerenderScreen} reviewData={data} />
+                            <UserReviews category={detailData.category} place_name={detailData.place_name} rerender={rerenderScreen} reviewData={data} />
                           ))
                             :
                             <Text style={{ margin: 15, fontWeight: '700', color: '#000000' }}>리뷰가 없습니다.</Text>

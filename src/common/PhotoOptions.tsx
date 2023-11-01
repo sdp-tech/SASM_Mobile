@@ -13,6 +13,7 @@ import PlaceUser from "../assets/img/Map/PlaceUser.svg";
 import PhotoIcon from "../assets/img/common/PhotoIcon.svg";
 import { CameraOptions } from "react-native-image-picker";
 import { ImageLibraryOptions } from "react-native-image-picker";
+import { ViewProps } from "react-native-svg/lib/typescript/fabric/utils";
 
 const PhotosInput = styled.View`
   display: flex;
@@ -102,13 +103,13 @@ export default function PhotoOptions({
   );
 }
 
-const Container = styled.View<{ width: number; height: number }>`
+const Container = styled.View<{ width: number; height: number, align: string }>`
   position: relative;
-  width: 100%;
+  width: ${(props) => props.height}px;
   height: ${(props) => props.height}px;
   display: flex;
-  flex-flow: row;
-  align-items: center;
+  flex-direction: row;
+  align-self: ${(props) => props.align};
 `;
 const SelectButton = styled.TouchableOpacity<{ width: number; height: number }>`
   position: relative;
@@ -125,6 +126,7 @@ interface PhotoSelectorProps extends PhotoProps {
   width: number;
   height: number;
   children?: ReactNode | JSX.Element | ReactElement;
+  alignContainer?: string;
 }
 export const PhotoSelector = ({
   width,
@@ -132,6 +134,7 @@ export const PhotoSelector = ({
   children,
   max,
   setPhoto,
+  alignContainer,
 }: PhotoSelectorProps): JSX.Element => {
   const options: CameraOptions[] | ImageLibraryOptions[] = [
     //카메라 & 갤러리 세팅
@@ -150,7 +153,7 @@ export const PhotoSelector = ({
     },
   ];
   return (
-    <Container width={width} height={height}>
+    <Container width={width} height={height} align={alignContainer ? alignContainer : 'center'}>
       <SelectButton
         width={width}
         height={height}
