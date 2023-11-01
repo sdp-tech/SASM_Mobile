@@ -230,7 +230,9 @@ export default function CurationDetail({ navigation, route }: StackScreenProps<H
             </View>
           </FastImage>
         <InfoBox>
-          <Image source={{ uri: curationDetail!.profile_image }} style={{ width: 50, height: 50, borderRadius: 25, marginRight: 10 }} />
+          <TouchableOpacity onPress={() => { navigationTab.navigate('마이페이지', { email: curationDetail.writer_email }) }}>
+            <Image source={{ uri: curationDetail!.profile_image }} style={{ width: 50, height: 50, borderRadius: 25, marginRight: 10 }} />
+          </TouchableOpacity>
           <View>
             <Text style={TextStyles.writer}>{curationDetail.nickname}</Text>
             <Text style={TextStyles.created}>{curationDetail.created.slice(0, 10).replace(/-/gi, '.')} 작성</Text>
@@ -267,6 +269,7 @@ const Storys = ({ navigation, data }: { navigation: StackNavigationProp<TabProps
   const [like, setLike] = useState<boolean>(false);
   const [followed, setFollowed] = useState<boolean>(false);
   const previewNavigation = useNavigation<StackNavigationProp<HomeStackParams>>();
+  const navigationTab = useNavigation<StackNavigationProp<TabProps>>();
 
   const request = new Request();
   const handleLike = async () => {
@@ -308,7 +311,10 @@ const Storys = ({ navigation, data }: { navigation: StackNavigationProp<TabProps
         <Text style={{ fontSize: 14 }}>{data.place_address}</Text>
       </StoryInfoBox>
       <InfoBox>
-        <FastImage source={{ uri: data!.profile_image, priority: FastImage.priority.normal }} style={{ width: 50, height: 50, borderRadius: 25, marginRight: 10 }} />
+        <TouchableOpacity onPress={() => { navigationTab.navigate('마이페이지', { email: data!.writer_email }) }}>
+          <Image source={{ uri: data!.profile_image }} style={{ width: 50, height: 50, borderRadius: 25, marginRight: 10 }} />
+        </TouchableOpacity>
+        
         <View>
           <Text style={TextStyles.writer}>{data.nickname}</Text>
           <Text style={TextStyles.created}>{data.created.slice(0, 10).replace(/-/gi, '.')} 작성</Text>

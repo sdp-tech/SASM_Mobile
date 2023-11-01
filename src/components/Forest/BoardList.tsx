@@ -283,7 +283,8 @@ const BoardListScreen = ({
             data={chunkArray(posts, 3)}
             pageWidth={width}
             dot={true}
-            onEndDrag={() => posts.length >= 9 && navigation.navigate('PostList', { board_name: '사슴의 추천글'})} 
+            onEndDrag={() => posts.length >= 9 && navigation.navigate('PostList', { board_name: '사슴의 추천글'})}
+            from='forest'
             renderItem={({ item }: any) => {
               return (
                 <FlatList

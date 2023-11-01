@@ -53,11 +53,11 @@ const Stack = createNativeStackNavigator<ForestStackParams>();
 const Forest = ({navigation, route}:StackScreenProps<TabProps, '포레스트'>) => {
   const navigationToForest = useNavigation<StackNavigationProp<ForestStackParams>>();
   useEffect(()=>{
-    if(route.params.id) {
+    if(route.params?.id) {
       // navigationToForest.reset({routes: [{name: "PostDetail", params: { post_id:route.params.id }}]});
       navigationToForest.push('PostDetail', {post_id: route.params.id})
     }
-  },[route.params.id])
+  },[route.params?.id])
   return (
     <Stack.Navigator
       screenOptions={() => ({

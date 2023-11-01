@@ -7,37 +7,47 @@ import { reviewDataProps } from './DetailCard';
 import PhotoOptions, { PhotoSelector } from '../../../common/PhotoOptions';
 import Close from "../../../assets/img/common/Close.svg";
 import { ScrollView } from 'react-native-gesture-handler';
+import FormHeader from '../../../common/FormHeader';
+import { CategoryIcon } from '../../../common/Category';
+import InputWithLabel from '../../../common/InputWithLabel';
+import NextButton from '../../../common/NextButton';
 
 const { width, height } = Dimensions.get('window');
 
-const Header = styled.View`
-  background-color: #75E59B;
-  height: 12.5%;
-  display: flex;
-  flex-flow: row;
-  align-items: center;
-  justify-content: space-between;
-  padding: 0 20px;
-`
 const Section = styled.View`
   padding: 20px;
+`
+const CategoryWrapper = styled.View`
+  flex-direction: row;
+  align-items: center;
+  height: 28px;
+  border-radius: 12px;
+  padding-horizontal: 10px;
+  background-color: '#FFFFFF';
+  border-color: 'rgba(203, 203, 203, 1)';
+  border-width: 1px;
+  flex: 1;
+  align-self: flex-start;
 `
 const KeywordBox = styled.View`
   display: flex;
   flex-flow: row wrap;
   justify-content: space-between;
-  margin-vertical: 20px;
+  margin-vertical: 10px;
 `
 const KeywordButton = styled.TouchableOpacity<{ isSelected: boolean }>`
   width: 49%;
-  background-color: ${props => props.isSelected ? '#75E59B' : '#FFFFFF'}
-  border: 1px #B7B7B7 solid;
+  background-color: ${props => props.isSelected ? '#82DAA6' : '#FFFFFF'}
+  border: 1px #82DAA6 solid;
+  border-radius: 12px;
   margin-vertical: 5px;
 `
 const KeywordTitle = styled.Text<{ isSelected: boolean }>`
   padding: 10px;
-  font-size: 13px;
+  font-size: 14px;
+  text-align: center;
   color: ${props => props.isSelected ? '#FFFFFF' : '#000000'};
+  font-family: Pretendard Variable;
 `
 const ContentsInput = styled.TextInput`
   border: 1px #B7B7B7 solid;
@@ -62,6 +72,7 @@ interface FormProps {
 
 interface WriteReviewProps {
   id: number;
+  place_name: string;
   category: string;
   setReviewModal: Dispatch<SetStateAction<boolean>>;
   setDetailModal?: Dispatch<SetStateAction<boolean>>;
@@ -70,9 +81,10 @@ interface WriteReviewProps {
   targetData?: reviewDataProps;
 }
 
-export default function WriteReview({ rerender, id, category, setReviewModal, setDetailModal, setTab, targetData }: WriteReviewProps) {
+export default function WriteReview({ rerender, id, place_name, category, setReviewModal, setDetailModal, setTab, targetData }: WriteReviewProps) {
   //업로드할 사진 목록
   const [photos, setPhotos] = useState<any[]>([]);
+  const [tmpPhoto, setTmpPhoto] = useState<any>(null);
   //수정할 사진 목록
   const [photoList, setPhotoList] = useState<any[]>([]);
   const request = new Request();
@@ -83,6 +95,7 @@ export default function WriteReview({ rerender, id, category, setReviewModal, se
       contents: ''
     }
   )
+  const disabled = Boolean(form.contents.length === 0 || form.keywords.length === 0 || photoList.length + photos.length > 3 )
   let keywordList: any[] = [
     //카테고리 별 키워드 리스트
     ['분위기가 좋다', 1],
@@ -121,7 +134,7 @@ export default function WriteReview({ rerender, id, category, setReviewModal, se
     }
     else {
       if (form.keywords.length >= 3) {
-        Alert.alert('경고', '키워드는 3개까지만');
+        Alert.alert('경고', '키워드는 3개까지만 선택하실 수 있습니다');
       }
       else {
         setForm({
@@ -212,39 +225,41 @@ export default function WriteReview({ rerender, id, category, setReviewModal, se
     }
   }, []);
 
+  useEffect(() => {
+    if(tmpPhoto) {
+      setPhotos((prev: any) => [...prev, tmpPhoto[0]]);
+      setTmpPhoto(null);
+    }
+  }, [tmpPhoto])
+
   return (
-    <View>
-      <Header>
-        <Text style={TextStyles.header}>리뷰하기</Text>
-        <TouchableOpacity onPress={() => { setReviewModal(false) }}><Close color={'#FFFFFF'} /></TouchableOpacity>
-      </Header>
+    <View style={{flex: 1}}>
+      <FormHeader title='리뷰하기' onLeft={() => { setReviewModal(false)}} begin onRight={null} />
       <ScrollView style={{height: '87.5%'}}>
       <Section>
-        <Text style={TextStyles.title}>이미지 등록하기</Text>
-        <PhotoSelector max={3} width={width-40} height={300} setPhoto={setPhotos}>
-          {
-            photos.map((data) =>
-              <View style={{ position: 'relative' }}>
-                <TouchableOpacity style={{ position: 'absolute', top: 5, right: 5, zIndex: 2 }} onPress={() => { deletePhoto(data, photos, setPhotos) }}>
-                  <Close color={'#FFFFFF'} width={20} height={20} />
-                </TouchableOpacity>
-                <Image source={{ uri: data.uri }} style={{ width: 100, height: 100, marginBottom: 10 }} />
-              </View>)
-          }
-          {
-            photoList.map((data) =>
-              <View style={{ position: 'relative' }}>
-                <TouchableOpacity style={{ position: 'absolute', top: 5, right: 5, zIndex: 2 }} onPress={() => { deletePhoto(data, photoList, setPhotoList) }}>
-                  <Close color={'#FFFFFF'} width={20} height={20} />
-                </TouchableOpacity>
-                <Image source={{ uri: data.imgfile }} style={{ width: 100, height: 100, marginBottom: 10 }} />
-              </View>
-            )
-          }
-        </PhotoSelector>
-        <Text style={TextStyles.titleBold}>좋았던 점을 알려주세요!</Text>
-        <Text style={TextStyles.title}>한줄평</Text>
-        <ContentsInput defaultValue={targetData && targetData.contents} onChangeText={(event) => { setForm({ ...form, contents: event }) }} />
+        <Text style={[TextStyles.title, {fontWeight: '700'}]}>{place_name}</Text>
+        <CategoryWrapper>
+          <CategoryIcon data={category} />
+          <Text style={{ fontSize: 14, marginHorizontal: 5 }}>{category}</Text>
+        </CategoryWrapper>
+        <InputWithLabel 
+          isRequired 
+          label='한줄평' 
+          value={targetData && targetData.contents} 
+          onChangeText={(event) => { setForm({ ...form, contents: event }) }} 
+          placeholder='좋았던 점을 알려주세요.'
+          style={{width: width * 0.9}}
+          labelStyle={{
+            alignSelf: 'flex-start',
+            textAlign: "left",
+            fontSize: 14,
+            lineHeight: 18,
+            letterSpacing: -0.6,
+            marginTop: 10,
+          }}
+          containerStyle={{marginVertical: 10}}
+        />
+        <Text style={TextStyles.title}>어떤 공간인지 알려주세요.</Text>
         <KeywordBox>
           {keywordList.map(data => {
             const isSelected = form.keywords.includes(data[1]);
@@ -254,9 +269,30 @@ export default function WriteReview({ rerender, id, category, setReviewModal, se
               </KeywordButton>)
           })}
         </KeywordBox>
-        <Submit onPress={uploadReview}>
-          <Text style={TextStyles.submit}>리뷰 등록하기</Text>
-        </Submit>
+        <Text style={TextStyles.title}>공간의 사진을 첨부해보세요.</Text>
+        <View style={{ flexDirection: 'row'}}>
+          {(photos.length + photoList.length < 3 ) && <PhotoSelector max={3} width={100} height={100} setPhoto={setTmpPhoto} alignContainer='flex-start' />}
+          {
+            photos.map((data) =>
+              <View style={{ position: 'relative', marginLeft: 5 }}>
+                <TouchableOpacity style={{ position: 'absolute', top: 5, right: 5, zIndex: 2 }} onPress={() => { deletePhoto(data, photos, setPhotos) }}>
+                  <Close color={'#FFFFFF'} width={20} height={20} />
+                </TouchableOpacity>
+                <Image source={{ uri: data.uri }} style={{ width: 100, height: 100, marginBottom: 10 }} />
+              </View>)
+          }
+          {
+            photoList.map((data) =>
+              <View style={{ position: 'relative', marginLeft: 5 }}>
+                <TouchableOpacity style={{ position: 'absolute', top: 5, right: 5, zIndex: 2 }} onPress={() => { deletePhoto(data, photoList, setPhotoList) }}>
+                  <Close color={'#FFFFFF'} width={20} height={20} />
+                </TouchableOpacity>
+                <Image source={{ uri: data.imgfile }} style={{ width: 100, height: 100, marginBottom: 10 }} />
+              </View>
+            )
+          }
+        </View>
+        <NextButton label='리뷰 작성 완료' onPress={uploadReview} style={{alignSelf: 'center', marginVertical: 10}} disabled={disabled} />
       </Section>
       </ScrollView>
     </View>

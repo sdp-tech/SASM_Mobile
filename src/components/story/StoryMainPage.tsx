@@ -42,6 +42,7 @@ const StoryMainPage = ({ navigation, route }: StoryProps) => {
   const [orderList, setOrderList] = useState(0);
   const [order, setOrder] = useState<string>(toggleItems[orderList].order);
   const [page, setPage] = useState<number>(1);
+  const [prevPage, setPrevPage] = useState<any>(null);
   const [nextPage, setNextPage] = useState<any>(null);
   const [refreshing, setRefreshing] = useState<boolean>(false);
   const [loading, setLoading] = useState<boolean>(false);
@@ -78,8 +79,9 @@ const StoryMainPage = ({ navigation, route }: StoryProps) => {
     }, null)
     setItem(response.data.data.results)
     setCount(response.data.data.count);
+    setPrevPage(response.data.data.previous);
     setNextPage(response.data.data.next);
-    setLoading(false)
+    setLoading(false);
   };
 
   const onChangeOrder = async () => {
@@ -117,7 +119,8 @@ const StoryMainPage = ({ navigation, route }: StoryProps) => {
           </View>
           <ScrollView scrollEnabled={height-statusBarHeight-88 > 700 ? false : true} style={{ marginVertical: 10 }} showsVerticalScrollIndicator={false}>
             {loading ? <ActivityIndicator style={{ justifyContent: 'center', height: width*0.85+140}} /> : 
-            <CardView data={item} gap={0} offset={0} pageWidth={width} dot={true} green={true} onEndReached={onEndReached}
+            <CardView data={item} gap={0} offset={0} pageWidth={width} dot={true} green={true}
+              from='story' onNext={() => nextPage && setPage(page+1)} onPrev={() => prevPage && setPage(page-1)}
               renderItem={({ item }: any) => {
                 const { id, rep_pic, place_name, title, story_like, category, preview, summary, writer, nickname, profile, writer_is_verified } = item;
                 return (
