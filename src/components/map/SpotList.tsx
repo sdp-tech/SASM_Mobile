@@ -1,4 +1,4 @@
-import React, { Dispatch, Ref, SetStateAction, useEffect } from 'react';
+import React, { Dispatch, Ref, SetStateAction, useEffect, useState } from 'react';
 import { FlatList, ScrollView } from 'react-native-gesture-handler';
 import { TextPretendard as Text } from "../../common/CustomText";
 import styled from 'styled-components/native';
@@ -8,8 +8,8 @@ import { detailDataProps } from './Map';
 import ItemCard from './SpotList/ItemCard';
 import RecommendItemCard from './SpotList/RecommendItemCard';
 import CardView from '../../common/CardView';
-import { WINDOW_WIDTH } from '@gorhom/bottom-sheet';
-import { View } from 'react-native';
+import { WINDOW_HEIGHT, WINDOW_WIDTH } from '@gorhom/bottom-sheet';
+import { View, Modal } from 'react-native';
 import { CategoryDescription } from '../../common/Category';
 
 const PaginationSection = styled.View`
@@ -34,6 +34,12 @@ export default function MapList({ placeData, setSheetMode, setPage, page, total,
   for (let i = 0; i < Math.min(3, placeData.length); i++) {
     recommends.push(placeData[i]);
   }
+  const [modal, setModal] = useState<boolean>(true);
+  useEffect(() => {
+    setTimeout(() => {
+      setModal(false);
+    }, 3000)
+  }, [])
   return (
     <View style={{borderTopLeftRadius:10, borderTopRightRadius:10, overflow:'hidden', flex:1}}>
       {
@@ -44,11 +50,6 @@ export default function MapList({ placeData, setSheetMode, setPage, page, total,
             <ItemCard setSheetMode={setSheetMode} key={item.id} placeData={item} setDetailData={setDetailData} setCenter={setCenter} />)}
           ListHeaderComponent={
             <>
-              {checkedList.length > 0 && 
-                <View style={{ marginTop: 10, padding: 10, flexDirection: 'row', width: WINDOW_WIDTH}}>
-                  <CategoryDescription data={checkedList[checkedList.length-1]} />
-                </View>
-              }
               <CardView
                 pageWidth={WINDOW_WIDTH}
                 dot={false}
@@ -56,7 +57,18 @@ export default function MapList({ placeData, setSheetMode, setPage, page, total,
                 gap={0}
                 offset={0}
                 renderItem={(data: any) => {
-                  return (<RecommendItemCard setSheetMode={setSheetMode} key={data.item.id} placeData={data.item} setDetailData={setDetailData} setCenter={setCenter} index={data.index} max={Math.min(3, placeData.length)} />)
+                  return (
+                    <>
+                      {checkedList.length > 0 && 
+                        <Modal visible={modal} animationType='fade' transparent>
+                          <View style={{ position: 'absolute', zIndex: 2, bottom: WINDOW_HEIGHT * 0.6, width: WINDOW_WIDTH-20, left: 10}}>
+                            <CategoryDescription data={checkedList[checkedList.length-1]} />
+                          </View>
+                        </Modal>
+                      }
+                      <RecommendItemCard setSheetMode={setSheetMode} key={data.item.id} placeData={data.item} setDetailData={setDetailData} setCenter={setCenter} index={data.index} max={Math.min(3, placeData.length)} />
+                    </>
+                  )
                 }}
               />
             </>
