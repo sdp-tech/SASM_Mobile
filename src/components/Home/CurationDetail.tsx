@@ -15,6 +15,7 @@ import ShareButton from "../../common/ShareButton";
 import CommentIcon from '../../assets/img/Story/Comment.svg';
 import { LoginContext } from '../../common/Context';
 import { getStatusBarHeight } from 'react-native-safearea-height';
+import FastImage from 'react-native-fast-image';
 
 const { width, height } = Dimensions.get('window');
 
@@ -220,16 +221,18 @@ export default function CurationDetail({ navigation, route }: StackScreenProps<H
         <TouchableOpacity style={{ position: 'absolute', top: statusBarHeight, left: 10, zIndex: 2 }} onPress={navigation.goBack}>
           <Arrow width={18} height={18} transform={[{ rotate: '180deg' }]} color={'white'} />
         </TouchableOpacity>
-          <ImageBackground source={{ uri: curationDetail!.rep_pic }} style={{ width: width, height: width * (reppicSize.height / reppicSize.width), position:'relative' }}>
+          <FastImage source={{ uri: curationDetail!.rep_pic, priority: FastImage.priority.normal }} style={{ width: width, height: width * (reppicSize.height / reppicSize.width), position:'relative' }}>
             <View style={{width:'100%', height:'100%', backgroundColor:'rgba(0,0,0,0.3)', justifyContent: 'flex-end', padding: 20}}>
               <Text style={TextStyles.title} numberOfLines={4}>{curationDetail.title}</Text>
               <Text style={[TextStyles.created, {color: '#D7D7D7', marginLeft: 3}]}>
                 작성 : {curationDetail.created.slice(0, 10).replace(/-/gi, '.')}  / 마지막 수정: {curationDetail.updated.slice(0, 10).replace(/-/gi, '.')}
               </Text>
             </View>
-          </ImageBackground>
+          </FastImage>
         <InfoBox>
-          <Image source={{ uri: curationDetail!.profile_image }} style={{ width: 50, height: 50, borderRadius: 25, marginRight: 10 }} />
+          <TouchableOpacity onPress={() => { navigationTab.navigate('마이페이지', { email: curationDetail.writer_email }) }}>
+            <Image source={{ uri: curationDetail!.profile_image }} style={{ width: 50, height: 50, borderRadius: 25, marginRight: 10 }} />
+          </TouchableOpacity>
           <View>
             <Text style={TextStyles.writer}>{curationDetail.nickname}</Text>
             <Text style={TextStyles.created}>{curationDetail.created.slice(0, 10).replace(/-/gi, '.')} 작성</Text>
@@ -266,6 +269,7 @@ const Storys = ({ navigation, data }: { navigation: StackNavigationProp<TabProps
   const [like, setLike] = useState<boolean>(false);
   const [followed, setFollowed] = useState<boolean>(false);
   const previewNavigation = useNavigation<StackNavigationProp<HomeStackParams>>();
+  const navigationTab = useNavigation<StackNavigationProp<TabProps>>();
 
   const request = new Request();
   const handleLike = async () => {
@@ -307,7 +311,10 @@ const Storys = ({ navigation, data }: { navigation: StackNavigationProp<TabProps
         <Text style={{ fontSize: 14 }}>{data.place_address}</Text>
       </StoryInfoBox>
       <InfoBox>
-        <Image source={{ uri: data!.profile_image }} style={{ width: 50, height: 50, borderRadius: 25, marginRight: 10 }} />
+        <TouchableOpacity onPress={() => { navigationTab.navigate('마이페이지', { email: data!.writer_email }) }}>
+          <Image source={{ uri: data!.profile_image }} style={{ width: 50, height: 50, borderRadius: 25, marginRight: 10 }} />
+        </TouchableOpacity>
+        
         <View>
           <Text style={TextStyles.writer}>{data.nickname}</Text>
           <Text style={TextStyles.created}>{data.created.slice(0, 10).replace(/-/gi, '.')} 작성</Text>
@@ -328,7 +335,7 @@ const Storys = ({ navigation, data }: { navigation: StackNavigationProp<TabProps
           data={data.rep_photos}
           renderItem={({ item }: any) => 
             <TouchableOpacity onPress={() => previewNavigation.navigate('PhotoPreview', { photoUri: item })}>
-              <Image source={{ uri: item! }} style={{ width: 250, height: 300, marginHorizontal: 5 }} />
+              <FastImage source={{ uri: item!, priority: FastImage.priority.normal }} style={{ width: 250, height: 300, marginHorizontal: 5 }} />
             </TouchableOpacity>
             }
           gap={10}

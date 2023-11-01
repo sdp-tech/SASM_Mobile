@@ -7,6 +7,7 @@ import { useNavigation } from '@react-navigation/native';
 import { StackNavigationProp } from '@react-navigation/stack';
 import { HomeStackParams } from '../../pages/Home';
 import { TouchableWithoutFeedback } from 'react-native-gesture-handler';
+import FastImage from 'react-native-fast-image';
 
 const CardWrapper = styled.View`
   position: relative;
@@ -23,10 +24,11 @@ export default function CurationItemCard({ style, data, onPress, rep }: ItemCard
   return (
     <TouchableWithoutFeedback onPress={onPress ? onPress : () => { navigation.navigate('Detail', { id: data.id }) }}>
       <CardWrapper style={style} >
-        <Image
+        <FastImage
           style={{ width: '100%', height: '100%' }}
           source={{
-            uri: data.rep_pic
+            uri: data.rep_pic,
+            priority: FastImage.priority.normal
           }}
         />
         <Text numberOfLines={2} style={{ ...TextStyles.title, fontSize: rep ? 28 : 16 }}>{data.title}</Text>
@@ -40,17 +42,18 @@ export function SearchItemCard({ style, data, onPress }: ItemCardProps): JSX.Ele
   return (
     <TouchableWithoutFeedback onPress={onPress ? onPress : () => { navigation.navigate('Detail', { id: data.id }) }}>
       <CardWrapper style={style}>
-        <ImageBackground
+        <FastImage
           style={{ width: '100%', height: '100%'}}
           source={{
-            uri: data.rep_pic
+            uri: data.rep_pic,
+            priority: FastImage.priority.normal
           }}
         >
         <View style={{backgroundColor: 'rgba(0,0,0,0.2)', width: '100%', height: '100%', justifyContent: 'flex-end' }}>
           <Text style={TextStyles.writer}>{data.nickname}</Text>
           <Text numberOfLines={2} style={TextStyles.title_email}>{data.title}</Text>
         </View>
-        </ImageBackground>
+        </FastImage>
       </CardWrapper>
     </TouchableWithoutFeedback>
   )

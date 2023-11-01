@@ -15,6 +15,7 @@ import { StackNavigationProp } from "@react-navigation/stack";
 import { useNavigation } from "@react-navigation/native";
 import { TabProps } from "../../../../../App";
 import { TouchableWithoutFeedback } from "react-native-gesture-handler";
+import FastImage from "react-native-fast-image";
 
 export interface MyStroyItemCardProps {
   category: string;
@@ -46,8 +47,8 @@ const MyStoryItemCard = ({ data, edit, rerender }: { data: MyStroyItemCardProps,
   return (
     <View style={{ position: 'relative' }}>
       <TouchableWithoutFeedback style={{ marginHorizontal: 8, marginBottom: 10 }} onPress={() => { navigationToTab.navigate('스토리', { id: id }) }}>
-        <ImageBackground
-          source={{ uri: rep_pic }}
+        <FastImage
+          source={{ uri: rep_pic, priority: FastImage.priority.normal }}
           style={{ width: 170, height: 220 }}
         >
           <View style={{ width: 170, height: 220, backgroundColor: 'rgba(0,0,0,0.3)', padding: 10 }}>
@@ -57,7 +58,7 @@ const MyStoryItemCard = ({ data, edit, rerender }: { data: MyStroyItemCardProps,
             </View>
             <Text style={textStyles.preview} numberOfLines={3}>{preview}</Text>
           </View>
-        </ImageBackground>
+        </FastImage>
         <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'flex-end', marginTop: 5 }}>
           {/* <Text style={[textStyles.writer, {color: verified ? '#209DF5' : '#89C77F'}]}>{verified ? ('Editor') : ('User')}</Text> */}
           <Text style={textStyles.writer}> {nickname}</Text>

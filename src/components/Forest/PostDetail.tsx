@@ -36,6 +36,7 @@ import { StackNavigationProp, StackScreenProps } from "@react-navigation/stack";
 import { useNavigation } from "@react-navigation/native";
 import { TabProps } from "../../../App";
 import { getStatusBarHeight } from 'react-native-safearea-height';
+import FastImage from "react-native-fast-image";
 
 interface Post {
   id: number;
@@ -121,10 +122,11 @@ const PostDetailSection = ({
 
   return (
     <View onLayout={onLayout}>
-      <ImageBackground
+      <FastImage
         style={{ height: 400 }}
         source={{
           uri: post.rep_pic,
+          priority: FastImage.priority.normal
         }}
       >
         <View style={{backgroundColor: 'rgba(0,0,0,0.2)', width: width, height: 400}}>
@@ -198,7 +200,7 @@ const PostDetailSection = ({
           </View>
         </View>
         </View>
-      </ImageBackground>
+      </FastImage>
       <View style={{ padding: 15 }}>
         <RenderHTML
           contentWidth={width}
@@ -272,7 +274,9 @@ const UserInfoSection = ({
       );
     }
   }
+  
   const navigationToTab = useNavigation<StackNavigationProp<TabProps>>();
+  
   return (
     <View
       style={{
@@ -285,8 +289,10 @@ const UserInfoSection = ({
       }}
     >
       
+      
       <View style={{ alignItems: 'center' }}>
         <TouchableOpacity onPress={() => { navigationToTab.navigate('마이페이지', { email: user.email }) }}> 
+        {/*email은 user에 들어있음(user.writer)*/}
         <Image
           style={{ width: 56, height: 56, borderRadius: 60 }}
           source={{
@@ -336,13 +342,11 @@ const PostRecommendSection = ({ data, navigation }: PostRecommendSectionProps) =
         renderItem={({ item }: any) => {
           return (
             <TouchableOpacity style={{ marginRight: 10 }} onPress={() => navigation.push('PostDetail', {post_id: item.id})}>
-              <ImageBackground
-                source={{ uri: item.rep_pic }}
+              <FastImage
+                source={{ uri: item.rep_pic, priority: FastImage.priority.normal }}
                 style={{
                   width: 120,
                   height: 120,
-                }}
-                imageStyle={{
                   borderRadius: 4
                 }}
               >
@@ -353,7 +357,7 @@ const PostRecommendSection = ({ data, navigation }: PostRecommendSectionProps) =
                   <Text style={{ color: 'white', fontSize: 12, fontWeight: '600' }}> {item.writer.nickname}</Text>
                 </View>
                 </View>
-              </ImageBackground>
+              </FastImage>
             </TouchableOpacity>
           );
         }}

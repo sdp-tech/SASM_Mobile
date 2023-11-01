@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { StyleSheet, SafeAreaView, Image, Dimensions, TouchableOpacity } from "react-native";
-import Close from '../assets/img/common/Close.svg'
+import Close from '../assets/img/common/Close.svg';
+import FastImage from "react-native-fast-image";
 
 const PhotoPreviewScreen = ({
   navigation,
@@ -25,8 +26,8 @@ const PhotoPreviewScreen = ({
       <TouchableOpacity onPress={() => navigation.goBack()} style={{position: 'absolute', top: 50, right: 10}}>
         <Close color={'black'}/>
       </TouchableOpacity>
-      <Image
-        source={{ uri: photoUri }}
+      <FastImage
+        source={{ uri: photoUri, priority: FastImage.priority.normal }}
         style={{ width: width, height: height }}
       />
     </SafeAreaView>

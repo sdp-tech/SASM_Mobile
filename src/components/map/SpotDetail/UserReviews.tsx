@@ -5,6 +5,7 @@ import styled from 'styled-components/native';
 import { reviewDataProps } from './DetailCard';
 import CardView from '../../../common/CardView';
 import ReviewDetail from './ReviewDetail';
+import FastImage from 'react-native-fast-image';
 
 const ReviewBox = styled.View`
   border-color: #DDDDDD;
@@ -21,15 +22,16 @@ interface UserReviewsProps {
   reviewData: reviewDataProps;
   rerender: () => void;
   category: string;
+  place_name: string;
 }
 
-export default function UserReviews({ reviewData, rerender, category }: UserReviewsProps): JSX.Element {
+export default function UserReviews({ reviewData, rerender, category, place_name }: UserReviewsProps): JSX.Element {
   const [detailModal, setDetailModal] = useState<boolean>(false);
 
   return (
     <ReviewBox>
       <Modal visible={detailModal}>
-        <ReviewDetail category={category} setDetailModal={setDetailModal} reviewData={reviewData} rerender={rerender} />
+        <ReviewDetail category={category} place_name={place_name} setDetailModal={setDetailModal} reviewData={reviewData} rerender={rerender} />
       </Modal>
       {
         reviewData &&
@@ -38,7 +40,7 @@ export default function UserReviews({ reviewData, rerender, category }: UserRevi
             reviewData.photos.length != 0 &&
             <CardView
               data={reviewData.photos}
-              renderItem={({ item }: any) => <Image source={{ uri: item.imgfile }} style={{ height: 150, width: 200, marginHorizontal: 5 }} />}
+              renderItem={({ item }: any) => <FastImage source={{ uri: item.imgfile, priority: FastImage.priority.normal  }} style={{ height: 150, width: 200, marginHorizontal: 5 }} />}
               gap={8}
               offset={19}
               pageWidth={194}

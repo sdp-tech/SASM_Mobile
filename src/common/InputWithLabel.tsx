@@ -4,6 +4,7 @@ import {
   TextInputProps,
   ViewStyle,
   TouchableOpacityProps,
+  TextStyle,
 } from "react-native";
 import { TextPretendard as Text } from "./CustomText";
 import styled from "styled-components/native";
@@ -20,6 +21,7 @@ const Input = styled.TextInput<{ isAlert: boolean | undefined }>`
 
 interface InputProps extends TextInputProps {
   label?: string;
+  labelStyle?: TextStyle;
   containerStyle?: ViewStyle;
   //필수 입력 사항 * 추가
   isRequired?: boolean;
@@ -36,6 +38,7 @@ export default function InputWithLabel({
   isRequired,
   containerStyle,
   label,
+  labelStyle,
   onChangeText,
   placeholder,
   value,
@@ -54,7 +57,7 @@ export default function InputWithLabel({
       }}
     >
       <Text
-        style={{
+        style={labelStyle ? labelStyle : {
           width: "85%",
           textAlign: "left",
           fontSize: 14,

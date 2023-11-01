@@ -5,6 +5,7 @@ import Arrow from "../../../assets/img/common/Arrow.svg";
 import CommentIcon from '../../../assets/img/Story/Comment.svg';
 import Heart from '../../../common/Heart';
 import { Request } from '../../../common/requests';
+import FastImage from 'react-native-fast-image';
 
 interface PostItemProps {
   post_id: number;
@@ -119,17 +120,17 @@ const PostItem = ({
               </View>
             </View>
             <View>
-              <ImageBackground
+              <FastImage
                 style={{
                   width: 90,
                   height: 90,
                   padding: 5,
                 }}
-                source={{ uri: rep_pic }}
+                source={{ uri: rep_pic, priority: FastImage.priority.normal }}
               />
               {photos.slice(0,2).map((uri: string, index: number) => {
                 return (
-                  <Image style={{width: 90, height: 90}} key={index} source={{uri: uri}} />
+                  <FastImage style={{width: 90, height: 90}} key={index} source={{uri: uri, priority: FastImage.priority.normal}} />
                 )
               })}
             </View>
@@ -159,13 +160,13 @@ const PostItem = ({
                 {writer.nickname}
               </Text>
             </View>
-            <ImageBackground
+            <FastImage
               style={{
                 width: 90,
                 height: 90,
                 padding: 5,
               }}
-              source={{ uri: rep_pic }}
+              source={{ uri: rep_pic, priority: FastImage.priority.normal }}
             />
           </>
         )}
