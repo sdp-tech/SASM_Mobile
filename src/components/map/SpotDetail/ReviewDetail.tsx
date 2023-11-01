@@ -43,9 +43,10 @@ interface ReviewDetailProps {
   setDetailModal: Dispatch<SetStateAction<boolean>>;
   rerender: () => void;
   category: string;
+  place_name: string;
 }
 
-export default function ReviewDetail({ reviewData, setDetailModal, rerender, category }: ReviewDetailProps): JSX.Element {
+export default function ReviewDetail({ reviewData, setDetailModal, rerender, category, place_name }: ReviewDetailProps): JSX.Element {
   const request = new Request();
   const { width, height } = Dimensions.get('window');
   const flatlistRef = useRef<FlatList>(null);
@@ -70,7 +71,7 @@ export default function ReviewDetail({ reviewData, setDetailModal, rerender, cat
   return (
     <Section>
       <Modal visible={reviewModal}>
-        <WriteReview id={reviewData.place} setReviewModal={setReviewModal} rerender={rerender} category={category} setTab={() => { }} targetData={reviewData} />
+        <WriteReview id={reviewData.place} place_name={place_name} setReviewModal={setReviewModal} rerender={rerender} category={category} setTab={() => { }} targetData={reviewData} />
       </Modal>
       <CloseButton onPress={() => { setDetailModal(false) }}>
         <Close color={'#FFFFFF'} />
