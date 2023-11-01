@@ -4,7 +4,6 @@ import { TextPretendard as Text } from '../../../common/CustomText';
 import FormHeader from '../../../common/FormHeader';
 import NextButton from '../../../common/NextButton';
 import { Request } from '../../../common/requests';
-import { isSearchBarAvailableForCurrentPlatform } from 'react-native-screens';
 
 interface UserCategoriesProps {
   modalVisible: boolean;

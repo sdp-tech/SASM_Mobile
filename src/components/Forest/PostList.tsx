@@ -14,23 +14,23 @@ import {
 } from "react-native";
 import type { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { useFocusEffect, useNavigation } from "@react-navigation/native";
+import ListHeader from "./components/ListHeader";
 import { LoginContext } from "../../common/Context";
-import CustomHeader from "../../common/CustomHeader";
+
 import { ForestStackParams } from "../../pages/Forest";
 import { Request } from "../../common/requests";
-import CardView from "../../common/CardView";
 import PostItem from "./components/PostItem";
 import PlusButton from "../../common/PlusButton";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { TabProps } from "../../../App";
-import ListHeader from "./components/ListHeader";
+
 const { width, height } = Dimensions.get('window');
-const request = new Request();
 
 const PostListScreen = ({
   navigation,
-  route
+  route,
 }: NativeStackScreenProps<ForestStackParams, "PostList">) => {
+  const [loading, setLoading] = useState(false);
   const [refreshing, setRefreshing] = useState(false);
   const [page, setPage] = useState(1);
   const [order, setOrder] = useState<string>('');
@@ -39,40 +39,20 @@ const PostListScreen = ({
   const {isLogin, setLogin} = useContext(LoginContext);
   const navigationToTab = useNavigation<StackNavigationProp<TabProps>>();
   const request = new Request();
+
   const board_name = route.params?.board_name;
   const board_category = route.params?.board_category;
-  const [userCategories, setUserCategories] = useState([] as any);
-  const [checkedList, setCheckedList] = useState(board_category); 
-  const [modalVisible, setModalVisible] = useState<boolean>(false);
-  const tempid = route.params?.category_Ids;
-  const [selectedIds,setSelectedIds]=useState<number[]>(tempid);
-  const [boardId, setBoardId]=useState<number>(0);
-
-  const getUserCategories = async () => {
-    const response = await request.get('/forest/user_categories/get/');
-    setUserCategories([...response.data.data.results, {id: 0, name: '+'}]);
-  }
 
   const getPosts = async () => {
-    if(checkedList){
-    let params = new URLSearchParams();
-    for (const category of checkedList){
-      params.append('semi_category_filters', category.id);
-    }
-    const response = await request.get(`/forest/?${params.toString()}`, {}, null);
-    setPosts(response.data.data.results);
+    const response = await request.get('/forest/', {
+      order: order,
+      page: page,
+      category_filter: board_category?.id
+    }, null);
+    if (page == 1) setPosts(response.data.data.results);
+    else setPosts([...posts, ...response.data.data.results]);
     setCount(response.data.data.count);
-    }
-    else{
-      const response = await request.get('/forest/', {
-        order: order,
-        page: page,
-        category_filter: board_category?.id
-      }, null);
-      setPosts(response.data.data.results);
-      setCount(response.data.data.count);
-    }
-  };
+  }
 
   const onRefresh = () => {
     setRefreshing(true);
@@ -86,98 +66,26 @@ const PostListScreen = ({
     }
   }
 
-  useEffect(()=>{
-    onRefresh()
-  },[checkedList]);
-  
-  useFocusEffect(useCallback(()=>{
-    if(isLogin){
-      getUserCategories();
-    }
-  },[isLogin, modalVisible]))
+  useEffect(() => {
+    if(board_name === '추천글' || board_name === '사슴의 추천글') setOrder('latest')
+    else if(board_name === '인기글' || board_name === '사슴의 인기글') setOrder('hot')
+    else if(board_name === '최신글' || board_name === '사슴의 최신글') setOrder('latest')
+  }, [route.params?.board_name])
 
   useFocusEffect(useCallback(() => {
     getPosts();
-    
-  }, [refreshing, page, checkedList]));
-
-  useEffect(() => {
-    if(board_name === '추천글' || board_name === '사슴의 추천글') {
-      setOrder('latest'); setBoardId(1);}
-    else if(board_name === '인기글' || board_name === '사슴의 인기글') 
-    {setOrder('hot'); setBoardId(2);}
-    else if(board_name === '최신글' || board_name === '사슴의 최신글') 
-    {setOrder('latest'); setBoardId(3);}
-  }, [route.params?.board_name])
+  }, [order, refreshing, page]));
 
   return (
     <SafeAreaView style={styles.container}>
-      {boardId==1?
-      <CustomHeader
-        onSearch={() => {
-          navigation.navigate("PostSearch");
-        }}
-      />
-      :
       <ListHeader
         board_name={board_name!}
         board_category={board_category}
         navigation={navigation}
-        />
-      }
-      {checkedList &&
-      <View style={{padding: 10, backgroundColor: '#F1FCF5'}}>
-            <CardView gap={0} offset={0} pageWidth={width} dot={false} data={userCategories} renderItem={({item}: any) => {
-              return (
-                <TouchableOpacity style={{borderRadius: 16, borderColor: '#67D393', borderWidth: 1, paddingVertical: 4, paddingHorizontal: 16, margin: 4, backgroundColor: selectedIds.includes(item.id) ? '#67D393' : 'white'}}
-                onPress={() => {
-                  if (selectedIds.includes(item.id)) {
-                    setSelectedIds(selectedIds.filter(id => id !== item.id));
-                    setCheckedList(checkedList.filter((category: any) => category.id !== item.id));
-                  } else {
-                    setSelectedIds([...selectedIds, item.id]);
-                    setCheckedList([...checkedList, item]);
-                  }
-                }}
-              >
-                <Text style={{color: selectedIds.includes(item.id) ? 'white' : '#202020', fontSize: 14, fontWeight: selectedIds.includes(item.id) ? '600' : '400'}}># {item.name}</Text>
-              </TouchableOpacity>
-              )}}
-            />
-          </View>
-      }
-      {checkedList? checkedList.length > 0 &&
-            <View style={{flexDirection: 'row', paddingHorizontal: 15, paddingBottom: 5, paddingTop: 10}}>
-              {checkedList.map((category: any) => 
-                (
-                  <Text style={{color: '#67D393', fontWeight: '700', fontSize: 16}}>
-                    #{category.name+' '}
-                  </Text>
-                )
-              )}
-              <Text style={{color: '#67D393', fontWeight: '700', fontSize: 16}}>
-                과 관련된 정보들
-              </Text>
-            </View>
-            :<View></View>
-      }
-      {boardId==1?
-      <View style={{flexDirection: 'row', paddingHorizontal: 20}}>
-            <Text
-              style={{
-                fontSize: 20,
-                fontWeight: "600",
-                flex: 1
-              }}
-            >
-              사슴의 추천글
-            </Text>
-          </View>
-      :      
+      />
       <View style={{flexDirection: 'row', zIndex: 1, alignItems: 'center', padding: 15, backgroundColor: '#F1FCF5'}}>
-      <Text style={{fontSize: 12, fontWeight: '400', flex: 1}}>전체 글 {count}개</Text>
+        <Text style={{fontSize: 12, fontWeight: '400', flex: 1}}>전체 글 {count}개</Text>
       </View>
-      }
       <FlatList
         data={posts}
         style={{ flexGrow: 1 }}
