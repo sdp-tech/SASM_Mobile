@@ -269,6 +269,7 @@ const Storys = ({ navigation, data }: { navigation: StackNavigationProp<TabProps
   const [like, setLike] = useState<boolean>(false);
   const [followed, setFollowed] = useState<boolean>(false);
   const previewNavigation = useNavigation<StackNavigationProp<HomeStackParams>>();
+  const navigationTab = useNavigation<StackNavigationProp<TabProps>>();
 
   const request = new Request();
   const handleLike = async () => {
@@ -310,7 +311,7 @@ const Storys = ({ navigation, data }: { navigation: StackNavigationProp<TabProps
         <Text style={{ fontSize: 14 }}>{data.place_address}</Text>
       </StoryInfoBox>
       <InfoBox>
-        <TouchableOpacity onPress={()=>console.log("onpressed")}>
+        <TouchableOpacity onPress={() => { navigationTab.navigate('마이페이지', { email: data!.writer_email }) }}>
           <Image source={{ uri: data!.profile_image }} style={{ width: 50, height: 50, borderRadius: 25, marginRight: 10 }} />
         </TouchableOpacity>
         
