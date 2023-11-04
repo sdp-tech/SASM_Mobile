@@ -49,6 +49,7 @@ const BoardListScreen = ({
   const [newPosts, setNewPosts] = useState([] as any);
   const [modalVisible, setModalVisible] = useState<boolean>(false);
   const [userCategories, setUserCategories] = useState([] as any);
+  const [topCategories, setTopCategories] = useState([] as any);
   const [checkedList, setCheckedList] = useState([] as any);
   const [selectedIds, setSelectedIds] = useState<number[]>([]);
   const {isLogin, setLogin} = useContext(LoginContext);
@@ -72,6 +73,7 @@ const BoardListScreen = ({
   const getUserCategories = async () => {
     const response = await request.get('/forest/user_categories/get/');
     setUserCategories([...response.data.data.results, {id: 0, name: '+'}]);
+    setTopCategories([...response.data.data.results]);
   }
 
   const getPosts = async () => {
@@ -155,7 +157,7 @@ const BoardListScreen = ({
       </View>
       {showbarCategory&&
                 <View style={{padding: 15, backgroundColor: '#F1FCF5'}}>
-                <CardView gap={0} offset={0} pageWidth={width} dot={false} data={userCategories} renderItem={({item}: any) => {
+                <CardView gap={0} offset={0} pageWidth={width} dot={false} data={topCategories} renderItem={({item}: any) => {
                   return (
                     <TouchableOpacity style={{borderRadius: 16, borderColor: '#67D393', borderWidth: 1, paddingVertical: 4, paddingHorizontal: 16, margin: 4, backgroundColor: selectedIds.includes(item.id) ? '#67D393' : 'white'}}
                     onPress={() => {
@@ -175,7 +177,7 @@ const BoardListScreen = ({
                 />
                 </View>
       }
-      <ScrollView onScroll={handleScroll}>
+      <ScrollView onScroll={handleScroll} scrollEventThrottle={25}>
           <View
             style={{ backgroundColor: "#C8F5D7", padding: 20, height: 100 }}
           >
