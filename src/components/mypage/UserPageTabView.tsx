@@ -4,7 +4,7 @@ import { TextPretendard as Text } from '../../common/CustomText';
 import { TouchableOpacity } from 'react-native-gesture-handler';
 import { TabView, TabBar, SceneMap } from "react-native-tab-view";
 import { Request } from '../../common/requests';
-import MyPlace from './components/myplace/MyPlace';
+import UserPlace from './components/myplace/UserPlace';
 import UserStory from './components/mystory/UserStory';
 import UserCuration from './components/mycuration/UserCuration';
 import UserForest from './components/myforest/UserForest';
@@ -90,7 +90,7 @@ const UserPageTabView = ({ navigation, route}: StackScreenProps<MyPageProps, 'us
   const renderScene = ({ route }: any) => {
     switch (route.key) {
       case "place":
-        return <MyPlace />;
+        return <UserPlace email={otherEmail}/>;
       case "story":
         return <UserStory email={otherEmail}/>;
       case "curation":
