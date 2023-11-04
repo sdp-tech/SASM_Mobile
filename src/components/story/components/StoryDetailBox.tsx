@@ -1,6 +1,6 @@
 import { View, StyleSheet, TouchableOpacity, Dimensions, Image, Alert, ImageBackground, Platform } from 'react-native';
 import { TextPretendard as Text } from '../../../common/CustomText';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { Request } from '../../../common/requests';
 import { useNavigation } from '@react-navigation/native';
 import { TabProps } from '../../../../App';
@@ -14,6 +14,7 @@ import { CategoryIcon } from "../../../common/Category";
 import Settings from '../../../assets/img/MyPage/Settings.svg';
 import Logo from "../../../assets/img/common/Logo.svg"
 import { getStatusBarHeight } from 'react-native-safearea-height';
+import FastImage from 'react-native-fast-image';
 
 interface StoryDetailProps {
     data: any;
@@ -58,7 +59,7 @@ const CategoryWrapper = styled.View`
   padding-horizontal: 10px;
   background-color: '#FFFFFF';
   border-color: 'rgba(203, 203, 203, 1)';
-  border-width: 1;
+  border-width: 1px;
 `
 
 const StoryDetailBox = ({navigation, data, isLogin, onLayout, email, onRefresh, onReport, onUpdate, onDelete}: StoryDetailProps) => {
@@ -92,7 +93,7 @@ const StoryDetailBox = ({navigation, data, isLogin, onLayout, email, onRefresh, 
             [
                 {
                     text: "이동",
-                    onPress: () => navigation.navigate('마이페이지')
+                    onPress: () => navigation.navigate('마이페이지', {})
     
                 },
                 {
@@ -121,15 +122,14 @@ const StoryDetailBox = ({navigation, data, isLogin, onLayout, email, onRefresh, 
         html: `${data?.html_content}`
     }
 
-    const renderersProps = {
-        img: {
-          enableExperimentalPercentWidth: false,
-          initialDimensions: {
-            width: width,
-            height: 400
+    const renderersProps = useMemo(
+        () => ({
+          img: {
+            enableExperimentalPercentWidth: true
           }
-        }
-    };
+        }),
+        [data]
+      )
 
     const tagsStyles = {
         p: {
@@ -170,19 +170,21 @@ const StoryDetailBox = ({navigation, data, isLogin, onLayout, email, onRefresh, 
                             pageWidth={width}
                             dot={false}
                             renderItem={({item}: any) => (
-                                <ImageBackground
-                                    style={{width: 280, height: 330, marginRight: 15}}
-                                    source={{uri: item}}
-                                    resizeMode='cover'
-                                >
-                                    <View style={{backgroundColor: 'rgba(0,0,0,0.2)', width: 280, height: 330}} />
-                                </ImageBackground>
+                                <TouchableOpacity onPress={() => navigation.navigate('PhotoPreview', { photoUri: item})}>
+                                    <FastImage
+                                        style={{width: 280, height: 330, marginRight: 15}}
+                                        source={{uri: item, priority: FastImage.priority.normal}}
+                                        resizeMode='cover'
+                                    >
+                                        <View style={{backgroundColor: 'rgba(0,0,0,0.2)', width: 280, height: 330}} />
+                                    </FastImage>
+                                </TouchableOpacity>
                             )}
                         />
                     ) : (
-                        <ImageBackground style={{width: width, height: 330}} source={{uri: data!.rep_pic}}>
+                        <FastImage style={{width: width, height: 330}} source={{uri: data!.rep_pic, priority: FastImage.priority.normal}}>
                             <View style={{backgroundColor: 'rgba(0,0,0,0.2)', width: width, height: 330}} />
-                        </ImageBackground>
+                        </FastImage>
                     )}
                 <TouchableOpacity style={{position: 'absolute', zIndex: 1, top: statusBarHeight+5, right: 20, width: 40, height: 40, alignItems: 'flex-end'}} onPress={() => setDot(!dot)}>
                     <Settings transform={[{ rotate: dot ? '90deg' : '0deg'}]} color={'white'} />
@@ -212,7 +214,10 @@ const StoryDetailBox = ({navigation, data, isLogin, onLayout, email, onRefresh, 
                             <Text style={textStyles.date}>작성: {data!.created.slice(0, 10).replace(/-/gi, '.')}</Text>
                         </View>
                         <View style = {{alignItems: 'center'}}>
-                            <Image source={{uri: data!.profile}} style={{width: 50, height: 50, borderRadius: 60, marginVertical: 5}} />
+                            <TouchableOpacity onPress={() => { navigationToTab.navigate('마이페이지', { email: data.writer }) }}>
+                                <Image source={{uri: data!.profile}} style={{width: 50, height: 50, borderRadius: 60, marginVertical: 5}} />
+                            </TouchableOpacity>
+                            
                             <View style={{flexDirection: 'row'}}>
                                 <Text style={[textStyles.writer, {color: data!.writer_is_verified ? '#209DF5' : '#67D393'}]}>{data!.writer_is_verified ? 'Editor' : 'User'}</Text>
                                 <Text style={textStyles.writer}> {data!.nickname}</Text>

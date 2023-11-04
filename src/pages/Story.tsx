@@ -9,6 +9,8 @@ import StoryDetailPage from '../components/story/StoryDetailPage';
 import WriteStoryPage from '../components/story/WriteStoryPage';
 import CommentListPage from '../components/story/CommentListPage';
 import RecommendListPage from '../components/story/RecommendListPage';
+import PhotoPreviewScreen from '../common/PhotoPreview';
+import UserPageTabView from '../components/mypage/UserPageTabView';
 import { TabProps } from '../../App';
 
 export interface StoryProps {
@@ -28,18 +30,24 @@ export type StoryStackParams = {
     data: any;
     type: boolean;
   }
+  PhotoPreview: {
+    photoUri: any;
+  }
+  UserPage: {
+    email : string;
+  }
 }
 
 const Stack = createNativeStackNavigator<StoryStackParams>();
 
 const StoryScreen = ({ navigation, route }: StackScreenProps<TabProps, '스토리'>) => {
-  const navigationToStory = useNavigation<StackNavigationProp<StoryStackParams>>();
+  const navigationToStory = useNavigation<StackNavigationProp<StoryStackParams>>(); /*네비게이션 설정*/
   useEffect(() => {
-    if(route.params.id) {
+    if(route.params?.id) {
       // navigationToStory.reset({routes: [{name: "StoryDetail", params: { id: route.params.id }}]});
-      navigationToStory.push('StoryDetail', { id : route.params.id})
+      navigationToStory.push('StoryDetail', { id : route.params.id}) /*넘어갈 페이지 설정*/
     }
-  }, [route.params.id])
+  }, [route.params?.id])
   return (
     <Stack.Navigator 
       screenOptions = {() => ({
@@ -52,6 +60,8 @@ const StoryScreen = ({ navigation, route }: StackScreenProps<TabProps, '스토�
       <Stack.Screen name = "WriteStory" component={WriteStoryPage} />
       <Stack.Screen name = "CommentList" component={CommentListPage} />
       <Stack.Screen name = "RecommendList" component={RecommendListPage} />
+      <Stack.Screen name="PhotoPreview" component={PhotoPreviewScreen} />
+      
     </Stack.Navigator>
   )
 }

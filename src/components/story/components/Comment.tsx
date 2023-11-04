@@ -49,10 +49,6 @@ export function Comment ({ data, story_id, reRenderScreen, email, isLogin, navig
         }
         //setLike(!like);
         reRenderScreen();
-
-        console.error("like는",like);
-        
-
         } else {
             Alert.alert(
               "로그인이 필요합니다.",
@@ -60,7 +56,7 @@ export function Comment ({ data, story_id, reRenderScreen, email, isLogin, navig
               [
                   {
                       text: "이동",
-                      onPress: () => navigation.navigate('마이페이지')
+                      onPress: () => navigation.navigate('마이페이지', {})
       
                   },
                   {
@@ -102,6 +98,11 @@ export function Comment ({ data, story_id, reRenderScreen, email, isLogin, navig
     if (data.email == email) {
         isWriter = true;
     }
+
+    useEffect(()=>{
+        setLike(data.user_likes? true: false);
+    },[data.user_likes])
+
     return (
         <View style={{borderBottomColor: '#D9D9D9', borderBottomWidth: 1, width: width-40, alignSelf: 'center', flex: 1}}>
             <View style = {{ flexDirection: 'row', paddingVertical: 25, alignItems: 'center'}}>

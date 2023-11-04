@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback, useContext } from "react";
-import { SafeAreaView, View, StyleSheet, TouchableOpacity, Dimensions, Alert } from "react-native";
+import { SafeAreaView, View, StyleSheet, TouchableOpacity, Dimensions, Alert, ActivityIndicator } from "react-native";
 import { TextPretendard as Text } from '../../common/CustomText';
 import SearchBar from "../../common/SearchBar";
 import { Request } from "../../common/requests";
@@ -42,8 +42,10 @@ const StoryMainPage = ({ navigation, route }: StoryProps) => {
   const [orderList, setOrderList] = useState(0);
   const [order, setOrder] = useState<string>(toggleItems[orderList].order);
   const [page, setPage] = useState<number>(1);
+  const [prevPage, setPrevPage] = useState<any>(null);
   const [nextPage, setNextPage] = useState<any>(null);
   const [refreshing, setRefreshing] = useState<boolean>(false);
+  const [loading, setLoading] = useState<boolean>(false);
   const [checkedList, setCheckedList] = useState<string[]>([]);
   const [count, setCount] = useState<number>(0);
   const { width, height } = Dimensions.get("window");
@@ -60,8 +62,13 @@ const StoryMainPage = ({ navigation, route }: StoryProps) => {
       getStories();
     }, [page, checkedList, order])
   );
-  
+
+  useEffect(() => {
+    setPage(1)
+  }, [checkedList, order])
+
   const getStories = async () => {
+    setLoading(true)
     let params = new URLSearchParams();
     for (const category of checkedList){
       params.append('filter', category);
@@ -70,17 +77,21 @@ const StoryMainPage = ({ navigation, route }: StoryProps) => {
       page: page,
       order: order
     }, null)
-    if (page === 1) {
-      setItem(response.data.data.results);
-    } else {
-      setItem([...item, ...response.data.data.results]);
-    }
+    setItem(response.data.data.results)
     setCount(response.data.data.count);
+    setPrevPage(response.data.data.previous);
     setNextPage(response.data.data.next);
+    setLoading(false);
   };
 
   const onChangeOrder = async () => {
     setOrder(toggleItems[orderList].order);
+  }
+
+  const onEndReached = () => {
+    if (nextPage) {
+      setPage(page + 1)
+    }
   }
 
   return (
@@ -107,54 +118,59 @@ const StoryMainPage = ({ navigation, route }: StoryProps) => {
             />
           </View>
           <ScrollView scrollEnabled={height-statusBarHeight-88 > 700 ? false : true} style={{ marginVertical: 10 }} showsVerticalScrollIndicator={false}>
+            {loading ? <ActivityIndicator style={{ justifyContent: 'center', height: width*0.85+140}} /> : 
             <CardView data={item} gap={0} offset={0} pageWidth={width} dot={true} green={true}
+              from='story' onNext={() => nextPage && setPage(page+1)} onPrev={() => prevPage && setPage(page-1)}
               renderItem={({ item }: any) => {
+                const { id, rep_pic, place_name, title, story_like, category, preview, summary, writer, nickname, profile, writer_is_verified } = item;
                 return (
                   <MainCard
-                    id={item.id}
-                    rep_pic={item.rep_pic}
-                    place_name={item.place_name}
-                    title={item.title}
-                    story_like={item.story_like}
-                    category={item.category}
-                    preview={item.preview}
-                    summary={item.summary}
-                    writer={item.writer}
-                    nickname={item.nickname}
-                    profile={item.profile}
-                    writer_is_verified={item.writer_is_verified}
+                    id={id}
+                    rep_pic={rep_pic}
+                    place_name={place_name}
+                    title={title}
+                    story_like={story_like}
+                    category={category}
+                    preview={preview}
+                    summary={summary}
+                    writer={writer}
+                    nickname={nickname}
+                    profile={profile}
+                    writer_is_verified={writer_is_verified}
                     isLogin={isLogin}
                     navigation={navigation}
                   />
                 )
               }} />
+            }
           </ScrollView>
           <PlusButton
-        onPress={() => {
-          if(!isLogin) {
-            Alert.alert(
-              "로그인이 필요합니다.",
-              "로그인 항목으로 이동하시겠습니까?",
-              [
-                {
-                  text: "이동",
-                  onPress: () => navigationToTab.navigate('마이페이지')
-      
-                },
-                {
-                  text: "취소",
-                  onPress: () => { },
-                  style: "cancel"
-                },
-              ],
-              { cancelable: false }
-            );
-          }
-          else {
-            navigation.navigate('WriteStory');
-          }
-        }}
-        position="rightbottom" />
+            onPress={() => {
+              if(!isLogin) {
+                Alert.alert(
+                  "로그인이 필요합니다.",
+                  "로그인 항목으로 이동하시겠습니까?",
+                  [
+                    {
+                      text: "이동",
+                      onPress: () => navigationToTab.navigate('마이페이지', {})
+          
+                    },
+                    {
+                      text: "취소",
+                      onPress: () => { },
+                      style: "cancel"
+                    },
+                  ],
+                  { cancelable: false }
+                );
+              }
+              else {
+                navigation.navigate('WriteStory');
+              }
+            }}
+            position="rightbottom"
+          />
     </SafeAreaView>
   );
 };

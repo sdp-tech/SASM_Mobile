@@ -67,12 +67,12 @@ react {
  * use App Bundles (https://developer.android.com/guide/app-bundle/)
  * and want to have separate APKs to upload to the Play Store.
  */
-def enableSeparateBuildPerCPUArchitecture = false
+def enableSeparateBuildPerCPUArchitecture = true
 
 /**
  * Set this to true to Run Proguard on Release builds to minify the Java bytecode.
  */
-def enableProguardInReleaseBuilds = false
+def enableProguardInReleaseBuilds = true
 
 /**
  * The preferred build flavor of JavaScriptCore (JSC)
@@ -111,6 +111,7 @@ android {
         versionName "1.0"
 
         manifestPlaceholders = [naverMapClientId: naverMapClientId, kakaoNativeAppKey: kakaoNativeAppKey]
+        resValue 'string', "CODE_PUSH_APK_BUILD_TIME", String.format("\"%d\"", System.currentTimeMillis())
     }
 
     splits {
@@ -122,11 +123,6 @@ android {
         }
     }
     signingConfigs {
-        Properties localProperties = new Properties()
-        localProperties.load(new FileInputStream("$project.rootDir/local.properties"))
-        localProperties.each { prop ->
-            project.ext.set(prop.key, prop.value)
-        }
         debug {
             storeFile file('debug.keystore')
             storePassword 'android'
@@ -135,14 +131,15 @@ android {
         }
         release {
             storeFile file('release.keystore')
-            storePassword release_storePassword
-            keyAlias release_keyAlias
-            keyPassword release_keyPassword
+            storePassword releaseStorePassword
+            keyAlias releaseKeyAlias
+            keyPassword releaseKeyPassword
         }
     }
     buildTypes {
         debug {
             signingConfig signingConfigs.debug
+            resValue "string", "CodePushDeploymentKey", CODEPUSH_DEPLOYMENT_KEY_DEBUG
         }
         release {
             // Caution! In production, you need to generate your own keystore file.
@@ -150,6 +147,12 @@ android {
             signingConfig signingConfigs.release
             minifyEnabled enableProguardInReleaseBuilds
             proguardFiles getDefaultProguardFile("proguard-android.txt"), "proguard-rules.pro"
+            resValue "string", "CodePushDeploymentKey", CODEPUSH_DEPLOYMENT_KEY_PRODUCTION
+        }
+        releaseStaging {
+            initWith release
+            resValue "string", "CodePushDeploymentKey", CODEPUSH_DEPLOYMENT_KEY_STAGING
+            matchingFallbacks = ['release']
         }
     }
 
@@ -197,7 +200,10 @@ dependencies {
     implementation 'com.google.firebase:firebase-auth'
     // Also add the dependency for the Google Play services library and specify its version
     implementation 'com.google.android.gms:play-services-auth:20.5.0'
+    implementation 'com.google.code.gson:gson:2.8.5'
+    implementation "com.kakao.sdk:v2-user:2.8.6" // 카카오 로그인
 
 }
 
 apply from: file("../../node_modules/@react-native-community/cli-platform-android/native_modules.gradle"); applyNativeModulesAppBuildGradle(project)
+apply from: "../../node_modules/react-native-code-push/android/codepush.gradle"

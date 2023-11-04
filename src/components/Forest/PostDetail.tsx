@@ -36,6 +36,7 @@ import { StackNavigationProp, StackScreenProps } from "@react-navigation/stack";
 import { useNavigation } from "@react-navigation/native";
 import { TabProps } from "../../../App";
 import { getStatusBarHeight } from 'react-native-safearea-height';
+import FastImage from "react-native-fast-image";
 
 interface Post {
   id: number;
@@ -99,26 +100,33 @@ const PostDetailSection = ({
     html: `${post?.content}`
   }
 
-  const renderersProps = {
-    img: {
-      enableExperimentalPercentWidth: true
-    }
-  };
+  const renderersProps = useMemo(
+    () => ({
+      img: {
+        enableExperimentalPercentWidth: true
+      }
+    }),
+    [post]
+  )
 
-  const tagsStyles = {
-    div: {
-      fontSize: 16,
-      lineHeight: 30,
-      letterSpacing: -0.6
-    }
-  }
+  const tagsStyles = useMemo(
+    () => ({
+      div: {
+        fontSize: 16,
+        lineHeight: 30,
+        letterSpacing: -0.6
+      }
+    }),
+    [post]
+  )
 
   return (
     <View onLayout={onLayout}>
-      <ImageBackground
+      <FastImage
         style={{ height: 400 }}
         source={{
           uri: post.rep_pic,
+          priority: FastImage.priority.normal
         }}
       >
         <View style={{backgroundColor: 'rgba(0,0,0,0.2)', width: width, height: 400}}>
@@ -192,7 +200,7 @@ const PostDetailSection = ({
           </View>
         </View>
         </View>
-      </ImageBackground>
+      </FastImage>
       <View style={{ padding: 15 }}>
         <RenderHTML
           contentWidth={width}
@@ -226,6 +234,7 @@ const PostDetailSection = ({
   );
 };
 
+
 const UserInfoSection = ({
   user, posts, isLogin, navigation, onRefresh, writer_is_followed
 }: UserInfoSectionProps) => {
@@ -252,7 +261,7 @@ const UserInfoSection = ({
         [
           {
             text: "이동",
-            onPress: () => navigation.navigate('마이페이지')
+            onPress: () => navigation.navigate('마이페이지', {})
 
           },
           {
@@ -265,6 +274,9 @@ const UserInfoSection = ({
       );
     }
   }
+  
+  const navigationToTab = useNavigation<StackNavigationProp<TabProps>>();
+  
   return (
     <View
       style={{
@@ -276,14 +288,20 @@ const UserInfoSection = ({
         borderBottomColor: "#E3E3E3",
       }}
     >
+      
+      
       <View style={{ alignItems: 'center' }}>
+        <TouchableOpacity onPress={() => { navigationToTab.navigate('마이페이지', { email: user.email }) }}> 
+        {/*email은 user에 들어있음(user.writer)*/}
         <Image
           style={{ width: 56, height: 56, borderRadius: 60 }}
           source={{
             uri: user.profile,
           }}
         />
-        <TouchableOpacity style={{ width: 75, borderColor: '#67D393', borderWidth: 1, borderRadius: 12, alignItems: 'center', justifyContent: 'center', paddingVertical: 5, paddingHorizontal: 15, marginTop: 15 }} onPress={onFollow}>
+        </TouchableOpacity>
+
+        <TouchableOpacity style={{ borderColor: '#67D393', borderWidth: 1, borderRadius: 12, alignItems: 'center', justifyContent: 'center', paddingVertical: 5, paddingHorizontal: 15, marginTop: 15 }} onPress={onFollow}>
           <Text style={{ color: '#202020', fontSize: 12 }}>{follow ? '팔로잉' : '+ 팔로우'}</Text>
         </TouchableOpacity>
       </View>
@@ -324,13 +342,11 @@ const PostRecommendSection = ({ data, navigation }: PostRecommendSectionProps) =
         renderItem={({ item }: any) => {
           return (
             <TouchableOpacity style={{ marginRight: 10 }} onPress={() => navigation.push('PostDetail', {post_id: item.id})}>
-              <ImageBackground
-                source={{ uri: item.rep_pic }}
+              <FastImage
+                source={{ uri: item.rep_pic, priority: FastImage.priority.normal }}
                 style={{
                   width: 120,
                   height: 120,
-                }}
-                imageStyle={{
                   borderRadius: 4
                 }}
               >
@@ -341,7 +357,7 @@ const PostRecommendSection = ({ data, navigation }: PostRecommendSectionProps) =
                   <Text style={{ color: 'white', fontSize: 12, fontWeight: '600' }}> {item.writer.nickname}</Text>
                 </View>
                 </View>
-              </ImageBackground>
+              </FastImage>
             </TouchableOpacity>
           );
         }}
@@ -374,7 +390,7 @@ const BottomBarSection = ({ post, email, onRefresh, navigation }: BottomBarSecti
         [
           {
             text: "이동",
-            onPress: () => navigation.navigate('마이페이지')
+            onPress: () => navigation.navigate('마이페이지', {})
 
           },
           {
@@ -393,23 +409,17 @@ const BottomBarSection = ({ post, email, onRefresh, navigation }: BottomBarSecti
   };
 
   return (
-    //<BottomSheetModalProvider>
-      <View style={{ flexDirection: "row", padding: 10 }}>
-        <View style={{ flexDirection: 'row', flex: 1, alignItems: 'center' }}>
-          <Heart color={'#202020'} like={like} onPress={toggleLike} size={18} ></Heart>
-          <Text style={{ fontSize: 14, color: '#202020', lineHeight: 20, marginLeft: 3, marginRight: 10 }}>{post.like_cnt}</Text>
-          <TouchableOpacity onPress={openCommentPopup} style={{ flexDirection: 'row', padding: 15, borderTopColor: '#E3E3E3', borderTopWidth: 1, alignItems: 'center' }}>
-            <CommentIcon color={'#202020'} />
-          </TouchableOpacity>
-          <Text style={{ fontSize: 14, color: '#202020', lineHeight: 20, marginLeft: 3 }}>{post.comment_cnt}</Text>
-        </View>
-        <ShareButton color={'black'} message={`[SASM Forest] ${post.title} - ${post.content}`} />
-        {commentPopupVisible && (
-          <PopComment
-            data={post} post_id={post.id} email={email} isLogin={!!email} navigation={navigation} repo={true} modalVisible={commentPopupVisible}  setModalVisible={setCommentPopupVisible}/>
-        )}
+    <View style={{ flexDirection: "row", padding: 10 }}>
+      <View style={{ flexDirection: 'row', flex: 1, alignItems: 'center' }}>
+        <Heart color={'#202020'} like={like} onPress={toggleLike} size={18} ></Heart>
+        <Text style={{ fontSize: 14, color: '#202020', lineHeight: 20, marginLeft: 3, marginRight: 10 }}>{post.like_cnt}</Text>
+        <TouchableOpacity onPress={scrollToComment}>
+          <CommentIcon color={'#202020'} />
+        </TouchableOpacity>
+        <Text style={{ fontSize: 14, color: '#202020', lineHeight: 20, marginLeft: 3 }}>{post.comment_cnt}</Text>
       </View>
-    //</BottomSheetModalProvider>
+      <ShareButton color={'black'} message={`[SASM Forest] ${post.title} - ${post.content}`} />
+    </View>
   )
 }
 
@@ -430,7 +440,6 @@ const PostDetailScreen = ({
   const [headerHeight, setHeaderHeight] = useState<number>(0);
   const [recommend, setRecommend] = useState([] as any);
   const {isLogin, setLogin} = useContext(LoginContext);
-
   const request = new Request();
   const post_id = route.params.post_id;
 
@@ -504,11 +513,11 @@ const PostDetailScreen = ({
     setHeaderHeight(height);
   }
 
-  // const scrollToComment = () => {
-  //   if (scrollRef.current) {
-  //     scrollRef.current.scrollToOffset({ animated: true, offset: headerHeight })
-  //   }
-  // }
+  const scrollToComment = () => {
+    if (scrollRef.current) {
+      scrollRef.current.scrollToOffset({ animated: true, offset: headerHeight })
+    }
+  }
 
   useEffect(() => {
     if (isLogin) checkUser();
@@ -562,7 +571,7 @@ const PostDetailScreen = ({
             }
             renderItem={({ item }) => {
               return (
-                <Comment data={item} reRenderScreen={reRenderScreen} post_id={post_id} email={user.email} isLogin={isLogin} navigation={navigation} callback={callback} />
+                <Comment data={item} reRenderScreen={reRenderScreen} post_id={post_id} email={user.email} isLogin={isLogin} navigation={navigation} callback={callback}/>
               )
             }}
           />

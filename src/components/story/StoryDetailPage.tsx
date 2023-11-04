@@ -19,6 +19,7 @@ import { StackNavigationProp } from '@react-navigation/stack';
 import { HomeStackParams } from '../../pages/Home';
 import { useNavigation } from '@react-navigation/native';
 import { TabProps } from '../../../App';
+import FastImage from 'react-native-fast-image';
 
 interface PostRecommendSectionProps {
   curations: any;
@@ -57,16 +58,15 @@ const PostRecommendSection = ({ curations, stories, navigation }: PostRecommendS
         dot={false}
         renderItem={({item}: any) => (
           <TouchableOpacity style={{marginHorizontal: 8}} onPress={() => { navigationHome.navigate('홈', { id: item.id }) }}>
-            <ImageBackground
-              style={{width: width*0.5, height: width*0.5}}
+            <FastImage
+              style={{width: width*0.5, height: width*0.5, borderRadius: 5}}
               source={{uri: item.rep_pic}}
-              imageStyle={{borderRadius: 5}}
               resizeMode='cover'
             >
               <View style={{width: width*0.5, height: width*0.5, borderRadius: 5, backgroundColor: 'rgba(0, 0, 0, 0.3)', justifyContent: 'flex-end'}}>
                 <Text style={{fontSize: 15, fontWeight: '700', marginBottom: 10, marginLeft: 10, color: 'white'}}>{item.title}</Text>
               </View>
-            </ImageBackground>
+            </FastImage>
           </TouchableOpacity>
         )}
       />
@@ -88,16 +88,15 @@ const PostRecommendSection = ({ curations, stories, navigation }: PostRecommendS
       dot={false}
       renderItem={({item}: any) => (
         <TouchableOpacity style={{marginHorizontal: 8}} onPress={() => navigation.push('StoryDetail', { id: item.id })}>
-          <ImageBackground
-            style={{width: width*0.5, height: width*0.25}}
+          <FastImage
+            style={{width: width*0.5, height: width*0.25, borderRadius: 5}}
             source={{uri: item.rep_pic}}
-            imageStyle={{borderRadius: 5}}
             resizeMode='cover'
           >
             <View style={{width: width*0.5, height: width*0.25, borderRadius: 5, backgroundColor: 'rgba(0, 0, 0, 0.3)', justifyContent: 'flex-end'}}>
               <Text style={{fontSize: 15, fontWeight: '700', marginBottom: 10, marginLeft: 10, color: 'white'}}>{item.title}</Text>
             </View>
-          </ImageBackground>
+          </FastImage>
         </TouchableOpacity>
       )}
     />
@@ -122,7 +121,7 @@ const BottomBarSection = ({ post, email, onRefresh, navigation }: BottomBarSecti
         [
           {
             text: "이동",
-            onPress: () => navigation.navigate('마이페이지')
+            onPress: () => navigation.navigate('마이페이지', {})
 
           },
           {
@@ -143,15 +142,11 @@ const BottomBarSection = ({ post, email, onRefresh, navigation }: BottomBarSecti
       <View style={{ flexDirection: 'row', flex: 1, alignItems: 'center' }}>
         <Heart color={'#202020'} like={like} onPress={toggleLike} size={18} ></Heart>
         <Text style={{fontSize: 14, color: '#202020', lineHeight: 20, marginLeft: 3, marginRight: 10}}>{post.like_cnt}</Text>
-        <TouchableOpacity onPress={openCommentPopup} style={{ flexDirection: 'row', padding: 15, borderTopColor: '#E3E3E3', borderTopWidth: 1, alignItems: 'center' }}>
+        <TouchableOpacity onPress={scrollToComment}>
           <CommentIcon color={'#202020'} />
         </TouchableOpacity>
         <Text style={{fontSize: 14, color: '#202020', lineHeight: 20, marginLeft: 3}}>{post.comment_cnt}</Text>
       </View>
-      {commentPopupVisible && (
-          <PopComment
-            data={post} post_id={post.id} email={email} isLogin={!!email} navigation={navigation} repo={false} modalVisible={commentPopupVisible}  setModalVisible={setCommentPopupVisible}/>
-        )}
       <ShareButton color={'black'} message={`[SASM Story] ${post.title} - ${post.html_content}`} />
     </View>
   )

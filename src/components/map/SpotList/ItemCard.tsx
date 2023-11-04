@@ -39,7 +39,7 @@ const TextBox = styled.View`
 export default function ItemCard({ placeData, setSheetMode, setDetailData, setCenter }: ItemCardProps): JSX.Element {
   const request = new Request();
   const getDetail = async () => {
-    const response_detail = await request.get('/places/place_detail/', { id: placeData.id });
+    const response_detail = await request.get(`/places/place_detail/${placeData.id}`);
     setDetailData(response_detail.data.data);
     setCenter({
       latitude: response_detail.data.data.latitude,
@@ -65,9 +65,9 @@ export default function ItemCard({ placeData, setSheetMode, setDetailData, setCe
         </View>
       </TextBox>
       <ImageBox>
-        <Image source={{ uri: placeData.rep_pic }} style={{ width: '33.3333%', height: '100%' }} />
-        <Image source={{ uri: placeData.extra_pic[0] }} style={{ width: '33.3333%', height: '100%' }} />
-        <Image source={{ uri: placeData.extra_pic[1] }} style={{ width: '33.3333%', height: '100%' }} />
+        <Image source={{ uri: placeData!.rep_pic }} style={{ width: '33.3333%', height: '100%' }} />
+        <Image source={{ uri: placeData!.extra_pic[0] }} style={{ width: '33.3333%', height: '100%' }} />
+        <Image source={{ uri: placeData!.extra_pic[1] }} style={{ width: '33.3333%', height: '100%' }} />
       </ImageBox>
     </StyledCard>
   )

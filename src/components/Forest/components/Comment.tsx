@@ -38,11 +38,7 @@ export function Comment ({ data, reRenderScreen, post_id, email, isLogin, naviga
     const toggleLike = async () => {
         if(isLogin){
         const response = await request.post(`/forest/${post_id}/comments/${data.id}/like/`, {}, {});
-        ///
-        const likes=request.get(`/forest/${post_id}/comments/${data.id}/like/`, {}, {});
-        console.error(likes);
-        // setLike(!like);
-        setLike(!likes);
+        setLike(!like);
         reRenderScreen();
         } else {
             Alert.alert(
@@ -51,7 +47,7 @@ export function Comment ({ data, reRenderScreen, post_id, email, isLogin, naviga
               [
                   {
                       text: "이동",
-                      onPress: () => navigation.navigate('마이페이지')
+                      onPress: () => navigation.navigate('마이페이지', {})
       
                   },
                   {
@@ -94,6 +90,10 @@ export function Comment ({ data, reRenderScreen, post_id, email, isLogin, naviga
         isWriter = true;
     }
 
+    useEffect(()=>{
+        setLike(data.user_likes? true: false);
+    },[data.user_likes])
+    
     return (
         <View style={{borderBottomColor: '#D9D9D9', borderBottomWidth: 1, width: width-40, alignSelf: 'center', flex: 1}}>
             <View style = {{ flexDirection: 'row', paddingVertical: 25, alignItems: 'center'}}>

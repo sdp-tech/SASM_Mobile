@@ -19,7 +19,7 @@ const CategoryWrapper = styled.TouchableOpacity<{ selected: boolean, color: stri
   border-radius: 12px;
   margin: ${props => props.story ? '0 5px' : '0 10px'};
   border-color: 'rgba(203, 203, 203, 1)';
-  border-width: ${props => props.story ? 1 : 0};
+  border-width: ${props => props.story ? 1 : 0}px;
 `
 
 interface ListProps {
@@ -27,15 +27,16 @@ interface ListProps {
   data: string;
   name: string;
   color: string;
+  content: string;
 }
 
 export const CATEGORY_LIST: ListProps[] = [
-  { id: 0, data: "식당 및 카페", name: "식당·카페", color: '#FAD656' },
-  { id: 1, data: "전시 및 체험공간", name: "전시·체험", color: '#42A7EE' },
-  { id: 2, data: "제로웨이스트 샵", name: "제로웨이스트", color: '#ED6093' },
-  { id: 3, data: "도시 재생 및 친환경 건축물", name: "건축물", color: '#C5F0A3' },
-  { id: 4, data: "복합 문화 공간", name: "복합문화", color: '#B06FE3' },
-  { id: 5, data: "녹색 공간", name: "녹색공간", color: '#1DBB6F' },
+  { id: 0, data: "식당 및 카페", name: "식당·카페", color: '#FAD656', content: '친환경 식재료와 비건 음식으로 지속가능한 식생활을 즐겨보세요.' },
+  { id: 1, data: "전시 및 체험공간", name: "전시·체험", color: '#42A7EE', content: '지속가능한 예술과 문화가 녹아든 이야기들을 만나보세요.' },
+  { id: 2, data: "제로웨이스트 샵", name: "제로웨이스트", color: '#ED6093', content: '지속가능한 라이프스타일을 위한 친환경 옵션을 찾아보세요.' },
+  { id: 3, data: "도시 재생 및 친환경 건축물", name: "친환경 건축물", color: '#C5F0A3', content: '( G-SEED, LEED 등 ) 친환경 건축물 인증을 받은 국내공간과, 한국의 도시 재생에 기여하는 장소에 방문해보세요.' },
+  { id: 4, data: "복합 문화 공간", name: "복합문화", color: '#B06FE3', content: '지속가능성과 관련한 작품의 전시·판매·작업공간이 한 데 모인 복합문화공간에 방문해보세요.' },
+  { id: 5, data: "녹색 공간", name: "야외공간", color: '#1DBB6F', content: '자연과 함께하는 공간에서 야외 활동을 즐기세요.' },
 ];
 
 export function MatchCategory(data: string): number {
@@ -61,6 +62,26 @@ export function CategoryIcon({data}:{data:string}): JSX.Element {
   return list[index];
 }
 
+const DescriptionBox = styled.View<{ color: string }>`
+  border-radius: 12px;
+  border: 2px solid ${props => props.color};
+  background: white;
+  flex-direction: row;
+  padding: 10px;
+  opacity: 0.9;
+`
+export function CategoryDescription({data}:{data:string}): JSX.Element {
+  const index = MatchCategory(data);
+  let list = [
+    <DescriptionBox color={CATEGORY_LIST[0].color}><CategoryIcon data={data} /><Text style={TextStyles.description}>{CATEGORY_LIST[0].content}</Text></DescriptionBox>,
+    <DescriptionBox color={CATEGORY_LIST[1].color}><CategoryIcon data={data} /><Text style={TextStyles.description}>{CATEGORY_LIST[1].content}</Text></DescriptionBox>,
+    <DescriptionBox color={CATEGORY_LIST[2].color}><CategoryIcon data={data} /><Text style={TextStyles.description}>{CATEGORY_LIST[2].content}</Text></DescriptionBox>,
+    <DescriptionBox color={CATEGORY_LIST[3].color}><CategoryIcon data={data} /><Text style={TextStyles.description}>{CATEGORY_LIST[3].content}</Text></DescriptionBox>,
+    <DescriptionBox color={CATEGORY_LIST[4].color}><CategoryIcon data={data} /><Text style={TextStyles.description}>{CATEGORY_LIST[4].content}</Text></DescriptionBox>,
+    <DescriptionBox color={CATEGORY_LIST[5].color}><CategoryIcon data={data} /><Text style={TextStyles.description}>{CATEGORY_LIST[5].content}</Text></DescriptionBox>,
+  ]
+  return list[index];
+}
 
 interface CategoryProps {
   checkedList: any[];
@@ -160,5 +181,10 @@ const TextStyles = StyleSheet.create({
     borderColor:'rgba(203, 203, 203, 1)',
     borderWidth: 1,
     overflow: 'hidden'
+  },
+  description: {
+    fontSize: 16,
+    color: '#202020',
+    paddingHorizontal: 5
   }
 })

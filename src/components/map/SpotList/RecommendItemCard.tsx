@@ -9,7 +9,7 @@ import { CategoryIcon } from '../../../common/Category';
 const { width, height } = Dimensions.get('screen');
 
 const StyledCard = styled.TouchableOpacity`
-  width: ${width};
+  width: ${width}px;
   height: 350px;
 `
 const TextBox = styled.View`
@@ -28,7 +28,7 @@ interface RecommendItemCardProps extends ItemCardProps {
 export default function RecommendItemCard({ placeData, setSheetMode, setDetailData, setCenter, index, max }: RecommendItemCardProps): JSX.Element {
   const request = new Request();
   const getDetail = async () => {
-    const response_detail = await request.get('/places/place_detail/', { id: placeData.id });
+    const response_detail = await request.get(`/places/place_detail/${placeData.id}`);
     setDetailData(response_detail.data.data);
     setCenter({
       latitude: response_detail.data.data.latitude,

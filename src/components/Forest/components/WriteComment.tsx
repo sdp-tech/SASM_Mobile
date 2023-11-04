@@ -48,7 +48,7 @@ export function WriteComment  ({ id, reRenderScreen, isLogin, data, commentId, n
               [
                   {
                       text: "이동",
-                      onPress: () => navigation.navigate('마이페이지')
+                      onPress: () => navigation.navigate('마이페이지', {})
       
                   },
                   {

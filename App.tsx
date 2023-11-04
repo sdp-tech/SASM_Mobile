@@ -1,6 +1,6 @@
-import React, { useEffect } from "react";
-import { Text, TouchableOpacity, View } from "react-native";
-import { NavigationContainer } from "@react-navigation/native";
+import React, { useEffect, useState, useCallback } from "react";
+import { Text, TouchableOpacity, View, Linking, LinkingStatic, Alert } from "react-native";
+import { LinkingOptions, NavigationContainer, useNavigation, useFocusEffect } from "@react-navigation/native";
 import {
   BottomTabBarProps,
   createBottomTabNavigator,
@@ -10,7 +10,7 @@ import MapScreen from "./src/pages/SpotMap";
 import LoginScreen from "./src/components/Auth/Login";
 import MyPageScreen from "./src/pages/MyPage";
 import ForestScreen from "./src/pages/Forest";
-import StoryScreen from "./src/pages/Story";
+import StoryScreen, { StoryStackParams } from "./src/pages/Story";
 import Navbar0 from "./src/assets/navbar/Navbar0.svg";
 import Navbar1 from "./src/assets/navbar/Navbar1.svg";
 import Navbar2 from "./src/assets/navbar/Navbar2.svg";
@@ -21,13 +21,36 @@ import HomeScreen from "./src/pages/Home";
 import { Coord } from "react-native-nmap";
 import SplashScreen from "react-native-splash-screen";
 import { LoginProvider } from "./src/common/Context";
+import CodePush from 'react-native-code-push';
 
 export type AppProps = {
   Home: any;
   Login: any;
-};
+}
 
 const Stack = createNativeStackNavigator();
+const useInitialURL = () => {
+  const [url, setUrl] = useState<string | null>(null);
+  const [processing, setProcessing] = useState(true);
+
+  useEffect(() => {
+    const getUrlAsync = async () => {
+      // Get the deep link used to open the app
+      const initialUrl = await Linking.getInitialURL();
+      // console.log(initialUrl)
+
+      // The setTimeout is just for testing purpose
+      setTimeout(() => {
+        setUrl(initialUrl);
+        setProcessing(false);
+      }, 1000);
+    };
+
+    getUrlAsync();
+  }, []);
+
+  return {url, processing};
+};
 
 const App = (): JSX.Element => {
   useEffect(() => {
@@ -36,10 +59,65 @@ const App = (): JSX.Element => {
     }, 800);
   });
 
+  // const navigation = useNavigation<StackNavigationProp<TabProps>>();
+
+  // useEffect(() => {
+  //   //IOS && ANDROID : 앱이 딥링크로 처음 실행될때, 앱이 열려있지 않을 때
+  //   Linking.getInitialURL()
+  //   .then((url) => deepLink(url))
+    
+  //   //IOS : 앱이 딥링크로 처음 실행될때, 앱이 열려있지 않을 때 && 앱이 실행 중일 때
+  //   //ANDROID : 앱이 실행 중일 때
+  //   Linking.addEventListener('url', addListenerLink);
+
+  //   return () => remover()
+  // })
+
+  // const deepLink = (url: any) => {
+  //   console.log('deep', url)
+  //   if (url) {
+  //     console.log(url)
+  //     // navigation.navigate('OTHER_PAGE', { share: url })
+  //   }
+  // };
+
+  // const addListenerLink = ({url}: any) => {
+  //   console.log('listener', url)
+  //   if (url) {
+  //     // navigation.navigate('OTHER_PAGE', { share: url })
+  //     console.log(url)
+  //   }
+  // };
+
+  // const remover = () => {
+  //   Linking.removeAllListeners('url');
+  // };
+
+  const {url: initialUrl, processing} = useInitialURL();
+  useEffect(() => {
+    if(initialUrl) Alert.alert(initialUrl!)
+  }, [])
+
+  const linking : LinkingOptions<AppProps> = {
+    prefixes: ["kakao6f1497a97a65b5fe1ca5cf4769c318fd://"],
+    config: {
+      screens: {
+        Home: {
+          screens: {
+            홈: ':from/:id',
+            스토리: ':from/:id',
+            포레스트: ':from/:id'
+          }
+        },
+        Login: {}
+      },
+    },
+  };
+
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
       <LoginProvider>
-        <NavigationContainer>
+        <NavigationContainer linking={linking}>
           <Stack.Navigator
             screenOptions={() => ({
               headerShown: false,
@@ -69,7 +147,10 @@ export type TabProps = {
   포레스트:{
     id: number | undefined;
   }
-  마이페이지: undefined;
+  /*add email parameter*/
+  마이페이지: {
+    email?: string; 
+  }
 };
 
 const CustomTab = ({ state, descriptors, navigation }: BottomTabBarProps) => {
@@ -131,6 +212,7 @@ const CustomTab = ({ state, descriptors, navigation }: BottomTabBarProps) => {
         };
         return (
           <TouchableOpacity
+            key={index}
             onPress={onPress}
             style={{
               width: "20%",
@@ -185,4 +267,15 @@ const HomeScreens = (): JSX.Element => {
   );
 };
 
-export default App;
+const codePushOptions = {
+  checkFrequency: CodePush.CheckFrequency.ON_APP_START,
+  updateDialog: { 
+    title: '...', 
+    optionalUpdateMessage: '...', 
+    optionalInstallButtonLabel: '업데이트', 
+    optionalIgnoreButtonLabel: '아니요.' 
+  },
+  installMode: CodePush.InstallMode.IMMEDIATE 
+}
+
+export default CodePush(codePushOptions)(App);

@@ -8,7 +8,7 @@ import PostListScreen from '../components/Forest/PostList';
 import PostSearchScreen from '../components/Forest/PostSearch';
 import PostDetailScreen from '../components/Forest/PostDetail';
 import PostCommentsScreen from '../components/Forest/PostComments';
-import PhotoPreviewScreen from '../components/Forest/PhotoPreview';
+import PhotoPreviewScreen from '../common/PhotoPreview';
 import { StackNavigationProp, StackScreenProps } from '@react-navigation/stack';
 import { TabProps } from '../../App';
 import PostUploadScreen from '../components/Forest/PostUpload';
@@ -30,6 +30,7 @@ export type ForestStackParams = {
   PostList: {
     board_name?: string;
     board_category?: any;
+    category_Ids?:any;
   };
   PostSearch: any;
   PostDetail: {
@@ -52,11 +53,11 @@ const Stack = createNativeStackNavigator<ForestStackParams>();
 const Forest = ({navigation, route}:StackScreenProps<TabProps, '포레스트'>) => {
   const navigationToForest = useNavigation<StackNavigationProp<ForestStackParams>>();
   useEffect(()=>{
-    if(route.params.id) {
+    if(route.params?.id) {
       // navigationToForest.reset({routes: [{name: "PostDetail", params: { post_id:route.params.id }}]});
       navigationToForest.push('PostDetail', {post_id: route.params.id})
     }
-  },[route.params.id])
+  },[route.params?.id])
   return (
     <Stack.Navigator
       screenOptions={() => ({
