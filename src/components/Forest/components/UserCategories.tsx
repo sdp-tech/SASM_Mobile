@@ -39,7 +39,11 @@ const UserCategories = ({ modalVisible, setModalVisible, categories }: UserCateg
     })
     if(response.status === 200){
       setModalVisible(false)
-    } else {
+    } 
+    else if(selectedIds.length>8){
+      Alert.alert('카테고리는 최대 8개까지 저장 가능합니다.')
+    }
+    else {
       Alert.alert('나만의 카테고리 저장에 실패하였습니다.')
     }
   }
