@@ -49,6 +49,7 @@ export function Comment ({ data, story_id, reRenderScreen, email, isLogin, navig
         }
         //setLike(!like);
         reRenderScreen();
+    
         } else {
             Alert.alert(
               "로그인이 필요합니다.",

@@ -38,7 +38,8 @@ export function Comment ({ data, reRenderScreen, post_id, email, isLogin, naviga
     const toggleLike = async () => {
         if(isLogin){
         const response = await request.post(`/forest/${post_id}/comments/${data.id}/like/`, {}, {});
-        setLike(!like);
+        ///기존 코드
+        setLike(!like); 
         reRenderScreen();
         } else {
             Alert.alert(

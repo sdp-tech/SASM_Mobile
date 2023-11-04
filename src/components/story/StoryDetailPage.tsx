@@ -142,12 +142,14 @@ const BottomBarSection = ({ post, email, onRefresh, navigation }: BottomBarSecti
       <View style={{ flexDirection: 'row', flex: 1, alignItems: 'center' }}>
         <Heart color={'#202020'} like={like} onPress={toggleLike} size={18} ></Heart>
         <Text style={{fontSize: 14, color: '#202020', lineHeight: 20, marginLeft: 3, marginRight: 10}}>{post.like_cnt}</Text>
-        <TouchableOpacity onPress={scrollToComment}>
+        <TouchableOpacity onPress={openCommentPopup}>
           <CommentIcon color={'#202020'} />
         </TouchableOpacity>
         <Text style={{fontSize: 14, color: '#202020', lineHeight: 20, marginLeft: 3}}>{post.comment_cnt}</Text>
       </View>
-      <ShareButton color={'black'} message={`[SASM Story] ${post.title} - ${post.html_content}`} />
+      <PopComment
+            data={post} post_id={post.id} email={email} isLogin={!!email} navigation={navigation} repo={false} modalVisible={commentPopupVisible}  setModalVisible={setCommentPopupVisible}/>
+      <ShareButton color={'black'} message={`[SASM Story] ${post.title}`} description={post.html_content} image={post.rep_pic} id={post.id} from='story' />
     </View>
   )
 }

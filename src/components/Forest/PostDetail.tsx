@@ -413,12 +413,13 @@ const BottomBarSection = ({ post, email, onRefresh, navigation }: BottomBarSecti
       <View style={{ flexDirection: 'row', flex: 1, alignItems: 'center' }}>
         <Heart color={'#202020'} like={like} onPress={toggleLike} size={18} ></Heart>
         <Text style={{ fontSize: 14, color: '#202020', lineHeight: 20, marginLeft: 3, marginRight: 10 }}>{post.like_cnt}</Text>
-        <TouchableOpacity onPress={scrollToComment}>
+        <TouchableOpacity onPress={openCommentPopup}>
           <CommentIcon color={'#202020'} />
         </TouchableOpacity>
         <Text style={{ fontSize: 14, color: '#202020', lineHeight: 20, marginLeft: 3 }}>{post.comment_cnt}</Text>
       </View>
-      <ShareButton color={'black'} message={`[SASM Forest] ${post.title} - ${post.content}`} />
+      <ShareButton color={'black'} message={`[SASM Forest] ${post.title}`} description={post.content} image={post.rep_pic} id={post.id} from='forest' />
+      <PopComment data={post} post_id={post.id} email={email} isLogin={!!email} navigation={navigation} repo={true} modalVisible={commentPopupVisible}  setModalVisible={setCommentPopupVisible}/>
     </View>
   )
 }
@@ -511,12 +512,6 @@ const PostDetailScreen = ({
   const onLayout = (e: any) => {
     const { height } = e.nativeEvent.layout;
     setHeaderHeight(height);
-  }
-
-  const scrollToComment = () => {
-    if (scrollRef.current) {
-      scrollRef.current.scrollToOffset({ animated: true, offset: headerHeight })
-    }
   }
 
   useEffect(() => {
