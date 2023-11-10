@@ -38,6 +38,7 @@ const { width, height } = Dimensions.get("screen");
 
 const BoardListScreen = ({
   navigation,
+  route,
 }: NativeStackScreenProps<ForestStackParams, "BoardList">) => {
   const [loading, setLoading] = useState(false);
   const [refreshing, setRefreshing] = useState(false);
@@ -59,6 +60,9 @@ const BoardListScreen = ({
   const [customHeight,setcustomHeight]=useState<number>(0);
   const [flatHeight,setflatHeight]=useState<number>(0);
   const request = new Request();
+
+  const user_select=route.params?.checkedList;
+  const user_select_id=route.params?.selectedIds;
 
   const getUserInfo = async () => {
     const response = await request.get('/mypage/me/', {}, {});
@@ -145,6 +149,13 @@ const BoardListScreen = ({
   useFocusEffect(useCallback(() => {
     getPosts();
   }, [refreshing, checkedList]))
+
+  useFocusEffect(useCallback(()=>{
+    if (user_select){setCheckedList(user_select);}
+    else{setCheckedList([])}
+    if(user_select_id){setSelectedIds(user_select_id);}
+    else{setSelectedIds([])}
+  },[user_select, user_select_id]))
 
   return (
     <SafeAreaView style={styles.container}>
@@ -282,7 +293,7 @@ const BoardListScreen = ({
                   key={item.id}
                   data={item}
                   onPress={() => {
-                    navigation.navigate("BoardDetail", { board_category: item });
+                    navigation.navigate("BoardDetail", { board_category: item , user_select:checkedList, user_select_id:selectedIds});
                   }}
                 />
               )}

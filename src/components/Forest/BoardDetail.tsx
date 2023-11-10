@@ -47,6 +47,8 @@ const BoardDetailScreen = ({
   const request = new Request();
   const navigationToTab = useNavigation<StackNavigationProp<TabProps>>();
   const board_category = route.params.board_category;
+  const user_select=route.params.user_select;
+  const user_select_id=route.params.user_select_id;
 
   const getUserInfo = async () => {
     const response = await request.get('/mypage/me/', {}, {});
@@ -56,6 +58,8 @@ const BoardDetailScreen = ({
   const getSemiCategories = async () => {
     const response = await request.get(`/forest/semi_categories/`, {category: board_category.id}, {});
     setSemiCategories(response.data.data.results);
+    setCheckedList(user_select);
+    if (user_select_id){setSelectedIds(user_select_id);}
   }
 
   const getPosts = async () => {
@@ -110,9 +114,10 @@ const BoardDetailScreen = ({
     getPosts();
   }, [refreshing, checkedList]))
 
+
   return (
     <SafeAreaView style={styles.container}>
-    <ListHeader board_name={board_category.name} navigation={navigation} />
+    <ListHeader key={JSON.stringify({ selectedIds, checkedList })} board_name={board_category.name} navigation={navigation} selectedIds={selectedIds} checkedList={checkedList}/>
     <ScrollView>
       {loading ? (
         <ActivityIndicator />
