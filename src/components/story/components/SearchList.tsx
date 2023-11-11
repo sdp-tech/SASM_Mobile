@@ -12,7 +12,7 @@ interface SearchListProps {
   onRefresh?: any;
   refreshing?: boolean;
   navigation: any;
-  card: boolean;
+  card?: boolean;
 }
 
 const SearchList = ({ info, onEndReached, onRefresh, refreshing, navigation, card }: SearchListProps) => {
@@ -76,6 +76,7 @@ const SearchList = ({ info, onEndReached, onRefresh, refreshing, navigation, car
       onRefresh = {onRefresh}
       refreshing = {refreshing}
       onEndReached = {onEndReached}
+      onEndReachedThreshold={0}
       showsVerticalScrollIndicator = {false}
       contentContainerStyle={{flexGrow: 1}}
       ListFooterComponent={
