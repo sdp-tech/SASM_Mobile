@@ -17,93 +17,29 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 
 interface SearchResultProps {
   type: "curation" | "story" | "forest";
-  data: any;
+  count: number;
+  data: any[];
+  onRefresh: any;
+  refreshing: boolean;
 }
 
-export default function SearchResult({ type, data }: SearchResultProps) {
+export default function SearchResult({
+  type,
+  count,
+  data,
+  onRefresh,
+  refreshing,
+}: SearchResultProps) {
   const toggleItems = [
     { label: "최신 순", value: 0, order: "latest" },
     { label: "오래된 순", value: 1, order: "oldest" },
   ];
-  const [item, setItem] = useState([] as any);
+  const [item, setItem] = useState(data);
   const [orderList, setOrderList] = useState(0);
-  const [order, setOrder] = useState<string>(toggleItems[orderList].order);
-  const [page, setPage] = useState<number>(1);
-  const [nextPage, setNextPage] = useState<any>(null);
-  const [search, setSearch] = useState<string>("");
-  const [refreshing, setRefreshing] = useState<boolean>(false);
-  const [checkedList, setCheckedList] = useState<string[]>([]);
-  const [count, setCount] = useState<number>(0);
-  const [cardView, setCardView] = useState<boolean>(true);
-  const { width, height } = Dimensions.get("screen");
-  const request = new Request();
 
   useEffect(() => {
-    onChangeOrder();
+    item.reverse();
   }, [orderList]);
-
-  useFocusEffect(
-    useCallback(() => {
-      handleSearchToggle();
-      getStories();
-    }, [page, checkedList, search, order])
-  );
-
-  useEffect(() => {
-    setPage(1);
-  }, [checkedList]);
-
-  const handleSearchToggle = async () => {
-    if (search.length === 0) {
-      setPage(1);
-      setItem([]);
-    }
-  };
-
-  const getStories = async () => {
-    let params = new URLSearchParams();
-    for (const category of checkedList) {
-      params.append("filter", category);
-    }
-    const response = await request.get(
-      `/stories/story_search/?${params.toString()}`,
-      {
-        search: search,
-        page: page,
-        order: order,
-      },
-      null
-    );
-    if (page === 1) {
-      setItem(response.data.data.results);
-    } else {
-      setItem([...item, ...response.data.data.results]);
-    }
-    setCount(response.data.data.count);
-    setNextPage(response.data.data.next);
-  };
-
-  const onRefresh = async () => {
-    if (!refreshing || page !== 1) {
-      setRefreshing(true);
-      setPage(1);
-      setRefreshing(false);
-    }
-  };
-
-  const onEndReached = async () => {
-    if (search.length > 0 && nextPage !== null) {
-      setPage(page + 1);
-    } else {
-      return;
-    }
-  };
-
-  const onChangeOrder = async () => {
-    setOrder(toggleItems[orderList].order);
-    setPage(1);
-    setItem([]);
-  };
 
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: "white", paddingTop: 10 }}>
@@ -125,7 +61,7 @@ export default function SearchResult({ type, data }: SearchResultProps) {
               flex: 1,
             }}
           >
-            전체 검색결과 n개
+            전체 검색결과 {count}개
           </Text>
           <View style={{ width: 100, zIndex: 2000 }}>
             <DropDown
@@ -141,7 +77,7 @@ export default function SearchResult({ type, data }: SearchResultProps) {
             <View style={{ alignItems: "center", marginVertical: 20 }}>
               <NothingIcon />
               <Text style={{ marginTop: 20 }}>
-                해당하는 큐레이션이 없습니다
+                해당하는 검색 결과가 없습니다.
               </Text>
             </View>
           ) : (
@@ -149,7 +85,6 @@ export default function SearchResult({ type, data }: SearchResultProps) {
               info={item}
               onRefresh={onRefresh}
               refreshing={refreshing}
-              onEndReached={onEndReached}
               type={type}
             />
           )}
