@@ -23,15 +23,16 @@ interface UserReviewsProps {
   rerender: () => void;
   category: string;
   place_name: string;
+  place_rep_pic: string;
 }
 
-export default function UserReviews({ reviewData, rerender, category, place_name }: UserReviewsProps): JSX.Element {
+export default function UserReviews({ reviewData, rerender, category, place_name, place_rep_pic }: UserReviewsProps): JSX.Element {
   const [detailModal, setDetailModal] = useState<boolean>(false);
 
   return (
     <ReviewBox>
       <Modal visible={detailModal}>
-        <ReviewDetail category={category} place_name={place_name} setDetailModal={setDetailModal} reviewData={reviewData} rerender={rerender} />
+        <ReviewDetail category={category} place_name={place_name} place_rep_pic={place_rep_pic} setDetailModal={setDetailModal} reviewData={reviewData} rerender={rerender} />
       </Modal>
       {
         reviewData &&
