@@ -16,6 +16,7 @@ import CommentIcon from '../../assets/img/Story/Comment.svg';
 import { LoginContext } from '../../common/Context';
 import { getStatusBarHeight } from 'react-native-safearea-height';
 import FastImage from 'react-native-fast-image';
+import axios from 'axios';
 
 const { width, height } = Dimensions.get('window');
 
@@ -114,6 +115,55 @@ const handleFollow = async (target: string, isLogin: boolean, navigation: StackN
   if (response.data.status == 'fail') Alert.alert(response.data.message)
 }
 
+const handleCurationDelete = async(
+  isLogin:boolean,
+  navigation: StackNavigationProp<TabProps>,
+  curationId: string,
+  getCurationDetail: ()=> void
+  )=>{
+    
+  if(!isLogin){
+    Alert.alert('로그인이 필요합니다.', "",
+    [
+      {
+        text: "로그인",
+        onPress: () => navigation.navigate('마이페이지', {}),
+        style: "cancel"
+      },
+      {
+        text: "ok",
+        style: "cancel"
+      },
+    ])
+    return;
+  }
+
+  try{
+    if(curationId){
+      Alert.alert('큐레이션 삭제 확인', '정말로 삭제하시겠습니까?',[
+        {
+          text: "취소",
+          style: "cancel"
+      },
+      {
+        text:"삭제",
+        onPress:async()=>{
+          const response = await axios.delete(`/curations/curation/${curationId}/`);
+          getCurationDetail();
+        },
+        style:"destructive"
+      },
+    ],
+    {
+      cancelable: false
+    })
+      
+    }
+  }catch(error){
+    console.error('!!에러 발생!!',error);
+  }
+}
+
 const BottomBarSection = ({ id, post, isLogin, onRefresh, navigation }:{id: number; post: CurationDetailProps, isLogin: boolean, onRefresh: () => void, navigation: any;}) => {
   const [like, setLike] = useState<boolean>(false)
   const request = new Request();
@@ -193,6 +243,7 @@ export default function CurationDetail({ navigation, route }: StackScreenProps<H
   })
   const statusBarHeight = getStatusBarHeight();
   const getCurationDetail = async () => {
+    console.error(route.params.id)
     const response_detail = await request.get(`/curations/curation_detail/${route.params.id}/`);
     setCurationDetail(response_detail.data.data);
     setLike(response_detail.data.data.like_curation);
@@ -214,6 +265,54 @@ export default function CurationDetail({ navigation, route }: StackScreenProps<H
     getCurationDetail();
     getCurationStoryDetail();
   }, [refreshing]))
+
+  const handleCurationDelete = async(
+    isLogin:boolean,
+    navigation: StackNavigationProp<TabProps>,
+    )=>{
+      
+    if(!isLogin){
+      Alert.alert('로그인이 필요합니다.', "",
+      [
+        {
+          text: "로그인",
+          onPress: () => navigation.navigate('마이페이지', {}),
+          style: "cancel"
+        },
+        {
+          text: "ok",
+          style: "cancel"
+        },
+      ])
+      return;
+    }
+  
+    try{
+      
+        Alert.alert('큐레이션 삭제 확인', '정말로 삭제하시겠습니까?',[
+          {
+            text: "취소",
+            style: "cancel"
+        },
+        {
+          text:"삭제",
+          onPress:async()=>{
+            const response = await axios.delete(`/curations/curation_delete/${route.params.id}/`);
+            getCurationDetail();
+          },
+          style:"destructive"
+        },
+      ],
+      {
+        cancelable: false
+      })
+        
+      
+    }catch(error){
+      console.error('!!에러 발생!!',error);
+    }
+  }
+  
 
   return (
     <>
