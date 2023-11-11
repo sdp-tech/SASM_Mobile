@@ -161,7 +161,7 @@ export default function WriteReview({ rerender, id, place_name, category, setRev
         formData.append('photos', {
           uri: photos[i].uri,
           name: photos[i].fileName,
-          type: 'image/jpeg/png',
+          type: photos[i].endsWith('.jpg') ? 'image/jpeg' : 'image/png',
         });
       }
     }
