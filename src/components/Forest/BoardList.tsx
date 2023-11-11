@@ -76,6 +76,7 @@ const BoardListScreen = ({
 
   const getUserCategories = async () => {
     const response = await request.get('/forest/user_categories/get/');
+    console.error(response)
     setUserCategories([...response.data.data.results, {id: 0, name: '+'}]);
     setTopCategories([...response.data.data.results]);
   }
@@ -571,7 +572,7 @@ const BoardListScreen = ({
           }
         }}
         position="rightbottom" />
-      <UserCategories modalVisible={modalVisible} setModalVisible={setModalVisible} categories={boardLists} />
+      { isLogin && <UserCategories modalVisible={modalVisible} setModalVisible={setModalVisible} categories={boardLists} />}
     </SafeAreaView>
   );
 };
