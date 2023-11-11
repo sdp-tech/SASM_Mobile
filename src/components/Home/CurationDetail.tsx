@@ -297,7 +297,7 @@ export default function CurationDetail({ navigation, route }: StackScreenProps<H
         {
           text:"삭제",
           onPress:async()=>{
-            const response = await axios.delete(`/curations/curation_delete/${route.params.id}/`);
+            const response = await request.delete(`/curations/curation_delete/${route.params.id}/`);
             getCurationDetail();
           },
           style:"destructive"
