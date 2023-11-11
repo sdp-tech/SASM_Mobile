@@ -135,7 +135,7 @@ export function Comment ({ data, story_id, reRenderScreen, email, isLogin, navig
                 </Modal>
                 <Report reported={reported} modalVisible={reportVisible} setModalVisible={setReportVisible} onReport={onReport} />
             </View>
-            {!isWriter &&
+            {(!isWriter && isLogin) &&
                 <TouchableOpacity style={{position: 'absolute', bottom: 5, right: 0}} onPress={() => setReportVisible(true)}>
                     <Text style={{color: '#A8A8A8', fontSize: 12}}>신고</Text>
                 </TouchableOpacity>
