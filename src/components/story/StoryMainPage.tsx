@@ -15,8 +15,12 @@ import PlusButton from "../../common/PlusButton";
 import { LoginContext } from "../../common/Context";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { TabProps } from "../../../App";
-import { ScrollView } from "react-native-gesture-handler";
+import { FlatList, ScrollView } from "react-native-gesture-handler";
 import { getStatusBarHeight } from "react-native-safearea-height";
+import ToListView from '../../assets/img/Story/ToListView.svg';
+import ToCardView from '../../assets/img/Story/ToCardView.svg';
+import SearchList from "./components/SearchList";
+import ListCard from "./components/ListCard";
 
 export interface StoryListProps {
   id: number;
@@ -48,6 +52,7 @@ const StoryMainPage = ({ navigation, route }: StoryProps) => {
   const [loading, setLoading] = useState<boolean>(false);
   const [checkedList, setCheckedList] = useState<string[]>([]);
   const [count, setCount] = useState<number>(0);
+  const [cardView, setCardView] = useState<boolean>(true);
   const { width, height } = Dimensions.get("window");
   const navigationToTab = useNavigation<StackNavigationProp<TabProps>>();
   const request = new Request();
@@ -60,12 +65,12 @@ const StoryMainPage = ({ navigation, route }: StoryProps) => {
   useFocusEffect(
     useCallback(() => {
       getStories();
-    }, [page, checkedList, order])
+    }, [page, checkedList, order, cardView])
   );
 
   useEffect(() => {
-    setPage(1)
-  }, [checkedList, order])
+    setPage(1);
+  }, [checkedList, order, cardView])
 
   const getStories = async () => {
     setLoading(true)
@@ -77,7 +82,11 @@ const StoryMainPage = ({ navigation, route }: StoryProps) => {
       page: page,
       order: order
     }, null)
-    setItem(response.data.data.results)
+    if(!cardView){
+      setItem([...item, ...response.data.data.results]);
+    } else {
+      setItem(response.data.data.results)
+    }
     setCount(response.data.data.count);
     setPrevPage(response.data.data.previous);
     setNextPage(response.data.data.next);
@@ -86,12 +95,21 @@ const StoryMainPage = ({ navigation, route }: StoryProps) => {
 
   const onChangeOrder = async () => {
     setOrder(toggleItems[orderList].order);
+    // setPage(1);
+    setItem([]);
   }
 
   const onEndReached = () => {
-    if (nextPage) {
+    if (nextPage && !cardView) {
       setPage(page + 1)
     }
+    console.error(cardView)
+  }
+
+  const toggleView = () => {
+    setCardView(!cardView);
+    // setPage(1);
+    setItem([]);
   }
 
   return (
@@ -106,6 +124,11 @@ const StoryMainPage = ({ navigation, route }: StoryProps) => {
               <Text style={textStyles.title}>{toggleItems[orderList].title}</Text>
               <Text style={textStyles.subtitle}>{toggleItems[orderList].subtitle}</Text>
             </View>
+            <TouchableOpacity style={{ justifyContent: 'center', marginRight: 15, marginBottom: 5}} onPress={toggleView}>
+              {
+                !cardView ? <ToListView width={18} height={18}/> : <ToCardView width={18} height={18}/>
+              }
+            </TouchableOpacity>
             <TouchableOpacity onPress={() => setOrderList((orderList + 1) % 3)} style={{ marginTop: 10 }}>
               <Reload />
             </TouchableOpacity>
@@ -117,33 +140,66 @@ const StoryMainPage = ({ navigation, route }: StoryProps) => {
               story={true}
             />
           </View>
-          <ScrollView scrollEnabled={height-statusBarHeight-88 > 700 ? false : true} style={{ marginVertical: 10 }} showsVerticalScrollIndicator={false}>
-            {loading ? <ActivityIndicator style={{ justifyContent: 'center', height: width*0.85+140}} /> : 
-            <CardView data={item} gap={0} offset={0} pageWidth={width} dot={true} green={true}
-              from='story' onNext={() => nextPage && setPage(page+1)} onPrev={() => prevPage && setPage(page-1)}
-              renderItem={({ item }: any) => {
-                const { id, rep_pic, place_name, title, story_like, category, preview, summary, writer, nickname, profile, writer_is_verified } = item;
-                return (
-                  <MainCard
-                    id={id}
-                    rep_pic={rep_pic}
-                    place_name={place_name}
-                    title={title}
-                    story_like={story_like}
-                    category={category}
-                    preview={preview}
-                    summary={summary}
-                    writer={writer}
-                    nickname={nickname}
-                    profile={profile}
-                    writer_is_verified={writer_is_verified}
-                    isLogin={isLogin}
-                    navigation={navigation}
-                  />
-                )
-              }} />
-            }
-          </ScrollView>
+          {
+            cardView ? 
+            <ScrollView nestedScrollEnabled scrollEnabled={height-statusBarHeight-88 > 700 ? false : true} style={{ marginVertical: 10 }} showsVerticalScrollIndicator={false}>
+              {loading ? <ActivityIndicator style={{ justifyContent: 'center', height: width*0.85+140}} /> : 
+                <CardView data={item} gap={0} offset={0} pageWidth={width} dot={true} green={true}
+                from='story' onNext={() => nextPage && setPage(page+1)} onPrev={() => prevPage && (page > 0) && setPage(page-1)}
+                renderItem={({ item }: any) => {
+                  const { id, rep_pic, place_name, title, story_like, category, preview, summary, writer, nickname, profile, writer_is_verified } = item;
+                  return (
+                    <MainCard
+                      id={id}
+                      rep_pic={rep_pic}
+                      place_name={place_name}
+                      title={title}
+                      story_like={story_like}
+                      category={category}
+                      preview={preview}
+                      summary={summary}
+                      writer={writer}
+                      nickname={nickname}
+                      profile={profile}
+                      writer_is_verified={writer_is_verified}
+                      isLogin={isLogin}
+                      navigation={navigation}
+                    />
+                  )
+                }} />
+              }
+            </ScrollView>
+            :
+            <View style={{paddingTop: 10, alignItems: 'center', flex: 1}}>
+              <FlatList
+                data={item}
+                onEndReached={onEndReached}
+                onEndReachedThreshold={1}
+                keyExtractor={(item) => item.id}
+                renderItem={({ item }: any) => {
+                  const { id, rep_pic, extra_pics, place_name, title, story_like, created, preview, summary, writer, nickname, profile, writer_is_verified } = item;
+                  return (
+                    <ListCard
+                      id={id}
+                      rep_pic={rep_pic}
+                      extra_pics={extra_pics}
+                      place_name={place_name}
+                      title={title}
+                      story_like={story_like}
+                      created={created}
+                      preview={preview}
+                      summary={summary}
+                      writer={writer}
+                      nickname={nickname}
+                      writer_is_verified={writer_is_verified}
+                      isLogin={isLogin}
+                      navigation={navigation}
+                    />
+                  )
+                }}
+              />
+            </View>
+          }
           <PlusButton
             onPress={() => {
               if(!isLogin) {

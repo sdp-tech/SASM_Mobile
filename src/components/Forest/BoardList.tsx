@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback, useContext } from "react";
+import React, { useState, useEffect, useCallback,useRef, useContext } from "react";
 import {
   FlatList,
   StyleSheet,
@@ -10,7 +10,10 @@ import {
   View,
   TouchableOpacity,
   Image,
-  Alert
+  Alert,
+  NativeSyntheticEvent,
+  NativeScrollEvent,
+  LayoutChangeEvent
 } from "react-native";
 import { TextPretendard as Text } from "../../common/CustomText";
 import type { NativeStackScreenProps } from "@react-navigation/native-stack";
@@ -28,11 +31,14 @@ import { TabProps } from "../../../App";
 import Arrow from '../../assets/img/common/Arrow.svg';
 import AddCategory from '../../assets/img/Forest/AddCategory.svg';
 import UserCategories from "./components/UserCategories";
+import { event } from "react-native-reanimated";
+import { NativeEvent } from "react-native-reanimated/lib/types/lib/reanimated2/commonTypes";
 
 const { width, height } = Dimensions.get("screen");
 
 const BoardListScreen = ({
   navigation,
+  route,
 }: NativeStackScreenProps<ForestStackParams, "BoardList">) => {
   const [loading, setLoading] = useState(false);
   const [refreshing, setRefreshing] = useState(false);
@@ -44,13 +50,19 @@ const BoardListScreen = ({
   const [newPosts, setNewPosts] = useState([] as any);
   const [modalVisible, setModalVisible] = useState<boolean>(false);
   const [userCategories, setUserCategories] = useState([] as any);
+  const [topCategories, setTopCategories] = useState([] as any);
   const [checkedList, setCheckedList] = useState([] as any);
   const [selectedIds, setSelectedIds] = useState<number[]>([]);
   const {isLogin, setLogin} = useContext(LoginContext);
-
+  const [showbarCategory, setshowbarCategory] = useState(false);
   const navigationToTab = useNavigation<StackNavigationProp<TabProps>>();
-
+  const flatListRef=useRef(null);
+  const [customHeight,setcustomHeight]=useState<number>(0);
+  const [flatHeight,setflatHeight]=useState<number>(0);
   const request = new Request();
+
+  const user_select=route.params?.checkedList;
+  const user_select_id=route.params?.selectedIds;
 
   const getUserInfo = async () => {
     const response = await request.get('/mypage/me/', {}, {});
@@ -64,7 +76,9 @@ const BoardListScreen = ({
 
   const getUserCategories = async () => {
     const response = await request.get('/forest/user_categories/get/');
+    console.error(response)
     setUserCategories([...response.data.data.results, {id: 0, name: '+'}]);
+    setTopCategories([...response.data.data.results]);
   }
 
   const getPosts = async () => {
@@ -100,6 +114,28 @@ const BoardListScreen = ({
     setRefreshing(false);
   }
 
+  const handleCustomHeaderLayout = (event:LayoutChangeEvent) => {
+    const { y, height } = event.nativeEvent.layout;
+    setcustomHeight(y+height);
+  }
+
+  const handleCardViewLayout=(event:LayoutChangeEvent)=>{
+    const{y,height} = event.nativeEvent.layout;
+    setflatHeight(customHeight+height+y);
+  }
+
+  const handleScroll=(event:NativeSyntheticEvent<NativeScrollEvent>)=>{
+    if(flatListRef.current){
+      const scrollPosition = event.nativeEvent.contentOffset.y;
+        if(scrollPosition>flatHeight+5){
+        setshowbarCategory(true);
+        }
+        else{
+          setshowbarCategory(false);
+        }
+    }
+  }
+
   useEffect(() => {
     getBoardItems();
   }, [refreshing]);
@@ -113,8 +149,14 @@ const BoardListScreen = ({
 
   useFocusEffect(useCallback(() => {
     getPosts();
-    console.log(checkedList)
   }, [refreshing, checkedList]))
+
+  useFocusEffect(useCallback(()=>{
+    if (user_select){setCheckedList(user_select);}
+    else{setCheckedList([])}
+    if(user_select_id){setSelectedIds(user_select_id);}
+    else{setSelectedIds([])}
+  },[user_select, user_select_id]))
 
   return (
     <SafeAreaView style={styles.container}>
@@ -123,7 +165,31 @@ const BoardListScreen = ({
           navigation.navigate("PostSearch");
         }}
       />
-      <ScrollView nestedScrollEnabled={true}>
+      <View onLayout={handleCustomHeaderLayout}>
+      </View>
+      {showbarCategory&&
+                <View style={{padding: 15, backgroundColor: '#F1FCF5'}}>
+                <CardView gap={0} offset={0} pageWidth={width} dot={false} data={topCategories} renderItem={({item}: any) => {
+                  return (
+                    <TouchableOpacity style={{borderRadius: 16, borderColor: '#67D393', borderWidth: 1, paddingVertical: 4, paddingHorizontal: 16, margin: 4, backgroundColor: selectedIds.includes(item.id) ? '#67D393' : 'white'}}
+                    onPress={() => {
+                      if (selectedIds.includes(item.id)) {
+                        setSelectedIds(selectedIds.filter(id => id !== item.id));
+                        setCheckedList(checkedList.filter((category: any) => category.id !== item.id));
+                      } else {
+                        setSelectedIds([...selectedIds, item.id]);
+                        setCheckedList([...checkedList, item]);
+                      }
+                    }}
+                  >
+                    <Text style={{color: selectedIds.includes(item.id) ? 'white' : '#202020', fontSize: 14, fontWeight: selectedIds.includes(item.id) ? '600' : '400'}}># {item.name}</Text>
+                  </TouchableOpacity>
+                  )
+                }}
+                />
+                </View>
+      }
+      <ScrollView onScroll={handleScroll} scrollEventThrottle={25}>
           <View
             style={{ backgroundColor: "#C8F5D7", padding: 20, height: 100 }}
           >
@@ -144,6 +210,7 @@ const BoardListScreen = ({
             }}
           >
             { isLogin &&
+            <View onLayout={handleCardViewLayout}>
               <View 
                 style={{
                   flexDirection: 'row',
@@ -162,6 +229,7 @@ const BoardListScreen = ({
                 { userCategories.length > 0 ?
                   <>
                     <FlatList
+                      ref={flatListRef}
                       data={userCategories}
                       renderItem={({ item }: any) => {
                         if(item.id === 0){
@@ -203,6 +271,7 @@ const BoardListScreen = ({
                   </>
                 }
               </View>
+              </View>
             }
           </View>
           <View
@@ -225,7 +294,7 @@ const BoardListScreen = ({
                   key={item.id}
                   data={item}
                   onPress={() => {
-                    navigation.navigate("BoardDetail", { board_category: item });
+                    navigation.navigate("BoardDetail", { board_category: item , user_select:checkedList, user_select_id:selectedIds});
                   }}
                 />
               )}
@@ -362,7 +431,7 @@ const BoardListScreen = ({
             </Text>
             <TouchableOpacity style={{ flexDirection: 'row', alignItems: 'center' }} onPress={() => {
               navigation.navigate("PostList", {
-                board_name: "사슴의 인기글",
+                board_name: "사슴의 인기글"
               });
             }}>
               <Text style={{ fontSize: 12, fontWeight: '500', marginRight: 5 }}>더보기</Text>
@@ -503,7 +572,7 @@ const BoardListScreen = ({
           }
         }}
         position="rightbottom" />
-      <UserCategories modalVisible={modalVisible} setModalVisible={setModalVisible} categories={boardLists} />
+      { isLogin && <UserCategories modalVisible={modalVisible} setModalVisible={setModalVisible} categories={boardLists} />}
     </SafeAreaView>
   );
 };

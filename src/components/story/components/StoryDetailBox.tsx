@@ -186,9 +186,11 @@ const StoryDetailBox = ({navigation, data, isLogin, onLayout, email, onRefresh, 
                             <View style={{backgroundColor: 'rgba(0,0,0,0.2)', width: width, height: 330}} />
                         </FastImage>
                     )}
-                <TouchableOpacity style={{position: 'absolute', zIndex: 1, top: statusBarHeight+5, right: 20, width: 40, height: 40, alignItems: 'flex-end'}} onPress={() => setDot(!dot)}>
-                    <Settings transform={[{ rotate: dot ? '90deg' : '0deg'}]} color={'white'} />
-                </TouchableOpacity>
+                { isLogin &&
+                    <TouchableOpacity style={{position: 'absolute', zIndex: 1, top: statusBarHeight+5, right: 20, width: 40, height: 40, alignItems: 'flex-end'}} onPress={() => setDot(!dot)}>
+                        <Settings transform={[{ rotate: dot ? '90deg' : '0deg'}]} color={'white'} />
+                    </TouchableOpacity>
+                }
                 { dot &&
                 <View style={{position: 'absolute', backgroundColor: 'white', top: Platform.OS === 'ios' ? 75: 50, left: width-140, borderRadius: 4}}>
                     <TouchableOpacity style={{borderColor: 'rgba(168, 168, 168, 0.20)', borderBottomWidth: 1, paddingHorizontal: 40, paddingVertical: 10}} onPress={onUpdate} disabled={!user}>

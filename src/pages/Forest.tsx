@@ -26,10 +26,13 @@ export type ForestStackParams = {
   BoardList: any;
   BoardDetail: {
     board_category: any;
+    user_select: any;
+    user_select_id: number[];
   }
   PostList: {
     board_name?: string;
     board_category?: any;
+    category_Ids?:any;
   };
   PostSearch: any;
   PostDetail: {

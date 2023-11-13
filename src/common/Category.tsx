@@ -62,15 +62,23 @@ export function CategoryIcon({data}:{data:string}): JSX.Element {
   return list[index];
 }
 
+const DescriptionBox = styled.View<{ color: string }>`
+  border-radius: 12px;
+  border: 2px solid ${props => props.color};
+  background: white;
+  flex-direction: row;
+  padding: 10px;
+  opacity: 0.9;
+`
 export function CategoryDescription({data}:{data:string}): JSX.Element {
   const index = MatchCategory(data);
   let list = [
-    <><Text style={{fontSize: 14, lineHeight: 20}}>{CATEGORY_LIST[0].name}🥗:</Text><Text style={{fontSize: 14, flex: 1, lineHeight: 20}}>{CATEGORY_LIST[0].content}</Text></>,
-    <><Text style={{fontSize: 14, lineHeight: 20}}>{CATEGORY_LIST[1].name}🎨:</Text><Text style={{fontSize: 14, flex: 1, lineHeight: 20}}>{CATEGORY_LIST[1].content}</Text></>,
-    <><Text style={{fontSize: 14, lineHeight: 20}}>{CATEGORY_LIST[2].name}♻️:</Text><Text style={{fontSize: 14, flex: 1, lineHeight: 20}}>{CATEGORY_LIST[2].content}</Text></>,
-    <><Text style={{fontSize: 14, lineHeight: 20}}>{CATEGORY_LIST[3].name}🏢:</Text><Text style={{fontSize: 14, flex: 1, lineHeight: 20}}>{CATEGORY_LIST[3].content}</Text></>,
-    <><Text style={{fontSize: 14, lineHeight: 20}}>{CATEGORY_LIST[4].name}🎭:</Text><Text style={{fontSize: 14, flex: 1, lineHeight: 20}}>{CATEGORY_LIST[4].content}</Text></>,
-    <><Text style={{fontSize: 14, lineHeight: 20}}>{CATEGORY_LIST[5].name}🌳:</Text><Text style={{fontSize: 14, flex: 1, lineHeight: 20}}>{CATEGORY_LIST[5].content}</Text></>
+    <DescriptionBox color={CATEGORY_LIST[0].color}><CategoryIcon data={data} /><Text style={TextStyles.description}>{CATEGORY_LIST[0].content}</Text></DescriptionBox>,
+    <DescriptionBox color={CATEGORY_LIST[1].color}><CategoryIcon data={data} /><Text style={TextStyles.description}>{CATEGORY_LIST[1].content}</Text></DescriptionBox>,
+    <DescriptionBox color={CATEGORY_LIST[2].color}><CategoryIcon data={data} /><Text style={TextStyles.description}>{CATEGORY_LIST[2].content}</Text></DescriptionBox>,
+    <DescriptionBox color={CATEGORY_LIST[3].color}><CategoryIcon data={data} /><Text style={TextStyles.description}>{CATEGORY_LIST[3].content}</Text></DescriptionBox>,
+    <DescriptionBox color={CATEGORY_LIST[4].color}><CategoryIcon data={data} /><Text style={TextStyles.description}>{CATEGORY_LIST[4].content}</Text></DescriptionBox>,
+    <DescriptionBox color={CATEGORY_LIST[5].color}><CategoryIcon data={data} /><Text style={TextStyles.description}>{CATEGORY_LIST[5].content}</Text></DescriptionBox>,
   ]
   return list[index];
 }
@@ -173,5 +181,10 @@ const TextStyles = StyleSheet.create({
     borderColor:'rgba(203, 203, 203, 1)',
     borderWidth: 1,
     overflow: 'hidden'
+  },
+  description: {
+    fontSize: 16,
+    color: '#202020',
+    paddingHorizontal: 5
   }
 })

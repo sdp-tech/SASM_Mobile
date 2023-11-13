@@ -38,6 +38,9 @@ export default function HomeSearch({
   const [search, setSearch] = useState<string>("");
   const [refreshing, setRefreshing] = useState<boolean>(false);
   const [count, setCount] = useState<any>({ curation: 0, story: 0, forest: 0 });
+  const [checkedList, setCheckedList] = useState<string[]>([]);
+  const [count, setCount] = useState<number>(0);
+  const [cardView, setCardView] = useState<boolean>(true);
   const { width, height } = Dimensions.get("screen");
   const request = new Request();
 
@@ -74,7 +77,16 @@ export default function HomeSearch({
       return;
     }
   };
+  
+  const onChangeOrder = async () => {
+    setOrder(toggleItems[orderList].order);
+    setPage(1);
+    setItem([]);
+  };
 
+  const toggleView = () => {
+    setCardView(!cardView);
+  };
   const recommendData = [
     "비건",
     "제로웨이스트",
