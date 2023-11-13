@@ -31,29 +31,25 @@ export default function HomeSearch({
     { label: "인기 순", value: 1, order: "hot" },
   ];
   const [item, setItem] = useState([] as any);
-  const [orderList, setOrderList] = useState(0);
-  const [order, setOrder] = useState<string>(toggleItems[orderList].order);
-  const [page, setPage] = useState<number>(1);
-  const [nextPage, setNextPage] = useState<any>(null);
   const [search, setSearch] = useState<string>("");
+  const [isSearch, setIsSearch] = useState<boolean>(false);
   const [refreshing, setRefreshing] = useState<boolean>(false);
   const [count, setCount] = useState<any>({ curation: 0, story: 0, forest: 0 });
-  const [checkedList, setCheckedList] = useState<string[]>([]);
-  const [count, setCount] = useState<number>(0);
-  const [cardView, setCardView] = useState<boolean>(true);
   const { width, height } = Dimensions.get("screen");
   const request = new Request();
 
   useEffect(() => {
-    getResult();
+    handleSearchToggle();
+    if (search.length > 0) {
+      getResult();
+    }
   }, [search]);
-
+  
   const getResult = async () => {
-    const response = await request.get(`/curations/total_search/`, {
+    const response = await request.get('/curations/total_search/', {
       search: search,
       order: "latest",
-    });
-
+    }, null);
     setItem(response.data.data);
     setCount({
       curation: response.data.curation_count,
@@ -62,31 +58,20 @@ export default function HomeSearch({
     });
   };
 
+  const handleSearchToggle = async () => {
+    if (search.length === 0) {
+      setItem([]);
+      setIsSearch(false);
+    }
+  };
+
   const onRefresh = async () => {
     if (!refreshing) {
       setRefreshing(true);
-      getResult();
       setRefreshing(false);
     }
   };
 
-  const onEndReached = async () => {
-    if (search.length > 0 && nextPage !== null) {
-      setPage(page + 1);
-    } else {
-      return;
-    }
-  };
-  
-  const onChangeOrder = async () => {
-    setOrder(toggleItems[orderList].order);
-    setPage(1);
-    setItem([]);
-  };
-
-  const toggleView = () => {
-    setCardView(!cardView);
-  };
   const recommendData = [
     "비건",
     "제로웨이스트",
@@ -106,7 +91,6 @@ export default function HomeSearch({
   const loadRecentSearches = async () => {
     try {
       const searches = await AsyncStorage.getItem("recentSearches_home");
-      console.log(searches);
       if (searches) {
         const searchesArray = JSON.parse(searches);
         setRecentSearches(searchesArray);
@@ -126,6 +110,7 @@ export default function HomeSearch({
 
   const handleSearchSubmit = () => {
     if (search.trim() === "") return;
+    setIsSearch(true);
     const updatedSearches = [search, ...recentSearches];
     setRecentSearches(updatedSearches);
     saveRecentSearches(updatedSearches);
@@ -177,13 +162,12 @@ export default function HomeSearch({
           placeholderTextColor={"#848484"}
           onSubmitEditing={handleSearchSubmit}
           returnKeyType="search"
-          autoFocus
         />
       </View>
-      {search.length > 0 ? (
+      {isSearch ? (
         <SearchResultTabView
           data={item}
-          search={search}
+          // search={search}
           count={count}
           refreshing={refreshing}
           onRefresh={onRefresh}

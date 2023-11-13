@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback, useContext } from "react";
+import React, { useState, useEffect, useCallback, useContext, memo } from "react";
 import { View, useWindowDimensions } from "react-native";
 import { TextPretendard as Text } from "../../../common/CustomText";
 import { TouchableOpacity } from "react-native-gesture-handler";
@@ -6,16 +6,16 @@ import SearchResult from "./SearchResult";
 import { TabView, TabBar, SceneMap } from "react-native-tab-view";
 
 interface SearchResultTabViewProps {
-  search: string;
+  // search: string;
   data: any[];
   count: any;
   onRefresh: any;
   refreshing: boolean;
 }
 
-export default function SearchResultTabView({
+function SearchResultTabView({
   data,
-  search,
+  // search,
   count,
   onRefresh,
   refreshing,
@@ -90,7 +90,7 @@ export default function SearchResultTabView({
               <View>
                 <Text
                   style={{
-                    fontColor: focused ? "#202020" : "#848484",
+                    color: focused ? "#202020" : "#848484",
                     fontWeight: focused ? 600 : 400,
                     fontSize: 14,
                     letterSpacing: -0.6,
@@ -107,3 +107,5 @@ export default function SearchResultTabView({
     />
   );
 }
+
+export default memo(SearchResultTabView);

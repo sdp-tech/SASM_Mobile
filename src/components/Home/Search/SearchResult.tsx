@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { View, SafeAreaView } from "react-native";
 import { TextPretendard as Text } from "../../../common/CustomText";
 import SearchList from "./SearchList";
@@ -14,7 +14,7 @@ interface SearchResultProps {
   refreshing: boolean;
 }
 
-export default function SearchResult({
+function SearchResult({
   type,
   search,
   count,
@@ -26,7 +26,7 @@ export default function SearchResult({
     { label: "최신 순", value: 0, order: "latest" },
     { label: "오래된 순", value: 1, order: "oldest" },
   ];
-  const [item, setItem] = useState(data);
+  // const [item, setItem] = useState(data);
   const [orderList, setOrderList] = useState(0);
   const isMounted = useRef(false);
 
@@ -50,7 +50,7 @@ export default function SearchResult({
               flex: 1,
             }}
           >
-            전체 검색결과 {item.length}개
+            전체 검색결과 {data.length}개
           </Text>
           <View style={{ width: 100, zIndex: 2000 }}>
             <DropDown
@@ -62,7 +62,7 @@ export default function SearchResult({
           </View>
         </View>
         <View style={{ paddingTop: 10, alignItems: "center", flex: 1 }}>
-          {item.length === 0 ? (
+          {data.length === 0 ? (
             <View style={{ alignItems: "center", marginVertical: 20 }}>
               <NothingIcon />
               <Text style={{ marginTop: 20 }}>
@@ -71,7 +71,7 @@ export default function SearchResult({
             </View>
           ) : (
             <SearchList
-              info={orderList === 0 ? item : item.slice().reverse()}
+              info={orderList === 0 ? data : data.slice().reverse()}
               onRefresh={onRefresh}
               refreshing={refreshing}
               type={type}
@@ -82,3 +82,4 @@ export default function SearchResult({
     </SafeAreaView>
   );
 }
+export default React.memo(SearchResult);

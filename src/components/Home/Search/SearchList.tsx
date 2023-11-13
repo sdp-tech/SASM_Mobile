@@ -28,7 +28,6 @@ export default function SearchList({
   const scrollToTop = () => {
     if (scrollRef.current) {
       scrollRef.current.scrollToOffset({ offset: 0, animated: true });
-      console.log("작동함");
     }
   };
 
