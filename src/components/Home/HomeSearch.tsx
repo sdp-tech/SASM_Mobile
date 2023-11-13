@@ -1,4 +1,4 @@
-import { useEffect, useCallback, useState } from "react";
+import { useEffect, useCallback, useState, useRef } from "react";
 import {
   View,
   TouchableOpacity,
@@ -37,6 +37,7 @@ export default function HomeSearch({
   const [nextPage, setNextPage] = useState<any>(null);
   const [search, setSearch] = useState<string>("");
   const [refreshing, setRefreshing] = useState<boolean>(false);
+  const [count, setCount] = useState<any>({ curation: 0, story: 0, forest: 0 });
   const [checkedList, setCheckedList] = useState<string[]>([]);
   const [count, setCount] = useState<number>(0);
   const [cardView, setCardView] = useState<boolean>(true);
@@ -44,54 +45,27 @@ export default function HomeSearch({
   const request = new Request();
 
   useEffect(() => {
-    onChangeOrder();
-  }, [orderList]);
+    getResult();
+  }, [search]);
 
-  useFocusEffect(
-    useCallback(() => {
-      handleSearchToggle();
-      getStories();
-    }, [page, checkedList, search, order])
-  );
+  const getResult = async () => {
+    const response = await request.get(`/curations/total_search/`, {
+      search: search,
+      order: "latest",
+    });
 
-  useEffect(() => {
-    setPage(1);
-  }, [checkedList]);
-
-  const handleSearchToggle = async () => {
-    if (search.length === 0) {
-      setPage(1);
-      setItem([]);
-    }
-  };
-
-  const getStories = async () => {
-    let params = new URLSearchParams();
-    for (const category of checkedList) {
-      params.append("filter", category);
-    }
-    const response = await request.get(
-      `/stories/story_search/?${params.toString()}`,
-      {
-        search: search,
-        page: page,
-        order: order,
-      },
-      null
-    );
-    if (page === 1) {
-      setItem(response.data.data.results);
-    } else {
-      setItem([...item, ...response.data.data.results]);
-    }
-    setCount(response.data.data.count);
-    setNextPage(response.data.data.next);
+    setItem(response.data.data);
+    setCount({
+      curation: response.data.curation_count,
+      story: response.data.story_count,
+      forest: response.data.forest_count,
+    });
   };
 
   const onRefresh = async () => {
-    if (!refreshing || page !== 1) {
+    if (!refreshing) {
       setRefreshing(true);
-      setPage(1);
+      getResult();
       setRefreshing(false);
     }
   };
@@ -103,7 +77,7 @@ export default function HomeSearch({
       return;
     }
   };
-
+  
   const onChangeOrder = async () => {
     setOrder(toggleItems[orderList].order);
     setPage(1);
@@ -113,7 +87,6 @@ export default function HomeSearch({
   const toggleView = () => {
     setCardView(!cardView);
   };
-
   const recommendData = [
     "비건",
     "제로웨이스트",
@@ -204,10 +177,17 @@ export default function HomeSearch({
           placeholderTextColor={"#848484"}
           onSubmitEditing={handleSearchSubmit}
           returnKeyType="search"
+          autoFocus
         />
       </View>
       {search.length > 0 ? (
-        <SearchResultTabView />
+        <SearchResultTabView
+          data={item}
+          search={search}
+          count={count}
+          refreshing={refreshing}
+          onRefresh={onRefresh}
+        />
       ) : (
         <>
           <View

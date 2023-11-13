@@ -9,24 +9,24 @@ export default function SearchForestCard({ data }: any) {
   const { width } = Dimensions.get("screen");
   const navigation = useNavigation<StackNavigationProp<TabProps>>();
 
-  const onPress = (id: number) => {
-    navigation.navigate("포레스트", { id: id });
-  };
-
   return (
-    <View
-      style={{
-        width: width - 30,
-        height: 90,
-        justifyContent: "center",
-        alignContent: "flex-start",
-        borderBottomColor: "#00000066",
-        borderBottomWidth: 0.5,
-      }}
+    <TouchableWithoutFeedback
+      onPress={() => navigation.navigate("포레스트", { id: data.id })}
     >
-      <Text style={textStyles.title}>포레스트 제목</Text>
-      <Text style={textStyles.writer}>포레스트 작성자</Text>
-    </View>
+      <View
+        style={{
+          width: width - 30,
+          height: 90,
+          justifyContent: "center",
+          alignContent: "flex-start",
+          borderBottomColor: "#00000066",
+          borderBottomWidth: 0.5,
+        }}
+      >
+        <Text style={textStyles.title}>{data.title}</Text>
+        <Text style={textStyles.writer}>{data.nickname}</Text>
+      </View>
+    </TouchableWithoutFeedback>
   );
 }
 

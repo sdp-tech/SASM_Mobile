@@ -1,19 +1,25 @@
 import { useState, useEffect, useCallback, useContext } from "react";
-import {
-  View,
-  SafeAreaView,
-  useWindowDimensions,
-  Image,
-  Alert,
-  Platform,
-} from "react-native";
+import { View, useWindowDimensions } from "react-native";
 import { TextPretendard as Text } from "../../../common/CustomText";
 import { TouchableOpacity } from "react-native-gesture-handler";
 import SearchResult from "./SearchResult";
 import { TabView, TabBar, SceneMap } from "react-native-tab-view";
-import { Request } from "../../../common/requests";
 
-export default function SearchResultTabView() {
+interface SearchResultTabViewProps {
+  search: string;
+  data: any[];
+  count: any;
+  onRefresh: any;
+  refreshing: boolean;
+}
+
+export default function SearchResultTabView({
+  data,
+  search,
+  count,
+  onRefresh,
+  refreshing,
+}: SearchResultTabViewProps) {
   const layout = useWindowDimensions();
   const [index, setIndex] = useState<number>(0);
   const [routes] = useState([
@@ -25,11 +31,35 @@ export default function SearchResultTabView() {
   const renderScene = ({ route }: any) => {
     switch (route.key) {
       case "curation":
-        return <SearchResult type={route.key} data={undefined} />;
+        return (
+          <SearchResult
+            type={route.key}
+            count={count.curation}
+            data={data.filter((item) => item.model === "Curation")}
+            onRefresh={onRefresh}
+            refreshing={refreshing}
+          />
+        );
       case "story":
-        return <SearchResult type={route.key} data={undefined} />;
+        return (
+          <SearchResult
+            type={route.key}
+            count={count.story}
+            data={data.filter((item) => item.model === "Story")}
+            onRefresh={onRefresh}
+            refreshing={refreshing}
+          />
+        );
       case "forest":
-        return <SearchResult type={route.key} data={undefined} />;
+        return (
+          <SearchResult
+            type={route.key}
+            count={count.forest}
+            data={data.filter((item) => item.model === "Forest")}
+            onRefresh={onRefresh}
+            refreshing={refreshing}
+          />
+        );
     }
   };
 
