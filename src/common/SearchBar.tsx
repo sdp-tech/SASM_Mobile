@@ -55,7 +55,7 @@ export default function SearchBar({
         }}
         {...rest}
       />
-      <ResetButton onPress={() => setSearch("")}>
+      <ResetButton onPress={() => setSearch(search)}>
         <Search />
       </ResetButton>
     </SearchWrapper>
