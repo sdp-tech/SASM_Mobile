@@ -40,11 +40,11 @@ export default function SearchList({
       renderItem={({ item }) => {
         switch (type) {
           case "curation":
-            return <CurationCard />;
+            return <CurationCard data={item} />;
           case "story":
-            return <StoryCard />;
+            return <StoryCard data={item} />;
           case "forest":
-            return <ForestCard />;
+            return <ForestCard data={item} />;
           default:
             return <></>;
         }

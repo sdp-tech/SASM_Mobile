@@ -6,6 +6,7 @@ import SearchResult from "./SearchResult";
 import { TabView, TabBar, SceneMap } from "react-native-tab-view";
 
 interface SearchResultTabViewProps {
+  search: string;
   data: any[];
   count: any;
   onRefresh: any;
@@ -14,6 +15,7 @@ interface SearchResultTabViewProps {
 
 export default function SearchResultTabView({
   data,
+  search,
   count,
   onRefresh,
   refreshing,
@@ -33,9 +35,7 @@ export default function SearchResultTabView({
           <SearchResult
             type={route.key}
             count={count.curation}
-            data={data.filter((item) => {
-              item.model === "Curation";
-            })}
+            data={data.filter((item) => item.model === "Curation")}
             onRefresh={onRefresh}
             refreshing={refreshing}
           />
@@ -45,9 +45,7 @@ export default function SearchResultTabView({
           <SearchResult
             type={route.key}
             count={count.story}
-            data={data.filter((item) => {
-              item.model === "Story";
-            })}
+            data={data.filter((item) => item.model === "Story")}
             onRefresh={onRefresh}
             refreshing={refreshing}
           />
@@ -57,9 +55,7 @@ export default function SearchResultTabView({
           <SearchResult
             type={route.key}
             count={count.forest}
-            data={data.filter((item) => {
-              item.model === "Forest";
-            })}
+            data={data.filter((item) => item.model === "Forest")}
             onRefresh={onRefresh}
             refreshing={refreshing}
           />

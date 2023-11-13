@@ -10,55 +10,57 @@ export default function SearchStoryCard({ data }: any) {
   const { width } = Dimensions.get("screen");
   const navigation = useNavigation<StackNavigationProp<TabProps>>();
 
-  const onPress = (id: number) => {
-    navigation.navigate("스토리", { id: id });
-  };
-
   return (
-    <View
-      style={{
-        flexDirection: "row",
-        width: width - 30,
-        height: 130,
-        justifyContent: "space-between",
-        borderBottomColor: "rgba(203, 203, 203, 1)",
-        borderBottomWidth: 1,
-      }}
+    <TouchableWithoutFeedback
+      onPress={() => navigation.navigate("스토리", { id: data.id })}
     >
       <View
         style={{
-          flexDirection: "column",
+          flexDirection: "row",
+          width: width - 30,
           height: 130,
-          width: width - 150,
-          justifyContent: "center",
+          justifyContent: "space-between",
+          borderBottomColor: "rgba(203, 203, 203, 1)",
+          borderBottomWidth: 1,
         }}
       >
-        <Text style={[textStyles.writer, { color: "#67D393" }]}>
-          스토리 작성자
-        </Text>
-        <Text numberOfLines={2} style={textStyles.title}>
-          스토리 부제목
-        </Text>
-        <Text style={textStyles.placename} numberOfLines={1}>
-          스토리 제목
-        </Text>
-      </View>
-      <View>
-        <Text style={textStyles.date}>스토리 작성일</Text>
-        <FastImage
-          source={{ uri: "data.rep_pic", priority: FastImage.priority.normal }}
+        <View
           style={{
-            width: 60,
-            height: 60,
-            borderRadius: 4,
-            marginRight: 8,
-            marginLeft: 20,
-            marginTop: 5,
-            backgroundColor: "grey",
+            flexDirection: "column",
+            height: 130,
+            width: width - 150,
+            justifyContent: "center",
           }}
-        />
+        >
+          <Text style={[textStyles.writer, { color: "#67D393" }]}>
+            {data.nickname}
+          </Text>
+          <Text numberOfLines={2} style={textStyles.title}>
+            {data.content}
+          </Text>
+          <Text style={textStyles.placename} numberOfLines={1}>
+            {data.title}
+          </Text>
+        </View>
+        <View style={{ alignItems: "flex-end" }}>
+          <Text style={textStyles.date}>
+            {data.created.slice(0, 10).replace(/-/gi, ".")} 작성
+          </Text>
+          <FastImage
+            source={{ uri: data.rep_pic, priority: FastImage.priority.normal }}
+            style={{
+              width: 60,
+              height: 60,
+              borderRadius: 4,
+              marginRight: 8,
+              marginLeft: 20,
+              marginTop: 5,
+              backgroundColor: "grey",
+            }}
+          />
+        </View>
       </View>
-    </View>
+    </TouchableWithoutFeedback>
   );
 }
 

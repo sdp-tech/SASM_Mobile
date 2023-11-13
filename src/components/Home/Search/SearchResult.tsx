@@ -1,22 +1,13 @@
-import { useEffect, useCallback, useState } from "react";
-import {
-  View,
-  TouchableOpacity,
-  Dimensions,
-  Platform,
-  SafeAreaView,
-  FlatList,
-} from "react-native";
+import { useEffect, useRef, useState } from "react";
+import { View, SafeAreaView } from "react-native";
 import { TextPretendard as Text } from "../../../common/CustomText";
-import { Request } from "../../../common/requests";
-import { useFocusEffect } from "@react-navigation/native";
 import SearchList from "./SearchList";
 import DropDown from "../../../common/DropDown";
 import NothingIcon from "../../../assets/img/nothing.svg";
-import AsyncStorage from "@react-native-async-storage/async-storage";
 
 interface SearchResultProps {
   type: "curation" | "story" | "forest";
+  search?: string;
   count: number;
   data: any[];
   onRefresh: any;
@@ -25,6 +16,7 @@ interface SearchResultProps {
 
 export default function SearchResult({
   type,
+  search,
   count,
   data,
   onRefresh,
@@ -36,10 +28,7 @@ export default function SearchResult({
   ];
   const [item, setItem] = useState(data);
   const [orderList, setOrderList] = useState(0);
-
-  useEffect(() => {
-    item.reverse();
-  }, [orderList]);
+  const isMounted = useRef(false);
 
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: "white", paddingTop: 10 }}>
@@ -61,7 +50,7 @@ export default function SearchResult({
               flex: 1,
             }}
           >
-            전체 검색결과 {count}개
+            전체 검색결과 {item.length}개
           </Text>
           <View style={{ width: 100, zIndex: 2000 }}>
             <DropDown
@@ -82,7 +71,7 @@ export default function SearchResult({
             </View>
           ) : (
             <SearchList
-              info={item}
+              info={orderList === 0 ? item : item.slice().reverse()}
               onRefresh={onRefresh}
               refreshing={refreshing}
               type={type}

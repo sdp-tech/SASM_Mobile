@@ -42,17 +42,13 @@ export default function HomeSearch({
   const request = new Request();
 
   useEffect(() => {
-    onChangeOrder();
-  }, [orderList]);
-
-  useEffect(() => {
     getResult();
   }, [search]);
 
   const getResult = async () => {
     const response = await request.get(`/curations/total_search/`, {
       search: search,
-      order: order,
+      order: "latest",
     });
 
     setItem(response.data.data);
@@ -77,12 +73,6 @@ export default function HomeSearch({
     } else {
       return;
     }
-  };
-
-  const onChangeOrder = async () => {
-    setOrder(toggleItems[orderList].order);
-    setPage(1);
-    setItem([]);
   };
 
   const recommendData = [
@@ -181,6 +171,7 @@ export default function HomeSearch({
       {search.length > 0 ? (
         <SearchResultTabView
           data={item}
+          search={search}
           count={count}
           refreshing={refreshing}
           onRefresh={onRefresh}
