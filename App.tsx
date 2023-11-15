@@ -270,12 +270,12 @@ const HomeScreens = (): JSX.Element => {
 const codePushOptions = {
   checkFrequency: CodePush.CheckFrequency.ON_APP_START,
   updateDialog: { 
-    title: '...', 
-    optionalUpdateMessage: '...', 
+    title: '업데이트하시겠습니까?', 
+    optionalUpdateMessage: '소소한 버그를 수정했어요🐛', 
     optionalInstallButtonLabel: '업데이트', 
     optionalIgnoreButtonLabel: '아니요.' 
   },
-  installMode: CodePush.InstallMode.IMMEDIATE 
+  installMode: CodePush.InstallMode.ON_NEXT_RESTART
 }
 
 export default CodePush(codePushOptions)(App);
