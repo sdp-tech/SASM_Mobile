@@ -316,7 +316,7 @@ export default function MapContainer({
         mapView?.current.animateToCoordinate(route.params.coor);
       } else {
         //현재 위치로 이동
-        mapView?.current.animateToCoordinate(nowCoor);
+        mapView?.current.animateToCoordinate(tempCoor);
         //스토리에서 넘어왔을 경우 해당 장소로 이동
         if (route.params.place_name && search != route.params.place_name) {
           setSearch(route.params.place_name);
