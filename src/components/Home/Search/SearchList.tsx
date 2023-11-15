@@ -1,11 +1,10 @@
-import { View, FlatList, TouchableOpacity } from "react-native";
-import { useRef, useContext } from "react";
+import { View, FlatList, TouchableOpacity, Dimensions } from "react-native";
+import { useRef } from "react";
 import { TextPretendard as Text } from "../../../common/CustomText";
 import Arrow from "../../../assets/img/common/Arrow.svg";
 import CurationCard from "./SearchCurationCard";
 import StoryCard from "./SearchStoryCard";
 import ForestCard from "./SearchForestCard";
-import { LoginContext } from "../../../common/Context";
 
 interface SearchListProps {
   info: any;
@@ -22,7 +21,7 @@ export default function SearchList({
   refreshing,
   type,
 }: SearchListProps) {
-  const { isLogin, setLogin } = useContext(LoginContext);
+  const { width } = Dimensions.get("screen");
   const scrollRef = useRef<FlatList>(null);
 
   const scrollToTop = () => {
@@ -53,10 +52,16 @@ export default function SearchList({
       refreshing={refreshing}
       onEndReached={onEndReached}
       showsVerticalScrollIndicator={false}
-      contentContainerStyle={{ flexGrow: 1 }}
+      contentContainerStyle={{
+        width: width,
+        flexGrow: 1,
+        alignItems: "flex-start",
+        paddingHorizontal: 5,
+      }}
       ListFooterComponent={
         <View
           style={{
+            width: width,
             justifyContent: "center",
             alignItems: "center",
             paddingVertical: 20,

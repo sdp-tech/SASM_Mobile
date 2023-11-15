@@ -44,12 +44,16 @@ export default function HomeSearch({
       getResult();
     }
   }, [search]);
-  
+
   const getResult = async () => {
-    const response = await request.get('/curations/total_search/', {
-      search: search,
-      order: "latest",
-    }, null);
+    const response = await request.get(
+      "/curations/total_search/",
+      {
+        search: search,
+        order: "latest",
+      },
+      null
+    );
     setItem(response.data.data);
     setCount({
       curation: response.data.curation_count,
@@ -167,7 +171,6 @@ export default function HomeSearch({
       {isSearch ? (
         <SearchResultTabView
           data={item}
-          // search={search}
           count={count}
           refreshing={refreshing}
           onRefresh={onRefresh}
