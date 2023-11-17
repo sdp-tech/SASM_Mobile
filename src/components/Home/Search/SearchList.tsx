@@ -11,7 +11,7 @@ interface SearchListProps {
   onEndReached?: any;
   onRefresh?: any;
   refreshing?: boolean;
-  type: "curation" | "story" | "forest";
+  type: string;
 }
 
 export default function SearchList({
@@ -34,14 +34,14 @@ export default function SearchList({
     <FlatList
       ref={scrollRef}
       data={info}
-      numColumns={type == "curation" ? 3 : 1}
+      numColumns={type === "Curation" ? 3 : 1}
       renderItem={({ item }) => {
         switch (type) {
-          case "curation":
+          case "Curation":
             return <CurationCard data={item} />;
-          case "story":
+          case "Story":
             return <StoryCard data={item} />;
-          case "forest":
+          case "Forest":
             return <ForestCard data={item} />;
           default:
             return <></>;
