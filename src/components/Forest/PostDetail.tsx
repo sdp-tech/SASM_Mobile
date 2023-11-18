@@ -153,9 +153,11 @@ const PostDetailSection = ({
            >
              {post.category.name}
           </Text>
-          <TouchableOpacity style={{marginTop: 10, marginRight: 10, width: 30, height: 30, alignItems: 'flex-end'}} onPress={() => setDot(!dot)}>
-            <Settings transform={[{ rotate: dot ? '90deg' : '0deg'}]} color={'white'}/>
-          </TouchableOpacity>
+          { email && 
+            <TouchableOpacity style={{marginTop: 10, marginRight: 10, width: 30, height: 30, alignItems: 'flex-end'}} onPress={() => setDot(!dot)}>
+              <Settings transform={[{ rotate: dot ? '90deg' : '0deg'}]} color={'white'}/>
+            </TouchableOpacity>
+          }
           { dot &&
           <View style={{position: 'absolute', backgroundColor: 'white', top: 40, left: width-140, borderRadius: 4}}>
             <TouchableOpacity style={{borderColor: 'rgba(168, 168, 168, 0.20)', borderBottomWidth: 1, paddingHorizontal: 40, paddingVertical: 10}} onPress={onUpdate} disabled={!user}>

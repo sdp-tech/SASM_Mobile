@@ -7,7 +7,9 @@
     "ios": "react-native run-ios",
     "lint": "eslint .",
     "start": "react-native start",
-    "test": "jest"
+    "test": "jest",
+    "codepush:android": "appcenter codepush release-react -a sdpygl.tech-gmail.com/SASM-1 -d Staging",
+    "codepush:ios": "appcenter codepush release-react -a sdpygl.tech-gmail.com/SASM -d Staging"
   },
   "dependencies": {
     "@actbase/react-daum-postcode": "^1.0.4",

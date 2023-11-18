@@ -16,6 +16,9 @@ import CommentIcon from '../../assets/img/Story/Comment.svg';
 import { LoginContext } from '../../common/Context';
 import { getStatusBarHeight } from 'react-native-safearea-height';
 import FastImage from 'react-native-fast-image';
+import Report from '../../common/Report';
+import Settings from '../../assets/img/MyPage/Settings.svg';
+import { BottomSheetModalProvider } from '@gorhom/bottom-sheet';
 
 const { width, height } = Dimensions.get('window');
 
@@ -169,6 +172,7 @@ export default function CurationDetail({ navigation, route }: StackScreenProps<H
   const [like, setLike] = useState<boolean>(false);
   const [following, setFollowing] = useState<boolean>(false);
   const [refreshing, setRefreshing] = useState<boolean>(false);
+  const [dot, setDot] = useState<boolean>(false);
   const [curatedStory, setCuratedStory] = useState<CuratedStoryProps[]>([]);
   const [curationDetail, setCurationDetail] = useState<CurationDetailProps>({
     contents: '',
@@ -185,6 +189,10 @@ export default function CurationDetail({ navigation, route }: StackScreenProps<H
     writer_is_verified: false,
     writer_is_followed: false,
   });
+  const [reported, setReported] = useState<string>('');
+  const [modalVisible, setModalVisible] = useState<boolean>(false);
+  const [email, setEmail] = useState<string>('');
+  const user = Boolean(curationDetail.writer_email === email);
   const [reppicSize, setReppicSize] = useState<{ width: number; height: number; }>({
     width: 1, height: 1
   })
@@ -205,18 +213,60 @@ export default function CurationDetail({ navigation, route }: StackScreenProps<H
     setCuratedStory(response_story_detail.data.data);
   }
 
+  const checkUser = async () => {
+    const response = await request.get(`/mypage/me/`, {}, {});
+    setEmail(response.data.data.email);
+  }
+
   const onRefresh = () => {
     setRefreshing(true);
     setRefreshing(false);
   }
+
+  useEffect(() => {
+    if (isLogin) checkUser();
+  }, [isLogin]);
 
   useFocusEffect(useCallback(() => {
     getCurationDetail();
     getCurationStoryDetail();
   }, [refreshing]))
 
+  const handleCurationDelete = async() => {
+    try {
+      Alert.alert('큐레이션 삭제 확인', '정말로 삭제하시겠습니까?',[
+        {
+          text: "취소",
+          style: "cancel"
+        },
+        {
+          text:"삭제",
+          onPress:async()=>{
+            const response = await request.delete(`/curations/curation_delete/${route.params.id}/`);
+            navigation.goBack();
+          },
+          style:"destructive"
+        },
+      ],
+      {
+        cancelable: false
+      })
+    } catch(error){
+      console.error('!!에러 발생!!',error);
+    }
+  }
+  
+  const onReport = async (item: any) => {
+    const response = await request.post('/report/create/', {
+      target: `curation:post:${route.params.id}`,
+      reason: item
+    }, {});
+    setReported(item);
+  }
+
   return (
     <>
+    <BottomSheetModalProvider>
       <ScrollView style={{ backgroundColor: '#FFFFFF' }}>
         <TouchableOpacity style={{ position: 'absolute', top: statusBarHeight, left: 10, zIndex: 2 }} onPress={navigation.goBack}>
           <Arrow width={18} height={18} transform={[{ rotate: '180deg' }]} color={'white'} />
@@ -229,6 +279,24 @@ export default function CurationDetail({ navigation, route }: StackScreenProps<H
               </Text>
             </View>
           </FastImage>
+          { isLogin && 
+            <TouchableOpacity style={{position: 'absolute', zIndex: 1, top: statusBarHeight+5, right: 20, width: 40, height: 40, alignItems: 'flex-end'}} onPress={() => setDot(!dot)}>
+              <Settings transform={[{ rotate: dot ? '90deg' : '0deg'}]} color={'white'} />
+            </TouchableOpacity>
+          }
+          { dot &&
+            <View style={{position: 'absolute', backgroundColor: 'white', top: Platform.OS === 'ios' ? 75: 50, left: width-140, borderRadius: 4}}>
+              {/* <TouchableOpacity style={{borderColor: 'rgba(168, 168, 168, 0.20)', borderBottomWidth: 1, paddingHorizontal: 40, paddingVertical: 10}} onPress={() => {}} disabled={!user}>
+                <Text style={{fontSize: 14, lineHeight: 20, letterSpacing: -0.6, opacity: user ? 1 : 0.4}}>수정하기</Text>
+              </TouchableOpacity> */}
+              <TouchableOpacity style={{borderColor: 'rgba(168, 168, 168, 0.20)', borderBottomWidth: 1, paddingHorizontal: 40, paddingVertical: 10}} onPress={handleCurationDelete} disabled={!user}>
+                <Text style={{fontSize: 14, lineHeight: 20, letterSpacing: -0.6, opacity: user ? 1 : 0.4}}>삭제하기</Text>
+              </TouchableOpacity>
+              <TouchableOpacity style={{paddingHorizontal: 40, paddingVertical: 10}} onPress={() => setModalVisible(true)} disabled={user}>
+                <Text style={{fontSize: 14, lineHeight: 20, letterSpacing: -0.6, opacity: !user ? 1 : 0.4}}>신고하기</Text>
+              </TouchableOpacity>
+            </View>
+          }
         <InfoBox>
           <TouchableOpacity onPress={() => { navigationTab.navigate('마이페이지', { email: curationDetail.writer_email }) }}>
             <Image source={{ uri: curationDetail!.profile_image }} style={{ width: 50, height: 50, borderRadius: 25, marginRight: 10 }} />
@@ -260,6 +328,8 @@ export default function CurationDetail({ navigation, route }: StackScreenProps<H
         }
       </ScrollView>
       <BottomBarSection id={route.params.id} post={curationDetail} isLogin={isLogin} onRefresh={onRefresh} navigation={navigation} />
+      <Report reported={reported} modalVisible={modalVisible} setModalVisible={setModalVisible} onReport={onReport} />
+      </BottomSheetModalProvider>
     </>
   )
 }
