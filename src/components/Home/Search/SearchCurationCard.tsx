@@ -16,22 +16,30 @@ export default function SearchCurationCard({ data }: any) {
   };
 
   return (
-    <FastImage
-      source={{ uri: "data_uri", priority: FastImage.priority.normal }}
-      style={{
-        margin: 5,
-        width: (width - 45) / 3,
-        height: 150,
-        backgroundColor: "grey",
+    <TouchableWithoutFeedback
+      onPress={() => {
+        navigation.navigate("홈", { id: data.id });
       }}
     >
-      <View style={{ height: "100%", justifyContent: "flex-end", padding: 8 }}>
-        <Text style={textStyles.writer}>작성자</Text>
-        <Text style={textStyles.title} numberOfLines={2}>
-          큐레이션 제목
-        </Text>
-      </View>
-    </FastImage>
+      <FastImage
+        source={{ uri: data.rep_pic, priority: FastImage.priority.normal }}
+        style={{
+          margin: 5,
+          width: (width - 40) / 3,
+          height: 150,
+          backgroundColor: "grey",
+        }}
+      >
+        <View
+          style={{ height: "100%", justifyContent: "flex-end", padding: 8 }}
+        >
+          <Text style={textStyles.writer}>{data.nickname}</Text>
+          <Text style={textStyles.title} numberOfLines={2}>
+            {data.title}
+          </Text>
+        </View>
+      </FastImage>
+    </TouchableWithoutFeedback>
   );
 }
 

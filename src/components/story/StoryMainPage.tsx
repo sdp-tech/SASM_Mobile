@@ -1,13 +1,11 @@
 import { useState, useEffect, useCallback, useContext } from "react";
 import { SafeAreaView, View, StyleSheet, TouchableOpacity, Dimensions, Alert, ActivityIndicator } from "react-native";
 import { TextPretendard as Text } from '../../common/CustomText';
-import SearchBar from "../../common/SearchBar";
 import { Request } from "../../common/requests";
 import { useFocusEffect, useNavigation, useIsFocused } from "@react-navigation/native";
 import { StoryProps } from "../../pages/Story";
 import CardView from "../../common/CardView";
 import CustomHeader from "../../common/CustomHeader";
-import StorySearch from "./components/StorySearch";
 import Category from "../../common/Category";
 import MainCard from "./components/MainCard";
 import Reload from "../../assets/img/Story/Reload.svg";
@@ -19,7 +17,6 @@ import { FlatList, ScrollView } from "react-native-gesture-handler";
 import { getStatusBarHeight } from "react-native-safearea-height";
 import ToListView from '../../assets/img/Story/ToListView.svg';
 import ToCardView from '../../assets/img/Story/ToCardView.svg';
-import SearchList from "./components/SearchList";
 import ListCard from "./components/ListCard";
 
 export interface StoryListProps {
@@ -70,7 +67,8 @@ const StoryMainPage = ({ navigation, route }: StoryProps) => {
 
   useEffect(() => {
     setPage(1);
-  }, [checkedList, order, cardView])
+    setItem([]);
+  }, [checkedList])
 
   const getStories = async () => {
     setLoading(true)
@@ -82,7 +80,7 @@ const StoryMainPage = ({ navigation, route }: StoryProps) => {
       page: page,
       order: order
     }, null)
-    if(!cardView){
+    if(!cardView && page !== 1){
       setItem([...item, ...response.data.data.results]);
     } else {
       setItem(response.data.data.results)
@@ -95,7 +93,7 @@ const StoryMainPage = ({ navigation, route }: StoryProps) => {
 
   const onChangeOrder = async () => {
     setOrder(toggleItems[orderList].order);
-    // setPage(1);
+    setPage(1);
     setItem([]);
   }
 
@@ -103,12 +101,11 @@ const StoryMainPage = ({ navigation, route }: StoryProps) => {
     if (nextPage && !cardView) {
       setPage(page + 1)
     }
-    console.error(cardView)
   }
 
   const toggleView = () => {
     setCardView(!cardView);
-    // setPage(1);
+    setPage(1);
     setItem([]);
   }
 
@@ -124,14 +121,16 @@ const StoryMainPage = ({ navigation, route }: StoryProps) => {
               <Text style={textStyles.title}>{toggleItems[orderList].title}</Text>
               <Text style={textStyles.subtitle}>{toggleItems[orderList].subtitle}</Text>
             </View>
-            <TouchableOpacity style={{ justifyContent: 'center', marginRight: 15, marginBottom: 5}} onPress={toggleView}>
-              {
-                !cardView ? <ToListView width={18} height={18}/> : <ToCardView width={18} height={18}/>
-              }
-            </TouchableOpacity>
-            <TouchableOpacity onPress={() => setOrderList((orderList + 1) % 3)} style={{ marginTop: 10 }}>
-              <Reload />
-            </TouchableOpacity>
+            <View style={{flexDirection: 'row', alignItems: 'center'}}>
+              <TouchableOpacity style={{ justifyContent: 'center', marginRight: 15}} onPress={toggleView}>
+                {
+                  !cardView ? <ToListView width={18} height={18}/> : <ToCardView width={18} height={18}/>
+                }
+              </TouchableOpacity>
+              <TouchableOpacity onPress={() => setOrderList((orderList + 1) % 3)}>
+                <Reload />
+              </TouchableOpacity>
+            </View>
           </View>
           <View style={{ borderTopColor: 'rgba(203, 203, 203, 1)', borderTopWidth: 1, paddingTop: 10, paddingLeft: 15}}>
             <Category
@@ -174,7 +173,7 @@ const StoryMainPage = ({ navigation, route }: StoryProps) => {
               <FlatList
                 data={item}
                 onEndReached={onEndReached}
-                onEndReachedThreshold={1}
+                onEndReachedThreshold={0.1}
                 keyExtractor={(item) => item.id}
                 renderItem={({ item }: any) => {
                   const { id, rep_pic, extra_pics, place_name, title, story_like, created, preview, summary, writer, nickname, profile, writer_is_verified } = item;

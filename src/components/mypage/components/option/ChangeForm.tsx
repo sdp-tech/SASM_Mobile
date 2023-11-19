@@ -122,7 +122,7 @@ export default function ChangeForm({ navigation, route }: StackScreenProps<MyPag
           formData.append(key,  {
             uri: form.profile_image.uri,
             name: form.profile_image.fileName,
-            type: 'image/jpeg/png',
+            type: form.profile_image.uri!.endsWith('.jpg') ? 'image/jpeg' : 'image/png'
           })
         }
         else if(key == 'nickname') {
@@ -172,7 +172,7 @@ export default function ChangeForm({ navigation, route }: StackScreenProps<MyPag
             <InputWithLabel
               value={form.nickname}
               label='닉네임'
-              alertLabel='이미 사용중인 이메일입니다'
+              alertLabel='이미 사용중인 닉네임입니다'
               isAlert={alert}
               placeholder='닉네임을 입력해주세요'
               onChangeText={(e) => { setCheck(false); setForm({ ...form, nickname: e }) }}

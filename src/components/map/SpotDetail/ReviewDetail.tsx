@@ -9,6 +9,9 @@ import { getNickname } from "../../../common/storage";
 import { Request } from '../../../common/requests';
 import WriteReview from './WriteReview';
 import FastImage from 'react-native-fast-image';
+import { StackNavigationProp, StackScreenProps } from "@react-navigation/stack";
+import { useNavigation } from "@react-navigation/native";
+import { TabProps } from "../../../../App";
 
 const Section = styled.SafeAreaView`
   height: 100%;
@@ -44,9 +47,10 @@ interface ReviewDetailProps {
   rerender: () => void;
   category: string;
   place_name: string;
+  place_rep_pic: string;
 }
 
-export default function ReviewDetail({ reviewData, setDetailModal, rerender, category, place_name }: ReviewDetailProps): JSX.Element {
+export default function ReviewDetail({ reviewData, setDetailModal, rerender, category, place_name, place_rep_pic }: ReviewDetailProps): JSX.Element {
   const request = new Request();
   const { width, height } = Dimensions.get('window');
   const flatlistRef = useRef<FlatList>(null);
@@ -67,6 +71,8 @@ export default function ReviewDetail({ reviewData, setDetailModal, rerender, cat
     setDetailModal(false);
     rerender();
   }
+
+  const navigationToTab = useNavigation<StackNavigationProp<TabProps>>();
 
   return (
     <Section>
@@ -97,17 +103,25 @@ export default function ReviewDetail({ reviewData, setDetailModal, rerender, cat
             }
           </>
         }
-        <FlatList
-          ref={flatlistRef}
-          onScroll={(e) => { setCurrentIdx(Math.floor(e.nativeEvent.contentOffset.x / width)) }}
-          data={reviewData.photos}
-          pagingEnabled
-          renderItem={({ item }: any) => <FastImage source={{ uri: item.imgfile, priority: FastImage.priority.normal }} style={{ width: width, height: height * 0.3 }} />}
-          horizontal
-        />
+        {
+          reviewData.photos.length > 0 ?
+            <FlatList
+              ref={flatlistRef}
+              onScroll={(e) => { setCurrentIdx(Math.floor(e.nativeEvent.contentOffset.x / width)) }}
+              data={reviewData.photos}
+              pagingEnabled
+              renderItem={({ item }: any) => <FastImage source={{ uri: item.imgfile, priority: FastImage.priority.normal }} style={{ width: width, height: height * 0.3 }} />}
+              horizontal
+            />
+          :
+          <FastImage source={{ uri: place_rep_pic, priority: FastImage.priority.normal }} style={{ width: width, height: height * 0.3 }} />
+        }
       </View>
       <TextBox>
-        <Text style={TextStyles.nickname}>{reviewData.nickname}</Text>
+        <TouchableOpacity onPress={() => { navigationToTab.navigate('마이페이지', { email: reviewData.writer }) }}>
+          <Text style={TextStyles.nickname}>{reviewData.nickname}</Text>
+        </TouchableOpacity>
+        
         <Text style={TextStyles.date}>{reviewData.created.slice(0, 10).replace(/-/gi, '.')}</Text>
         <Text style={TextStyles.content}>{reviewData.contents}</Text>
         {
