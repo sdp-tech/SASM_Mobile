@@ -38,8 +38,6 @@ const BoardDetailScreen = ({
   const [refreshing, setRefreshing] = useState(false);
   const [nickname, setNickname] = useState('');
   const [semiCategories, setSemiCategories] = useState([] as any);
-  // const [checkedList, setCheckedList] = useState([] as any);
-  // const [selectedIds, setSelectedIds] = useState<number[]>([]);
   const [posts, setPosts] = useState([] as any);
   const [hotPosts, setHotPosts] = useState([] as any);
   const [newPosts, setNewPosts] = useState([] as any);
@@ -61,14 +59,15 @@ const BoardDetailScreen = ({
   const getSemiCategories = async () => {
     const response = await request.get(`/forest/semi_categories/`, {category: board_category.id}, {});
     setSemiCategories(response.data.data.results);
-    // setCheckedList(user_select);
-    // if (user_select_id){setSelectedIds(user_select_id);}
   }
 
   const getPosts = async () => {
     let params = new URLSearchParams();
     for (const category of selectedCategories){
-      params.append('semi_category_filters', String(category.id));
+      if (semiCategories.includes(category.id)){
+        params.append('semi_category_filters', String(category.id));
+      }
+
     }
     const response = await request.get(`/forest/?${params.toString()}`, {
       category_filter: board_category.id,
@@ -115,7 +114,6 @@ const BoardDetailScreen = ({
 
   useFocusEffect(useCallback(() => {
     getPosts();
-    console.error("selectedCategories",selectedCategories)
   }, [refreshing, selectedCategories]))
 
 
