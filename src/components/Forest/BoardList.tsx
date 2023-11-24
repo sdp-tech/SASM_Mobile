@@ -50,8 +50,6 @@ const BoardListScreen = ({
   const [modalVisible, setModalVisible] = useState<boolean>(false);
   const [userCategories, setUserCategories] = useState([] as any);
   const [topCategories, setTopCategories] = useState([] as any);
-  // const [checkedList, setCheckedList] = useState([] as any);
-  // const [selectedIds, setSelectedIds] = useState<number[]>([]);
   const {isLogin, setLogin} = useContext(LoginContext);
   const{selectedCategories, setSelectedCategories, selectedIds, setSelectedIds}=useContext(SelectedCategoryContext);
   const [showbarCategory, setshowbarCategory] = useState(false);
@@ -74,7 +72,6 @@ const BoardListScreen = ({
 
   const getUserCategories = async () => {
     const response = await request.get('/forest/user_categories/get/');
-    console.error(response)
     setUserCategories([...response.data.data.results, {id: 0, name: '+'}]);
     setTopCategories([...response.data.data.results]);
   }
@@ -147,7 +144,6 @@ const BoardListScreen = ({
 
   useFocusEffect(useCallback(() => {
     getPosts();
-    console.error("hhh",selectedCategories)
   }, [refreshing, selectedCategories]))
 
   return (
@@ -168,11 +164,9 @@ const BoardListScreen = ({
                       if (selectedIds.includes(item.id)) {
                         setSelectedIds(selectedIds.filter(id => id !== item.id));
                         setSelectedCategories(selectedCategories.filter((category: any) => category.id !== item.id));
-                        console.error("있는경우",selectedCategories)
                       } else {
                         setSelectedIds(selectedIds=>[...selectedIds, Number(item.id)]);
                         setSelectedCategories(selectedCategories=>[...selectedCategories, item]);
-                        console.error("변해야함(추가)",selectedIds)
                       }
                     }}
                   >
@@ -242,10 +236,8 @@ const BoardListScreen = ({
                                 } else {
                                   setSelectedIds(selectedIds => {
                                     const updatedIds = [... selectedIds, item.id];
-                                    console.error("변해야함(추가)", updatedIds);
                                     return updatedIds;
                                   });
-                                  // setSelectedIds([...selectedIds , item.id]);
                                   setSelectedCategories([...selectedCategories, item]);
                                 }
                               }}
