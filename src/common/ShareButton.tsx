@@ -38,12 +38,6 @@ export default function ShareButton({ message, color, image, description, id, fr
                     {
                         title: "SASM 앱에서 확인해보세요!",
                         link: {
-                            // androidExecutionParams: [
-                            //     { key: "id", value: id.toString() },
-                            // ],
-                            // iosExecutionParams: [
-                            //     { key: "id", value: id.toString() },
-                            // ],
                             androidExecutionParams: [
                                 { key: 'from', value: from },
                                 { key: 'id', value: id.toString() }
@@ -56,12 +50,11 @@ export default function ShareButton({ message, color, image, description, id, fr
                     },
                 ],
             });
-            console.log(response);
         } catch (e: any) {
             console.error(e);
             Alert.alert('공유하기가 실패하였습니다.')
         }
-    }, []);
+    }, [message, id, image, description, from]);
 
 
     return (
