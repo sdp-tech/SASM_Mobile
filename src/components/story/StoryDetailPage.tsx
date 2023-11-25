@@ -149,7 +149,7 @@ const BottomBarSection = ({ post, email, onRefresh, navigation }: BottomBarSecti
       </View>
       <PopComment
             data={post} post_id={post.id} email={email} isLogin={!!email} navigation={navigation} repo={false} modalVisible={commentPopupVisible}  setModalVisible={setCommentPopupVisible}/>
-      <ShareButton color={'black'} message={`[SASM Story] ${post.title}`} description={post.html_content} image={post.rep_pic} id={post.id} from='story' />
+      <ShareButton color={'black'} message={`[SASM Story] ${post.title}`} description={post.html_content} image={post.rep_pic} id={post.id} />
     </View>
   )
 }
