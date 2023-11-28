@@ -140,7 +140,7 @@ function RegisterEmail({ navigation, route }: StackScreenProps<RegisterParams>) 
           <Arrow width={20} height={20} transform={[{ rotateY: '180deg' }]} color={'black'} />
         </TouchableOpacity>
       </View>
-      <View style={{flex: 1}}>
+      <ScrollView style={{flex: 1}}>
       <View style={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
         <InputWithLabel
           containerStyle={{ width: '75%', paddingLeft: width * 0.15 / 8 }}
@@ -149,6 +149,7 @@ function RegisterEmail({ navigation, route }: StackScreenProps<RegisterParams>) 
           onChangeText={(text) => { setForm({ ...form, email: text }); setCheck({ ...check, email: false }) }}
           isRequired={true}
           isAlert={!emailCheck}
+          descriptionLabel={check.email ? '사용 가능한 이메일입니다.': ''}
           alertLabel='이메일 형식이 올바르지 않습니다'
           inputMode='email'
         />
@@ -179,6 +180,9 @@ function RegisterEmail({ navigation, route }: StackScreenProps<RegisterParams>) 
           containerStyle={{ width: '75%', paddingLeft: width * 0.15 / 8 }}
           label='닉네임'
           placeholder='닉네임을 입력해주세요'
+          isAlert={!check.nickname}
+          alertLabel='이미 사용중인 닉네임입니다'
+          descriptionLabel={check.nickname ? '사용 가능한 닉네임입니다.': ''}
           onChangeText={(text) => { setForm({ ...form, nickname: text }); setCheck({ ...check, nickname: false }) }}
         />
         <TouchableOpacity
@@ -193,7 +197,7 @@ function RegisterEmail({ navigation, route }: StackScreenProps<RegisterParams>) 
         isBorder={true}
         label={true}
       /> */}
-      </View>
+      </ScrollView>
       <TouchableOpacity style={{marginBottom: 30}} onPress={tryRegister}><Text style={TextStyles.submit}>지속가능한 공간 탐방하기</Text></TouchableOpacity>
     </SafeAreaView>
     </KeyboardAvoidingView>
