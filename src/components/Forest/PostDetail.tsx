@@ -420,7 +420,7 @@ const BottomBarSection = ({ post, email, onRefresh, navigation }: BottomBarSecti
         </TouchableOpacity>
         <Text style={{ fontSize: 14, color: '#202020', lineHeight: 20, marginLeft: 3 }}>{post.comment_cnt}</Text>
       </View>
-      <ShareButton color={'black'} message={`[SASM Forest] ${post.title}`} description={post.content} image={post.rep_pic} id={post.id} from='forest' />
+      <ShareButton color={'black'} message={`[SASM Forest] ${post.title}`} description={post.content} image={post.rep_pic} id={post.id} />
       <PopComment data={post} post_id={post.id} email={email} isLogin={!!email} navigation={navigation} repo={true} modalVisible={commentPopupVisible}  setModalVisible={setCommentPopupVisible}/>
     </View>
   )
