@@ -63,28 +63,29 @@ export default function MyForest() {
 
   return (
     <View style={{ flex: 1 }}>
-      <SearchNCategory
-        checkedList={checkedList}
-        setCheckedList={setCheckedList}
-        edit={edit}
-        setEdit={setEdit}
-        setSearch={setSearch}
-        search={search}
-        setType={setType}
-        type={type}
-        setPage={type ? setPage : setWrittenPage}
-        label='내 포레스트'
-        forest
-      />
       {
         isLogin ?
-          (type ? forestList : written).length == 0 ?
-            <View style={{ alignItems: 'center', marginVertical: 20 }}>
-              <NothingIcon />
-              <Text style={{ marginTop: 20 }}>해당하는 포레스트가 없습니다</Text>
-            </View>
-            :
-            <>
+        <>
+          <SearchNCategory
+            checkedList={checkedList}
+            setCheckedList={setCheckedList}
+            edit={edit}
+            setEdit={setEdit}
+            setSearch={setSearch}
+            search={search}
+            setType={setType}
+            type={type}
+            setPage={type ? setPage : setWrittenPage}
+            label='내 포레스트'
+            forest
+          />
+          {
+            (type ? forestList : written).length == 0 ?
+              <View style={{ alignItems: 'center', marginVertical: 20 }}>
+                <NothingIcon />
+                <Text style={{ marginTop: 20 }}>해당하는 포레스트가 없습니다</Text>
+              </View>
+              :
               <FlatList
                 data={type ? forestList : written}
                 contentContainerStyle={{ paddingHorizontal: 20 }}
@@ -107,10 +108,10 @@ export default function MyForest() {
                 style={{ alignContent: 'space-between' }}
                 showsVerticalScrollIndicator={false}
               />
-
-            </>
-          :
-          <RequireLogin index={3} />
+          }
+        </>
+        :
+        <RequireLogin index={3} />
       }
     </View>
   )

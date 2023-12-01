@@ -92,6 +92,8 @@ function RegisterEmail({ navigation, route }: StackScreenProps<RegisterParams>) 
   let passwordCheck: boolean = false;
   if (form.password === form.passwordConfirm || form.passwordConfirm === "")
     passwordCheck = true;
+  // 닉네임 체크
+  const [alert, setAlert] = useState<boolean>(false);
 
   const checkRepetition = async (type: string, data: string) => {
     const response_check = await request.post('/users/rep_check/', {
@@ -104,6 +106,11 @@ function RegisterEmail({ navigation, route }: StackScreenProps<RegisterParams>) 
       }
       else {
         setCheck({ ...check, nickname: true });
+      }
+    } else {
+      if (type == 'nickname') {
+        setAlert(true);
+        setTimeout(()=>{setAlert(false)}, 3000);
       }
     }
     Alert.alert(response_check.data.data);
@@ -180,7 +187,7 @@ function RegisterEmail({ navigation, route }: StackScreenProps<RegisterParams>) 
           containerStyle={{ width: '75%', paddingLeft: width * 0.15 / 8 }}
           label='닉네임'
           placeholder='닉네임을 입력해주세요'
-          isAlert={!check.nickname}
+          isAlert={alert}
           alertLabel='이미 사용중인 닉네임입니다'
           descriptionLabel={check.nickname ? '사용 가능한 닉네임입니다.': ''}
           onChangeText={(text) => { setForm({ ...form, nickname: text }); setCheck({ ...check, nickname: false }) }}
