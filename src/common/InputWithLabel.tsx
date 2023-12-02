@@ -83,7 +83,7 @@ export default function InputWithLabel({
         {...rest}
       />
       <Text
-        style={{ width: "85%", fontSize: 10, lineHeight: 18, color: "#FF4D00" }}
+        style={{ width: "85%", fontSize: 10, lineHeight: 18, color: descriptionLabel ? '#67D393':"#FF4D00" }}
       >
         {isAlert && alertLabel}{descriptionLabel && descriptionLabel}
       </Text>
