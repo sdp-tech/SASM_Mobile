@@ -24,6 +24,7 @@ export default function MyForest() {
   const [written, setWritten] = useState<MyForestItemCardProps[]>([]);
   const request = new Request();
   const [checkedList, setCheckedList] = useState<string[]>([]);
+  const [isUser, setIsUser] = useState<boolean>(true);
 
   const rerender = () => {
     setRefresh(true);
@@ -78,6 +79,7 @@ export default function MyForest() {
             setPage={type ? setPage : setWrittenPage}
             label='내 포레스트'
             forest
+            isUser={isUser}
           />
           {
             (type ? forestList : written).length == 0 ?
