@@ -25,7 +25,9 @@ export type HomeStackParams = {
   Detail: {
     id: number;
   };
-  Form: undefined;
+  Form: {
+    id?:number;
+  };
   Search: undefined;
   PhotoPreview: {
     photoUri: any;

@@ -56,7 +56,7 @@ const StoryContentBox = styled.View`
   padding-horizontal: 25px;
   margin-vertical: 20px;
 `
-interface CurationDetailProps {
+export interface CurationDetailProps {
   contents: string;
   created: string;
   updated: string;
@@ -72,7 +72,7 @@ interface CurationDetailProps {
   writer_is_followed: boolean;
 }
 
-interface CuratedStoryProps {
+export interface CuratedStoryProps {
   created: string;
   hashtags: string;
   like_story: boolean;
@@ -172,7 +172,7 @@ export default function CurationDetail({ navigation, route }: StackScreenProps<H
   const [like, setLike] = useState<boolean>(false);
   const [following, setFollowing] = useState<boolean>(false);
   const [refreshing, setRefreshing] = useState<boolean>(false);
-  const [dot, setDot] = useState<boolean>(false);
+  const [dot, setDot] = useState<boolean>(true);
   const [curatedStory, setCuratedStory] = useState<CuratedStoryProps[]>([]);
   const [curationDetail, setCurationDetail] = useState<CurationDetailProps>({
     contents: '',
@@ -286,9 +286,9 @@ export default function CurationDetail({ navigation, route }: StackScreenProps<H
           }
           { dot &&
             <View style={{position: 'absolute', backgroundColor: 'white', top: Platform.OS === 'ios' ? 75: 50, left: width-140, borderRadius: 4}}>
-              {/* <TouchableOpacity style={{borderColor: 'rgba(168, 168, 168, 0.20)', borderBottomWidth: 1, paddingHorizontal: 40, paddingVertical: 10}} onPress={() => {}} disabled={!user}>
+              { <TouchableOpacity style={{borderColor: 'rgba(168, 168, 168, 0.20)', borderBottomWidth: 1, paddingHorizontal: 40, paddingVertical: 10}} onPress={() => navigation.navigate('Form',{id: route.params.id}) } disabled={!user}>
                 <Text style={{fontSize: 14, lineHeight: 20, letterSpacing: -0.6, opacity: user ? 1 : 0.4}}>수정하기</Text>
-              </TouchableOpacity> */}
+              </TouchableOpacity> }
               <TouchableOpacity style={{borderColor: 'rgba(168, 168, 168, 0.20)', borderBottomWidth: 1, paddingHorizontal: 40, paddingVertical: 10}} onPress={handleCurationDelete} disabled={!user}>
                 <Text style={{fontSize: 14, lineHeight: 20, letterSpacing: -0.6, opacity: user ? 1 : 0.4}}>삭제하기</Text>
               </TouchableOpacity>

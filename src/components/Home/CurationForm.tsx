@@ -1,4 +1,4 @@
-import React, { Dispatch, SetStateAction, useEffect, useMemo, useState, useRef, useCallback } from 'react';
+import React, { Dispatch, SetStateAction, useContext, useEffect, useMemo, useState, useRef, useCallback } from 'react';
 import { Dimensions, TextInput, TouchableOpacity, Image, Modal, View, ActivityIndicator, ImageBackground, StyleSheet, Alert, KeyboardAvoidingView, Platform } from 'react-native';
 import { TextPretendard as Text } from '../../common/CustomText';
 import { ScrollView } from 'react-native-gesture-handler';
@@ -13,6 +13,10 @@ import AddColor from "../../assets/img/common/AddColor.svg";
 import { getStatusBarHeight } from 'react-native-safearea-height';
 import FormHeader from '../../common/FormHeader';
 import FinishModal from '../../common/FinishModal';
+import {LoginContext} from '../../common/Context';
+import { useFocusEffect, useNavigation } from '@react-navigation/native';
+import {TabProps} from '../../../App';
+import CurationDetail, { CurationDetailProps, CuratedStoryProps } from './CurationDetail';
 
 const { width, height } = Dimensions.get('window');
 
@@ -81,7 +85,8 @@ interface FormProps {
   [index: string]: any;
 }
 
-export default function CurationForm({ navigation, route }: StackScreenProps<HomeStackParams>): JSX.Element {
+
+export default function CurationForm({ navigation, route }: StackScreenProps<HomeStackParams, 'Form'>): JSX.Element {
   const [form, setForm] = useState<FormProps>({
     title: '',
     contents: '',
@@ -101,12 +106,83 @@ export default function CurationForm({ navigation, route }: StackScreenProps<Hom
   const hasUnsavedChanges = Boolean(form.title.length > 0 || form.contents.length > 0 || selectedStory.length > 0 || rep_pic[0].uri != '');
   const [modalVisible, setModalVisible] = useState(false);
   const [curationId, setCurationId] = useState<number>(0);
-  
+  const [curatedStory, setCuratedStory] = useState<CuratedStoryProps[]>([]);
+  const [refreshing, setRefreshing] = useState<boolean>(false);
+  const [curationDetail, setCurationDetail] = useState<CurationDetailProps>({
+    contents: '',
+    created: '',
+    updated: '',
+    like_curation: false,
+    like_cnt: 0,
+    map_image: '',
+    rep_pic: '',
+    title: '',
+    nickname: '',
+    profile_image: '',
+    writer_email: '',
+    writer_is_verified: false,
+    writer_is_followed: false,
+  });
+  const [reppicSize, setReppicSize] = useState<{ width: number; height: number; }>({
+    width: 1, height: 1
+  })
+  const [mapImageSize, setMapImageSize] = useState<{ width: number; height: number; }>({
+    width: 1, height: 1
+  })
+  const [like, setLike] = useState<boolean>(false);
+  const [following, setFollowing] = useState<boolean>(false);
   const handleCheckedList = (id: number): void => {
     setSelectedStory(selectedStory.filter(element => element.id != id));
   }
+  const id= route.params.id;
+  const getCurationDetail = async () => {
+    const response_detail = await request.get(`/curations/curation_detail/${id}/`);
+    setCurationDetail(response_detail.data.data);
+    Image.getSize(response_detail.data.data.rep_pic, (width, height) => { setReppicSize({ width: width, height: height }) });
+    Image.getSize(response_detail.data.data.map_image, (width, height) => { setMapImageSize({ width: width, height: height }) })
+  }
+  const getCurationStoryDetail = async () => {
+    
+    const response_story_detail = await request.get(`/curations/curated_story_detail/${id}/`);
+    // setCuratedStory(response_story_detail.data.data);
+    // selectedStory[0].id = response_story_detail.data.id;
+    
+    console.log('story', response_story_detail.data)
 
+    setSelectedStory(response_story_detail.data.data);
+  }
   const uploadCuration = async () => {
+    if(id){
+      const formData = new FormData();
+      for (let i of Object.keys(form)) {
+        formData.append(i, form[i]);
+      }
+  
+      formData.append('rep_pic', {
+        uri: rep_pic[0].uri,
+        name: rep_pic[0].fileName,
+        type: 'image/jpeg/png',
+      })
+      for (let i of selectedStory) {
+        formData.append('stories', i.id);
+        formData.append('short_curations', '.');
+      }
+      if (form.title.length == 0 || form.contents.length == 0) {
+        Alert.alert('빈 칸을 전부 채워주세요.')
+        return;
+      }
+      if (rep_pic[0].uri == '') {
+        Alert.alert('대표 사진을 설정해주세요.')
+        return;
+      }
+      if (selectedStory.length < 3) {
+        Alert.alert('최소 3개의 스토리를 선택해주세요.')
+        return;
+      }
+      
+      const response = await request.put(`/curations/curation_update/${id}`,formData,{"content-Type":"application/json"});
+      }
+    else{
     const formData = new FormData();
     for (let i of Object.keys(form)) {
       formData.append(i, form[i]);
@@ -133,9 +209,12 @@ export default function CurationForm({ navigation, route }: StackScreenProps<Hom
       Alert.alert('최소 3개의 스토리를 선택해주세요.')
       return;
     }
+    
     const response = await request.post('/curations/curation_create/', formData, { "Content-Type": "multipart/form-data" });
+    console.log(response.data.data.id)
     setCurationId(response.data.data.id);
     setModalVisible(true);
+    }
   }
 
   const handleRepPic = () => {
@@ -158,6 +237,15 @@ export default function CurationForm({ navigation, route }: StackScreenProps<Hom
   useEffect(() => {
     console.log(selectedStory);
   }, [selectedStory])
+  
+  useFocusEffect(useCallback(() => {
+    if(id){
+      console.log('id', id)
+      
+    getCurationDetail();
+    getCurationStoryDetail();}
+    console.log(selectedStory)
+  }, [id]))
 
   useEffect(
     () =>
@@ -201,10 +289,10 @@ export default function CurationForm({ navigation, route }: StackScreenProps<Hom
     <FormHeader title='큐레이션 작성' onLeft={() => navigation.goBack()} onRight={uploadCuration} begin={true} end={true} />
     <ScrollView>
       <ReppicBox onPress={handleRepPic}>
-        <ImageBackground source={rep_pic[0].uri != '' ? {uri: rep_pic[0].uri} : require('../../assets/img/Home/form_example.png')}
+        <ImageBackground source={curationDetail.rep_pic != '' ? curationDetail.rep_pic :( rep_pic[0].uri != '' ? ({uri: rep_pic[0].uri} ): require('../../assets/img/Home/form_example.png'))}
           imageStyle={{height: (height*0.9)/2}} style={{ flex: 1 }} resizeMode={'cover'} alt='대표 사진' />
         <View style={{backgroundColor: 'rgba(0,0,0,0.3)', width: width, height: (height*0.9)/2}}>
-        <InputTitle placeholder='제목을 입력해주세요 *' placeholderTextColor={'white'} onChangeText={(e) => { setForm({ ...form, title: e }) }} maxLength={45} />
+        <InputTitle value={curationDetail.title} placeholder='제목을 입력해주세요 *' placeholderTextColor={'white'} onChangeText={(e) => { setForm({ ...form, title: e }) }} maxLength={45} />
         <Text style={{ position: 'absolute', bottom: 25, right: 10 }}>{form.title.length}/45</Text>
         </View>
       </ReppicBox>
@@ -225,7 +313,7 @@ export default function CurationForm({ navigation, route }: StackScreenProps<Hom
           </Button>
         </StorySection>
         <View style={{ position: 'relative' }}>
-          <InputContent multiline={true} textAlignVertical='top' placeholder='큐레이션 설명을 작성해보세요.' onChangeText={(e) => { setForm({ ...form, contents: e }) }} maxLength={200} />
+          <InputContent value = {curationDetail.contents} multiline={true} textAlignVertical='top' placeholder='큐레이션 설명을 작성해보세요.' onChangeText={(e) => { setForm({ ...form, contents: e }) }} maxLength={200} />
           <Text style={{ position: 'absolute', bottom: 30, right: 15 }}>{form.contents.length}/200</Text>
         </View>
         <Footer>
