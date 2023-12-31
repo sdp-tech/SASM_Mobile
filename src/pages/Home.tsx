@@ -21,6 +21,7 @@ export type HomeStackParams = {
   Home: undefined;
   List: {
     from: "search" | "admin" | "verify";
+    id?: number; //추가
   };
   Detail: {
     id: number;

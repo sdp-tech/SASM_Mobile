@@ -134,7 +134,7 @@ export default function CurationForm({ navigation, route }: StackScreenProps<Hom
   const handleCheckedList = (id: number): void => {
     setSelectedStory(selectedStory.filter(element => element.id != id));
   }
-  const id= route.params.id;
+  const id= route.params?.id;
   const getCurationDetail = async () => {
     const response_detail = await request.get(`/curations/curation_detail/${id}/`);
     setCurationDetail(response_detail.data.data);
@@ -147,9 +147,8 @@ export default function CurationForm({ navigation, route }: StackScreenProps<Hom
     // setCuratedStory(response_story_detail.data.data);
     // selectedStory[0].id = response_story_detail.data.id;
     
-    console.log('story', response_story_detail.data)
-
-    setSelectedStory(response_story_detail.data.data);
+    setSelectedStory(selectedStory => [...selectedStory, ...response_story_detail.data.data]);
+    
   }
   const uploadCuration = async () => {
     if(id){
@@ -161,11 +160,12 @@ export default function CurationForm({ navigation, route }: StackScreenProps<Hom
       formData.append('rep_pic', {
         uri: rep_pic[0].uri,
         name: rep_pic[0].fileName,
-        type: 'image/jpeg/png',
+        type: rep_pic[0].uri.endsWith('.jpg') ? 'image/jpeg' : 'image/png',
       })
       for (let i of selectedStory) {
         formData.append('stories', i.id);
         formData.append('short_curations', '.');
+        formData.append('photo_image_uri', i.rep_pic);
       }
       if (form.title.length == 0 || form.contents.length == 0) {
         Alert.alert('빈 칸을 전부 채워주세요.')
@@ -180,8 +180,9 @@ export default function CurationForm({ navigation, route }: StackScreenProps<Hom
         return;
       }
       
-      const response = await request.put(`/curations/curation_update/${id}`,formData,{"content-Type":"application/json"});
-      }
+      const response = await request.put(`/curations/curation_update/${id}`,formData,{"content-Type": "multipart/form-data" });
+      console.log(formData)
+    }
     else{
     const formData = new FormData();
     for (let i of Object.keys(form)) {
@@ -191,11 +192,12 @@ export default function CurationForm({ navigation, route }: StackScreenProps<Hom
     formData.append('rep_pic', {
       uri: rep_pic[0].uri,
       name: rep_pic[0].fileName,
-      type: 'image/jpeg/png',
+      type: rep_pic[0].uri.endsWith('.jpg') ? 'image/jpeg' : 'image/png',
     })
     for (let i of selectedStory) {
       formData.append('stories', i.id);
       formData.append('short_curations', '.');
+      formData.append('photo_image_uri', i.rep_pic);
     }
     if (form.title.length == 0 || form.contents.length == 0) {
       Alert.alert('빈 칸을 전부 채워주세요.')
@@ -212,6 +214,7 @@ export default function CurationForm({ navigation, route }: StackScreenProps<Hom
     
     const response = await request.post('/curations/curation_create/', formData, { "Content-Type": "multipart/form-data" });
     console.log(response.data.data.id)
+    console.log(formData)
     setCurationId(response.data.data.id);
     setModalVisible(true);
     }
@@ -289,11 +292,11 @@ export default function CurationForm({ navigation, route }: StackScreenProps<Hom
     <FormHeader title='큐레이션 작성' onLeft={() => navigation.goBack()} onRight={uploadCuration} begin={true} end={true} />
     <ScrollView>
       <ReppicBox onPress={handleRepPic}>
-        <ImageBackground source={curationDetail.rep_pic != '' ? curationDetail.rep_pic :( rep_pic[0].uri != '' ? ({uri: rep_pic[0].uri} ): require('../../assets/img/Home/form_example.png'))}
+        <ImageBackground source={curationDetail?.rep_pic != '' ? (rep_pic[0].uri = curationDetail.rep_pic,{uri: rep_pic[0].uri}) :( rep_pic[0].uri != '' ? ({uri: rep_pic[0].uri} ): require('../../assets/img/Home/form_example.png'))}
           imageStyle={{height: (height*0.9)/2}} style={{ flex: 1 }} resizeMode={'cover'} alt='대표 사진' />
         <View style={{backgroundColor: 'rgba(0,0,0,0.3)', width: width, height: (height*0.9)/2}}>
-        <InputTitle value={curationDetail.title} placeholder='제목을 입력해주세요 *' placeholderTextColor={'white'} onChangeText={(e) => { setForm({ ...form, title: e }) }} maxLength={45} />
-        <Text style={{ position: 'absolute', bottom: 25, right: 10 }}>{form.title.length}/45</Text>
+        <InputTitle value={curationDetail.title? form.title = curationDetail.title : form.title} placeholder='제목을 입력해주세요 *' placeholderTextColor={'white'} onChangeText={(e) => { setForm({ ...form, title: e }) }} maxLength={45} />
+        <Text style={{ position: 'absolute', bottom: 25, right: 10 }}>{form.title.length || curationDetail.title.length}/45</Text>
         </View>
       </ReppicBox>
       <Section>
@@ -301,7 +304,7 @@ export default function CurationForm({ navigation, route }: StackScreenProps<Hom
         <StorySection>
           {
             selectedStory.map((data, index) =>
-              <TouchableOpacity onPress={() => { console.log(data); handleCheckedList(data.id) }} style={{ position: 'relative' }}>
+              <TouchableOpacity onPress={() => {  handleCheckedList(data.id) }} style={{ position: 'relative' }}>
                 <StoryImage style={index == 0 && { borderColor: '#67D393', borderWidth: 2 }} source={{ uri: data.rep_pic }} />
                 {index == 0 && <Text style={TextStyles.rep}>대표</Text>}
                 <Text style={TextStyles.place_name}>{data.place_name}</Text>
@@ -313,8 +316,8 @@ export default function CurationForm({ navigation, route }: StackScreenProps<Hom
           </Button>
         </StorySection>
         <View style={{ position: 'relative' }}>
-          <InputContent value = {curationDetail.contents} multiline={true} textAlignVertical='top' placeholder='큐레이션 설명을 작성해보세요.' onChangeText={(e) => { setForm({ ...form, contents: e }) }} maxLength={200} />
-          <Text style={{ position: 'absolute', bottom: 30, right: 15 }}>{form.contents.length}/200</Text>
+          <InputContent value = {curationDetail.contents? form.contents = curationDetail.contents: form.contents} multiline={true} textAlignVertical='top' placeholder='큐레이션 설명을 작성해보세요.' onChangeText={(e) => { setForm({ ...form, contents: e }) }} maxLength={200} />
+          <Text style={{ position: 'absolute', bottom: 30, right: 15 }}>{form.contents.length || curationDetail.contents.length}/200</Text>
         </View>
         <Footer>
           <TouchableOpacity onPress={navigation.goBack}><Text>취소</Text></TouchableOpacity>

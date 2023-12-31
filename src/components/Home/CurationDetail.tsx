@@ -172,7 +172,7 @@ export default function CurationDetail({ navigation, route }: StackScreenProps<H
   const [like, setLike] = useState<boolean>(false);
   const [following, setFollowing] = useState<boolean>(false);
   const [refreshing, setRefreshing] = useState<boolean>(false);
-  const [dot, setDot] = useState<boolean>(true);
+  const [dot, setDot] = useState<boolean>(false);
   const [curatedStory, setCuratedStory] = useState<CuratedStoryProps[]>([]);
   const [curationDetail, setCurationDetail] = useState<CurationDetailProps>({
     contents: '',
