@@ -157,21 +157,19 @@ export default function CurationForm({ navigation, route }: StackScreenProps<Hom
   
       
       formData.append('photo_image_url', rep_pic[0].uri == ''?curationDetail.rep_pic: rep_pic[0].uri)
-      formData.append('rep_pic', {
-        uri: rep_pic[0].uri,
-        name: rep_pic[0].fileName,
-        type: rep_pic[0].uri.endsWith('.jpg') ? 'image/jpeg' : 'image/png',
-      })
+      if(rep_pic[0].uri != '' && (rep_pic[0].uri !== curationDetail.rep_pic)){
+        formData.append('rep_pic', {
+          uri: rep_pic[0].uri,
+          name: rep_pic[0].fileName,
+          type: rep_pic[0].uri.endsWith('.jpg') ? 'image/jpeg' : 'image/png',
+        })
+      }
       for (let i of selectedStory) {
         formData.append('stories', (i.story_id||i.id));
         formData.append('short_curations', '.');
       }
       if (form.title.length == 0 || form.contents.length == 0) {
         Alert.alert('빈 칸을 전부 채워주세요.')
-        return;
-      }
-      if (rep_pic[0].uri == '') {
-        Alert.alert('대표 사진을 설정해주세요.')
         return;
       }
       if (selectedStory.length < 3) {
