@@ -76,8 +76,8 @@ export default function StoryListModal({ target, setStoryListModal, selectedStor
   }, [dropValue])
 
   const handleSelectedStory = (id: number, rep_pic: string, place_name:string) => {
-    if (selectedStory.filter(el => el.id == id).length > 0) {
-      setSelectedStory(selectedStory.filter(el => el.id != id));
+    if (selectedStory.filter(el => (el.id || el.story_id)== id).length > 0) {
+      setSelectedStory(selectedStory.filter(el => (el.id || el.story_id)!= id));
       setSelectedPlace(selectedPlace.filter(el => el != place_name))
     }
     else {
@@ -108,7 +108,7 @@ export default function StoryListModal({ target, setStoryListModal, selectedStor
         <FlatList
           data={storyList}
           renderItem={({ item }) =>
-            <ItemCard selected={selectedStory.filter(el => el.id == item.id).length > 0} onPress={() => { handleSelectedStory(item.id, item.rep_pic, item.place_name) }}>
+            <ItemCard selected={selectedStory.filter(el => (el.id||el.story_id) == item.id).length > 0} onPress={() => { handleSelectedStory(item.id, item.rep_pic, item.place_name) }}>
               <FastImage source={{ uri: item.rep_pic, priority: FastImage.priority.normal }} style={{ height: 100, width: 100, marginRight: 15, borderRadius: 3 }} />
               <TextBox>
                 <Text style={ListTextStyles.title} numberOfLines={1}>{item.title}</Text>
