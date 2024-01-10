@@ -95,7 +95,7 @@ export default function CurationList({ navigation, route }: StackScreenProps<Hom
           />
       <PlusButton
         position='rightbottom'
-        onPress={() => { navigation.navigate('Form') }}
+        onPress={() => { navigation.navigate('Form', {id: route.params.id}) }}
       />
     </SafeAreaView >
   )

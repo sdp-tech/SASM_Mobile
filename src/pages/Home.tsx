@@ -21,11 +21,14 @@ export type HomeStackParams = {
   Home: undefined;
   List: {
     from: "search" | "admin" | "verify";
+    id?: number; //추가
   };
   Detail: {
     id: number;
   };
-  Form: undefined;
+  Form: {
+    id?:number;
+  };
   Search: undefined;
   PhotoPreview: {
     photoUri: any;
