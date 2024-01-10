@@ -156,11 +156,16 @@ export default function CurationForm({ navigation, route }: StackScreenProps<Hom
       }
   
       
+      formData.append('photo_image_url', rep_pic[0].uri == ''?curationDetail.rep_pic: rep_pic[0].uri)
+      formData.append('rep_pic', {
+        uri: rep_pic[0].uri,
+        name: rep_pic[0].fileName,
+        type: rep_pic[0].uri.endsWith('.jpg') ? 'image/jpeg' : 'image/png',
+      })
       for (let i of selectedStory) {
         formData.append('stories', (i.story_id||i.id));
         formData.append('short_curations', '.');
       }
-      formData.append('photo_image_url', rep_pic[0].uri)
       if (form.title.length == 0 || form.contents.length == 0) {
         Alert.alert('빈 칸을 전부 채워주세요.')
         return;
@@ -177,6 +182,7 @@ export default function CurationForm({ navigation, route }: StackScreenProps<Hom
         form.title = curationDetail.title;
       }
       const response = await request.put(`/curations/curation_update/${id}/`,formData,{"content-Type": "multipart/form-data" });
+      console.log(response.data.data.id)
       console.log(formData)
       setCurationId(response.data.data.id);
       setModalVisible(true);
@@ -188,10 +194,11 @@ export default function CurationForm({ navigation, route }: StackScreenProps<Hom
     }
     
     formData.append('rep_pic', {
-      uri: rep_pic[0].uri,
-      name: rep_pic[0].fileName,
-      type: rep_pic[0].uri.endsWith('.jpg') ? 'image/jpeg' : 'image/png',
-    })
+        uri: rep_pic[0].uri,
+        name: rep_pic[0].fileName,
+        type: rep_pic[0].uri.endsWith('.jpg') ? 'image/jpeg' : 'image/png',
+      })
+
     for (let i of selectedStory) {
       formData.append('stories', i.id);
       formData.append('short_curations', '.');
@@ -290,7 +297,7 @@ export default function CurationForm({ navigation, route }: StackScreenProps<Hom
       }),
     [navigation, hasUnsavedChanges, curationId]
   );
-
+      
   return (
     <KeyboardAvoidingView behavior={'height'} keyboardVerticalOffset={iOS ? 0 : statusBarHeight+88} style={{flex: 1, backgroundColor: '#FFFFFF'}}>
       <Modal visible={modalVisible}>
@@ -304,7 +311,7 @@ export default function CurationForm({ navigation, route }: StackScreenProps<Hom
     <FormHeader  title= {id? '큐레이션 수정':'큐레이션 작성'} onLeft={() => navigation.goBack()} onRight={uploadCuration} begin={true} end={true} />
     <ScrollView>
       <ReppicBox onPress={handleRepPic}>
-        <ImageBackground source={( rep_pic[0].uri != '' ? ({uri: rep_pic[0].uri} ): (curationDetail?.rep_pic != ''? (rep_pic[0].uri = curationDetail.rep_pic,{uri: rep_pic[0].uri}):require('../../assets/img/Home/form_example.png')))}
+        <ImageBackground source={( rep_pic[0].uri != '' ? ({uri: rep_pic[0].uri} ): (curationDetail?.rep_pic != ''? (  {uri:curationDetail.rep_pic}):require('../../assets/img/Home/form_example.png')))}
           imageStyle={{height: (height*0.9)/2}} style={{ flex: 1 }} resizeMode={'cover'} alt='대표 사진' />
         <View style={{backgroundColor: 'rgba(0,0,0,0.3)', width: width, height: (height*0.9)/2}}>
         <InputTitle value={form.title } placeholder='제목을 입력해주세요 *' placeholderTextColor={'white'} onChangeText={(e) => { setForm({ ...form, title: e }) }} maxLength={45} />
