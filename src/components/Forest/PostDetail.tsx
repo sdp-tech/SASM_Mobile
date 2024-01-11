@@ -540,7 +540,7 @@ const PostDetailScreen = ({
             refreshing={refreshing}
             ListHeaderComponent={
               <>
-                <PostDetailSection post={post} email={user.email} onReport={() => setModalVisible(true)} onDelete={deletePost} onUpdate={()=>navigation.navigate('PostUpload', {post: post})} onLayout={onLayout} />
+                <PostDetailSection post={post} email={user.email} onReport={() => setModalVisible(true)} onDelete={deletePost} onUpdate={()=>navigation.replace('PostUpload', {post: post})} onLayout={onLayout} />
                 <UserInfoSection user={post.writer} posts={writerPosts.filter((item: any) => item.id !== post.id)} isLogin={isLogin} navigation={navigation} onRefresh={reRenderScreen} writer_is_followed={post.writer_is_followed}/>
                 <View style={{ flexDirection: 'row', padding: 20, alignItems: 'center' }}>
                   <View style={{ flexDirection: 'row', flex: 1 }}>
