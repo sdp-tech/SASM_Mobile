@@ -306,7 +306,7 @@ export default function CurationForm({ navigation, route }: StackScreenProps<Hom
           subtitle={[(id? '수정한 큐레이션은':'작성한 큐레이션은'), '마이페이지 > 큐레이션 > 내가 쓴 큐레이션', '에서 확인할 수 있어요']}
         />
       </Modal>
-    <FormHeader  title= {id? '큐레이션 수정':'큐레이션 작성'} onLeft={() => navigation.goBack()} onRight={uploadCuration} begin={true} end={true} />
+    <FormHeader  title= {id? '큐레이션 수정':'큐레이션 작성'} onLeft={() => id ? navigation.replace('Detail', { id: id}) : navigation.goBack()} onRight={uploadCuration} begin={true} end={true} />
     <ScrollView>
       <ReppicBox onPress={handleRepPic}>
         <ImageBackground source={( rep_pic[0].uri != '' ? ({uri: rep_pic[0].uri} ): (curationDetail?.rep_pic != ''? (  {uri:curationDetail.rep_pic}):require('../../assets/img/Home/form_example.png')))}

@@ -111,10 +111,12 @@ const handleFollow = async (target: string, isLogin: boolean, navigation: StackN
     {
       targetEmail: target
     })
-  if (setFollowing) {
-    setFollowing(!following);
-  }
   if (response.data.status == 'fail') Alert.alert(response.data.message)
+  else {
+    if (setFollowing) {
+      setFollowing(!following);
+    }
+  }
 }
 
 const BottomBarSection = ({ id, post, isLogin, onRefresh, navigation }:{id: number; post: CurationDetailProps, isLogin: boolean, onRefresh: () => void, navigation: any;}) => {
@@ -286,7 +288,7 @@ export default function CurationDetail({ navigation, route }: StackScreenProps<H
           }
           { dot &&
             <View style={{position: 'absolute', backgroundColor: 'white', top: Platform.OS === 'ios' ? 75: 50, left: width-140, borderRadius: 4}}>
-              { <TouchableOpacity style={{borderColor: 'rgba(168, 168, 168, 0.20)', borderBottomWidth: 1, paddingHorizontal: 40, paddingVertical: 10}} onPress={() => navigation.navigate('Form',{id: route.params.id}) } disabled={!user}>
+              { <TouchableOpacity style={{borderColor: 'rgba(168, 168, 168, 0.20)', borderBottomWidth: 1, paddingHorizontal: 40, paddingVertical: 10}} onPress={() => navigation.replace('Form',{id: route.params.id}) } disabled={!user}>
                 <Text style={{fontSize: 14, lineHeight: 20, letterSpacing: -0.6, opacity: user ? 1 : 0.4}}>수정하기</Text>
               </TouchableOpacity> }
               <TouchableOpacity style={{borderColor: 'rgba(168, 168, 168, 0.20)', borderBottomWidth: 1, paddingHorizontal: 40, paddingVertical: 10}} onPress={handleCurationDelete} disabled={!user}>
